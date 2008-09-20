@@ -1,0 +1,5 @@
+2008-09-20  David Athay  <ko2fan@gmail.com>
+	* src/game.cpp, src/game.h, src/graphics/entity.h, src/graphics/graphics.h,
+	src/graphics/graphics.cpp, src/graphics/node.h, src/main.cpp,
+	src/utilities/log.cpp, src/utilities/log.h: Added logging, and initialising
+	SDL to use OpenGL.

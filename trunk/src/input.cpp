@@ -31,7 +31,7 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-09-20
+ *	Date of file creation: 08-09-21
  *
  *	Date file last modified: 08-09-21
  *
@@ -39,25 +39,38 @@
  *
  ********************************************/
 
-/**
- * The entity class, this is used by movable objects
- */
+#include "input.h"
 
-#ifndef ST_ENTITY_HEADER
-#define ST_ENTITY_HEADER
+#include <SDL/SDL.h>
+#include <algorithm>
 
 namespace ST
 {
-	class Entity : public Node
+	void InputManager::getEvents()
 	{
-	private:
-		Entity();
+		SDL_Event event;
+		while (SDL_PollEvent(&event))
+		{
+			switch (event.type)
+			{
+			case SDL_KEYDOWN:
+				{
+					keysDown.push_back(event.key.keysym.sym);
+				}
+			}
+		}
+	}
 
-	public:
-		Entity(std::string name, Texture *texture);
+	bool InputManager::getKey(SDLKey key)
+	{
+		std::list<SDLKey>::iterator itr;
+		itr = std::find(keysDown.begin(), keysDown.end(), key);
+		if (itr != keysDown.end())
+		{
+			keysDown.erase(itr);
+			return true;
+		}
 
-	private:
-	};
+		return false;
+	}
 }
-
-#endif

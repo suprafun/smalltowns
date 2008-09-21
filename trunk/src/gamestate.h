@@ -31,7 +31,7 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-09-20
+ *	Date of file creation: 08-09-21
  *
  *	Date file last modified: 08-09-21
  *
@@ -40,91 +40,24 @@
  ********************************************/
 
 /**
- * The Graphics Engine is the main rendering class
+ * The Game State class is a base class for each state the game may use
  */
 
-#ifndef ST_GRAPHICS_HEADER
-#define ST_GRAPHICS_HEADER
-
-#include <list>
-#include <map>
-
-struct SDL_Surface;
+#ifndef ST_GAMESTATE_HEADER
+#define ST_GAMESTATE_HEADER
 
 namespace ST
 {
-	class Node;
-	class Entity;
-	class Geometry;
-	class Overlay;
-	class Texture;
-	class Camera;
-	class Point;
-	class Rectangle;
-	class GameState;
-
-	class GraphicsEngine
+	class GameState
 	{
 	public:
-		/**
-		 * Constructor
-		 * Creates the renderer, should only be created once
-		 */
-		GraphicsEngine();
+		virtual ~GameState() {}
 
-		/**
-		 * Destructor
-		 * Cleans up class
-		 */
-		~GraphicsEngine();
-
-		/**
-		 * Create Node
-		 * Creates a new node, and returns it
-		 * @param name The name of the Node
-		 * @param point The position of the Node
-		 * @return Returns a pointer to the Node created
-		 */
-		Node* createNode(std::string name, std::string texture, Point *point = NULL);
-
-		/**
-		 * Create Entity
-		 * Creates a new entity, and returns it
-		 * @param name The name of the Entity
-		 * @param point The position of the Entity
-		 * @return Returns a pointer to the Entity created
-		 */
-		Entity* createEntity(std::string name, std::string texture, Point *point = NULL);
-
-		/**
-		 * Create Camera
-		 * Creates the camera, and returns it
-		 * @param name The name of the Camera
-		 * @param rect The position of the Camera, and the size of view
-		 * @return Returns a point to the Camera created
-		 */
-		Camera* createCamera(std::string name, Rectangle *rect);
-
-		/**
-		 * Render Frame
-		 * Renders a single frame to the screen
-		 * It loops through all the nodes and draws them if visible
-		 */
-		void renderFrame();
-
-	private:
-		// graphics stuff
-		SDL_Surface *mScreen;
-		Camera *mCamera;
-		
-		// list of nodes
-		std::list<Node*> mNodes;
-
-		// list of textures
-		std::map<std::string, Texture*> mTextures;
+		virtual void enter() = 0;
+		virtual void exit() = 0;
+		virtual bool update() = 0;
 	};
-
-	extern GraphicsEngine *graphicsEngine;
 }
 
 #endif
+

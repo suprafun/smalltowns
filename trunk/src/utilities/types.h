@@ -31,7 +31,7 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-09-20
+ *	Date of file creation: 08-09-21
  *
  *	Date file last modified: 08-09-21
  *
@@ -40,24 +40,24 @@
  ********************************************/
 
 /**
- * The entity class, this is used by movable objects
+ * This header contains miscellaneous types that are useful
  */
 
-#ifndef ST_ENTITY_HEADER
-#define ST_ENTITY_HEADER
+#ifndef ST_TYPES_HEADER
+#define ST_TYPES_HEADER
 
 namespace ST
 {
-	class Entity : public Node
+	struct Point
 	{
-	private:
-		Entity();
+		int x, y;
+	}
 
-	public:
-		Entity(std::string name, Texture *texture);
-
-	private:
-	};
+	struct Rectangle
+	{
+		int x, y;
+		unsigned int width, height;
+	}
 }
 
 #endif

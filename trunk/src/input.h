@@ -31,7 +31,7 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-09-20
+ *	Date of file creation: 08-09-21
  *
  *	Date file last modified: 08-09-21
  *
@@ -40,91 +40,39 @@
  ********************************************/
 
 /**
- * The Graphics Engine is the main rendering class
+ * This manages all input from the user
  */
 
-#ifndef ST_GRAPHICS_HEADER
-#define ST_GRAPHICS_HEADER
+#ifndef ST_INPUT_HEADER
+#define ST_INPUT_HEADER
 
+#include <SDL/SDL_keysym.h>
 #include <list>
-#include <map>
-
-struct SDL_Surface;
 
 namespace ST
 {
-	class Node;
-	class Entity;
-	class Geometry;
-	class Overlay;
-	class Texture;
-	class Camera;
-	class Point;
-	class Rectangle;
-	class GameState;
-
-	class GraphicsEngine
+	class InputManager
 	{
 	public:
 		/**
-		 * Constructor
-		 * Creates the renderer, should only be created once
+		 * Get Events
+		 * Poll for SDL events
 		 */
-		GraphicsEngine();
+		void getEvents();
 
 		/**
-		 * Destructor
-		 * Cleans up class
+		 * Get Key
+		 * Check whether a key was pressed
+		 * @param key The key to check was pressed
+		 * @return Returns true if key was pressed
 		 */
-		~GraphicsEngine();
-
-		/**
-		 * Create Node
-		 * Creates a new node, and returns it
-		 * @param name The name of the Node
-		 * @param point The position of the Node
-		 * @return Returns a pointer to the Node created
-		 */
-		Node* createNode(std::string name, std::string texture, Point *point = NULL);
-
-		/**
-		 * Create Entity
-		 * Creates a new entity, and returns it
-		 * @param name The name of the Entity
-		 * @param point The position of the Entity
-		 * @return Returns a pointer to the Entity created
-		 */
-		Entity* createEntity(std::string name, std::string texture, Point *point = NULL);
-
-		/**
-		 * Create Camera
-		 * Creates the camera, and returns it
-		 * @param name The name of the Camera
-		 * @param rect The position of the Camera, and the size of view
-		 * @return Returns a point to the Camera created
-		 */
-		Camera* createCamera(std::string name, Rectangle *rect);
-
-		/**
-		 * Render Frame
-		 * Renders a single frame to the screen
-		 * It loops through all the nodes and draws them if visible
-		 */
-		void renderFrame();
+		bool getKey(SDLKey key);
 
 	private:
-		// graphics stuff
-		SDL_Surface *mScreen;
-		Camera *mCamera;
-		
-		// list of nodes
-		std::list<Node*> mNodes;
-
-		// list of textures
-		std::map<std::string, Texture*> mTextures;
+		std::list<SDLKey> keysDown;
 	};
 
-	extern GraphicsEngine *graphicsEngine;
+	extern InputManager *inputManager;
 }
 
 #endif

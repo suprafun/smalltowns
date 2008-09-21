@@ -1,3 +1,11 @@
+2008-09-21  David Athay  <ko2fan@gmail.com>
+
+	* src/game.cpp, src/game.h, src/gamestate.h, src/graphics/camera.h,
+	src/graphics/entity.h, src/graphics/graphics.cpp, src/graphics/graphics.h,
+	src/graphics/node.h, src/input.cpp, src/input.h, src/teststate.cpp,
+	src/teststate.h, src/utilities/log.cpp, src/utilities/types.h: Added game
+	states and keyboard input.
+
 2008-09-20  David Athay  <ko2fan@gmail.com>
 	* src/game.cpp, src/game.h, src/graphics/entity.h, src/graphics/graphics.h,
 	src/graphics/graphics.cpp, src/graphics/node.h, src/main.cpp,

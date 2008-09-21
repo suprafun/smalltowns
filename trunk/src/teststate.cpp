@@ -31,7 +31,7 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-09-20
+ *	Date of file creation: 08-09-21
  *
  *	Date file last modified: 08-09-21
  *
@@ -39,25 +39,58 @@
  *
  ********************************************/
 
-/**
- * The entity class, this is used by movable objects
- */
+#include "teststate.h"
 
-#ifndef ST_ENTITY_HEADER
-#define ST_ENTITY_HEADER
+#include "input.h"
+#include "utilities/log.h"
+
+#include <sstream>
+#include <SDL/SDL.h>
 
 namespace ST
 {
-	class Entity : public Node
+	TestState::TestState()
 	{
-	private:
-		Entity();
 
-	public:
-		Entity(std::string name, Texture *texture);
+	}
 
-	private:
-	};
+	void TestState::enter()
+	{
+		mFrames = 0;
+		mTime = 0;
+		mLastTime = 0;
+	}
+
+	void TestState::exit()
+	{
+
+	}
+
+	bool TestState::update()
+	{
+		// Add another frame
+		// Get how much time has passed
+		// Find the difference and if its a second or more
+		// Or the time has travelled backwards (possible if time wraps)
+		// Output the number of frames to log
+		mFrames++;
+		mTime = SDL_GetTicks();
+		int diff = mTime - mLastTime;
+		if (diff >= 1000 || diff < 0)
+		{
+			std::stringstream str;
+			str << mFrames;
+			logger->logDebug(str.str() + " frames per second");
+			mFrames = 0;
+			mLastTime = mTime;
+		}
+		
+		// Check for input, if escape pressed, exit
+		if (inputManager->getKey(SDLK_ESCAPE))
+		{
+			return false;
+		}
+
+		return true;
+	}
 }
-
-#endif

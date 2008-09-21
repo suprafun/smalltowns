@@ -33,7 +33,7 @@
  *
  *	Date of file creation: 08-09-20
  *
- *	Date file last modified: 08-09-20
+ *	Date file last modified: 08-09-21
  *
  *	$Id$
  *
@@ -41,6 +41,8 @@
 
 #include "game.h"
 
+#include "input.h"
+#include "teststate.h"
 #include "graphics/graphics.h"
 #include "utilities/log.h"
 
@@ -49,9 +51,11 @@ namespace ST
 	// globals
 	Log *logger = NULL;
 	GraphicsEngine *graphicsEngine = NULL;
+	InputManager *inputManager = NULL;
 
 	Game::~Game()
 	{
+		delete inputManager;
 		delete graphicsEngine;
 		delete logger;
 	}
@@ -60,5 +64,19 @@ namespace ST
 	{
 		logger = new Log();
 		graphicsEngine = new GraphicsEngine();
+		inputManager = new InputManager();
+
+		// create new test state, for testing
+		state = new TestState();
+		state->enter();
+	
+		// Update the state each frame
+		// Render the frame
+		// Get Input
+		while (state->update())
+		{
+			graphicsEngine->renderFrame();
+			inputManager->getEvents();
+		}
 	}
 }

@@ -33,7 +33,7 @@
  *
  *	Date of file creation: 08-09-20
  *
- *	Date file last modified: 08-09-20
+ *	Date file last modified: 08-09-21
  *
  *	$Id$
  *
@@ -50,13 +50,24 @@ namespace ST
 {
 	class Node
 	{
-	public:
+	private:
+		/**
+		 * Default constructor
+		 * Not to be used
+		 */
 		Node();
-		Node(std::string name);
+	public:
+		/**
+		 * Constructor
+		 * @param name The name of the node
+		 * @param texture The name of the texture
+		 */
+		Node(std::string name, Texture *texture);
 		virtual ~Node();
 
 	protected:
 		std::string mName;
+		Texture *mTexture;
 	};
 }
 

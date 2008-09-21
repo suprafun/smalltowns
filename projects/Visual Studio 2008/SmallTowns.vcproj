@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDLMain.lib SDL.lib"
+				AdditionalDependencies="SDLMain.lib SDL.lib opengl32.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -180,11 +180,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\input.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\utilities\log.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\teststate.cpp"
 				>
 			</File>
 		</Filter>
@@ -194,6 +202,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\src\graphics\camera.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\graphics\entity.h"
 				>
 			</File>
@@ -202,7 +214,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\gamestate.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\graphics\graphics.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\input.h"
 				>
 			</File>
 			<File
@@ -211,6 +231,14 @@
 			</File>
 			<File
 				RelativePath="..\..\src\graphics\node.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\teststate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\utilities\types.h"
 				>
 			</File>
 		</Filter>

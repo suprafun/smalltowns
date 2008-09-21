@@ -49,11 +49,16 @@
 
 namespace ST
 {
+	class GameState;
+
 	class Game
 	{
 	public:
 		~Game();
 		void run();
+
+	private:
+		GameState *state;
 	};
 }
 

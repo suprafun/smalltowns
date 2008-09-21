@@ -33,7 +33,7 @@
  *
  *	Date of file creation: 08-09-20
  *
- *	Date file last modified: 08-09-20
+ *	Date file last modified: 08-09-21
  *
  *	$Id$
  *
@@ -60,16 +60,16 @@ namespace ST
 
 	void Log::logError(std::string text)
 	{
-		mFile << text;
+		mFile << "Error: " << text << std::endl;
 	}
 
 	void Log::logWarning(std::string text)
 	{
-
+		mFile << "Warning: " << text << std::endl;
 	}
 
 	void Log::logDebug(std::string text)
 	{
-
+		mFile << "Debug: " << text << std::endl;
 	}
 }

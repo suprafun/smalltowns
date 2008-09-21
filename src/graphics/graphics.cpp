@@ -50,15 +50,39 @@ namespace ST
 {
 	GraphicsEngine::GraphicsEngine()
 	{
+		// Initialise SDL
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
 		{
 			logger->logError("GraphicsEngine::GraphicsEngine"
 				"failed to initialise SDL");
 		}
 
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
+		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
+		// Set the window title
+		SDL_WM_SetCaption("Small Towns", NULL);
+
+		// Initialise SDL to use OpenGL
 		mScreen = SDL_SetVideoMode(800, 600, 16, SDL_OPENGL);
 
+	}
+
+	GraphicsEngine::~GraphicsEngine()
+	{
+		// Do SDL cleanup
+		SDL_Quit();
+	}
+
+	void GraphicsEngine::renderFrame()
+	{
+		// Clear the screen
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Swap between front and back buffer
+		SDL_GL_SwapBuffers();
 	}
 }

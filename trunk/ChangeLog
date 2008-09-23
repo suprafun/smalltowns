@@ -1,3 +1,9 @@
+2008-09-23  David Athay  <ko2fan@gmail.com>
+
+	* SmallTowns.cbp, src/graphics/graphics.cpp, src/input.cpp, 
+	src/teststate.cpp, src/main.cpp, src/game.cpp, src/utilities/log.cpp: 
+	Created codeblocks project, and made it compile on FreeBSD.
+
 2008-09-21  David Athay  <ko2fan@gmail.com>
 
 	* src/game.cpp, src/game.h, src/gamestate.h, src/graphics/camera.h,

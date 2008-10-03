@@ -31,60 +31,68 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-09-21
+ *	Date of file creation: 08-09-27
  *
  *	$Id$
  *
  ********************************************/
 
 /**
- * The camera class is used to display to the screen
+ * The Map class contains the map data
  */
 
-#ifndef ST_CAMERA_HEADER
-#define ST_CAMERA_HEADER
+#ifndef ST_MAP_HEADER
+#define ST_MAP_HEADER
 
-#include "../utilities/types.h"
-
+#include <list>
 #include <string>
+#include <vector>
 
 namespace ST
 {
-	class Camera
-	{
-	protected:
-		Camera();
+	class Tile;
 
+	class Layer
+	{
+	public:
+		Layer();
+		~Layer();
+
+		/**
+		 * Get Tile At
+		 * Returns the tile at x, y
+		 * @param x The x position of the tile to return
+		 * @param y The y position of the tile to return
+		 * @return Returns the Tile found at the given location
+		 */
+		Tile* getTileAt(int x, int y);
+
+	private:
+		std::list<Tile*> mTiles;
+	};
+
+	class Map
+	{
 	public:
 		/**
 		 * Constructor
-		 * @param name The name of the camera
-		 * @param rect Rectangle representing the viewport to display
 		 */
-		Camera(std::string name, Rectangle *rect);
-
+		Map();
+		~Map();
+		
 		/**
-		 * Get Position
-		 * @return Returns the offset from the map of the camera
+		 * Load
+		 * Reads the map from a file
+		 * @param filename The name of the file to read the map from
+		 * @return Returns true if successfully read in map
 		 */
-		Point getPosition();
-
-		/**
-		 * Get View Width
-		 * @return Returns the width of the viewport
-		 */
-		const int getViewWidth() const;
-
-		/**
-		 * Get View Height
-		 * @return Returns the height of the viewport
-		 */
-		const int getViewHeight() const;
+		bool load(const std::string &filename);
 
 	private:
-		std::string mName;
-		Rectangle mViewport;
+		std::vector<Layer*> mLayers;
 	};
+
+	extern Map *mapEngine;
 }
 
 #endif

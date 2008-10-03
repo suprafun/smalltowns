@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDLMain.lib SDL.lib opengl32.lib"
+				AdditionalDependencies="SDLMain.lib SDL.lib SDL_image.lib opengl32.lib glu32.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -90,7 +90,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			OutputDirectory="..\..\bin"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
@@ -133,6 +133,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="SDLMain.lib SDL.lib SDL_image.lib opengl32.lib glu32.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -172,6 +173,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\src\graphics\camera.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\game.cpp"
 				>
 			</File>
@@ -192,7 +197,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\graphics\node.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\teststate.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\graphics\texture.cpp"
 				>
 			</File>
 		</Filter>
@@ -230,11 +243,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\map.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\graphics\node.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\teststate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\graphics\texture.h"
 				>
 			</File>
 			<File

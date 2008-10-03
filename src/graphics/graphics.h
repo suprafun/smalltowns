@@ -33,8 +33,6 @@
  *
  *	Date of file creation: 08-09-20
  *
- *	Date file last modified: 08-09-21
- *
  *	$Id$
  *
  ********************************************/
@@ -48,6 +46,7 @@
 
 #include <list>
 #include <map>
+#include <string>
 
 struct SDL_Surface;
 
@@ -59,9 +58,9 @@ namespace ST
 	class Overlay;
 	class Texture;
 	class Camera;
-	class Point;
-	class Rectangle;
 	class GameState;
+	struct Point;
+	struct Rectangle;
 
 	class GraphicsEngine
 	{
@@ -97,20 +96,47 @@ namespace ST
 		Entity* createEntity(std::string name, std::string texture, Point *point = NULL);
 
 		/**
-		 * Create Camera
-		 * Creates the camera, and returns it
-		 * @param name The name of the Camera
-		 * @param rect The position of the Camera, and the size of view
-		 * @return Returns a point to the Camera created
+		 * Set Camera
+		 * Sets the default camera to use for drawing to
+		 * @param cam The camera to use
 		 */
-		Camera* createCamera(std::string name, Rectangle *rect);
+		void setCamera(Camera *cam);
 
 		/**
 		 * Render Frame
 		 * Renders a single frame to the screen
-		 * It loops through all the nodes and draws them if visible
 		 */
 		void renderFrame();
+
+		/**
+		 * Display Nodes
+		 * This puts the nodes on screen
+		 * It loops through all the nodes and draws them if visible
+		 */
+		void outputNodes();
+
+		/**
+		 * Load Sprite Sheet
+		 * Increases Texture count if one already exists
+		 * Creates a new Texture for each one that doesn't exist already
+		 * @param name The name of the file the sprite sheet
+		 * @return Returns true is successfully loaded
+		 */
+		bool loadSpriteSheet(const std::string &name);
+
+		/**
+		 * Get Pixel
+		 * @return Returns the pixel at the position of the SDL Surface
+		 */
+		unsigned int getPixel(SDL_Surface *s, int x, int y) const;
+
+		/**
+		 * Get Texture
+		 * @param name The name of the texture
+		 * @return Returns the texture or NULL if texture not found
+		 */
+		Texture* getTexture(const std::string &name);
+
 
 	private:
 		// graphics stuff

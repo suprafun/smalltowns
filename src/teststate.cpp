@@ -33,19 +33,20 @@
  *
  *	Date of file creation: 08-09-21
  *
- *	Date file last modified: 08-09-21
- *
  *	$Id$
  *
  ********************************************/
 
 #include "teststate.h"
-
 #include "input.h"
+
+#include "graphics/camera.h"
+#include "graphics/graphics.h"
+#include "graphics/node.h"
 #include "utilities/log.h"
 
 #include <sstream>
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 namespace ST
 {
@@ -59,6 +60,55 @@ namespace ST
 		mFrames = 0;
 		mTime = 0;
 		mLastTime = 0;
+
+		// Create Viewport
+		Rectangle rect;
+		rect.x = 0;
+		rect.y = 0;
+		rect.width = 640;
+		rect.height = 480;
+		cam = new Camera("Default", &rect);
+
+		// Set camera
+		graphicsEngine->setCamera(cam);
+
+		// Load in images
+		if (!graphicsEngine->loadSpriteSheet("grass.png"))
+		{
+			// error
+			logger->logError("Unable to load sprite sheet");
+			return;
+		}
+
+		// Create Test Nodes
+		Point p;
+		p.x = 0;
+		p.y = 0;
+
+		int mapSize = (rect.width / 42) * (rect.height / 11);
+		int row = 1;
+		for (int i = 0; i < mapSize; ++i)
+		{
+			p.x += 42;
+			if (p.x > rect.width)
+			{
+				if (row % 2)
+				{
+					p.x = 21;
+				}
+				else
+				{
+					p.x = 0;
+				}
+					
+				p.y += 11;
+				++row;
+			}
+
+			std::stringstream stream("Tile");
+			stream << i;
+			Node *node = graphicsEngine->createNode(stream.str(), "Grass", &p);
+		}
 	}
 
 	void TestState::exit()
@@ -90,6 +140,8 @@ namespace ST
 		{
 			return false;
 		}
+
+		SDL_Delay(0);
 
 		return true;
 	}

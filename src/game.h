@@ -33,8 +33,6 @@
  *
  *	Date of file creation: 08-09-20
  *
- *	Date file last modified: 08-09-20
- *
  *	$Id$
  *
  ********************************************/
@@ -54,7 +52,17 @@ namespace ST
 	class Game
 	{
 	public:
+		/**
+		 * Destructor
+		 * Cleans up Game
+		 */
 		~Game();
+
+		/**
+		 * Run
+		 * Creates everything needed to run the game
+		 * Loops until user exists the game
+		 */
 		void run();
 
 	private:

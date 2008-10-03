@@ -51,6 +51,8 @@
 
 namespace ST
 {
+	class Camera;
+
 	class TestState : public GameState
 	{
 	public:
@@ -78,6 +80,7 @@ namespace ST
 		int mFrames;
 		int mTime;
 		int mLastTime;
+		Camera *cam;
 	};
 }
 

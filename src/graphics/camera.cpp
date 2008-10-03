@@ -7,13 +7,13 @@
  *	Copyright (c) 2008, The Small Towns Dev Team
  *	All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification, 
+ *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
  *
- *	- Redistributions of source code must retain the above copyright notice, 
+ *	- Redistributions of source code must retain the above copyright notice,
  *		this list of conditions and the following disclaimer.
  *	- Redistributions in binary form must reproduce the above copyright notice,
- *		this list of conditions and the following disclaimer in the documentation 
+ *		this list of conditions and the following disclaimer in the documentation
  *		and/or other materials provided with the distribution.
  *	- Neither the name of the Small Towns Dev Team nor the names of its contributors
  *		may be used to endorse or promote products derived from this software without
@@ -31,60 +31,41 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-09-21
+ *	Date of file creation: 08-10-02
  *
  *	$Id$
  *
  ********************************************/
 
-/**
- * The camera class is used to display to the screen
- */
-
-#ifndef ST_CAMERA_HEADER
-#define ST_CAMERA_HEADER
-
-#include "../utilities/types.h"
-
-#include <string>
+#include "camera.h"
 
 namespace ST
 {
-	class Camera
+	Camera::Camera(std::string name, ST::Rectangle *rect)
+		: mName(name)
 	{
-	protected:
-		Camera();
+		mViewport.height = rect->height;
+		mViewport.width = rect->width;
+		mViewport.x = rect->x;
+		mViewport.y = rect->y;
+	}
 
-	public:
-		/**
-		 * Constructor
-		 * @param name The name of the camera
-		 * @param rect Rectangle representing the viewport to display
-		 */
-		Camera(std::string name, Rectangle *rect);
+	const int Camera::getViewWidth() const
+	{
+		return mViewport.width;
+	}
 
-		/**
-		 * Get Position
-		 * @return Returns the offset from the map of the camera
-		 */
-		Point getPosition();
+	const int Camera::getViewHeight() const
+	{
+		return mViewport.height;
+	}
 
-		/**
-		 * Get View Width
-		 * @return Returns the width of the viewport
-		 */
-		const int getViewWidth() const;
-
-		/**
-		 * Get View Height
-		 * @return Returns the height of the viewport
-		 */
-		const int getViewHeight() const;
-
-	private:
-		std::string mName;
-		Rectangle mViewport;
-	};
+	Point Camera::getPosition()
+	{
+		Point p;
+		p.x = mViewport.x;
+		p.y = mViewport.y;
+		return p;
+	}
 }
 
-#endif

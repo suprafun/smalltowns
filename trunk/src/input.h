@@ -33,8 +33,6 @@
  *
  *	Date of file creation: 08-09-21
  *
- *	Date file last modified: 08-09-21
- *
  *	$Id$
  *
  ********************************************/
@@ -46,7 +44,7 @@
 #ifndef ST_INPUT_HEADER
 #define ST_INPUT_HEADER
 
-#include <SDL/SDL_keysym.h>
+#include <SDL_keysym.h>
 #include <list>
 
 namespace ST

@@ -7,13 +7,13 @@
  *	Copyright (c) 2008, The Small Towns Dev Team
  *	All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification, 
+ *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
  *
- *	- Redistributions of source code must retain the above copyright notice, 
+ *	- Redistributions of source code must retain the above copyright notice,
  *		this list of conditions and the following disclaimer.
  *	- Redistributions in binary form must reproduce the above copyright notice,
- *		this list of conditions and the following disclaimer in the documentation 
+ *		this list of conditions and the following disclaimer in the documentation
  *		and/or other materials provided with the distribution.
  *	- Neither the name of the Small Towns Dev Team nor the names of its contributors
  *		may be used to endorse or promote products derived from this software without
@@ -31,60 +31,73 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-09-21
+ *	Date of file creation: 08-10-02
  *
  *	$Id$
  *
  ********************************************/
 
-/**
- * The camera class is used to display to the screen
- */
+#include "node.h"
+#include "texture.h"
 
-#ifndef ST_CAMERA_HEADER
-#define ST_CAMERA_HEADER
-
-#include "../utilities/types.h"
-
-#include <string>
+#include "../utilities/log.h"
 
 namespace ST
 {
-	class Camera
+	Node::Node(std::string name, Texture *texture)
+		: mName(name),
+		mVisible(true)
 	{
-	protected:
-		Camera();
+		if (texture)
+		{
+			texture->increaseCount();
+			mTexture = texture;
+			mHeight = mTexture->getHeight();
+			mWidth = mTexture->getWidth();
+		}
+		else
+		{
+			logger->logError("Invalid texture assigned to node");
+		}
 
-	public:
-		/**
-		 * Constructor
-		 * @param name The name of the camera
-		 * @param rect Rectangle representing the viewport to display
-		 */
-		Camera(std::string name, Rectangle *rect);
+		mPosition.x = 0;
+		mPosition.y = 0;
+	}
 
-		/**
-		 * Get Position
-		 * @return Returns the offset from the map of the camera
-		 */
-		Point getPosition();
+	Node::~Node()
+	{
+		if (mTexture)
+			mTexture->remove();
+	}
 
-		/**
-		 * Get View Width
-		 * @return Returns the width of the viewport
-		 */
-		const int getViewWidth() const;
+	bool Node::getVisible() const
+	{
+		return mVisible;
+	}
 
-		/**
-		 * Get View Height
-		 * @return Returns the height of the viewport
-		 */
-		const int getViewHeight() const;
+	const int Node::getHeight() const
+	{
+		return mHeight;
+	}
 
-	private:
-		std::string mName;
-		Rectangle mViewport;
-	};
+	const int Node::getWidth() const
+	{
+		return mWidth;
+	}
+
+	Point& Node::getPosition()
+	{
+		return (mPosition);
+	}
+
+	void Node::moveNode(Point *position)
+	{
+		mPosition.x = position->x;
+		mPosition.y = position->y;
+	}
+
+	GLuint Node::getGLTexture()
+	{
+		return mTexture->getGLTexture();
+	}
 }
-
-#endif

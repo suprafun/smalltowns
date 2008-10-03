@@ -31,45 +31,101 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-09-20
- *
- *	Date file last modified: 08-09-21
+ *	Date of file creation: 08-10-02
  *
  *	$Id$
  *
  ********************************************/
 
-#include "log.h"
+#include "texture.h"
+
+#include <SDL.h>
 
 namespace ST
 {
-	Log::Log()
+	Texture::Texture(std::string name) : mName(name), mInstances(1)
 	{
-		mFile.open("log.txt", std::fstream::out);
+		mWidth = 0;
+		mHeight = 0;
 	}
 
-	Log::Log(std::string filename)
+	Texture::Texture(std::string name, int width, int height)
+		: mName(name),
+		mInstances(1),
+		mWidth(width),
+		mHeight(height)
 	{
-		mFile.open(filename.c_str(), std::fstream::out);
 	}
 
-	Log::~Log()
+	Texture::~Texture()
 	{
-		mFile.close();
+		glDeleteTextures(1, &mGLTexture);
 	}
 
-	void Log::logError(std::string text)
+	void Texture::setPixels(SDL_Surface *surface)
 	{
-		mFile << "Error: " << text << std::endl;
+		int mode = GL_RGBA;
+
+		// set mode based on bpp
+		if (surface->format->BytesPerPixel == 3)
+		{
+			mode = GL_RGB;
+		}
+
+		// Set the width and height of the texture
+		mWidth = surface->w;
+		mHeight = surface->h;
+
+		// Generate 1 texture
+		glGenTextures(1, &mGLTexture);
+
+		// Bind the texture first
+		glBindTexture(GL_TEXTURE_2D, mGLTexture);
+
+		// test
+		//glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
+
+		// Put the SDL pixels into the texture
+		SDL_LockSurface(surface);
+		gluBuild2DMipmaps(GL_TEXTURE_2D, mode, mWidth, mHeight,
+                   mode, GL_UNSIGNED_BYTE, surface->pixels );
+		SDL_UnlockSurface(surface);
+
+        // Set params for filter to make the image look nice
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+
 	}
 
-	void Log::logWarning(std::string text)
+	std::string Texture::getName() const
 	{
-		mFile << "Warning: " << text << std::endl;
+		return mName;
 	}
 
-	void Log::logDebug(std::string text)
+	int Texture::getWidth() const
 	{
-		mFile << "Debug: " << text << std::endl;
+		return mWidth;
+	}
+
+	int Texture::getHeight() const
+	{
+		return mHeight;
+	}
+
+	GLuint Texture::getGLTexture()
+	{
+		return mGLTexture;
+	}
+
+	void Texture::remove()
+	{
+		--mInstances;
+		if (mInstances <= 0)
+		{
+			delete this;
+		}
 	}
 }

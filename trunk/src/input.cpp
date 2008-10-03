@@ -33,15 +33,13 @@
  *
  *	Date of file creation: 08-09-21
  *
- *	Date file last modified: 08-09-21
- *
  *	$Id$
  *
  ********************************************/
 
 #include "input.h"
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include <algorithm>
 
 namespace ST

@@ -1,3 +1,13 @@
+2008-10-03  David Athay  <ko2fan@gmail.com>
+
+	* projects/Visual Studio 2008/SmallTowns.sln,
+	projects/Visual Studio 2008/SmallTowns.vcproj, src/game.cpp, src/game.h,
+	src/graphics/camera.cpp, src/graphics/camera.h, src/graphics/graphics.cpp,
+	src/graphics/graphics.h, src/graphics/node.cpp, src/graphics/node.h,
+	src/graphics/texture.cpp, src/graphics/texture.h, src/input.cpp,
+	src/input.h, src/main.cpp, src/map.h, src/teststate.cpp, src/teststate.h,
+	src/utilities/log.cpp, src/utilities/types.h: Added drawing a test map.
+
 2008-09-23  David Athay  <ko2fan@gmail.com>
 
 	* SmallTowns.cbp, src/graphics/graphics.cpp, src/input.cpp, 

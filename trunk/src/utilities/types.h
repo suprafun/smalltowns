@@ -33,8 +33,6 @@
  *
  *	Date of file creation: 08-09-21
  *
- *	Date file last modified: 08-09-21
- *
  *	$Id$
  *
  ********************************************/
@@ -51,13 +49,13 @@ namespace ST
 	struct Point
 	{
 		int x, y;
-	}
+	};
 
 	struct Rectangle
 	{
 		int x, y;
 		unsigned int width, height;
-	}
+	};
 }
 
 #endif

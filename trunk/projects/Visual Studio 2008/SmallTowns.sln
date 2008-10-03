@@ -17,4 +17,7 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		AMDCaProjectFile = D:\Programming\SmallTowns\projects\Visual Studio 2008\CodeAnalyst\SmallTowns.caw
+	EndGlobalSection
 EndGlobal

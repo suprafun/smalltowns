@@ -38,52 +38,81 @@
  ********************************************/
 
 /**
- * The camera class is used to display to the screen
+ * The Texture class is used to store a texture's data
  */
 
-#ifndef ST_CAMERA_HEADER
-#define ST_CAMERA_HEADER
+#ifndef ST_TEXTURE_HEADER
+#define ST_TEXTURE_HEADER
 
-#include "../utilities/types.h"
-
+#include <SDL_opengl.h>
 #include <string>
+
+struct SDL_Surface;
 
 namespace ST
 {
-	class Camera
+	class Texture
 	{
-	protected:
-		Camera();
-
 	public:
 		/**
 		 * Constructor
-		 * @param name The name of the camera
-		 * @param rect Rectangle representing the viewport to display
 		 */
-		Camera(std::string name, Rectangle *rect);
+		Texture(std::string name);
+		Texture(std::string name, int width, int height);
 
 		/**
-		 * Get Position
-		 * @return Returns the offset from the map of the camera
+		 * Destructor
 		 */
-		Point getPosition();
+		~Texture();
 
 		/**
-		 * Get View Width
-		 * @return Returns the width of the viewport
+		 * Set Pixels
+		 * Puts a SDL Surface's pixels into a GL Texture
 		 */
-		const int getViewWidth() const;
+		void setPixels(SDL_Surface *surface);
 
 		/**
-		 * Get View Height
-		 * @return Returns the height of the viewport
+		 * Increase instance count
 		 */
-		const int getViewHeight() const;
+		void increaseCount() { ++mInstances; }
+
+		/**
+		 * Get Name
+		 * @return Returns the name of the texture
+		 */
+		std::string getName() const;
+
+		/**
+		 * Get Height
+		 * @return Returns the height of the texture
+		 */
+		int getHeight() const;
+
+		/**
+		 * Get Width
+		 * @return Returns the width of the texture
+		 */
+		int getWidth() const;
+
+		/**
+		* Get GL Texture
+		* @return Returns the GL Texture
+		*/
+		GLuint getGLTexture();
+
+		/**
+		 * Remove
+		 * This will eventually delete the texture
+		 * when the number of instances equals 0
+		 */
+		void remove();
 
 	private:
 		std::string mName;
-		Rectangle mViewport;
+		int mInstances;
+		int mWidth;
+		int mHeight;
+		GLuint mGLTexture;
 	};
 }
 

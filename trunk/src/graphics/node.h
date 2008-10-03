@@ -33,8 +33,6 @@
  *
  *	Date of file creation: 08-09-20
  *
- *	Date file last modified: 08-09-21
- *
  *	$Id$
  *
  ********************************************/
@@ -46,8 +44,15 @@
 #ifndef ST_NODE_HEADER
 #define ST_NODE_HEADER
 
+#include <SDL_opengl.h>
+#include <string>
+
+#include "../utilities/types.h"
+
 namespace ST
 {
+	class Texture;
+
 	class Node
 	{
 	private:
@@ -65,9 +70,50 @@ namespace ST
 		Node(std::string name, Texture *texture);
 		virtual ~Node();
 
+		/**
+		 * Get Position
+		 * @return Returns the position of the node
+		 */
+		Point& getPosition();
+
+		/**
+		 * Get Width
+		 * @return Returns the width of the node
+		 */
+		const int getWidth() const;
+
+		/**
+		 * Get Height
+		 * @return Returns the height of the node
+		 */
+		const int getHeight() const;
+
+		/**
+		 * Get Visible
+		 * @return Returns if the node is visible
+		 */
+		bool getVisible() const;
+
+		/**
+		 * Move Node
+		 * Moves the node to a new position
+		 * @param position The new position for the node to be
+		 */
+		void moveNode(Point *position);
+
+		/**
+		 * Get GL Texture
+		 * @return Returns the GL Texture for drawing
+		 */
+		GLuint getGLTexture();
+
 	protected:
 		std::string mName;
 		Texture *mTexture;
+		Point mPosition;
+		int mWidth;
+		int mHeight;
+		bool mVisible;
 	};
 }
 

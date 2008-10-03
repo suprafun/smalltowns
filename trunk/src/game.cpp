@@ -33,8 +33,6 @@
  *
  *	Date of file creation: 08-09-20
  *
- *	Date file last modified: 08-09-21
- *
  *	$Id$
  *
  ********************************************/

@@ -20,7 +20,10 @@
 				</Compiler>
 				<Linker>
 					<Add option="`sdl-config --libs`" />
+					<Add library="SDL_image" />
 					<Add library="GL" />
+					<Add library="GLU" />
+					<Add library="pthread" />
 				</Linker>
 			</Target>
 		</Build>
@@ -30,14 +33,19 @@
 		<Unit filename="src/game.cpp" />
 		<Unit filename="src/game.h" />
 		<Unit filename="src/gamestate.h" />
+		<Unit filename="src/graphics/camera.cpp" />
 		<Unit filename="src/graphics/camera.h" />
 		<Unit filename="src/graphics/entity.h" />
 		<Unit filename="src/graphics/graphics.cpp" />
 		<Unit filename="src/graphics/graphics.h" />
+		<Unit filename="src/graphics/node.cpp" />
 		<Unit filename="src/graphics/node.h" />
+		<Unit filename="src/graphics/texture.cpp" />
+		<Unit filename="src/graphics/texture.h" />
 		<Unit filename="src/input.cpp" />
 		<Unit filename="src/input.h" />
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/map.h" />
 		<Unit filename="src/teststate.cpp" />
 		<Unit filename="src/teststate.h" />
 		<Unit filename="src/utilities/log.cpp" />

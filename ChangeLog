@@ -1,3 +1,10 @@
+2008-10-15  David Athay  <ko2fan@gmail.com>
+
+	* src/game.cpp, src/graphics/graphics.cpp, src/graphics/graphics.h,
+	src/graphics/node.cpp, src/graphics/node.h, src/map.h, src/teststate.cpp,
+	src/graphics/animation.cpp, src/graphics/animation.h, src/map.cpp,
+	src/tile.cpp, src/tile.h: Added support for tiles and started on map.
+
 2008-10-03  David Athay  <ko2fan@gmail.com>
 
 	* projects/Visual Studio 2008/SmallTowns.sln,

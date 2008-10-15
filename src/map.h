@@ -44,13 +44,15 @@
 #ifndef ST_MAP_HEADER
 #define ST_MAP_HEADER
 
+#include <fstream>
 #include <list>
 #include <string>
 #include <vector>
 
 namespace ST
 {
-	class Tile;
+	class Node;
+	class Texture;
 
 	class Layer
 	{
@@ -59,16 +61,23 @@ namespace ST
 		~Layer();
 
 		/**
+		 * Add Tile
+		 * Adds a tile to the layer
+		 * @param tile The tile to add
+		 */
+		void addNode(Node *node);
+
+		/**
 		 * Get Tile At
 		 * Returns the tile at x, y
 		 * @param x The x position of the tile to return
 		 * @param y The y position of the tile to return
 		 * @return Returns the Tile found at the given location
 		 */
-		Tile* getTileAt(int x, int y);
+		Node* getNodeAt(unsigned int x, unsigned int y);
 
 	private:
-		std::list<Tile*> mTiles;
+		std::list<Node*> mNodes;
 	};
 
 	class Map
@@ -88,7 +97,18 @@ namespace ST
 		 */
 		bool load(const std::string &filename);
 
+		/**
+		 * Add Tile
+		 * Adds a tile to the layer
+		 * @param tile The tile number
+		 * @param layer The layer number
+		 * @param blocking Whether the tile blocks the players path
+		 */
+		void addTile(unsigned int tile, Texture *texture, unsigned int layer, bool blocking);
+
+
 	private:
+		std::fstream mFile;
 		std::vector<Layer*> mLayers;
 	};
 

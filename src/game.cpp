@@ -40,6 +40,7 @@
 #include "game.h"
 
 #include "input.h"
+#include "map.h"
 #include "teststate.h"
 #include "graphics/graphics.h"
 #include "utilities/log.h"
@@ -50,9 +51,11 @@ namespace ST
 	Log *logger = NULL;
 	GraphicsEngine *graphicsEngine = NULL;
 	InputManager *inputManager = NULL;
+	Map *mapEngine = NULL;
 
 	Game::~Game()
 	{
+		delete mapEngine;
 		delete inputManager;
 		delete graphicsEngine;
 		delete logger;
@@ -63,6 +66,7 @@ namespace ST
 		logger = new Log();
 		graphicsEngine = new GraphicsEngine();
 		inputManager = new InputManager();
+		mapEngine = new Map();
 
 		// create new test state, for testing
 		state = new TestState();

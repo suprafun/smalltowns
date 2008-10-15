@@ -31,86 +31,29 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-10-02
+ *	Date of file creation: 08-10-05
  *
  *	$Id$
  *
  ********************************************/
 
-#include "node.h"
-#include "texture.h"
-
-#include "../utilities/log.h"
+#include "tile.h"
 
 namespace ST
 {
-	Node::Node(std::string name, Texture *texture)
-		: mName(name),
-		mVisible(true)
+	Tile::Tile(unsigned int id, Texture *texture)
+		: Node(std::string("Tile" + id), texture), mId(id), mBlocks(false)
 	{
-		if (texture)
-		{
-			texture->increaseCount();
-			mTexture = texture;
-			mHeight = mTexture->getHeight();
-			mWidth = mTexture->getWidth();
-		}
-		else
-		{
-			logger->logError("Invalid texture assigned to node");
-		}
-
-		mPosition.x = 0;
-		mPosition.y = 0;
-
-		mBounds.x = 0;
-		mBounds.y = 0;
-		mBounds.width = mWidth;
-		mBounds.height = mHeight;
-	}
-
-	Node::~Node()
-	{
-		if (mTexture)
-			mTexture->remove();
-	}
-
-	bool Node::getVisible() const
-	{
-		return mVisible;
-	}
-
-	const int Node::getHeight() const
-	{
-		return mHeight;
-	}
-
-	const int Node::getWidth() const
-	{
-		return mWidth;
-	}
-
-	Point& Node::getPosition()
-	{
-		return (mPosition);
-	}
-
-	Rectangle& Node::getBounds()
-	{
-		return mBounds;
-	}
-
-	void Node::moveNode(Point *position)
-	{
-		// move to the new position
-		// update the bounds
-		mPosition.x = mBounds.x = position->x;
-		mPosition.y = mBounds.y = position->y;
 
 	}
 
-	GLuint Node::getGLTexture()
+	void Tile::setBlocking(bool blocking)
 	{
-		return mTexture->getGLTexture();
+		mBlocks = blocking;
+	}
+
+	bool Tile::getBlocking() const
+	{
+		return mBlocks;
 	}
 }

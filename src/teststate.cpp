@@ -85,7 +85,7 @@ namespace ST
 		p.x = 0;
 		p.y = 0;
 
-		int mapSize = (rect.width / 42) * (rect.height / 11);
+		int mapSize = (rect.width / 42.0f) * (rect.height / 11.0f);
 		int row = 1;
 		for (int i = 0; i < mapSize; ++i)
 		{
@@ -107,7 +107,7 @@ namespace ST
 
 			std::stringstream stream("Tile");
 			stream << i;
-			Node *node = graphicsEngine->createNode(stream.str(), "Grass", &p);
+			Node *node = graphicsEngine->createNode(stream.str(), "grass.png", &p);
 		}
 	}
 

@@ -31,86 +31,103 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-10-02
+ *	Date of file creation: 08-10-05
  *
  *	$Id$
  *
  ********************************************/
 
-#include "node.h"
-#include "texture.h"
+#include "map.h"
+#include "tile.h"
 
-#include "../utilities/log.h"
+#include "graphics/node.h"
+
+#include "utilities/log.h"
+#include "utilities/math.h"
+
+#include <sstream>
 
 namespace ST
 {
-	Node::Node(std::string name, Texture *texture)
-		: mName(name),
-		mVisible(true)
+	Layer::Layer()
 	{
-		if (texture)
+
+	}
+
+	Layer::~Layer()
+	{
+
+	}
+
+	void Layer::addNode(Node *node)
+	{
+
+	}
+
+	Node* Layer::getNodeAt(unsigned int x, unsigned int y)
+	{
+		// iterators for searching through the list of tiles
+		std::list<Node*>::iterator itr = mNodes.begin();
+		std::list<Node*>::const_iterator itr_end = mNodes.end();
+		// The position to look at tile in
+		Point p;
+		p.x = x;
+		p.y = y;
+
+		while (itr != itr_end)
 		{
-			texture->increaseCount();
-			mTexture = texture;
-			mHeight = mTexture->getHeight();
-			mWidth = mTexture->getWidth();
+			// Check whether the co-ordinates are inside the tile
+			if (checkInside(p, (*itr)->getBounds()))
+			{
+				return (*itr);
+			}
+			++itr;
 		}
-		else
+		return NULL;
+	}
+
+	Map::Map()
+	{
+
+	}
+
+	Map::~Map()
+	{
+
+	}
+
+	bool Map::load(const std::string &filename)
+	{
+		// Open the file
+		mFile.open(filename.c_str(), std::fstream::in);
+		
+		//Check the file opened successfully
+		if (!mFile.is_open())
 		{
-			logger->logError("Invalid texture assigned to node");
+			logger->logError("Error opening map file");
+			return false;
 		}
 
-		mPosition.x = 0;
-		mPosition.y = 0;
+		// TODO: Read in the file
 
-		mBounds.x = 0;
-		mBounds.y = 0;
-		mBounds.width = mWidth;
-		mBounds.height = mHeight;
+		mFile.close();
+
+		return true;
 	}
 
-	Node::~Node()
+	void Map::addTile(unsigned int tile, Texture *texture, unsigned int layer, bool blocking)
 	{
-		if (mTexture)
-			mTexture->remove();
-	}
+		if (layer > mLayers.size())
+		{
+			logger->logError("Failed to add tile");
+			return;
+		}
 
-	bool Node::getVisible() const
-	{
-		return mVisible;
-	}
+		Tile *t = new Tile(tile, texture);
+		t->setBlocking(blocking);
 
-	const int Node::getHeight() const
-	{
-		return mHeight;
-	}
-
-	const int Node::getWidth() const
-	{
-		return mWidth;
-	}
-
-	Point& Node::getPosition()
-	{
-		return (mPosition);
-	}
-
-	Rectangle& Node::getBounds()
-	{
-		return mBounds;
-	}
-
-	void Node::moveNode(Point *position)
-	{
-		// move to the new position
-		// update the bounds
-		mPosition.x = mBounds.x = position->x;
-		mPosition.y = mBounds.y = position->y;
-
-	}
-
-	GLuint Node::getGLTexture()
-	{
-		return mTexture->getGLTexture();
+		mLayers[layer]->addNode(t);
 	}
 }
+
+

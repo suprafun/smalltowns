@@ -7,13 +7,13 @@
  *	Copyright (c) 2008, The Small Towns Dev Team
  *	All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
+ *	Redistribution and use in source and binary forms, with or without modification, 
  *	are permitted provided that the following conditions are met:
  *
- *	- Redistributions of source code must retain the above copyright notice,
+ *	- Redistributions of source code must retain the above copyright notice, 
  *		this list of conditions and the following disclaimer.
  *	- Redistributions in binary form must reproduce the above copyright notice,
- *		this list of conditions and the following disclaimer in the documentation
+ *		this list of conditions and the following disclaimer in the documentation 
  *		and/or other materials provided with the distribution.
  *	- Neither the name of the Small Towns Dev Team nor the names of its contributors
  *		may be used to endorse or promote products derived from this software without
@@ -31,86 +31,35 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-10-02
+ *	Date of file creation: 08-10-05
  *
  *	$Id$
  *
  ********************************************/
 
-#include "node.h"
-#include "texture.h"
+/**
+ * The Tile class holds the geometry
+ */
 
-#include "../utilities/log.h"
+#ifndef ST_TILE_HEADER
+#define ST_TILE_HEADER
+
+#include "graphics/node.h"
 
 namespace ST
 {
-	Node::Node(std::string name, Texture *texture)
-		: mName(name),
-		mVisible(true)
+	class Tile : public Node
 	{
-		if (texture)
-		{
-			texture->increaseCount();
-			mTexture = texture;
-			mHeight = mTexture->getHeight();
-			mWidth = mTexture->getWidth();
-		}
-		else
-		{
-			logger->logError("Invalid texture assigned to node");
-		}
+	public:
+		Tile(unsigned int id, Texture *texture);
 
-		mPosition.x = 0;
-		mPosition.y = 0;
+		void setBlocking(bool blocking);
+		bool getBlocking() const;
 
-		mBounds.x = 0;
-		mBounds.y = 0;
-		mBounds.width = mWidth;
-		mBounds.height = mHeight;
-	}
-
-	Node::~Node()
-	{
-		if (mTexture)
-			mTexture->remove();
-	}
-
-	bool Node::getVisible() const
-	{
-		return mVisible;
-	}
-
-	const int Node::getHeight() const
-	{
-		return mHeight;
-	}
-
-	const int Node::getWidth() const
-	{
-		return mWidth;
-	}
-
-	Point& Node::getPosition()
-	{
-		return (mPosition);
-	}
-
-	Rectangle& Node::getBounds()
-	{
-		return mBounds;
-	}
-
-	void Node::moveNode(Point *position)
-	{
-		// move to the new position
-		// update the bounds
-		mPosition.x = mBounds.x = position->x;
-		mPosition.y = mBounds.y = position->y;
-
-	}
-
-	GLuint Node::getGLTexture()
-	{
-		return mTexture->getGLTexture();
-	}
+	private:
+		int mId;
+		bool mBlocks;
+	};
 }
+
+#endif

@@ -125,6 +125,18 @@ namespace ST
 		bool loadSpriteSheet(const std::string &name);
 
 		/**
+		 * Create Texture
+		 * Creates a new texture
+		 * @param surface The surface of the texture
+		 * @param width The width of the texture
+		 * @param height The height of the texture
+		 * @return Returns the texture created
+		 */
+		Texture* createTexture(SDL_Surface *surface, std::string name,
+						   unsigned int x, unsigned int y,
+						   unsigned int width, unsigned height);
+
+		/**
 		 * Get Pixel
 		 * @return Returns the pixel at the position of the SDL Surface
 		 */

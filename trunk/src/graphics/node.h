@@ -89,6 +89,12 @@ namespace ST
 		const int getHeight() const;
 
 		/**
+		 * Get Bounds
+		 * @return Returns a rectangle with the position, and size
+		 */
+		Rectangle& getBounds();
+
+		/**
 		 * Get Visible
 		 * @return Returns if the node is visible
 		 */
@@ -99,18 +105,19 @@ namespace ST
 		 * Moves the node to a new position
 		 * @param position The new position for the node to be
 		 */
-		void moveNode(Point *position);
+		virtual void moveNode(Point *position);
 
 		/**
 		 * Get GL Texture
 		 * @return Returns the GL Texture for drawing
 		 */
-		GLuint getGLTexture();
+		virtual GLuint getGLTexture();
 
 	protected:
 		std::string mName;
 		Texture *mTexture;
 		Point mPosition;
+		Rectangle mBounds;
 		int mWidth;
 		int mHeight;
 		bool mVisible;

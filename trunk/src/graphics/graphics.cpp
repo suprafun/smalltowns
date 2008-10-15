@@ -38,6 +38,7 @@
  ********************************************/
 
 #include "graphics.h"
+#include "animation.h"
 #include "camera.h"
 #include "node.h"
 #include "texture.h"
@@ -216,130 +217,119 @@ namespace ST
 		s = IMG_Load(name.c_str());
 		if (s)
 		{
-			
-
 			// We want the colour to look for the border, anchor and
 			// animation frame
 			unsigned int border = getPixel(s, 0, 0);
 			unsigned int anchor = getPixel(s, 1, 0);
 			unsigned int animation = getPixel(s, 2, 0);
 
-			// We now need to strip the border away, and be left with a
-			// frame to put into the texture
+			// We store the initial position where each frame starts
+			// and the current position for finding the width and height
+			Point initPos;
+			initPos.x = 1;
+			initPos.y = 2;
 			Point position;
-			position.x = 1;
-			position.y = 2;
+			position.x = initPos.x;
+			position.y = initPos.y;
 
 			// Keep track of how many frames there are
 			// The number of animations
 			// The height and width of each frame
 			unsigned int numFrames = 0;
-			unsigned int numAnimations = 0;
+			unsigned int currentAnimations = 0;
 			unsigned int frameHeight = 0;
 			unsigned int frameWidth = 0;
+			Animation *anim = new Animation();
 
-			while(position.y <= s->h)
+			while (position.y <= s->h)
 			{
 				if (getPixel(s, position.x, position.y) == border)
 				{
-					// set height, remove the top border and the top line
 					frameHeight = position.y - 2;
-					++numFrames;
+					--position.y;
+					while (position.x <= s->w)
+					{
+						if (getPixel(s, position.x, position.y) == border)
+						{
+							frameWidth = position.x - 2;
+							Texture *texture = createTexture(s, name, 
+								initPos.x, initPos.y, frameWidth, frameHeight);
+							if (!texture)
+							{
+								return false;
+							}
+							anim->addTexture(texture);
+							++numFrames;
+							initPos.x = position.x + 2;
+							initPos.y = position.y + 1;
+						}
+						++position.x;
+					}
 				}
-
 				++position.y;
-			}
-
-			if (!frameHeight)
-			{
-				// error
-				logger->logError("Never found height of frame!");
-				SDL_FreeSurface(s);
-				return false;
-			}
-
-			position.y = 2;
-
-			while (position.x <= s->w)
-			{
-				if (getPixel(s, position.x, position.y) == border)
-				{
-					// set width, remove the border pixel
-					frameWidth = position.x - 2;
-				}
-
-				++position.x;
-			}
-
-			if (!frameWidth)
-			{
-				// error
-				logger->logError("Never found width of frame!");
-				SDL_FreeSurface(s);
-				return false;
-			}
-
-			// Set the byte order of RGBA
-			Uint32 rmask, gmask, bmask, amask;
-			#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-			rmask = 0xff000000;
-			gmask = 0x00ff0000;
-			bmask = 0x0000ff00;
-			amask = 0x000000ff;
-			#else
-			rmask = 0x000000ff;
-			gmask = 0x0000ff00;
-			bmask = 0x00ff0000;
-			amask = 0xff000000;
-			#endif
-
-			// Put the frame into new surface
-			SDL_Surface *tex = SDL_CreateRGBSurface(SDL_SWSURFACE, frameWidth, frameHeight,
-				s->format->BitsPerPixel, rmask, gmask, bmask, amask);
+			}		
 			
-			if (!tex)
-			{
-				// error
-				logger->logError("Could not create new surface");
-				SDL_FreeSurface(s);
-				return false;
-			}
-
-			// Create area to copy over
-			SDL_Rect rect;
-			rect.x = 1;
-			rect.y = 2;
-			rect.w = frameWidth;
-			rect.h = frameHeight;
-
-			// Copy frame over
-			Uint8 alpha = s->format->alpha;
-			SDL_SetAlpha(s, 0, 0);
-			SDL_BlitSurface(s, &rect, tex, NULL);
-			SDL_SetAlpha(tex, SDL_SRCALPHA, alpha);
-			SDL_FreeSurface(s);
-
-			// Create texture from frame
-			Texture *texture = new Texture("Grass");
-			texture->setPixels(tex);
-
-			mTextures.insert(std::pair<std::string, Texture*>(texture->getName(),
-				texture));
-
-			/* TODO: Find animations and anchor point of each frame
-
-				if (getPixel(s, position.x, position.y) == animation)
-				{
-					++numAnimations;
-				}
-			*/
-			
-			SDL_FreeSurface(tex);
 			return true;
 		}
 
 		logger->logError(IMG_GetError());
 		return false;
+	}
+
+	Texture* GraphicsEngine::createTexture(SDL_Surface *surface, std::string name,
+									   unsigned int x, unsigned int y,
+									   unsigned int width, unsigned int height)
+	{
+		// Set the byte order of RGBA
+		Uint32 rmask, gmask, bmask, amask;
+		#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		rmask = 0xff000000;
+		gmask = 0x00ff0000;
+		bmask = 0x0000ff00;
+		amask = 0x000000ff;
+		#else
+		rmask = 0x000000ff;
+		gmask = 0x0000ff00;
+		bmask = 0x00ff0000;
+		amask = 0xff000000;
+		#endif
+
+		// Put the frame into new surface
+		SDL_Surface *tex = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height,
+			surface->format->BitsPerPixel, rmask, gmask, bmask, amask);
+		
+		if (!tex)
+		{
+			// error
+			logger->logError("Could not create new surface");
+			SDL_FreeSurface(surface);
+			return NULL;
+		}
+
+		// Create area to copy over
+		SDL_Rect rect;
+		rect.x = x;
+		rect.y = y;
+		rect.w = width;
+		rect.h = height;
+
+		// Copy frame over
+		Uint8 alpha = surface->format->alpha;
+		SDL_SetAlpha(surface, 0, 0);
+		SDL_BlitSurface(surface, &rect, tex, NULL);
+		SDL_SetAlpha(tex, SDL_SRCALPHA, alpha);
+		SDL_FreeSurface(surface);
+
+		// Create texture from frame
+		Texture *texture = new Texture(name, width, height);
+		texture->setPixels(tex);
+
+		mTextures.insert(std::pair<std::string, Texture*>(texture->getName(),
+			texture));
+
+		SDL_FreeSurface(tex);
+
+		return texture;
 	}
 
 	unsigned int GraphicsEngine::getPixel(SDL_Surface *s, int x, int y) const

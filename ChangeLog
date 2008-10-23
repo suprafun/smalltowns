@@ -1,3 +1,10 @@
+2008-10-23  David Athay  <ko2fan@gmail.com>
+
+	* src/graphics/graphics.cpp, src/interface/interfacemanager.h,
+	src/interface/window.h, src/net/client.h, src/teststate.cpp,
+	src/utilities/math.h, data/grass.png, data/base.png: Added test player
+	node, and started creating interface.
+
 2008-10-15  David Athay  <ko2fan@gmail.com>
 
 	* src/game.cpp, src/graphics/graphics.cpp, src/graphics/graphics.h,

@@ -86,8 +86,6 @@ namespace ST
 		glClearColor(0.0f, 0.0f , 0.0f, 1.0f);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthFunc(GL_LEQUAL);
-		//glBlendFunc(GL_SRC_ALPHA, GL_SRC_COLOR);
-		//glColor3f(1.0f, 1.0f, 1.0f);
 
 	}
 

@@ -48,6 +48,11 @@
 #include <sstream>
 #include <SDL.h>
 
+const int tilewidth = 42;
+const int halftilewidth = 21;
+const int tileheight = 22;
+const int halftileheight = 11;
+
 namespace ST
 {
 	TestState::TestState()
@@ -80,35 +85,46 @@ namespace ST
 			return;
 		}
 
+		if (!graphicsEngine->loadSpriteSheet("base.png"))
+		{
+			// error
+			logger->logError("Unable to load sprite sheet");
+			return;
+		}
+
 		// Create Test Nodes
 		Point p;
 		p.x = 0;
 		p.y = 0;
 
-		int mapSize = (rect.width / 42.0f) * (rect.height / 11.0f);
+		int mapSize = ((float)rect.width / tilewidth) * ((float)rect.height / halftileheight);
 		int row = 1;
 		for (int i = 0; i < mapSize; ++i)
 		{
-			p.x += 42;
+			p.x += tilewidth;
 			if (p.x > rect.width)
 			{
 				if (row % 2)
 				{
-					p.x = 21;
+					p.x = halftilewidth;
 				}
 				else
 				{
 					p.x = 0;
 				}
 					
-				p.y += 11;
+				p.y += halftileheight;
 				++row;
 			}
 
-			std::stringstream stream("Tile");
-			stream << i;
+			std::stringstream stream;
+			stream << "Test" << i;
 			Node *node = graphicsEngine->createNode(stream.str(), "grass.png", &p);
 		}
+
+		p.x = 0;
+		p.y = 84;
+		Node *node = graphicsEngine->createNode("player", "base.png", &p);
 	}
 
 	void TestState::exit()

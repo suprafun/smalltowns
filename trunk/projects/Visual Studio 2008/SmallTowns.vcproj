@@ -193,6 +193,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\interface\interfacemanager.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\utilities\log.cpp"
 				>
 			</File>
@@ -218,6 +222,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\tile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\interface\window.cpp"
 				>
 			</File>
 		</Filter>

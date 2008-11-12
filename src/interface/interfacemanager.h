@@ -38,7 +38,7 @@
  ********************************************/
 
 /**
- * The Client class holds the client network data
+ * The Interface manager class manages the interface
  */
 
 #ifndef ST_INTERFACE_MANAGER_HEADER
@@ -56,12 +56,32 @@ namespace ST
 		InterfaceManager();
 		~InterfaceManager();
 
+		/**
+		 * Load GUI Sheet
+		 * Loads a gui from an xml file
+		 */
+		bool loadGuiSheet(const std::string &filename);
+
+		/**
+		 * Unload GUI Sheet
+		 */
+		void unloadGuiSheet();
+
+		/**
+		 * Add a new window
+		 */
 		void addWindow(Window *window);
+
+		/**
+		 * Add a new window to another
+		 */
 		void addSubWindow(Window *parent, Window *window);
 
 	private:
 		std::list<Window*> mWindows;
 	};
+
+	extern InterfaceManager *interfaceManager;
 }
 
 #endif

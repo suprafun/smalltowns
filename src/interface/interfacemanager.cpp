@@ -7,13 +7,13 @@
  *	Copyright (c) 2008, The Small Towns Dev Team
  *	All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification, 
+ *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
  *
- *	- Redistributions of source code must retain the above copyright notice, 
+ *	- Redistributions of source code must retain the above copyright notice,
  *		this list of conditions and the following disclaimer.
  *	- Redistributions in binary form must reproduce the above copyright notice,
- *		this list of conditions and the following disclaimer in the documentation 
+ *		this list of conditions and the following disclaimer in the documentation
  *		and/or other materials provided with the distribution.
  *	- Neither the name of the Small Towns Dev Team nor the names of its contributors
  *		may be used to endorse or promote products derived from this software without
@@ -31,36 +31,43 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-10-23
+ *	Date of file creation: 08-10-29
  *
  *	$Id$
  *
  ********************************************/
 
-/**
- * The Window is the base class for the interface
- */
-
-#ifndef ST_WINDOW_HEADER
-#define ST_WINDOW_HEADER
-
-#include <list>
-#include <string>
+#include "interfacemanager.h"
 
 namespace ST
 {
-	class Window
+	InterfaceManager::InterfaceManager()
 	{
-	public:
-		Window(std::string name);
-		Window(Window *parent, std::string name);
 
-	private:
-		std::string mName;
-		std::list<Window*> mChildren;
-		Window *mParent;
-		std::string mTitle;
-	};
+	}
+
+	InterfaceManager::~InterfaceManager()
+	{
+
+	}
+
+	bool InterfaceManager::loadGuiSheet(const std::string &filename)
+	{
+
+	}
+
+	void InterfaceManager::unloadGuiSheet()
+	{
+
+	}
+
+	void InterfaceManager::addWindow(Window *window)
+	{
+
+	}
+
+	void InterfaceManager::addSubWindow(Window *parent, Window *window)
+	{
+
+	}
 }
-
-#endif

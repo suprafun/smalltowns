@@ -52,9 +52,11 @@ namespace ST
 	GraphicsEngine *graphicsEngine = NULL;
 	InputManager *inputManager = NULL;
 	Map *mapEngine = NULL;
+	InterfaceManager *interfaceManager = NULL;
 
 	Game::~Game()
 	{
+		delete interfaceManager;
 		delete mapEngine;
 		delete inputManager;
 		delete graphicsEngine;
@@ -67,6 +69,7 @@ namespace ST
 		graphicsEngine = new GraphicsEngine();
 		inputManager = new InputManager();
 		mapEngine = new Map();
+		interfaceManager = new InterfaceManager();
 
 		// create new test state, for testing
 		state = new TestState();

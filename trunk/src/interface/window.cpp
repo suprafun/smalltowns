@@ -47,9 +47,14 @@ namespace ST
 
 	}
 
-	Window(Window *parent, std::string name)
+	Window::Window(Window *parent, std::string name)
 		: mName(name), mParent(parent)
 	{
 
 	}
+
+    void Window::addChild(Window *window)
+    {
+        mChildren.push_back(window);
+    }
 }

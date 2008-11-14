@@ -38,6 +38,7 @@
  ********************************************/
 
 #include "interfacemanager.h"
+#include "window.h"
 
 namespace ST
 {
@@ -63,11 +64,12 @@ namespace ST
 
 	void InterfaceManager::addWindow(Window *window)
 	{
-
+        mWindows.push_back(window);
 	}
 
 	void InterfaceManager::addSubWindow(Window *parent, Window *window)
 	{
-
+        mWindows.push_back(window);
+        parent->addChild(window);
 	}
 }

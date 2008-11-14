@@ -43,6 +43,7 @@
 #include "map.h"
 #include "teststate.h"
 #include "graphics/graphics.h"
+#include "interface/interfacemanager.h"
 #include "utilities/log.h"
 
 namespace ST

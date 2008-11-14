@@ -33,6 +33,8 @@
 		<Unit filename="src/game.cpp" />
 		<Unit filename="src/game.h" />
 		<Unit filename="src/gamestate.h" />
+		<Unit filename="src/graphics/animation.cpp" />
+		<Unit filename="src/graphics/animation.h" />
 		<Unit filename="src/graphics/camera.cpp" />
 		<Unit filename="src/graphics/camera.h" />
 		<Unit filename="src/graphics/entity.h" />
@@ -44,10 +46,16 @@
 		<Unit filename="src/graphics/texture.h" />
 		<Unit filename="src/input.cpp" />
 		<Unit filename="src/input.h" />
+		<Unit filename="src/interface/interfacemanager.h" />
+		<Unit filename="src/interface/window.h" />
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/map.cpp" />
 		<Unit filename="src/map.h" />
+		<Unit filename="src/net/client.h" />
 		<Unit filename="src/teststate.cpp" />
 		<Unit filename="src/teststate.h" />
+		<Unit filename="src/tile.cpp" />
+		<Unit filename="src/tile.h" />
 		<Unit filename="src/utilities/log.cpp" />
 		<Unit filename="src/utilities/log.h" />
 		<Unit filename="src/utilities/types.h" />

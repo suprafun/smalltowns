@@ -181,6 +181,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\net\client.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\game.cpp"
 				>
 			</File>
@@ -197,7 +201,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\interface\label.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\utilities\log.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\loginstate.cpp"
 				>
 			</File>
 			<File
@@ -209,11 +221,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\net\networkmanager.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\graphics\node.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\teststate.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\interface\textfield.cpp"
 				>
 			</File>
 			<File
@@ -271,7 +291,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\interface\label.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\utilities\log.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\loginstate.h"
 				>
 			</File>
 			<File
@@ -283,11 +311,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\net\networkmanager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\graphics\node.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\teststate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\interface\textfield.h"
 				>
 			</File>
 			<File

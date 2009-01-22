@@ -42,9 +42,12 @@
 namespace ST
 {
 	Window::Window(std::string name)
-		: mName(name), mParent(NULL)
+		: mName(name), mParent(NULL), mVisible(true)
 	{
-
+		mPosition.x = 0;
+		mPosition.y = 0;
+		mSize.x = 1;
+		mSize.y = 1;
 	}
 
 	Window::Window(Window *parent, std::string name)
@@ -57,4 +60,34 @@ namespace ST
     {
         mChildren.push_back(window);
     }
+
+	void Window::setVisible(bool visible)
+	{
+		mVisible = visible;
+	}
+
+	bool Window::getVisible() const
+	{
+		return mVisible;
+	}
+	
+	std::string Window::getName() const
+	{
+		return mName;
+	}
+
+	Point& Window::getPosition()
+	{
+		return mPosition;
+	}
+
+	int Window::getWidth() const
+	{
+		return mSize.x;
+	}
+
+	int Window::getHeight() const
+	{
+		return mSize.y;
+	}
 }

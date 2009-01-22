@@ -4,16 +4,16 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2008, The Small Towns Dev Team
+ *	Copyright (c) 2009, The Small Towns Dev Team
  *	All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
+ *	Redistribution and use in source and binary forms, with or without modification, 
  *	are permitted provided that the following conditions are met:
  *
- *	- Redistributions of source code must retain the above copyright notice,
+ *	- Redistributions of source code must retain the above copyright notice, 
  *		this list of conditions and the following disclaimer.
  *	- Redistributions in binary form must reproduce the above copyright notice,
- *		this list of conditions and the following disclaimer in the documentation
+ *		this list of conditions and the following disclaimer in the documentation 
  *		and/or other materials provided with the distribution.
  *	- Neither the name of the Small Towns Dev Team nor the names of its contributors
  *		may be used to endorse or promote products derived from this software without
@@ -31,45 +31,18 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-10-29
+ *	Date of file creation: 09-01-22
  *
  *	$Id$
  *
  ********************************************/
 
-#include "interfacemanager.h"
-#include "window.h"
+#include "client.h"
 
 namespace ST
 {
-	InterfaceManager::InterfaceManager()
+	Client::Client()
 	{
 
-	}
-
-	InterfaceManager::~InterfaceManager()
-	{
-
-	}
-
-	bool InterfaceManager::loadGuiSheet(const std::string &filename)
-	{
-
-	}
-
-	void InterfaceManager::unloadGuiSheet()
-	{
-
-	}
-
-	void InterfaceManager::addWindow(Window *window)
-	{
-        mWindows.push_back(window);
-	}
-
-	void InterfaceManager::addSubWindow(Window *parent, Window *window)
-	{
-        mWindows.push_back(window);
-        parent->addChild(window);
 	}
 }

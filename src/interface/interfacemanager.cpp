@@ -40,6 +40,8 @@
 #include "interfacemanager.h"
 #include "window.h"
 
+#include <SDL_opengl.h>
+
 namespace ST
 {
 	InterfaceManager::InterfaceManager()
@@ -49,27 +51,111 @@ namespace ST
 
 	InterfaceManager::~InterfaceManager()
 	{
-
+		removeAllWindows();
 	}
 
 	bool InterfaceManager::loadGuiSheet(const std::string &filename)
 	{
-
+		return false;
 	}
 
 	void InterfaceManager::unloadGuiSheet()
 	{
-
+		
 	}
 
 	void InterfaceManager::addWindow(Window *window)
 	{
-        mWindows.push_back(window);
+		mWindows.insert(std::pair<std::string, Window*>(window->getName(), window));
 	}
 
 	void InterfaceManager::addSubWindow(Window *parent, Window *window)
 	{
-        mWindows.push_back(window);
+		mWindows.insert(std::pair<std::string, Window*>(window->getName(), window));
         parent->addChild(window);
+	}
+
+	void InterfaceManager::removeWindow(const std::string &name)
+	{
+		WindowItr itr = mWindows.find(name);
+		if (itr != mWindows.end())
+		{
+			mWindows.erase(itr);
+		}
+	}
+
+	void InterfaceManager::removeAllWindows()
+	{
+		WindowItr itr_end = mWindows.end();
+		for (WindowItr itr = mWindows.begin(); itr != itr_end; ++itr)
+		{
+			delete itr->second;
+		}
+		mWindows.clear();
+	}
+
+	Window* InterfaceManager::getWindow(const std::string &name)
+	{
+		Window *win = 0;
+		WindowItr itr = mWindows.find(name);
+		if (itr != mWindows.end())
+		{
+			win = itr->second;
+		}
+		return win;
+	}
+
+	void InterfaceManager::drawWindows()
+	{
+		WindowItr itr_end = mWindows.end();
+		for (WindowItr itr = mWindows.begin(); itr != itr_end; ++itr)
+		{
+			if (itr->second->getVisible())
+				drawWindow(itr->second);
+		}
+	}
+
+	void InterfaceManager::drawWindow(Window *window)
+	{
+		// reset identity matrix
+		glLoadIdentity();
+
+		// set position and size to local variables
+		int x = window->getPosition().x;
+		int y = window->getPosition().y;
+		float width = (float)window->getWidth();
+		float height = (float)window->getHeight();
+
+		// move to the correct position
+		glTranslatef((float)x, (float)y, 0.0f);
+
+		// enable transparancy
+		glEnable(GL_BLEND);
+
+		// disable depth testing
+		glDisable(GL_DEPTH_TEST);
+
+		// enable texture mapping
+		//glBindTexture(GL_TEXTURE_2D, (*itr)->getGLTexture());
+		//glEnable(GL_TEXTURE_2D);
+
+		glBegin(GL_QUADS);
+
+		// draw quad
+		glTexCoord2i(0, 0);
+		glVertex3f(0.0f, -height, 0.0f);
+		glTexCoord2i(1, 0);
+		glVertex3f(width, -height, 0.0f);
+		glTexCoord2i(1, 1);
+		glVertex3f(width, 0.0f, 0.0f);
+		glTexCoord2i(0, 1);
+		glVertex3f(0.0f, 0.0f, 0.0f);
+
+		glEnd();
+        
+		// finish texture mapping
+		//glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
 	}
 }

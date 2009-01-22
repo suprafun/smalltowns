@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2008, The Small Towns Dev Team
+ *	Copyright (c) 2009, The Small Towns Dev Team
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -31,48 +31,69 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-10-23
+ *	Date of file creation: 09-01-22
  *
  *	$Id$
  *
  ********************************************/
 
-/**
- * The Window is the base class for the interface
- */
+#include "loginstate.h"
+#include "input.h"
 
-#ifndef ST_WINDOW_HEADER
-#define ST_WINDOW_HEADER
+#include "interface/interfacemanager.h"
+#include "interface/label.h"
+#include "interface/textfield.h"
+#include "interface/window.h"
 
-#include "../utilities/types.h"
 
-#include <list>
-#include <string>
+#include <SDL.h>
 
 namespace ST
 {
-	class Window
+	LoginState::LoginState()
 	{
-	public:
-		Window(std::string name);
-		Window(Window *parent, std::string name);
-		void addChild(Window *window);
-		void setVisible(bool visible);
-		bool getVisible() const;
-		std::string getName() const;
-		Point& getPosition();
-		int getWidth() const;
-		int getHeight() const;
 
-	protected:
-		std::string mName;
-		std::list<Window*> mChildren;
-		Window *mParent;
-		Point mPosition;
-		Point mSize;
-		std::string mTitle;
-		bool mVisible;
-	};
+	}
+
+	void LoginState::enter()
+	{
+		// create window for entering username and password
+		Window *win = new Window("Login Window");
+		interfaceManager->addWindow(win);
+
+		// create label for username
+		Label *usernameLabel = new Label("0");
+		interfaceManager->addSubWindow(win, usernameLabel);
+
+		// create label for password
+		Label *passwordLabel = new Label("1");
+		interfaceManager->addSubWindow(win, passwordLabel);
+
+		// create textfield for entering username and add to window
+		TextField *username = new TextField("Username");
+		interfaceManager->addSubWindow(win, username);
+
+		// create textfield for entering password and add to window
+		TextField *password = new TextField("Password");
+		interfaceManager->addSubWindow(win, password);
+	}
+
+	void LoginState::exit()
+	{
+		interfaceManager->removeAllWindows();
+	}
+
+	bool LoginState::update()
+	{
+
+		// Check for input, if escape pressed, exit
+		if (inputManager->getKey(SDLK_ESCAPE))
+		{
+			return false;
+		}
+
+		SDL_Delay(0);
+
+		return true;
+	}
 }
-
-#endif

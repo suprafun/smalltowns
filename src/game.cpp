@@ -41,9 +41,10 @@
 
 #include "input.h"
 #include "map.h"
-#include "teststate.h"
+#include "loginstate.h"
 #include "graphics/graphics.h"
 #include "interface/interfacemanager.h"
+#include "net/networkmanager.h"
 #include "utilities/log.h"
 
 namespace ST
@@ -54,9 +55,11 @@ namespace ST
 	InputManager *inputManager = NULL;
 	Map *mapEngine = NULL;
 	InterfaceManager *interfaceManager = NULL;
+	NetworkManager *networkManager = NULL;
 
 	Game::~Game()
 	{
+		delete networkManager;
 		delete interfaceManager;
 		delete mapEngine;
 		delete inputManager;
@@ -71,9 +74,10 @@ namespace ST
 		inputManager = new InputManager();
 		mapEngine = new Map();
 		interfaceManager = new InterfaceManager();
+		networkManager = new NetworkManager();
 
 		// create new test state, for testing
-		state = new TestState();
+		state = new LoginState();
 		state->enter();
 
 		// Update the state each frame
@@ -82,7 +86,9 @@ namespace ST
 		while (state->update())
 		{
 			graphicsEngine->renderFrame();
+			interfaceManager->drawWindows();
 			inputManager->getEvents();
+			networkManager->process();
 		}
 	}
 }

@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2008, The Small Towns Dev Team
+ *	Copyright (c) 2009, The Small Towns Dev Team
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification, 
@@ -31,86 +31,37 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-10-23
+ *	Date of file creation: 09-01-22
  *
  *	$Id$
  *
  ********************************************/
 
 /**
- * The Interface manager class manages the interface
+ * The Network manager class manages the networking
  */
 
-#ifndef ST_INTERFACE_MANAGER_HEADER
-#define ST_INTERFACE_MANAGER_HEADER
+#ifndef ST_NETWORK_MANAGER_HEADER
+#define ST_NETWORK_MANAGER_HEADER
 
-#include <map>
 #include <string>
 
 namespace ST
 {
-	class Window;
-
-	class InterfaceManager
+	class Host;
+	class NetworkManager
 	{
 	public:
-		InterfaceManager();
-		~InterfaceManager();
-
-		/**
-		 * Load GUI Sheet
-		 * Loads a gui from an xml file
-		 */
-		bool loadGuiSheet(const std::string &filename);
-
-		/**
-		 * Unload GUI Sheet
-		 */
-		void unloadGuiSheet();
-
-		/**
-		 * Add a new window
-		 */
-		void addWindow(Window *window);
-
-		/**
-		 * Add a new window to another
-		 */
-		void addSubWindow(Window *parent, Window *window);
-
-		/**
-		 * Remove a window
-		 */
-		void removeWindow(const std::string &name);
-		void removeWindow(Window *window);
-
-		/**
-		 * Remove all windows currently added
-		 */
-		void removeAllWindows();
-
-		/**
-		 * Returns the window
-		 */
-		Window* getWindow(const std::string &name);
-
-		/**
-		 * Draw windows
-		 */
-		void drawWindows();
+		NetworkManager();
+		bool connect(const std::string &hostname);
+		void process();
 
 	private:
-		/**
-		 * Draw window
-		 */
-		void drawWindow(Window *window);
-
-	private:
-		std::map<std::string, Window*> mWindows;
-		typedef std::map<std::string, Window*>::iterator WindowItr;
+		Host *mHost;
+		bool mConnected;
 	};
 
-	extern InterfaceManager *interfaceManager;
+	extern NetworkManager *networkManager;
 }
 
 #endif

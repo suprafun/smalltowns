@@ -4,16 +4,16 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2008, The Small Towns Dev Team
+ *	Copyright (c) 2009, The Small Towns Dev Team
  *	All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification, 
+ *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
  *
- *	- Redistributions of source code must retain the above copyright notice, 
+ *	- Redistributions of source code must retain the above copyright notice,
  *		this list of conditions and the following disclaimer.
  *	- Redistributions in binary form must reproduce the above copyright notice,
- *		this list of conditions and the following disclaimer in the documentation 
+ *		this list of conditions and the following disclaimer in the documentation
  *		and/or other materials provided with the distribution.
  *	- Neither the name of the Small Towns Dev Team nor the names of its contributors
  *		may be used to endorse or promote products derived from this software without
@@ -31,86 +31,47 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-10-23
+ *	Date of file creation: 09-01-22
  *
  *	$Id$
  *
  ********************************************/
 
 /**
- * The Interface manager class manages the interface
+ * The Login State is used for logging into the game server
  */
 
-#ifndef ST_INTERFACE_MANAGER_HEADER
-#define ST_INTERFACE_MANAGER_HEADER
+#ifndef ST_LOGINSTATE_HEADER
+#define ST_LOGINSTATE_HEADER
 
-#include <map>
-#include <string>
+#include "gamestate.h"
 
 namespace ST
 {
-	class Window;
-
-	class InterfaceManager
+	class LoginState : public GameState
 	{
 	public:
-		InterfaceManager();
-		~InterfaceManager();
+		LoginState();
 
 		/**
-		 * Load GUI Sheet
-		 * Loads a gui from an xml file
+		 * Enter
+		 * Called when entering the state
 		 */
-		bool loadGuiSheet(const std::string &filename);
+		void enter();
 
 		/**
-		 * Unload GUI Sheet
+		 * Exit
+		 * Called when leaving the state
 		 */
-		void unloadGuiSheet();
+		void exit();
 
 		/**
-		 * Add a new window
+		 * Update
+		 * Called every frame
+		 * Return false to exit the game
 		 */
-		void addWindow(Window *window);
-
-		/**
-		 * Add a new window to another
-		 */
-		void addSubWindow(Window *parent, Window *window);
-
-		/**
-		 * Remove a window
-		 */
-		void removeWindow(const std::string &name);
-		void removeWindow(Window *window);
-
-		/**
-		 * Remove all windows currently added
-		 */
-		void removeAllWindows();
-
-		/**
-		 * Returns the window
-		 */
-		Window* getWindow(const std::string &name);
-
-		/**
-		 * Draw windows
-		 */
-		void drawWindows();
-
-	private:
-		/**
-		 * Draw window
-		 */
-		void drawWindow(Window *window);
-
-	private:
-		std::map<std::string, Window*> mWindows;
-		typedef std::map<std::string, Window*>::iterator WindowItr;
+		bool update();
 	};
-
-	extern InterfaceManager *interfaceManager;
 }
 
 #endif

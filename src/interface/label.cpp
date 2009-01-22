@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2008, The Small Towns Dev Team
+ *	Copyright (c) 2009, The Small Towns Dev Team
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -31,48 +31,18 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-10-23
+ *	Date of file creation: 09-01-22
  *
  *	$Id$
  *
  ********************************************/
 
-/**
- * The Window is the base class for the interface
- */
-
-#ifndef ST_WINDOW_HEADER
-#define ST_WINDOW_HEADER
-
-#include "../utilities/types.h"
-
-#include <list>
-#include <string>
+#include "label.h"
 
 namespace ST
 {
-	class Window
+	Label::Label(const std::string &name) : Window(name)
 	{
-	public:
-		Window(std::string name);
-		Window(Window *parent, std::string name);
-		void addChild(Window *window);
-		void setVisible(bool visible);
-		bool getVisible() const;
-		std::string getName() const;
-		Point& getPosition();
-		int getWidth() const;
-		int getHeight() const;
 
-	protected:
-		std::string mName;
-		std::list<Window*> mChildren;
-		Window *mParent;
-		Point mPosition;
-		Point mSize;
-		std::string mTitle;
-		bool mVisible;
-	};
+	}
 }
-
-#endif

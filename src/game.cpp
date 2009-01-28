@@ -76,7 +76,7 @@ namespace ST
 		interfaceManager = new InterfaceManager();
 		networkManager = new NetworkManager();
 
-		// create new test state, for testing
+		// TODO: create state to connect to server
 		state = new LoginState();
 		state->enter();
 

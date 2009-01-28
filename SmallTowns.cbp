@@ -24,6 +24,8 @@
 					<Add library="GL" />
 					<Add library="GLU" />
 					<Add library="pthread" />
+					<Add library="tinyxml" />
+					<Add library="enet" />
 				</Linker>
 			</Target>
 		</Build>
@@ -46,18 +48,35 @@
 		<Unit filename="src/graphics/texture.h" />
 		<Unit filename="src/input.cpp" />
 		<Unit filename="src/input.h" />
+		<Unit filename="src/interface/interfacemanager.cpp" />
 		<Unit filename="src/interface/interfacemanager.h" />
+		<Unit filename="src/interface/label.cpp" />
+		<Unit filename="src/interface/label.h" />
+		<Unit filename="src/interface/textfield.cpp" />
+		<Unit filename="src/interface/textfield.h" />
+		<Unit filename="src/interface/window.cpp" />
 		<Unit filename="src/interface/window.h" />
+		<Unit filename="src/loginstate.cpp" />
+		<Unit filename="src/loginstate.h" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/map.cpp" />
 		<Unit filename="src/map.h" />
+		<Unit filename="src/net/client.cpp" />
 		<Unit filename="src/net/client.h" />
+		<Unit filename="src/net/host.cpp" />
+		<Unit filename="src/net/host.h" />
+		<Unit filename="src/net/networkmanager.cpp" />
+		<Unit filename="src/net/networkmanager.h" />
+		<Unit filename="src/net/packet.cpp" />
+		<Unit filename="src/net/packet.h" />
+		<Unit filename="src/net/protocol.h" />
 		<Unit filename="src/teststate.cpp" />
 		<Unit filename="src/teststate.h" />
 		<Unit filename="src/tile.cpp" />
 		<Unit filename="src/tile.h" />
 		<Unit filename="src/utilities/log.cpp" />
 		<Unit filename="src/utilities/log.h" />
+		<Unit filename="src/utilities/math.h" />
 		<Unit filename="src/utilities/types.h" />
 		<Extensions>
 			<code_completion />

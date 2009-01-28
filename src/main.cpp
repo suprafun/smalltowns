@@ -41,9 +41,11 @@
 
 #include "game.h"
 
+ST::Game *game = 0;
+
 int main(int argc, char *argv[])
 {
-	ST::Game game;
-	game.run();
+	game = new ST::Game;
+	game->run();
 	return 0;
 }

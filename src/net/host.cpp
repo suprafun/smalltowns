@@ -31,55 +31,81 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-01-22
+ *	Date of file creation: 09-01-28
  *
  *	$Id$
  *
  ********************************************/
 
-#include "networkmanager.h"
 #include "host.h"
 #include "packet.h"
-#include "protocol.h"
 
 namespace ST
 {
-	NetworkManager::NetworkManager()
-	{
-        mHost = new Host();
-	}
+    Host::Host():
+        mServer(NULL), mConnected(false)
+    {
+        // create a new client host for connecting to the server
+        mClient = enet_host_create (NULL /* create a client host */,
+                1 /* only allow 1 outgoing connection */,
+                57600 / 8 /* 56K modem with 56 Kbps downstream bandwidth */,
+                14400 / 8 /* 56K modem with 14 Kbps upstream bandwidth */);
+    }
 
-	void NetworkManager::connect(const std::string &hostname, unsigned int port)
-	{
-	    mHost->connect(hostname, port);
-	}
+    Host::~Host()
+    {
+        enet_host_destroy(mClient);
+    }
 
-	void NetworkManager::process()
-	{
-        mHost->process();
+    void Host::connect(const std::string &hostname, unsigned int port)
+    {
+        // set the address of the server to connect to
+        enet_address_set_host(&mAddress, hostname.c_str());
+        mAddress.port = port;
 
-        Packet *packet = mHost->getPacket();
-        if (packet)
+        // connect to the server
+        mServer = enet_host_connect (mClient, &mAddress, 1);
+    }
+
+    void Host::process()
+    {
+        // check for data
+        ENetEvent event;
+        while (enet_host_service(mClient, &event, 0) > 0)
         {
-            processPacket(packet);
-        }
-	}
-
-	void NetworkManager::processPacket(Packet *packet)
-	{
-	    switch(packet->getId())
-	    {
-        case APMSG_CONNECT_RESPONSE:
+            switch (event.type)
             {
-                if (packet->getByte() == NOERROR)
+            case ENET_EVENT_TYPE_CONNECT:
                 {
-                    // TODO: Change game state to login
-                }
-                else
+                    mConnected = true;
+                } break;
+
+            case ENET_EVENT_TYPE_RECEIVE:
                 {
-                    // TODO: Display error message
-                }
-            } break;
-	    }
-	}
+                    Packet *packet = new Packet((char*)event.packet->data,
+                                                event.packet->dataLength);
+                    mPackets.push_back(packet);
+                    enet_packet_destroy (event.packet);
+                } break;
+
+            case ENET_EVENT_TYPE_DISCONNECT:
+                {
+                    mConnected = false;
+                } break;
+            }
+        }
+    }
+
+    Packet* Host::getPacket()
+    {
+        if (mPackets.size() > 0)
+        {
+            Packet *p = mPackets.front();
+            delete mPackets.front();
+            mPackets.pop_front();
+            return p;
+        }
+
+        return NULL;
+    }
 }

@@ -7,13 +7,13 @@
  *	Copyright (c) 2009, The Small Towns Dev Team
  *	All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification, 
+ *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
  *
- *	- Redistributions of source code must retain the above copyright notice, 
+ *	- Redistributions of source code must retain the above copyright notice,
  *		this list of conditions and the following disclaimer.
  *	- Redistributions in binary form must reproduce the above copyright notice,
- *		this list of conditions and the following disclaimer in the documentation 
+ *		this list of conditions and the following disclaimer in the documentation
  *		and/or other materials provided with the distribution.
  *	- Neither the name of the Small Towns Dev Team nor the names of its contributors
  *		may be used to endorse or promote products derived from this software without
@@ -49,16 +49,30 @@
 namespace ST
 {
 	class Host;
+	class Packet;
 	class NetworkManager
 	{
 	public:
 		NetworkManager();
-		bool connect(const std::string &hostname);
+
+		/**
+		 * Connect to a server
+		 */
+		void connect(const std::string &hostname, unsigned int port);
+
+		/**
+		 * Process is called every frame to get packets and process them
+		 */
 		void process();
+
+    private:
+		/**
+		 * Process the packets
+		 */
+		void processPacket(Packet*);
 
 	private:
 		Host *mHost;
-		bool mConnected;
 	};
 
 	extern NetworkManager *networkManager;

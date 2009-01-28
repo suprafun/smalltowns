@@ -31,18 +31,58 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-01-22
+ *	Date of file creation: 09-01-28
  *
  *	$Id$
  *
  ********************************************/
 
-#include "label.h"
+/**
+ * The Host class is what the client connects to
+ */
+
+#ifndef ST_HOST_HEADER
+#define ST_HOST_HEADER
+
+#include <string>
+#include <queue>
+#include "enet/enet.h"
 
 namespace ST
 {
-	Label::Label(const std::string &name) : Window(name)
-	{
+    class Packet;
 
-	}
+    class Host
+    {
+    public:
+        Host();
+        ~Host();
+        /**
+         * Connect to the server
+         * @param address The hostname of the server
+         * @param port The port of the server
+         */
+        void connect(const std::string &address, unsigned int port);
+
+        /**
+         * Process is called each frame to look for data from the server
+         * and create a packet if data is found
+         */
+        void process();
+
+        /**
+         * Return the oldest packet received
+         */
+        Packet* getPacket();
+
+    private:
+        ENetAddress mAddress;
+        ENetPeer *mServer;
+        ENetHost *mClient;
+
+        std::deque<Packet*> mPackets;
+        bool mConnected;
+    };
 }
+
+#endif

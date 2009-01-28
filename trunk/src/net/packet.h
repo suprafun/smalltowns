@@ -31,18 +31,52 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-01-22
+ *	Date of file creation: 09-01-28
  *
  *	$Id$
  *
  ********************************************/
 
-#include "label.h"
+/**
+ * The Packet class is what stores data from the server
+ */
+
+#ifndef ST_PACKET_HEADER
+#define ST_PACKET_HEADER
+
+#include <string>
 
 namespace ST
 {
-	Label::Label(const std::string &name) : Window(name)
-	{
+    const int DEFAULT_SIZE = 255;
+    class Packet
+    {
+    public:
+        Packet(int id);
+        Packet(char *data, unsigned int length);
+        ~Packet();
 
-	}
+        unsigned int getId() { return mId; }
+        unsigned int getSize() { return mPosition; }
+        char* getData() { return mData; }
+
+        void expand(unsigned int size);
+
+        unsigned char getByte();
+        void setByte(unsigned char c);
+
+        int32_t getInteger();
+        void setInteger(int32_t num);
+
+        std::string getString();
+        void setString(std::string s);
+
+    private:
+        char *mData;
+        unsigned int mSize;
+        unsigned int mId;
+        unsigned int mPosition;
+    };
 }
+
+#endif

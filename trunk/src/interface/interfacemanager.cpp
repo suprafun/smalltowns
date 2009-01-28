@@ -40,6 +40,8 @@
 #include "interfacemanager.h"
 #include "window.h"
 
+#include <tinyxml.h>
+
 #include <SDL_opengl.h>
 
 namespace ST
@@ -56,12 +58,24 @@ namespace ST
 
 	bool InterfaceManager::loadGuiSheet(const std::string &filename)
 	{
-		return false;
+	    bool loaded = false;
+
+        // Open XML file
+        TiXmlDocument doc(filename.c_str());
+        loaded = doc.LoadFile();
+
+        // Check it opened successfully
+        if (!loaded)
+        {
+            return false;
+        }
+
+        return true;
 	}
 
 	void InterfaceManager::unloadGuiSheet()
 	{
-		
+
 	}
 
 	void InterfaceManager::addWindow(Window *window)
@@ -152,7 +166,7 @@ namespace ST
 		glVertex3f(0.0f, 0.0f, 0.0f);
 
 		glEnd();
-        
+
 		// finish texture mapping
 		//glDisable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);

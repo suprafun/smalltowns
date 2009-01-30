@@ -75,6 +75,11 @@ namespace ST
          */
         Packet* getPacket();
 
+        /**
+         * Return connection status
+         */
+        bool isConnected();
+
     private:
         ENetAddress mAddress;
         ENetPeer *mServer;

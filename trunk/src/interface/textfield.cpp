@@ -39,10 +39,79 @@
 
 #include "textfield.h"
 
+#include <SDL_opengl.h>
+#include <FTGL/ftgl.h>
+
 namespace ST
 {
 	TextField::TextField(const std::string &name) : Window(name)
 	{
+        font = new FTGLPixmapFont("st.ttf");
+        font->FaceSize(12);
+	}
 
+    TextField::~TextField()
+    {
+        delete font;
+    }
+
+    void TextField::setText(const std::string &text)
+	{
+	    mText = text;
+	}
+
+	std::string TextField::getText()
+	{
+	    return mText;
+	}
+
+	void TextField::setFontSize(int size)
+	{
+	    font->FaceSize(size);
+	}
+
+	void TextField::drawWindow()
+	{
+	    // reset identity matrix
+		glLoadIdentity();
+
+		// set position and size to local variables
+		float x = (float)getPosition().x;
+		float y = (float)getPosition().y;
+		float width = (float)getWidth();
+		float height = (float)getHeight();
+
+		// move to the correct position
+		glTranslatef(x, y, 0.0f);
+
+		// disable depth testing
+		glDisable(GL_DEPTH_TEST);
+
+		glColor3f(1.0f, 1.0f, 1.0f);
+
+		glBegin(GL_LINE_LOOP);
+
+		// draw quad
+		glTexCoord2i(0, 0);
+		glVertex3f(0.0f, -height, 0.0f);
+		glTexCoord2i(1, 0);
+		glVertex3f(width, -height, 0.0f);
+		glTexCoord2i(1, 1);
+		glVertex3f(width, 0.0f, 0.0f);
+		glTexCoord2i(0, 1);
+		glVertex3f(0.0f, 0.0f, 0.0f);
+
+		glEnd();
+
+		font->Render(mText.c_str(), mText.size(), FTPoint(x + 5.0f, y - 15.0f));
+
+		glEnable(GL_DEPTH_TEST);
+	}
+
+	void TextField::processKey(SDLKey key)
+	{
+	    if (key == SDLK_RETURN || key == SDLK_TAB)
+            return;
+	    mText += SDL_GetKeyName(key);
 	}
 }

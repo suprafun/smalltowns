@@ -31,67 +31,102 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-01-22
+ *	Date of file creation: 09-01-30
  *
- *	$Id$
+ *	$Id:$
  *
  ********************************************/
 
-#include "loginstate.h"
 #include "connectstate.h"
 #include "input.h"
 #include "game.h"
+#include "loginstate.h"
 
 #include "interface/interfacemanager.h"
 #include "interface/label.h"
 #include "interface/textfield.h"
 #include "interface/window.h"
 
+#include "net/networkmanager.h"
+
+#include "utilities/stringutils.h"
+
 #include <SDL.h>
 
 namespace ST
 {
-	LoginState::LoginState()
+	ConnectState::ConnectState()
 	{
 
 	}
 
-	void LoginState::enter()
+	void ConnectState::enter()
 	{
 		// create window for entering username and password
-		Window *win = new Window("Login Window");
+		Window *win = new Window("Connect Window");
+		win->setPosition(200, 400);
+		win->setSize(375, 200);
 		interfaceManager->addWindow(win);
 
 		// create label for username
-		Label *usernameLabel = new Label("0");
-		interfaceManager->addSubWindow(win, usernameLabel);
+		Label *hostnameLabel = new Label("HostnameLabel");
+		hostnameLabel->setPosition(260, 335);
+		hostnameLabel->setText("Server: ");
+		hostnameLabel->setFontSize(24);
+		interfaceManager->addSubWindow(win, hostnameLabel);
 
 		// create label for password
-		Label *passwordLabel = new Label("1");
-		interfaceManager->addSubWindow(win, passwordLabel);
+		Label *portLabel = new Label("PortLabel");
+		portLabel->setPosition(260, 285);
+		portLabel->setText("Port: ");
+		portLabel->setFontSize(24);
+		interfaceManager->addSubWindow(win, portLabel);
 
 		// create textfield for entering username and add to window
-		TextField *username = new TextField("Username");
-		interfaceManager->addSubWindow(win, username);
+		TextField *hostname = new TextField("Host");
+		hostname->setPosition(335, 350);
+		hostname->setSize(180, 25);
+		hostname->setFontSize(18);
+		interfaceManager->addSubWindow(win, hostname);
 
 		// create textfield for entering password and add to window
-		TextField *password = new TextField("Password");
-		interfaceManager->addSubWindow(win, password);
+		TextField *port = new TextField("Port");
+		port->setPosition(335, 300);
+		port->setSize(120, 25);
+		port->setFontSize(18);
+		interfaceManager->addSubWindow(win, port);
 	}
 
-	void LoginState::exit()
+	void ConnectState::exit()
 	{
 		interfaceManager->removeAllWindows();
 	}
 
-	bool LoginState::update()
+	bool ConnectState::update()
 	{
 
 		// Check for input, if escape pressed, exit
 		if (inputManager->getKey(SDLK_ESCAPE))
 		{
-		    GameState *state = new ConnectState();
-			game->changeState(state);
+			return false;
+		}
+
+		if (inputManager->getKey(SDLK_RETURN))
+		{
+		    std::string hostname = static_cast<TextField*>(interfaceManager->getWindow("Host"))->getText();
+		    std::string port = static_cast<TextField*>(interfaceManager->getWindow("Port"))->getText();
+		    if (hostname.size() > 0)
+		    {
+		        if (port == "")
+                    port = "0";
+		        networkManager->connect(hostname, toInt(port));
+		    }
+		}
+
+		if (networkManager->isConnected())
+		{
+		    GameState *state = new LoginState;
+		    game->changeState(state);
 		}
 
 		SDL_Delay(0);
@@ -99,3 +134,4 @@ namespace ST
 		return true;
 	}
 }
+

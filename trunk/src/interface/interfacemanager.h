@@ -7,13 +7,13 @@
  *	Copyright (c) 2008, The Small Towns Dev Team
  *	All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification, 
+ *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
  *
- *	- Redistributions of source code must retain the above copyright notice, 
+ *	- Redistributions of source code must retain the above copyright notice,
  *		this list of conditions and the following disclaimer.
  *	- Redistributions in binary form must reproduce the above copyright notice,
- *		this list of conditions and the following disclaimer in the documentation 
+ *		this list of conditions and the following disclaimer in the documentation
  *		and/or other materials provided with the distribution.
  *	- Neither the name of the Small Towns Dev Team nor the names of its contributors
  *		may be used to endorse or promote products derived from this software without
@@ -46,10 +46,12 @@
 
 #include <map>
 #include <string>
+#include <SDL.h>
 
 namespace ST
 {
 	class Window;
+	class MouseButton;
 
 	class InterfaceManager
 	{
@@ -93,11 +95,27 @@ namespace ST
 		 * Returns the window
 		 */
 		Window* getWindow(const std::string &name);
+		Window* getWindow(int x, int y);
 
 		/**
 		 * Draw windows
 		 */
 		void drawWindows();
+
+		/**
+		 * Change focus
+		 */
+        void changeFocus(Window *window);
+
+        /**
+         * Send a key event to the interface
+         */
+        void sendKey(SDLKey key);
+
+        /**
+         * Send a mouse event to the interface
+         */
+        void sendMouse(MouseButton *button);
 
 	private:
 		/**
@@ -108,6 +126,7 @@ namespace ST
 	private:
 		std::map<std::string, Window*> mWindows;
 		typedef std::map<std::string, Window*>::iterator WindowItr;
+		Window* mFocused;
 	};
 
 	extern InterfaceManager *interfaceManager;

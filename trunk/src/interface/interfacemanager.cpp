@@ -40,15 +40,15 @@
 #include "interfacemanager.h"
 #include "window.h"
 
-#include <tinyxml.h>
+#include "../input.h"
 
-#include <SDL_opengl.h>
+#include <tinyxml.h>
 
 namespace ST
 {
 	InterfaceManager::InterfaceManager()
 	{
-
+        mFocused = NULL;
 	}
 
 	InterfaceManager::~InterfaceManager()
@@ -80,6 +80,8 @@ namespace ST
 
 	void InterfaceManager::addWindow(Window *window)
 	{
+	    if (mFocused == NULL)
+            mFocused = window;
 		mWindows.insert(std::pair<std::string, Window*>(window->getName(), window));
 	}
 
@@ -119,57 +121,58 @@ namespace ST
 		return win;
 	}
 
+	Window* InterfaceManager::getWindow(int x, int y)
+	{
+	    Window *window;
+	    WindowItr itr_end = mWindows.end();
+		for (WindowItr itr = mWindows.begin(); itr != itr_end; ++itr)
+		{
+		    window = itr->second;
+		    if (window->getNumChildren() > 0)
+                continue;
+			if (x >= window->getPosition().x && x <= window->getPosition().x + window->getWidth())
+			{
+			    if (y <= window->getPosition().y && y >= window->getPosition().y - window->getHeight())
+			    {
+			        return window;
+			    }
+			}
+		}
+
+		return NULL;
+	}
+
 	void InterfaceManager::drawWindows()
 	{
 		WindowItr itr_end = mWindows.end();
 		for (WindowItr itr = mWindows.begin(); itr != itr_end; ++itr)
 		{
 			if (itr->second->getVisible())
-				drawWindow(itr->second);
+				itr->second->drawWindow();
 		}
 	}
 
-	void InterfaceManager::drawWindow(Window *window)
+	void InterfaceManager::changeFocus(Window *window)
 	{
-		// reset identity matrix
-		glLoadIdentity();
+	    window->setFocus(true);
+	    mFocused->setFocus(false);
+	    mFocused = window;
+	}
 
-		// set position and size to local variables
-		int x = window->getPosition().x;
-		int y = window->getPosition().y;
-		float width = (float)window->getWidth();
-		float height = (float)window->getHeight();
+	void InterfaceManager::sendKey(SDLKey key)
+	{
+	    if (mFocused)
+            mFocused->processKey(key);
+	}
 
-		// move to the correct position
-		glTranslatef((float)x, (float)y, 0.0f);
-
-		// enable transparancy
-		glEnable(GL_BLEND);
-
-		// disable depth testing
-		glDisable(GL_DEPTH_TEST);
-
-		// enable texture mapping
-		//glBindTexture(GL_TEXTURE_2D, (*itr)->getGLTexture());
-		//glEnable(GL_TEXTURE_2D);
-
-		glBegin(GL_QUADS);
-
-		// draw quad
-		glTexCoord2i(0, 0);
-		glVertex3f(0.0f, -height, 0.0f);
-		glTexCoord2i(1, 0);
-		glVertex3f(width, -height, 0.0f);
-		glTexCoord2i(1, 1);
-		glVertex3f(width, 0.0f, 0.0f);
-		glTexCoord2i(0, 1);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-
-		glEnd();
-
-		// finish texture mapping
-		//glDisable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
+	void InterfaceManager::sendMouse(MouseButton *button)
+	{
+	    Window *win = getWindow(button->x, button->y);
+	    if (win && win != mFocused)
+	    {
+            changeFocus(win);
+	    }
+	    if (mFocused)
+            mFocused->processMouse(button);
 	}
 }

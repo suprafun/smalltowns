@@ -48,12 +48,22 @@
 
 #include <string>
 
+class FTFont;
+
 namespace ST
 {
 	class Label : public Window
 	{
 	public:
 		Label(const std::string &name);
+		~Label();
+		void setText(const std::string &text);
+		void setFontSize(int size);
+		virtual void drawWindow();
+
+    private:
+        std::string mText;
+        FTFont *font;
 	};
 }
 

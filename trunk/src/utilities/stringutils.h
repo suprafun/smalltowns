@@ -31,55 +31,31 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-09-20
+ *	Date of file creation: 09-01-30
  *
  *	$Id$
  *
  ********************************************/
 
 /**
- * The Game class controls the graphics, input, sound and networking
- * It loops until the user exits
+ * This header contains string utilities that are useful
  */
 
-#ifndef ST_GAME_HEADER
-#define ST_GAME_HEADER
+#ifndef ST_STRINGUTILS_HEADER
+#define ST_STRINGUTILS_HEADER
+
+#include <sstream>
 
 namespace ST
 {
-	class GameState;
-
-	class Game
+	int toInt(const std::string &text)
 	{
-	public:
-		/**
-		 * Destructor
-		 * Cleans up Game
-		 */
-		~Game();
-
-		/**
-		 * Run
-		 * Creates everything needed to run the game
-		 * Loops until user exists the game
-		 */
-		void run();
-
-		/**
-		 * Change State
-		 */
-        void changeState(GameState *state);
-
-    private:
-        void cleanUp();
-
-	private:
-		GameState *mState;
-		GameState *mOldState;
-	};
+	    int i;
+	    std::stringstream str;
+	    str << text;
+	    str >> i;
+	    return i;
+	}
 }
 
-extern ST::Game *game;
-
 #endif
-

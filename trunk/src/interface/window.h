@@ -48,9 +48,12 @@
 
 #include <list>
 #include <string>
+#include <SDL.h>
 
 namespace ST
 {
+    class MouseButton;
+
 	class Window
 	{
 	public:
@@ -61,8 +64,16 @@ namespace ST
 		bool getVisible() const;
 		std::string getName() const;
 		Point& getPosition();
+		void setPosition(int x, int y);
+		void setSize(int width, int height);
 		int getWidth() const;
 		int getHeight() const;
+		void setFocus(bool focused);
+		int getNumChildren() const;
+
+		virtual void drawWindow();
+		virtual void processKey(SDLKey key);
+		virtual void processMouse(MouseButton *button);
 
 	protected:
 		std::string mName;
@@ -72,6 +83,7 @@ namespace ST
 		Point mSize;
 		std::string mTitle;
 		bool mVisible;
+		bool mFocus;
 	};
 }
 

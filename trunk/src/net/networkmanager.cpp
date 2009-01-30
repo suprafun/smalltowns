@@ -82,4 +82,9 @@ namespace ST
             } break;
 	    }
 	}
+
+	bool NetworkManager::isConnected()
+	{
+	    return mHost->isConnected();
+	}
 }

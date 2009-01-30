@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2008, The Small Towns Dev Team
+ *	Copyright (c) 2009, The Small Towns Dev Team
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -31,55 +31,47 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-09-20
+ *	Date of file creation: 09-01-30
  *
  *	$Id$
  *
  ********************************************/
 
 /**
- * The Game class controls the graphics, input, sound and networking
- * It loops until the user exits
+ * The Connect State is used for connecting to a game server
  */
 
-#ifndef ST_GAME_HEADER
-#define ST_GAME_HEADER
+#ifndef ST_CONNECTSTATE_HEADER
+#define ST_CONNECTSTATE_HEADER
+
+#include "gamestate.h"
 
 namespace ST
 {
-	class GameState;
-
-	class Game
+	class ConnectState : public GameState
 	{
 	public:
-		/**
-		 * Destructor
-		 * Cleans up Game
-		 */
-		~Game();
+		ConnectState();
 
 		/**
-		 * Run
-		 * Creates everything needed to run the game
-		 * Loops until user exists the game
+		 * Enter
+		 * Called when entering the state
 		 */
-		void run();
+		void enter();
 
 		/**
-		 * Change State
+		 * Exit
+		 * Called when leaving the state
 		 */
-        void changeState(GameState *state);
+		void exit();
 
-    private:
-        void cleanUp();
-
-	private:
-		GameState *mState;
-		GameState *mOldState;
+		/**
+		 * Update
+		 * Called every frame
+		 * Return false to exit the game
+		 */
+		bool update();
 	};
 }
 
-extern ST::Game *game;
-
 #endif
-

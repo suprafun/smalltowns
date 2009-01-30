@@ -47,6 +47,9 @@
 #include "window.h"
 
 #include <string>
+#include <SDL.h>
+
+class FTFont;
 
 namespace ST
 {
@@ -54,6 +57,17 @@ namespace ST
 	{
 	public:
 		TextField(const std::string &name);
+		~TextField();
+		void setText(const std::string &text);
+		std::string getText();
+		void setFontSize(int size);
+		void drawWindow();
+
+		virtual void processKey(SDLKey key);
+
+    private:
+        FTFont *font;
+        std::string mText;
 	};
 }
 

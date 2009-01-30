@@ -108,4 +108,9 @@ namespace ST
 
         return NULL;
     }
+
+    bool Host::isConnected()
+    {
+        return mConnected;
+    }
 }

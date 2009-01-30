@@ -65,6 +65,11 @@ namespace ST
 		 */
 		void process();
 
+		/**
+		 * Checks if connected to server yet
+		 */
+        bool isConnected();
+
     private:
 		/**
 		 * Process the packets

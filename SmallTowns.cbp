@@ -17,6 +17,7 @@
 				<Compiler>
 					<Add option="-g" />
 					<Add option="`sdl-config --cflags`" />
+					<Add option="`freetype-config --cflags`" />
 				</Compiler>
 				<Linker>
 					<Add option="`sdl-config --libs`" />
@@ -26,12 +27,15 @@
 					<Add library="pthread" />
 					<Add library="tinyxml" />
 					<Add library="enet" />
+					<Add library="ftgl" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="src/connectstate.cpp" />
+		<Unit filename="src/connectstate.h" />
 		<Unit filename="src/game.cpp" />
 		<Unit filename="src/game.h" />
 		<Unit filename="src/gamestate.h" />

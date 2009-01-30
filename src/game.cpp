@@ -41,7 +41,7 @@
 
 #include "input.h"
 #include "map.h"
-#include "loginstate.h"
+#include "connectstate.h"
 #include "graphics/graphics.h"
 #include "interface/interfacemanager.h"
 #include "net/networkmanager.h"
@@ -76,19 +76,36 @@ namespace ST
 		interfaceManager = new InterfaceManager();
 		networkManager = new NetworkManager();
 
-		// TODO: create state to connect to server
-		state = new LoginState();
-		state->enter();
+		// Create state to connect to server
+		mState = new ConnectState();
+		mState->enter();
 
 		// Update the state each frame
 		// Render the frame
 		// Get Input
-		while (state->update())
+		while (mState->update())
 		{
 			graphicsEngine->renderFrame();
-			interfaceManager->drawWindows();
 			inputManager->getEvents();
 			networkManager->process();
+			cleanUp();
 		}
+	}
+
+	void Game::changeState(GameState *state)
+	{
+        mState->exit();
+        mOldState = mState;
+        mState = state;
+        mState->enter();
+	}
+
+	void Game::cleanUp()
+	{
+	    if (mOldState)
+        {
+            delete mOldState;
+            mOldState = NULL;
+        }
 	}
 }

@@ -43,6 +43,8 @@
 #include "node.h"
 #include "texture.h"
 
+#include "../interface/interfacemanager.h"
+
 #include "../utilities/log.h"
 #include "../utilities/types.h"
 
@@ -74,13 +76,16 @@ namespace ST
 		const SDL_VideoInfo* video = SDL_GetVideoInfo();
 		int bpp = video->vfmt->BitsPerPixel;
 
-		// Initialise SDL to use OpenGL
-		mScreen = SDL_SetVideoMode(800, 600, bpp, SDL_OPENGL);
+		mWidth = 800;
+		mHeight = 600;
 
-		glViewport(0, 0, 800, 600);
+		// Initialise SDL to use OpenGL
+		mScreen = SDL_SetVideoMode(mWidth, mHeight, bpp, SDL_OPENGL);
+
+		glViewport(0, 0, mWidth, mHeight);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(0.0f, 800.0f, 600.0f, 0.0f, -1.0f, 1.0f);
+		glOrtho(0.0f, mWidth, 0.0f, mHeight, -1.0f, 1.0f);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glClearColor(0.0f, 0.0f , 0.0f, 1.0f);
@@ -127,7 +132,9 @@ namespace ST
 		if (mCamera)
 			outputNodes();
 
-		// Swap between front and back buffer
+        interfaceManager->drawWindows();
+
+        // Swap between front and back buffer
 		SDL_GL_SwapBuffers();
 	}
 
@@ -196,7 +203,7 @@ namespace ST
 			glVertex3f(0.0f, 0.0f, 0.0f);
 
 			glEnd();
-	        
+
 			// finish texture mapping
 			glDisable(GL_TEXTURE_2D);
 			glDisable(GL_BLEND);
@@ -250,7 +257,7 @@ namespace ST
 						if (getPixel(s, position.x, position.y) == border)
 						{
 							frameWidth = position.x - 2;
-							Texture *texture = createTexture(s, name, 
+							Texture *texture = createTexture(s, name,
 								initPos.x, initPos.y, frameWidth, frameHeight);
 							if (!texture)
 							{
@@ -265,8 +272,8 @@ namespace ST
 					}
 				}
 				++position.y;
-			}		
-			
+			}
+
 			return true;
 		}
 
@@ -295,7 +302,7 @@ namespace ST
 		// Put the frame into new surface
 		SDL_Surface *tex = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height,
 			surface->format->BitsPerPixel, rmask, gmask, bmask, amask);
-		
+
 		if (!tex)
 		{
 			// error
@@ -338,7 +345,7 @@ namespace ST
 		// Get the number of bytes per pixel (different formats, ie 16 bit,
 		// 24 bit, 32 bit)
 		int bpp = s->format->BytesPerPixel;
-		
+
 		// Retrieve the pixel at x and y
 		Uint32 *pixel = (Uint32*)((Uint8*)s->pixels + y * s->pitch + x * bpp);
 
@@ -369,7 +376,7 @@ namespace ST
 	{
 		std::map<std::string, Texture*>::iterator itr;
 		itr = mTextures.find(name);
-		
+
 		if (itr != mTextures.end())
 		{
 			return itr->second;
@@ -377,5 +384,14 @@ namespace ST
 
 		return NULL;
 	}
-			
+
+    int GraphicsEngine::getScreenWidth() const
+    {
+        return mWidth;
+    }
+
+    int GraphicsEngine::getScreenHeight() const
+    {
+        return mHeight;
+    }
 }

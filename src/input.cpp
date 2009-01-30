@@ -39,6 +39,9 @@
 
 #include "input.h"
 
+#include "graphics/graphics.h"
+#include "interface/interfacemanager.h"
+
 #include <SDL.h>
 #include <algorithm>
 
@@ -54,7 +57,17 @@ namespace ST
 			case SDL_KEYDOWN:
 				{
 					keysDown.push_back(event.key.keysym.sym);
-				}
+					interfaceManager->sendKey(event.key.keysym.sym);
+				} break;
+            case SDL_MOUSEBUTTONDOWN:
+                {
+                    MouseButton *button = new MouseButton;
+                    button->button = event.button.button;
+                    button->state = event.button.state;
+                    button->x = event.button.x;
+                    button->y = graphicsEngine->getScreenHeight() - event.button.y;
+                    interfaceManager->sendMouse(button);
+                } break;
 			}
 		}
 	}

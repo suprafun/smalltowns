@@ -31,92 +31,77 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-01-22
+ *	Date of file creation: 09-02-03
  *
  *	$Id$
  *
  ********************************************/
 
-#include "textfield.h"
+#ifndef ST_IRCSERVER_HEADER
+#define ST_IRCSERVER_HEADER
 
-#include <SDL_opengl.h>
-#include <FTGL/ftgl.h>
+#include <string>
+
+namespace IRC
+{
+class Command;
+class IRCClient;
+}
 
 namespace ST
 {
-	TextField::TextField(const std::string &name) : Window(name)
-	{
-        font = new FTGLPixmapFont("st.ttf");
-        font->FaceSize(12);
-	}
+    class IRCMessage;
 
-    TextField::~TextField()
+    class IRCServer
     {
-        delete font;
-    }
+    public:
+        /**
+         * Constructor
+         * @param hostname The hostname of the IRC server
+         */
+        IRCServer();
 
-    void TextField::setText(const std::string &text)
-	{
-	    mText = text;
-	}
+        /**
+         * Destructor
+         */
+        ~IRCServer();
 
-	std::string TextField::getText()
-	{
-	    return mText;
-	}
+        /**
+         * Connect to IRC
+         * This connects the client to the IRC server
+         */
+        void connect(const std::string &hostname);
 
-	void TextField::setFontSize(int size)
-	{
-	    font->FaceSize(size);
-	}
+        /**
+         * Check
+         * This checks for packets from the IRC server
+         * and processes them if found
+         */
+        void process();
 
-	void TextField::drawWindow()
-	{
-	    // reset identity matrix
-		glLoadIdentity();
+        /**
+         * Process messages
+         * This process the message from the IRC server
+         * @param command The command to process
+         */
+        void processMessage(IRC::Command *command);
 
-		// set position and size to local variables
-		float x = (float)getPosition().x;
-		float y = (float)getPosition().y;
-		float width = (float)getWidth();
-		float height = (float)getHeight();
+        /**
+         * Send message
+         * Sends a message to the IRC server
+         * @param command The command to send
+         */
+        void sendMessage(IRCMessage *msg);
 
-		// move to the correct position
-		glTranslatef(x, y, 0.0f);
 
-		// disable depth testing
-		glDisable(GL_DEPTH_TEST);
-
-		glColor3f(1.0f, 1.0f, 1.0f);
-
-		glBegin(GL_LINE_LOOP);
-
-		// draw quad
-		glTexCoord2i(0, 0);
-		glVertex3f(0.0f, -height, 0.0f);
-		glTexCoord2i(1, 0);
-		glVertex3f(width, -height, 0.0f);
-		glTexCoord2i(1, 1);
-		glVertex3f(width, 0.0f, 0.0f);
-		glTexCoord2i(0, 1);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-
-		glEnd();
-
-		font->Render(mText.c_str(), mText.size(), FTPoint(x + 5.0f, y - 15.0f));
-
-		glEnable(GL_DEPTH_TEST);
-	}
-
-	void TextField::processKey(SDLKey key)
-	{
-	    if (key == SDLK_RETURN || key == SDLK_TAB)
-            return;
-        if (key == SDLK_BACKSPACE)
-        {
-            mText = mText.substr(0, mText.size() - 1);
-            return;
-        }
-	    mText += SDL_GetKeyName(key);
-	}
+    private:
+        std::string mHostname;
+        std::string mNick;
+        std::string mCurrentChannel;
+        IRC::IRCClient *mClient;
+        bool mRegistering;
+        bool mRegistered;
+    };
 }
+
+#endif

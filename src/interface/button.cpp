@@ -31,46 +31,44 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-01-22
+ *	Date of file creation: 09-02-03
  *
  *	$Id$
  *
  ********************************************/
 
-#include "textfield.h"
+#include "button.h"
+
+#include "../input.h"
 
 #include <SDL_opengl.h>
 #include <FTGL/ftgl.h>
 
 namespace ST
 {
-	TextField::TextField(const std::string &name) : Window(name)
+	Button::Button(const std::string &name) : Window(name)
 	{
+	    mPressed = false;
         font = new FTGLPixmapFont("st.ttf");
         font->FaceSize(12);
 	}
 
-    TextField::~TextField()
+    Button::~Button()
     {
         delete font;
     }
 
-    void TextField::setText(const std::string &text)
+    void Button::setText(const std::string &text)
 	{
 	    mText = text;
 	}
 
-	std::string TextField::getText()
-	{
-	    return mText;
-	}
-
-	void TextField::setFontSize(int size)
+	void Button::setFontSize(int size)
 	{
 	    font->FaceSize(size);
 	}
 
-	void TextField::drawWindow()
+	void Button::drawWindow()
 	{
 	    // reset identity matrix
 		glLoadIdentity();
@@ -103,20 +101,19 @@ namespace ST
 
 		glEnd();
 
-		font->Render(mText.c_str(), mText.size(), FTPoint(x + 5.0f, y - 15.0f));
+		font->Render(mText.c_str(), mText.size(), FTPoint(x + 5.0f, y - height / 2));
 
 		glEnable(GL_DEPTH_TEST);
 	}
 
-	void TextField::processKey(SDLKey key)
+	bool Button::clicked()
 	{
-	    if (key == SDLK_RETURN || key == SDLK_TAB)
-            return;
-        if (key == SDLK_BACKSPACE)
-        {
-            mText = mText.substr(0, mText.size() - 1);
-            return;
-        }
-	    mText += SDL_GetKeyName(key);
+	    return mPressed;
+	}
+
+	void Button::processMouse(MouseButton *button)
+	{
+        mPressed = true;
 	}
 }
+

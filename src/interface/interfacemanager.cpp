@@ -96,6 +96,9 @@ namespace ST
 		WindowItr itr = mWindows.find(name);
 		if (itr != mWindows.end())
 		{
+		    if (mFocused == itr->second)
+                mFocused = NULL;
+		    delete itr->second;
 			mWindows.erase(itr);
 		}
 	}
@@ -108,6 +111,7 @@ namespace ST
 			delete itr->second;
 		}
 		mWindows.clear();
+		mFocused = NULL;
 	}
 
 	Window* InterfaceManager::getWindow(const std::string &name)

@@ -39,9 +39,11 @@
 
 #include "loginstate.h"
 #include "connectstate.h"
+#include "teststate.h"
 #include "input.h"
 #include "game.h"
 
+#include "interface/button.h"
 #include "interface/interfacemanager.h"
 #include "interface/label.h"
 #include "interface/textfield.h"
@@ -60,23 +62,38 @@ namespace ST
 	{
 		// create window for entering username and password
 		Window *win = new Window("Login Window");
+		win->setPosition(200, 400);
+		win->setSize(375, 200);
 		interfaceManager->addWindow(win);
 
 		// create label for username
 		Label *usernameLabel = new Label("0");
+		usernameLabel->setPosition(240, 335);
+		usernameLabel->setText("Username: ");
+		usernameLabel->setFontSize(24);
 		interfaceManager->addSubWindow(win, usernameLabel);
 
 		// create label for password
-		Label *passwordLabel = new Label("1");
-		interfaceManager->addSubWindow(win, passwordLabel);
+//		Label *passwordLabel = new Label("1");
+//		interfaceManager->addSubWindow(win, passwordLabel);
 
 		// create textfield for entering username and add to window
 		TextField *username = new TextField("Username");
+		username->setPosition(335, 350);
+		username->setSize(180, 25);
+		username->setFontSize(18);
 		interfaceManager->addSubWindow(win, username);
 
 		// create textfield for entering password and add to window
-		TextField *password = new TextField("Password");
-		interfaceManager->addSubWindow(win, password);
+//		TextField *password = new TextField("Password");
+//		interfaceManager->addSubWindow(win, password);
+
+        Button *button = new Button("Submit");
+        button->setPosition(475, 250);
+        button->setSize(80,20);
+        button->setText("Submit");
+        button->setFontSize(18);
+        interfaceManager->addSubWindow(win, button);
 	}
 
 	void LoginState::exit()
@@ -94,8 +111,28 @@ namespace ST
 			game->changeState(state);
 		}
 
+		if (inputManager->getKey(SDLK_RETURN))
+		{
+		    submit();
+		}
+
+		if (static_cast<Button*>(interfaceManager->getWindow("Submit"))->clicked())
+		{
+		    submit();
+		}
+
 		SDL_Delay(0);
 
 		return true;
+	}
+
+	void LoginState::submit()
+	{
+	    std::string username = static_cast<TextField*>(interfaceManager->getWindow("Username"))->getText();
+        if (username != "")
+        {
+            GameState *state = new TestState;
+            game->changeState(state);
+        }
 	}
 }

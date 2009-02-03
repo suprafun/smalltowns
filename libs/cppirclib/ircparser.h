@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2009, The Small Towns Dev Team
+ *	Copyright (c) 2008, CasualGamer.co.uk
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -15,7 +15,7 @@
  *	- Redistributions in binary form must reproduce the above copyright notice,
  *		this list of conditions and the following disclaimer in the documentation
  *		and/or other materials provided with the distribution.
- *	- Neither the name of the Small Towns Dev Team nor the names of its contributors
+ *	- Neither the name of the author nor the names of its contributors
  *		may be used to endorse or promote products derived from this software without
  *		specific prior written permission.
  *
@@ -31,50 +31,59 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-01-30
+ *	Date of file creation: 08-11-14
  *
  *	$Id$
  *
  ********************************************/
 
-/**
- * The Connect State is used for connecting to a game server
- */
+#ifndef IRCLIB_PARSER
+#define IRCLIB_PARSER
 
-#ifndef ST_CONNECTSTATE_HEADER
-#define ST_CONNECTSTATE_HEADER
+#include <string>
 
-#include "gamestate.h"
-
-namespace ST
+namespace IRC
 {
-	class ConnectState : public GameState
-	{
-	public:
-		ConnectState();
+    class Command;
 
-		/**
-		 * Enter
-		 * Called when entering the state
-		 */
-		void enter();
+    class IRCParser
+    {
+    public:
+        /**
+         * Parse the data received from server
+         * @param data The data received
+         * @param length The size of the data
+         * @return Returns the command received
+         */
+        Command* parse(char *data, unsigned int length);
 
-		/**
-		 * Exit
-		 * Called when leaving the state
-		 */
-		void exit();
+        /**
+         * Parse the command
+         * Create a command based on the arguments
+         * @param prefix The prefix
+         * @param command The command
+         * @param params The parameters
+         * @return Returns the command
+         */
+        Command* parseCommand(std::string &prefix,
+                              const std::string &command,
+                              std::string &params);
 
-		/**
-		 * Update
-		 * Called every frame
-		 * Return false to exit the game
-		 */
-		bool update();
+        /**
+         * Parse the word
+         * @param data The data (must be null terminated)
+         * @return Returns the word found in data
+         */
+        std::string parseWord(char *data);
 
-    private:
-        void submit();
-	};
+        /**
+         * Lookup the command
+         * Changes a string to its enum
+         */
+        unsigned int lookupCommand(const std::string &command);
+    };
 }
+
+extern IRC::IRCParser gIrcParser;
 
 #endif

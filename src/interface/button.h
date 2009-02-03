@@ -31,92 +31,47 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-01-22
+ *	Date of file creation: 09-02-03
  *
  *	$Id$
  *
  ********************************************/
 
-#include "textfield.h"
+/**
+ * The button class is for creating clickable images
+ */
 
-#include <SDL_opengl.h>
-#include <FTGL/ftgl.h>
+#ifndef ST_BUTTON_HEADER
+#define ST_BUTTON_HEADER
+
+#include "window.h"
+
+#include <string>
+#include <SDL.h>
+
+class FTFont;
 
 namespace ST
 {
-	TextField::TextField(const std::string &name) : Window(name)
+    class MouseButton;
+	class Button : public Window
 	{
-        font = new FTGLPixmapFont("st.ttf");
-        font->FaceSize(12);
-	}
+	public:
+		Button(const std::string &name);
+		~Button();
 
-    TextField::~TextField()
-    {
-        delete font;
-    }
+		void setText(const std::string &text);
+		void setFontSize(int size);
+		void drawWindow();
+		bool clicked();
 
-    void TextField::setText(const std::string &text)
-	{
-	    mText = text;
-	}
+		virtual void processMouse(MouseButton *button);
 
-	std::string TextField::getText()
-	{
-	    return mText;
-	}
-
-	void TextField::setFontSize(int size)
-	{
-	    font->FaceSize(size);
-	}
-
-	void TextField::drawWindow()
-	{
-	    // reset identity matrix
-		glLoadIdentity();
-
-		// set position and size to local variables
-		float x = (float)getPosition().x;
-		float y = (float)getPosition().y;
-		float width = (float)getWidth();
-		float height = (float)getHeight();
-
-		// move to the correct position
-		glTranslatef(x, y, 0.0f);
-
-		// disable depth testing
-		glDisable(GL_DEPTH_TEST);
-
-		glColor3f(1.0f, 1.0f, 1.0f);
-
-		glBegin(GL_LINE_LOOP);
-
-		// draw quad
-		glTexCoord2i(0, 0);
-		glVertex3f(0.0f, -height, 0.0f);
-		glTexCoord2i(1, 0);
-		glVertex3f(width, -height, 0.0f);
-		glTexCoord2i(1, 1);
-		glVertex3f(width, 0.0f, 0.0f);
-		glTexCoord2i(0, 1);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-
-		glEnd();
-
-		font->Render(mText.c_str(), mText.size(), FTPoint(x + 5.0f, y - 15.0f));
-
-		glEnable(GL_DEPTH_TEST);
-	}
-
-	void TextField::processKey(SDLKey key)
-	{
-	    if (key == SDLK_RETURN || key == SDLK_TAB)
-            return;
-        if (key == SDLK_BACKSPACE)
-        {
-            mText = mText.substr(0, mText.size() - 1);
-            return;
-        }
-	    mText += SDL_GetKeyName(key);
-	}
+    private:
+        FTFont *font;
+        std::string mText;
+        bool mPressed;
+	};
 }
+
+#endif

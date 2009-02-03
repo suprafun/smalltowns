@@ -81,6 +81,7 @@
 		<Unit filename="src/utilities/log.cpp" />
 		<Unit filename="src/utilities/log.h" />
 		<Unit filename="src/utilities/math.h" />
+		<Unit filename="src/utilities/stringutils.h" />
 		<Unit filename="src/utilities/types.h" />
 		<Extensions>
 			<code_completion />

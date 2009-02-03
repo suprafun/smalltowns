@@ -38,30 +38,44 @@
  ********************************************/
 
 #include "teststate.h"
+#include "loginstate.h"
 #include "input.h"
 
+/*
 #include "graphics/camera.h"
 #include "graphics/graphics.h"
 #include "graphics/node.h"
 #include "utilities/log.h"
+*/
+#include "interface/interfacemanager.h"
+#include "interface/textbox.h"
+#include "interface/textfield.h"
+#include "interface/window.h"
+
+#include "net/networkmanager.h"
+
+#include "irc/ircserver.h"
 
 #include <sstream>
 #include <SDL.h>
 
+/*
 const int tilewidth = 42;
 const int halftilewidth = 21;
 const int tileheight = 22;
 const int halftileheight = 11;
+*/
 
 namespace ST
 {
 	TestState::TestState()
 	{
-
+        chatServer = new IRCServer;
 	}
 
 	void TestState::enter()
 	{
+	    /*
 		mFrames = 0;
 		mTime = 0;
 		mLastTime = 0;
@@ -112,7 +126,7 @@ namespace ST
 				{
 					p.x = 0;
 				}
-					
+
 				p.y += halftileheight;
 				++row;
 			}
@@ -125,15 +139,38 @@ namespace ST
 		p.x = 0;
 		p.y = 84;
 		Node *node = graphicsEngine->createNode("player", "base.png", &p);
+		*/
+		// create window for chat
+		Window *win = new Window("Login Window");
+		win->setPosition(200, 400);
+		win->setSize(375, 200);
+		interfaceManager->addWindow(win);
+
+		// create textbox in non-edit mode for chat
+		TextBox *chatBox = new TextBox("chat");
+		chatBox->setPosition(260, 335);
+		chatBox->setRows(5);
+		chatBox->setFontSize(18);
+		interfaceManager->addSubWindow(win, chatBox);
+
+		// create textfield for sending chat
+		TextField *chatField = new TextField("sendchat");
+		chatField->setPosition(335, 350);
+		chatField->setSize(180, 25);
+		chatField->setFontSize(18);
+		interfaceManager->addSubWindow(win, chatField);
+
+        chatServer->connect("london.uk.whatnet.org");
 	}
 
 	void TestState::exit()
 	{
-
+        interfaceManager->removeAllWindows();
 	}
 
 	bool TestState::update()
 	{
+	    /*
 		// Add another frame
 		// Get how much time has passed
 		// Find the difference and if its a second or more
@@ -149,6 +186,18 @@ namespace ST
 			logger->logDebug(str.str() + " frames per second");
 			mFrames = 0;
 			mLastTime = mTime;
+		}
+		*/
+
+		if (inputManager->getKey(SDLK_RETURN))
+		{
+		    std::string chat = static_cast<TextField*>(interfaceManager->getWindow("sendchat"))->getText();
+		    if (chat.size() > 0)
+		    {
+//		        IRCMessage *msg = new IRCMessage;
+//		        msg->addString(chat);
+//		        msg->send(chatServer);
+		    }
 		}
 
 		// Check for input, if escape pressed, exit

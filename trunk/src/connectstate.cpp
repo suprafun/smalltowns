@@ -42,6 +42,7 @@
 #include "game.h"
 #include "loginstate.h"
 
+#include "interface/button.h"
 #include "interface/interfacemanager.h"
 #include "interface/label.h"
 #include "interface/textfield.h"
@@ -95,6 +96,14 @@ namespace ST
 		port->setSize(120, 25);
 		port->setFontSize(18);
 		interfaceManager->addSubWindow(win, port);
+
+		// create button for submitting details
+		Button *button = new Button("Submit");
+		button->setPosition(475, 250);
+        button->setSize(80,20);
+        button->setText("Submit");
+        button->setFontSize(18);
+        interfaceManager->addSubWindow(win, button);
 	}
 
 	void ConnectState::exit()
@@ -113,14 +122,12 @@ namespace ST
 
 		if (inputManager->getKey(SDLK_RETURN))
 		{
-		    std::string hostname = static_cast<TextField*>(interfaceManager->getWindow("Host"))->getText();
-		    std::string port = static_cast<TextField*>(interfaceManager->getWindow("Port"))->getText();
-		    if (hostname.size() > 0)
-		    {
-		        if (port == "")
-                    port = "0";
-		        networkManager->connect(hostname, toInt(port));
-		    }
+		    submit();
+		}
+
+		if (static_cast<Button*>(interfaceManager->getWindow("Submit"))->clicked())
+		{
+		    submit();
 		}
 
 		if (networkManager->isConnected())
@@ -132,6 +139,18 @@ namespace ST
 		SDL_Delay(0);
 
 		return true;
+	}
+
+	void ConnectState::submit()
+	{
+	    std::string hostname = static_cast<TextField*>(interfaceManager->getWindow("Host"))->getText();
+        std::string port = static_cast<TextField*>(interfaceManager->getWindow("Port"))->getText();
+        if (hostname.size() > 0)
+        {
+            if (port == "")
+                port = "0";
+            networkManager->connect(hostname, toInt(port));
+        }
 	}
 }
 

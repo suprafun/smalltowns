@@ -48,7 +48,11 @@
 
 namespace ST
 {
-	int toInt(const std::string &text)
+    class utils
+    {
+    public:
+
+	static int toInt(const std::string &text)
 	{
 	    int i;
 	    std::stringstream str;
@@ -56,6 +60,14 @@ namespace ST
 	    str >> i;
 	    return i;
 	}
+
+	static bool isCharacter(int mValue)
+    {
+        return (mValue >= 32 && mValue <= 126)
+            || (mValue >= 162 && mValue <= 255)
+            || (mValue == 9);
+    }
+    };
 }
 
 #endif

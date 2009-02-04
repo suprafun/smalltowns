@@ -39,6 +39,8 @@
 
 #include "textbox.h"
 
+#include "../utilities/stringutils.h"
+
 #include <SDL_opengl.h>
 #include <FTGL/ftgl.h>
 
@@ -70,6 +72,28 @@ namespace ST
 	void TextBox::setEditable(bool editable)
 	{
 	    mEditable = editable;
+	}
+
+	void TextBox::addRow(const std::string &text)
+	{
+	    int maxSize = getWidth();
+	    int totallength = text.size() * 8;
+	    int length = maxSize / 8;
+	    if (totallength > maxSize)
+	    {
+	        int sofar = 0;
+	        while (sofar < text.size())
+	        {
+	            if (length + sofar > text.size())
+	            {
+	                length = text.size() - sofar;
+	            }
+                mTextHistory.push_back(text.substr(sofar, length));
+                sofar += length;
+	        }
+	        return;
+	    }
+	    mTextHistory.push_back(text);
 	}
 
 	void TextBox::drawWindow()
@@ -111,25 +135,36 @@ namespace ST
         }
         else
         {
-            for (int i = 0; i < mRows; ++i)
+            // loop through the history
+            // start with latest first (subtract 1, since counting starts from 0)
+            // make sure i doesnt go under 0
+            int numberRows = 0;
+            for (int i = mTextHistory.size() - 1; i >= 0; --i)
             {
-                if (mTextHistory.size() > i)
+                if (numberRows < mRows)
                 {
-                    font->Render(mTextHistory[i].c_str(), mTextHistory[i].size(), FTPoint(x + 5.0f, y - i * 15.0f));
+                    font->Render(mTextHistory[i].c_str(), mTextHistory[i].size(), FTPoint(x + 5.0f, y - (i + 1) * 15.0f));
                 }
+                ++numberRows;
             }
         }
 
 		glEnable(GL_DEPTH_TEST);
 	}
 
-	void TextBox::processKey(SDLKey key)
+	void TextBox::processKey(SDL_keysym key)
 	{
 	    if (!mEditable)
             return;
-	    if (key == SDLK_RETURN || key == SDLK_TAB)
+	    if (key.sym == SDLK_RETURN || key.sym == SDLK_TAB)
             return;
-	    mText += SDL_GetKeyName(key);
+	    if (utils::isCharacter(key.unicode))
+        {
+            char c = key.unicode;
+            std::stringstream str;
+            str << c;
+            mText.append(str.str());
+        }
 	}
 }
 

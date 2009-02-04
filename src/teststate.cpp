@@ -40,6 +40,7 @@
 #include "teststate.h"
 #include "loginstate.h"
 #include "input.h"
+#include "player.h"
 
 /*
 #include "graphics/camera.h"
@@ -48,6 +49,7 @@
 #include "utilities/log.h"
 */
 #include "interface/interfacemanager.h"
+#include "interface/list.h"
 #include "interface/textbox.h"
 #include "interface/textfield.h"
 #include "interface/window.h"
@@ -55,6 +57,7 @@
 #include "net/networkmanager.h"
 
 #include "irc/ircserver.h"
+#include "irc/ircmessage.h"
 
 #include <sstream>
 #include <SDL.h>
@@ -148,18 +151,27 @@ namespace ST
 
 		// create textbox in non-edit mode for chat
 		TextBox *chatBox = new TextBox("chat");
-		chatBox->setPosition(260, 335);
+		chatBox->setPosition(260, 370);
+		chatBox->setSize(230, 125);
 		chatBox->setRows(5);
 		chatBox->setFontSize(18);
 		interfaceManager->addSubWindow(win, chatBox);
 
 		// create textfield for sending chat
 		TextField *chatField = new TextField("sendchat");
-		chatField->setPosition(335, 350);
+		chatField->setPosition(335, 240);
 		chatField->setSize(180, 25);
 		chatField->setFontSize(18);
 		interfaceManager->addSubWindow(win, chatField);
 
+		// create userlist
+		List *list = new List("userlist");
+		list->setPosition(600, 550);
+		list->setSize(85, 400);
+		list->setFontSize(18);
+		interfaceManager->addWindow(list);
+
+        chatServer->setNick(player->getName());
         chatServer->connect("london.uk.whatnet.org");
 	}
 
@@ -191,20 +203,34 @@ namespace ST
 
 		if (inputManager->getKey(SDLK_RETURN))
 		{
-		    std::string chat = static_cast<TextField*>(interfaceManager->getWindow("sendchat"))->getText();
-		    if (chat.size() > 0)
+		    if (chatServer->isConnected())
 		    {
-//		        IRCMessage *msg = new IRCMessage;
-//		        msg->addString(chat);
-//		        msg->send(chatServer);
+                std::string chat = static_cast<TextField*>(interfaceManager->getWindow("sendchat"))->getText();
+                if (chat.size() > 0)
+                {
+                    IRCMessage *msg = new IRCMessage;
+                    msg->setType(IRCMessage::CHAT);
+                    msg->addString(chat);
+                    chatServer->sendMessage(msg);
+                    chat.insert(0, player->getName() + ": ");
+                    static_cast<TextBox*>(interfaceManager->getWindow("chat"))->addRow(chat);
+                    static_cast<TextField*>(interfaceManager->getWindow("sendchat"))->setText("");
+                }
+		    }
+		    else
+		    {
+		        static_cast<TextBox*>(interfaceManager->getWindow("chat"))->addRow("You aren't connected yet!");
 		    }
 		}
 
 		// Check for input, if escape pressed, exit
 		if (inputManager->getKey(SDLK_ESCAPE))
 		{
+		    chatServer->quit();
 			return false;
 		}
+
+		chatServer->process();
 
 		SDL_Delay(0);
 

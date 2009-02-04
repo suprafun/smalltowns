@@ -39,6 +39,8 @@
 
 #include "textfield.h"
 
+#include "../utilities/stringutils.h"
+
 #include <SDL_opengl.h>
 #include <FTGL/ftgl.h>
 
@@ -103,20 +105,49 @@ namespace ST
 
 		glEnd();
 
-		font->Render(mText.c_str(), mText.size(), FTPoint(x + 5.0f, y - 15.0f));
+        int length = 0;
+        if (mText.size() * 8.0f > width)
+        {
+            length = mText.size() - width / 8;
+        }
+		font->Render(mText.substr(length).c_str(), mText.substr(length).size(), FTPoint(x + 5.0f, y - 15.0f));
+
+		if (mFocus)
+		{
+		    glTranslatef(5.0f + mText.substr(length).size() * 7.0f, 0.0f, 0.0f);
+		    glBegin(GL_LINES);
+
+		    // draw a line for the carat
+		    glVertex3f(0.0f, 0.0f, 0.0f);
+		    glVertex3f(0.0f, -font->LineHeight(), 0.0f);
+
+		    glEnd();
+		}
 
 		glEnable(GL_DEPTH_TEST);
 	}
 
-	void TextField::processKey(SDLKey key)
+	void TextField::processKey(SDL_keysym key)
 	{
-	    if (key == SDLK_RETURN || key == SDLK_TAB)
+	    if (key.sym == SDLK_RETURN || key.sym == SDLK_TAB)
             return;
-        if (key == SDLK_BACKSPACE)
+        else if (key.sym == SDLK_BACKSPACE)
         {
             mText = mText.substr(0, mText.size() - 1);
             return;
         }
-	    mText += SDL_GetKeyName(key);
+        else if (key.sym == SDLK_SPACE)
+        {
+            mText.append(" ");
+            return;
+        }
+
+        if (utils::isCharacter(key.unicode))
+        {
+            char c = key.unicode;
+            std::stringstream str;
+            str << c;
+            mText.append(str.str());
+        }
 	}
 }

@@ -163,7 +163,7 @@ namespace ST
 	    mFocused = window;
 	}
 
-	void InterfaceManager::sendKey(SDLKey key)
+	void InterfaceManager::sendKey(SDL_keysym key)
 	{
 	    if (mFocused)
             mFocused->processKey(key);

@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2008, The Small Towns Dev Team
+ *	Copyright (c) 2009, The Small Towns Dev Team
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -31,57 +31,58 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-09-21
+ *	Date of file creation: 09-02-04
  *
  *	$Id$
  *
  ********************************************/
 
-#include "input.h"
-
-#include "graphics/graphics.h"
-#include "interface/interfacemanager.h"
-
-#include <SDL.h>
-#include <algorithm>
+#include "ircmessage.h"
 
 namespace ST
 {
-	void InputManager::getEvents()
-	{
-		SDL_Event event;
-		while (SDL_PollEvent(&event))
-		{
-			switch (event.type)
-			{
-			case SDL_KEYDOWN:
-				{
-					keysDown.push_back(event.key.keysym.sym);
-					interfaceManager->sendKey(event.key.keysym);
-				} break;
-            case SDL_MOUSEBUTTONDOWN:
+    IRCMessage::IRCMessage()
+    {
+        mType = 0;
+        mChannel = "#smalltowns";
+    }
+
+    void IRCMessage::setType(int type)
+    {
+        mType = type;
+    }
+
+    int IRCMessage::getType() const
+    {
+        return mType;
+    }
+
+    void IRCMessage::addString(const std::string &text)
+    {
+        switch(mType)
+        {
+            case CHAT:
+            {
+                if (mChannel != "" && mMessage.size() == 0)
                 {
-                    MouseButton *button = new MouseButton;
-                    button->button = event.button.button;
-                    button->state = event.button.state;
-                    button->x = event.button.x;
-                    button->y = graphicsEngine->getScreenHeight() - event.button.y;
-                    interfaceManager->sendMouse(button);
-                } break;
-			}
-		}
-	}
+                    mMessage = mChannel + " :";
+                }
+            } break;
 
-	bool InputManager::getKey(SDLKey key)
-	{
-		std::list<SDLKey>::iterator itr;
-		itr = std::find(keysDown.begin(), keysDown.end(), key);
-		if (itr != keysDown.end())
-		{
-			keysDown.erase(itr);
-			return true;
-		}
+            case JOIN:
+            {
+                if (mMessage.size() == 0)
+                {
+                    mMessage = "JOIN ";
+                    mChannel = text;
+                }
+            } break;
+        }
+        mMessage.append(text);
+    }
 
-		return false;
-	}
+    std::string IRCMessage::getText() const
+    {
+        return mMessage;
+    }
 }

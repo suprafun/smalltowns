@@ -38,6 +38,11 @@
  ********************************************/
 
 #include "ircserver.h"
+#include "ircmessage.h"
+
+#include "../interface/interfacemanager.h"
+#include "../interface/list.h"
+#include "../interface/textbox.h"
 
 #include <cppirclib.h>
 
@@ -60,5 +65,127 @@ namespace ST
     {
         mHostname = hostname;
         mClient->connectTo(mHostname, 6667);
+        static_cast<TextBox*>(interfaceManager->getWindow("chat"))->addRow("Connecting...");
+    }
+
+    void IRCServer::process()
+    {
+        if (!mClient->isConnected())
+            return;
+
+        if (!mRegistered && !mRegistering && mNick.size() > 1)
+        {
+            mClient->doRegistration("test", mNick,
+                                    "st 0 * :" "Small Towns 0.0.1");
+            mRegistering = true;
+        }
+
+        int packets = mClient->ping();
+
+        if (packets > 0)
+        {
+            IRC::Command *command = mClient->getCommand();
+            processMessage(command);
+        }
+    }
+
+    void IRCServer::processMessage(IRC::Command *command)
+    {
+        switch (command->getCommand())
+        {
+            case IRC::Command::IRC_PING:
+            {
+                IRC::Command *pingCommand = new IRC::Command();
+                pingCommand->setCommand(IRC::Command::IRC_PONG);
+                std::string str = command->getParam(0);
+                pingCommand->setParams(str);
+                mClient->sendCommand(pingCommand);
+            } break;
+
+            case IRC::Command::IRC_CONNECT:
+            {
+                mRegistered = true;
+                IRC::Command *conCommand = new IRC::Command;
+                conCommand->setCommand(IRC::Command::IRC_JOIN);
+                conCommand->setParams("#smalltowns");
+                mClient->sendCommand(conCommand);
+                static_cast<TextBox*>(interfaceManager->getWindow("chat"))->addRow("Connected!");
+            } break;
+
+            case IRC::Command::IRC_SAY:
+            {
+                int i = 0;
+                std::string text = command->getUserInfo() + ": ";
+                while (command->getParam(i) != "" && i < 255)
+                {
+                    text.append(command->getParam(i));
+                    ++i;
+                }
+                static_cast<TextBox*>(interfaceManager->getWindow("chat"))->addRow(text);
+            } break;
+
+            case IRC::Command::IRC_NAMES:
+            {
+                std::string name;
+                for (int i = 0; i < command->numParams(); ++i)
+                {
+                    name = command->getParam(i);
+                    static_cast<List*>(interfaceManager->getWindow("userlist"))->addLabel(name);
+                }
+            } break;
+
+            case IRC::Command::IRC_JOIN:
+            {
+                std::string name = command->getUserInfo();
+                std::string msg = name + " connected";
+                static_cast<List*>(interfaceManager->getWindow("userlist"))->addLabel(name);
+                static_cast<TextBox*>(interfaceManager->getWindow("chat"))->addRow(msg);
+            } break;
+
+            case IRC::Command::IRC_PART:
+            {
+                std::string name = command->getUserInfo();
+                std::string msg = name + " parted";
+                static_cast<List*>(interfaceManager->getWindow("userlist"))->removeLabel(name);
+                static_cast<TextBox*>(interfaceManager->getWindow("chat"))->addRow(msg);
+            } break;
+        }
+    }
+
+    void IRCServer::sendMessage(IRCMessage *msg)
+    {
+        IRC::Command *command = new IRC::Command;
+        switch (msg->getType())
+        {
+            case IRCMessage::CHAT:
+                command->setCommand(IRC::Command::IRC_SAY);
+                break;
+        }
+        command->setParams(msg->getText());
+        mClient->sendCommand(command);
+
+        delete msg;
+    }
+
+    void IRCServer::setNick(const std::string &nick)
+    {
+        if (!mClient->isConnected())
+            mNick = nick;
+
+        // TODO: Send nick change to server
+    }
+
+    void IRCServer::quit()
+    {
+        if (!mClient->isConnected())
+            return;
+        IRC::Command *command = new IRC::Command;
+        command->setCommand(IRC::Command::IRC_QUIT);
+        mClient->sendCommand(command);
+    }
+
+    bool IRCServer::isConnected()
+    {
+        return mRegistered;
     }
 }

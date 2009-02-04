@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2008, The Small Towns Dev Team
+ *	Copyright (c) 2009, The Small Towns Dev Team
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -31,57 +31,42 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-09-21
+ *	Date of file creation: 09-02-04
  *
  *	$Id$
  *
  ********************************************/
 
-#include "input.h"
+#ifndef ST_IRCMESSAGE_HEADER
+#define ST_IRCMESSAGE_HEADER
 
-#include "graphics/graphics.h"
-#include "interface/interfacemanager.h"
-
-#include <SDL.h>
-#include <algorithm>
+#include <string>
 
 namespace ST
 {
-	void InputManager::getEvents()
-	{
-		SDL_Event event;
-		while (SDL_PollEvent(&event))
-		{
-			switch (event.type)
-			{
-			case SDL_KEYDOWN:
-				{
-					keysDown.push_back(event.key.keysym.sym);
-					interfaceManager->sendKey(event.key.keysym);
-				} break;
-            case SDL_MOUSEBUTTONDOWN:
-                {
-                    MouseButton *button = new MouseButton;
-                    button->button = event.button.button;
-                    button->state = event.button.state;
-                    button->x = event.button.x;
-                    button->y = graphicsEngine->getScreenHeight() - event.button.y;
-                    interfaceManager->sendMouse(button);
-                } break;
-			}
-		}
-	}
+    class IRCMessage
+    {
+    public:
+        IRCMessage();
 
-	bool InputManager::getKey(SDLKey key)
-	{
-		std::list<SDLKey>::iterator itr;
-		itr = std::find(keysDown.begin(), keysDown.end(), key);
-		if (itr != keysDown.end())
-		{
-			keysDown.erase(itr);
-			return true;
-		}
+        void setType(int type);
+        int getType() const;
+        void addString(const std::string &text);
+        std::string getText() const;
 
-		return false;
-	}
+        enum
+        {
+            CHAT    = 0,
+            NOTICE  = 1,
+            PRIVMSG = 2,
+            JOIN    = 3
+        };
+
+    private:
+        std::string mChannel;
+        std::string mMessage;
+        int mType;
+    };
 }
+
+#endif

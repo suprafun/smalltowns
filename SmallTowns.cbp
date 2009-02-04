@@ -18,6 +18,7 @@
 					<Add option="-g" />
 					<Add option="`sdl-config --cflags`" />
 					<Add option="`freetype-config --cflags`" />
+					<Add directory="libs/cppirclib" />
 				</Compiler>
 				<Linker>
 					<Add option="`sdl-config --libs`" />
@@ -28,6 +29,7 @@
 					<Add library="tinyxml" />
 					<Add library="enet" />
 					<Add library="ftgl" />
+					<Add library="libs/cppirclib/libcppirclib.a" />
 				</Linker>
 			</Target>
 		</Build>
@@ -52,14 +54,24 @@
 		<Unit filename="src/graphics/texture.h" />
 		<Unit filename="src/input.cpp" />
 		<Unit filename="src/input.h" />
+		<Unit filename="src/interface/button.cpp" />
+		<Unit filename="src/interface/button.h" />
 		<Unit filename="src/interface/interfacemanager.cpp" />
 		<Unit filename="src/interface/interfacemanager.h" />
 		<Unit filename="src/interface/label.cpp" />
 		<Unit filename="src/interface/label.h" />
+		<Unit filename="src/interface/list.cpp" />
+		<Unit filename="src/interface/list.h" />
+		<Unit filename="src/interface/textbox.cpp" />
+		<Unit filename="src/interface/textbox.h" />
 		<Unit filename="src/interface/textfield.cpp" />
 		<Unit filename="src/interface/textfield.h" />
 		<Unit filename="src/interface/window.cpp" />
 		<Unit filename="src/interface/window.h" />
+		<Unit filename="src/irc/ircmessage.cpp" />
+		<Unit filename="src/irc/ircmessage.h" />
+		<Unit filename="src/irc/ircserver.cpp" />
+		<Unit filename="src/irc/ircserver.h" />
 		<Unit filename="src/loginstate.cpp" />
 		<Unit filename="src/loginstate.h" />
 		<Unit filename="src/main.cpp" />
@@ -74,6 +86,8 @@
 		<Unit filename="src/net/packet.cpp" />
 		<Unit filename="src/net/packet.h" />
 		<Unit filename="src/net/protocol.h" />
+		<Unit filename="src/player.cpp" />
+		<Unit filename="src/player.h" />
 		<Unit filename="src/teststate.cpp" />
 		<Unit filename="src/teststate.h" />
 		<Unit filename="src/tile.cpp" />

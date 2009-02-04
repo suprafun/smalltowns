@@ -149,7 +149,7 @@ namespace ST
         {
             if (port == "")
                 port = "0";
-            networkManager->connect(hostname, toInt(port));
+            networkManager->connect(hostname, utils::toInt(port));
         }
 	}
 }

@@ -63,9 +63,10 @@ namespace ST
         void setFontSize(int size);
         void setRows(int rows);
         void setEditable(bool editable);
+        void addRow(const std::string &text);
         void drawWindow();
 
-        virtual void processKey(SDLKey key);
+        virtual void processKey(SDL_keysym key);
 
     private:
         FTFont *font;

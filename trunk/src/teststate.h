@@ -33,8 +33,6 @@
  *
  *	Date of file creation: 08-09-21
  *
- *	Date file last modified: 08-09-21
- *
  *	$Id$
  *
  ********************************************/
@@ -48,6 +46,8 @@
 #define ST_TESTSTATE_HEADER
 
 #include "gamestate.h"
+
+#include <string>
 
 namespace ST
 {

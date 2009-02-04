@@ -101,7 +101,7 @@ namespace ST
 
 		glEnd();
 
-		font->Render(mText.c_str(), mText.size(), FTPoint(x + 5.0f, y - height / 2));
+		font->Render(mText.c_str(), mText.size(), FTPoint(x + 8.0f, y - 6.0f - height / 2));
 
 		glEnable(GL_DEPTH_TEST);
 	}

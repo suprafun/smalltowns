@@ -70,6 +70,7 @@ Command* IRCParser::parse(char *data, unsigned int length)
     {
         ++start;
     }
+
     for (unsigned int i = start; i < length; ++i)
     {
         if (data[i] == '\n' || data[i] == '\r')
@@ -165,10 +166,25 @@ Command* IRCParser::parseCommand(std::string &prefix,
             c->setCommand(Command::IRC_NAMES);
 
             // set the prefix
-            c->setChanInfo(prefix);
+            //c->setChanInfo(prefix);
+
+            // set the channel
+            std::size_t chan, end;
+            chan = params.find('#');
+            if (chan == std::string::npos)
+            {
+                chan = 0;
+            }
+            end = params.find(':');
+            if (end == std::string::npos)
+            {
+                end = 0;
+            }
+
+            c->setChanInfo(params.substr(chan, end-chan));
 
             // set the params
-            c->setParams(params);
+            c->setParams(params.substr(end+1));
         } break;
 
         case Command::IRC_SERVER:

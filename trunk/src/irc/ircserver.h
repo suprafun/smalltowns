@@ -93,6 +93,21 @@ namespace ST
          */
         void sendMessage(IRCMessage *msg);
 
+        /**
+         * Set nickname to use on IRC
+         */
+        void setNick(const std::string &nick);
+
+        /**
+         * Disconnect from IRC
+         */
+        void quit();
+
+        /**
+         * Returns whether it has connected to the irc server yet
+         */
+        bool isConnected();
+
 
     private:
         std::string mHostname;

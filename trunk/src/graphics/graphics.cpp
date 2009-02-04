@@ -63,6 +63,9 @@ namespace ST
 				"failed to initialise SDL");
 		}
 
+		// needed for input
+		SDL_EnableUNICODE(true);
+
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);

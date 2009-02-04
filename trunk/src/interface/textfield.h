@@ -63,7 +63,7 @@ namespace ST
 		void setFontSize(int size);
 		void drawWindow();
 
-		virtual void processKey(SDLKey key);
+		virtual void processKey(SDL_keysym key);
 
     private:
         FTFont *font;

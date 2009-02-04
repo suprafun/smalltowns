@@ -39,9 +39,10 @@
 
 #include "game.h"
 
+#include "connectstate.h"
 #include "input.h"
 #include "map.h"
-#include "connectstate.h"
+#include "player.h"
 #include "graphics/graphics.h"
 #include "interface/interfacemanager.h"
 #include "net/networkmanager.h"
@@ -56,9 +57,11 @@ namespace ST
 	Map *mapEngine = NULL;
 	InterfaceManager *interfaceManager = NULL;
 	NetworkManager *networkManager = NULL;
+	Player *player = NULL;
 
 	Game::~Game()
 	{
+	    delete player;
 		delete networkManager;
 		delete interfaceManager;
 		delete mapEngine;
@@ -69,12 +72,13 @@ namespace ST
 
 	void Game::run()
 	{
-		logger = new Log();
-		graphicsEngine = new GraphicsEngine();
-		inputManager = new InputManager();
-		mapEngine = new Map();
-		interfaceManager = new InterfaceManager();
-		networkManager = new NetworkManager();
+		logger = new Log;
+		graphicsEngine = new GraphicsEngine;
+		inputManager = new InputManager;
+		mapEngine = new Map;
+		interfaceManager = new InterfaceManager;
+		networkManager = new NetworkManager;
+		player = new Player;
 
 		// Create state to connect to server
 		mState = new ConnectState();

@@ -42,6 +42,7 @@
 #include "teststate.h"
 #include "input.h"
 #include "game.h"
+#include "player.h"
 
 #include "interface/button.h"
 #include "interface/interfacemanager.h"
@@ -131,6 +132,7 @@ namespace ST
 	    std::string username = static_cast<TextField*>(interfaceManager->getWindow("Username"))->getText();
         if (username != "")
         {
+            player->setName(username);
             GameState *state = new TestState;
             game->changeState(state);
         }

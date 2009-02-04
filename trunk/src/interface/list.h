@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2008, The Small Towns Dev Team
+ *	Copyright (c) 2009, The Small Towns Dev Team
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -31,57 +31,45 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-09-21
+ *	Date of file creation: 09-02-04
  *
  *	$Id$
  *
  ********************************************/
 
-#include "input.h"
+/**
+ * The list is for displaying a list of things
+ */
 
-#include "graphics/graphics.h"
-#include "interface/interfacemanager.h"
+#ifndef ST_LIST_HEADER
+#define ST_LIST_HEADER
 
-#include <SDL.h>
-#include <algorithm>
+#include "window.h"
+
+#include <list>
+#include <string>
+
+class FTFont;
 
 namespace ST
 {
-	void InputManager::getEvents()
+	class List : public Window
 	{
-		SDL_Event event;
-		while (SDL_PollEvent(&event))
-		{
-			switch (event.type)
-			{
-			case SDL_KEYDOWN:
-				{
-					keysDown.push_back(event.key.keysym.sym);
-					interfaceManager->sendKey(event.key.keysym);
-				} break;
-            case SDL_MOUSEBUTTONDOWN:
-                {
-                    MouseButton *button = new MouseButton;
-                    button->button = event.button.button;
-                    button->state = event.button.state;
-                    button->x = event.button.x;
-                    button->y = graphicsEngine->getScreenHeight() - event.button.y;
-                    interfaceManager->sendMouse(button);
-                } break;
-			}
-		}
-	}
+	public:
+		List(const std::string &name);
+		~List();
+		void addLabel(const std::string &label);
+		void removeLabel(const std::string &label);
+		void setFontSize(int size);
+		virtual void drawWindow();
 
-	bool InputManager::getKey(SDLKey key)
-	{
-		std::list<SDLKey>::iterator itr;
-		itr = std::find(keysDown.begin(), keysDown.end(), key);
-		if (itr != keysDown.end())
-		{
-			keysDown.erase(itr);
-			return true;
-		}
+    private:
+        std::list<std::string> mTextList;
+        FTFont *font;
 
-		return false;
-	}
+        typedef std::list<std::string>::iterator ListItr;
+	};
 }
+
+#endif
+

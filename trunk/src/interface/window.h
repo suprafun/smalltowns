@@ -72,7 +72,7 @@ namespace ST
 		int getNumChildren() const;
 
 		virtual void drawWindow();
-		virtual void processKey(SDLKey key);
+		virtual void processKey(SDL_keysym key);
 		virtual void processMouse(MouseButton *button);
 
 	protected:

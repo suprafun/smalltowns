@@ -110,7 +110,7 @@ namespace ST
         /**
          * Send a key event to the interface
          */
-        void sendKey(SDLKey key);
+        void sendKey(SDL_keysym key);
 
         /**
          * Send a mouse event to the interface

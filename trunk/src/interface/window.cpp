@@ -178,7 +178,7 @@ namespace ST
 		glEnable(GL_DEPTH_TEST);
 	}
 
-	void Window::processKey(SDLKey key)
+	void Window::processKey(SDL_keysym key)
 	{
 
 	}

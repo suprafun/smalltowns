@@ -41,6 +41,10 @@
 
 #include "enet/enet.h"
 
+#ifdef WIN32
+typedef unsigned int uint32_t;
+#endif
+
 namespace ST
 {
     Packet::Packet(int id)

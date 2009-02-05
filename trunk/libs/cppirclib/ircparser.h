@@ -42,6 +42,12 @@
 
 #include <string>
 
+#ifdef WIN32
+#define EXPORT __declspec(dllexport)
+#else
+#define EXPORT
+#endif
+
 namespace IRC
 {
     class Command;
@@ -55,7 +61,7 @@ namespace IRC
          * @param length The size of the data
          * @return Returns the command received
          */
-        Command* parse(char *data, unsigned int length);
+        EXPORT Command* parse(char *data, unsigned int length);
 
         /**
          * Parse the command
@@ -65,7 +71,7 @@ namespace IRC
          * @param params The parameters
          * @return Returns the command
          */
-        Command* parseCommand(std::string &prefix,
+        EXPORT Command* parseCommand(std::string &prefix,
                               const std::string &command,
                               std::string &params);
 
@@ -74,13 +80,13 @@ namespace IRC
          * @param data The data (must be null terminated)
          * @return Returns the word found in data
          */
-        std::string parseWord(char *data);
+        EXPORT std::string parseWord(char *data);
 
         /**
          * Lookup the command
          * Changes a string to its enum
          */
-        unsigned int lookupCommand(const std::string &command);
+        EXPORT unsigned int lookupCommand(const std::string &command);
     };
 }
 

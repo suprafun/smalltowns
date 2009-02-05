@@ -144,7 +144,7 @@ namespace ST
 		Node *node = graphicsEngine->createNode("player", "base.png", &p);
 		*/
 		// create window for chat
-		Window *win = new Window("Login Window");
+		Window *win = new Window("Chat Window");
 		win->setPosition(200, 400);
 		win->setSize(375, 200);
 		interfaceManager->addWindow(win);
@@ -152,7 +152,7 @@ namespace ST
 		// create textbox in non-edit mode for chat
 		TextBox *chatBox = new TextBox("chat");
 		chatBox->setPosition(260, 370);
-		chatBox->setSize(230, 125);
+		chatBox->setSize(255, 125);
 		chatBox->setRows(5);
 		chatBox->setFontSize(18);
 		interfaceManager->addSubWindow(win, chatBox);
@@ -171,8 +171,10 @@ namespace ST
 		list->setFontSize(18);
 		interfaceManager->addWindow(list);
 
-        chatServer->setNick(player->getName());
-        chatServer->connect("london.uk.whatnet.org");
+		std::string nick = player->getName();
+		std::string host = "london.uk.whatnet.org";
+		chatServer->setNick(nick);
+        chatServer->connect(host);
 	}
 
 	void TestState::exit()

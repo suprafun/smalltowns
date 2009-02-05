@@ -53,7 +53,7 @@ class FTFont;
 
 namespace ST
 {
-    class MouseButton;
+    struct MouseButton;
 	class Button : public Window
 	{
 	public:

@@ -40,9 +40,15 @@
 #include "cppirclib.h"
 #include "ircparser.h"
 
+#ifdef WIN32
+#include <Winsock2.h>
+#else
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#endif
+
+#include <sstream>
 
 using namespace IRC;
 
@@ -54,13 +60,27 @@ IRCParser gIrcParser;
 
 Socket::Socket()
 {
+#ifdef WIN32
+	WSADATA wsaData;   // if this doesn't work
+    //WSAData wsaData; // then try this instead
+
+    if (WSAStartup(MAKEWORD(1, 1), &wsaData) != 0) {
+        fprintf(stderr, "WSAStartup failed.\n");
+        exit(1);
+    }
+#endif
     mDescriptor = socket(PF_INET, SOCK_STREAM, 0);
     memset (&mAddress, 0, sizeof(mAddress));
 }
 
 Socket::~Socket()
 {
+#ifdef WIN32
+	closesocket(mDescriptor);
+	WSACleanup(); 
+#else
     close(mDescriptor);
+#endif
 }
 
 unsigned int Socket::getSocket() const
@@ -110,6 +130,7 @@ void Command::setParams(const std::string &params)
     unsigned int position = 0;
     // previous position
     int prev = 0;
+	mParams.clear();
 
     // keep looping until out of params
     while(1)
@@ -122,7 +143,7 @@ void Command::setParams(const std::string &params)
         }
         else
         {
-            mParams.push_back(params.substr(prev));
+			mParams.push_back(params.substr(prev));
             break;
         }
     }
@@ -184,7 +205,7 @@ IRCConnection::~IRCConnection()
 int IRCConnection::checkForData(char *data, unsigned int length) const
 {
     int len = 0;
-    int pos = 0;
+    unsigned int pos = 0;
     unsigned int socket = mSocket->getSocket();
     timeval tv;
     fd_set readfd;
@@ -213,14 +234,14 @@ int IRCConnection::checkForData(char *data, unsigned int length) const
             ++pos;
             // check it doesnt overflow, if it does,
             // return 0 so it doesnt try processing
-            if (pos > length)
+            if (pos >= length)
                 return 0;
         }
     }
     return pos;
 }
 
-void IRCConnection::sendData(char *data, unsigned int length)
+void IRCConnection::sendData(const char *data, unsigned int length)
 {
     int len;
 
@@ -327,7 +348,7 @@ bool IRCClient::isConnected() const
 
 int IRCClient::ping()
 {
-    char data[255];
+	char data[255];
     int len;
 
     // check for new data to arrive from irc server
@@ -342,54 +363,56 @@ int IRCClient::ping()
 
 void IRCClient::sendCommand(Command *command)
 {
-    std::string data;
+    std::stringstream data;
     switch (command->getCommand())
     {
         case Command::IRC_PASS:
-            data = "PASS";
+            data << "PASS";
             break;
 
         case Command::IRC_NICK:
-            data = "NICK";
+            data << "NICK";
             break;
 
         case Command::IRC_USER:
-            data = "USER";
+            data << "USER";
             break;
 
         case Command::IRC_PONG:
-            data = "PONG";
+            data << "PONG";
             break;
 
         case Command::IRC_JOIN:
-            data = "JOIN";
+            data << "JOIN";
             break;
 
         case Command::IRC_SAY:
-            data = "PRIVMSG";
+            data << "PRIVMSG";
             break;
 
         case Command::IRC_QUIT:
-            data = "QUIT";
+            data << "QUIT";
             break;
 
         case Command::IRC_VERSION:
-            data = "CTCP VERSION";
+            data << "CTCP VERSION";
             break;
 
     }
 
-    int i = 0;
-    while (command->getParam(i) != "")
+	std::string param = "";
+	for (int i = 0; i < command->numParams(); ++i)
     {
-        data += " ";
-        data += command->getParam(i);
-        ++i;
+		param = command->getParam(i);
+        data << " " << param;
     }
-    data += "\r\n";
-    mConnection->sendData((char*)data.c_str(), data.size());
+    data << "\r\n";
 
-    printf("%s", data.c_str());
+	int length = strlen(data.str().c_str());
+	std::string str = data.str();
+    mConnection->sendData(str.c_str(), length);
+
+    printf("%s", str.c_str());
 
     delete command;
 }

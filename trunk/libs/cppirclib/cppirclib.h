@@ -40,7 +40,16 @@
 #ifndef IRCLIB
 #define IRCLIB
 
+#ifdef WIN32
+#include <winsock2.h>
+typedef unsigned int uint32_t;
+typedef unsigned short uint16_t;
+#define EXPORT __declspec(dllexport)
+#else
 #include <netinet/in.h>
+#define EXPORT
+#endif
+
 #include <list>
 #include <map>
 #include <string>
@@ -89,45 +98,45 @@ namespace IRC
         /**
          * Constructor
          */
-        Command();
+        EXPORT Command();
 
         /**
          * Destructor
          */
-        ~Command();
+        EXPORT ~Command();
 
         /**
          * Set Command
          */
-        void setCommand(unsigned int command);
+        EXPORT void setCommand(unsigned int command);
 
         /**
          * Set Params
          */
-        void setParams(const std::string &params);
+        EXPORT void setParams(const std::string &params);
 
         /**
          * Set Info
          */
-        void setUserInfo(const std::string &info);
-        void setChanInfo(const std::string &info);
+        EXPORT void setUserInfo(const std::string &info);
+        EXPORT void setChanInfo(const std::string &info);
 
         /**
          * Get Command
          */
-        unsigned int getCommand() const;
+        EXPORT unsigned int getCommand() const;
 
         /**
          * Get Params
          */
-        std::string getParam(unsigned int param) const;
-        int numParams() const;
+        EXPORT std::string getParam(unsigned int param) const;
+        EXPORT int numParams() const;
 
         /**
          * Get Info
          */
-        std::string getUserInfo() const;
-        std::string getChanInfo() const;
+        EXPORT std::string getUserInfo() const;
+        EXPORT std::string getChanInfo() const;
 
     private:
         unsigned int mCommand;
@@ -161,7 +170,7 @@ namespace IRC
          * Send data
          * @param data The data to send to the host
          */
-        void sendData(char *data, unsigned int length);
+        void sendData(const char *data, unsigned int length);
 
         /**
          * Get Socket
@@ -223,7 +232,7 @@ namespace IRC
         /**
          * Constructor
          */
-        IRCClient();
+        EXPORT IRCClient();
 
         /**
          * Destructor
@@ -234,50 +243,50 @@ namespace IRC
          * Init
          * Must be called before connecting
          */
-        void init();
+        EXPORT void init();
 
         /**
          * Connect to IRC Server
          * @param hostname The hostname to connect to
          * @return Returns whether its a valid hostname
          */
-        bool connectTo(const std::string &hostname, unsigned int port);
+        EXPORT bool connectTo(const std::string &hostname, unsigned int port);
 
         /**
          * Is Connected
          * @return Returns true when connected to the server
          */
-        bool isConnected() const;
+        EXPORT bool isConnected() const;
 
         /**
          * Ping
          * Checks if there is data to recieve
          * @return Returns the number of commands received
          */
-        int ping();
+        EXPORT int ping();
 
         /**
          * Send Command
          * @param Command to send
          */
-        void sendCommand(Command *command);
+        EXPORT void sendCommand(Command *command);
 
         /**
          * Get Command
          * @return Returns the IRC Command
          */
-        Command* getCommand();
+        EXPORT Command* getCommand();
 
         /**
          * Add Command
          */
-        void addCommand(char *data, unsigned int length);
+        EXPORT void addCommand(char *data, unsigned int length);
 
         /**
          * Do Registration
          * Register with server (sends PASS, NICK, USER
          */
-        void doRegistration(const std::string &password,
+        EXPORT void doRegistration(const std::string &password,
                             const std::string &nick,
                             const std::string &user);
 
@@ -285,12 +294,12 @@ namespace IRC
          * Add Channel
          * @param channel The name of the channel to add
          */
-        void addChannel(const std::string &channel);
+        EXPORT void addChannel(const std::string &channel);
 
         /**
          * Get Channel
          */
-        IRCChannel* getChannel(const std::string &channel);
+        EXPORT IRCChannel* getChannel(const std::string &channel);
 
     private:
         IRCConnection *mConnection;

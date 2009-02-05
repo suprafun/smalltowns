@@ -52,7 +52,7 @@
 
 namespace ST
 {
-    class MouseButton;
+    struct MouseButton;
 
 	class Window
 	{

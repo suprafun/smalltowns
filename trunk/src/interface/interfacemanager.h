@@ -51,7 +51,7 @@
 namespace ST
 {
 	class Window;
-	class MouseButton;
+	struct MouseButton;
 
 	class InterfaceManager
 	{

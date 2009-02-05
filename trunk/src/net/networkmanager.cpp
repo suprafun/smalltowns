@@ -46,6 +46,8 @@ namespace ST
 {
 	NetworkManager::NetworkManager()
 	{
+		enet_initialize();
+		atexit(enet_deinitialize);
         mHost = new Host();
 	}
 

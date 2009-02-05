@@ -92,7 +92,9 @@ namespace IRC
             IRC_SAY,
             IRC_OP,
             IRC_DEOP,
-            IRC_NAMES
+            IRC_NAMES,
+			ERR_BADNICK,
+			ERR_NICKINUSE,
         };
 
         /**

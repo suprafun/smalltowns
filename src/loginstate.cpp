@@ -67,6 +67,13 @@ namespace ST
 		win->setSize(375, 200);
 		interfaceManager->addWindow(win);
 
+		// create label for error messages
+		Label *errorLabel = new Label("error");
+		errorLabel->setPosition(240, 570);
+		errorLabel->setText("");
+		errorLabel->setFontSize(24);
+		interfaceManager->addSubWindow(win, errorLabel);
+
 		// create label for username
 		Label *usernameLabel = new Label("0");
 		usernameLabel->setPosition(240, 335);

@@ -160,6 +160,24 @@ Command* IRCParser::parseCommand(std::string &prefix,
             c->setParams(params.substr(1));
         } break;
 
+		case Command::IRC_PART:
+		{
+			// set the command
+			c->setCommand(Command::IRC_PART);
+
+			// set the prefix
+			std::size_t exclamation;
+			exclamation = prefix.find("!");
+			if (exclamation != std::string::npos)
+			{
+				prefix = prefix.substr(0, exclamation);
+			}
+			c->setUserInfo(prefix);
+
+			// set the params
+			c->setParams(params.substr(1));
+		} break;
+
         case Command::IRC_NAMES:
         {
             // set the command
@@ -193,6 +211,16 @@ Command* IRCParser::parseCommand(std::string &prefix,
             c->setUserInfo(prefix);
             c->setParams(params);
         } break;
+
+		case Command::ERR_BADNICK:
+		{
+			c->setCommand(Command::ERR_BADNICK);
+		} break;
+
+		case Command::ERR_NICKINUSE:
+		{
+			c->setCommand(Command::ERR_NICKINUSE);
+		} break;
     }
 
     return c;
@@ -223,42 +251,57 @@ unsigned int IRCParser::lookupCommand(const std::string &command)
         return Command::IRC_NOTICE;
     }
 
-    if (command == "PING")
+    else if (command == "PING")
     {
         return Command::IRC_PING;
     }
 
-    if (command == "JOIN")
+    else if (command == "JOIN")
     {
         return Command::IRC_JOIN;
     }
 
-    if (command == "SAY" || command == "PRIVMSG")
+	else if (command == "PART")
+	{
+		return Command::IRC_PART;
+	}
+
+    else if (command == "SAY" || command == "PRIVMSG")
     {
         return Command::IRC_SAY;
     }
 
-    if (command == "QUIT")
+    else if (command == "QUIT")
     {
         return Command::IRC_QUIT;
     }
 
-    if (command == "VERSION")
+    else if (command == "VERSION")
     {
         return Command::IRC_VERSION;
     }
 
-    if (command == "001")
+    else if (command == "001")
     {
         return Command::IRC_CONNECT;
     }
 
-    if (command == "353")
+    else if (command == "353")
     {
         return Command::IRC_NAMES;
     }
 
-    if (command == "461")
+	else if (command == "432")
+	{
+		return Command::ERR_BADNICK;
+	}
+
+	else if (command == "433")
+	{
+		return Command::ERR_NICKINUSE;
+	}
+
+    else if (command == "461")
     {
         return Command::IRC_SERVER;
     }

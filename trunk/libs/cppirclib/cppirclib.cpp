@@ -348,11 +348,11 @@ bool IRCClient::isConnected() const
 
 int IRCClient::ping()
 {
-	char data[255];
+	char data[512];
     int len;
 
     // check for new data to arrive from irc server
-    if ((len = mConnection->checkForData(data, 255)) > 0)
+    if ((len = mConnection->checkForData(data, 512)) > 0)
     {
         addCommand(data, len);
         return 1;
@@ -385,6 +385,10 @@ void IRCClient::sendCommand(Command *command)
         case Command::IRC_JOIN:
             data << "JOIN";
             break;
+
+		case Command::IRC_PART:
+			data << "PART";
+			break;
 
         case Command::IRC_SAY:
             data << "PRIVMSG";

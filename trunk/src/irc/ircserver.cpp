@@ -40,7 +40,11 @@
 #include "ircserver.h"
 #include "ircmessage.h"
 
+#include "../game.h"
+#include "../loginstate.h"
+
 #include "../interface/interfacemanager.h"
+#include "../interface/label.h"
 #include "../interface/list.h"
 #include "../interface/textbox.h"
 
@@ -124,6 +128,7 @@ namespace ST
                 while (command->getParam(i) != "" && i < 255)
                 {
                     text.append(command->getParam(i));
+					text.append(" ");
                     ++i;
                 }
                 TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
@@ -168,6 +173,24 @@ namespace ST
 				if (box)
 					box->addRow(msg);
             } break;
+
+			case IRC::Command::ERR_BADNICK:
+			{
+				GameState *state = new LoginState;
+				game->changeState(state);
+				Label *label = static_cast<Label*>(interfaceManager->getWindow("error"));
+				if (label)
+					label->setText("Invalid characters in nick.");
+			} break;
+
+			case IRC::Command::ERR_NICKINUSE:
+			{
+				GameState *state = new LoginState;
+				game->changeState(state);
+				Label *label = static_cast<Label*>(interfaceManager->getWindow("error"));
+				if (label)
+					label->setText("Username already in use");
+			} break;
         }
     }
 

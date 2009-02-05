@@ -152,12 +152,12 @@ Command* IRCParser::parseCommand(std::string &prefix,
             exclamation = prefix.find("!");
             if (exclamation != std::string::npos)
             {
-                prefix = prefix.substr(0, exclamation-1);
+                prefix = prefix.substr(0, exclamation);
             }
             c->setUserInfo(prefix);
 
             // set the params
-            c->setParams(params.substr(1, params.size() - 1));
+            c->setParams(params.substr(1));
         } break;
 
         case Command::IRC_NAMES:

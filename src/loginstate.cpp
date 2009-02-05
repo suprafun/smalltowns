@@ -112,12 +112,8 @@ namespace ST
 			game->changeState(state);
 		}
 
-		if (inputManager->getKey(SDLK_RETURN))
-		{
-		    submit();
-		}
-
-		if (static_cast<Button*>(interfaceManager->getWindow("Submit"))->clicked())
+		if (inputManager->getKey(SDLK_RETURN) ||
+			static_cast<Button*>(interfaceManager->getWindow("Submit"))->clicked())
 		{
 		    submit();
 		}
@@ -130,7 +126,7 @@ namespace ST
 	void LoginState::submit()
 	{
 	    std::string username = static_cast<TextField*>(interfaceManager->getWindow("Username"))->getText();
-        if (username != "")
+        if (username.size() > 1)
         {
             player->setName(username);
             GameState *state = new TestState;

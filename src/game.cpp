@@ -81,6 +81,7 @@ namespace ST
 		player = new Player;
 
 		// Create state to connect to server
+		mOldState = 0;
 		mState = new ConnectState();
 		mState->enter();
 

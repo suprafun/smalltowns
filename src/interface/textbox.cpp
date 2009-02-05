@@ -143,7 +143,7 @@ namespace ST
             {
                 if (numberRows < mRows)
                 {
-                    font->Render(mTextHistory[i].c_str(), mTextHistory[i].size(), FTPoint(x + 5.0f, y - (i + 1) * 15.0f));
+                    font->Render(mTextHistory[i].c_str(), mTextHistory[i].size(), FTPoint(x + 5.0f, y - (mRows - numberRows + 1) * 15.0f));
                 }
                 ++numberRows;
             }

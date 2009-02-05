@@ -45,6 +45,9 @@
 #define ST_PACKET_HEADER
 
 #include <string>
+#ifdef WIN32
+typedef int int32_t;
+#endif
 
 namespace ST
 {

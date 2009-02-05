@@ -49,7 +49,7 @@
 namespace ST
 {
     IRCServer::IRCServer():
-    mHostname(""), mNick(""), mClient(0),
+    mClient(0),
     mRegistering(false), mRegistered(false)
     {
         mClient = new IRC::IRCClient();
@@ -65,7 +65,9 @@ namespace ST
     {
         mHostname = hostname;
         mClient->connectTo(mHostname, 6667);
-        static_cast<TextBox*>(interfaceManager->getWindow("chat"))->addRow("Connecting...");
+        TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
+		if (box)
+			box->addRow("Connecting...");
     }
 
     void IRCServer::process()
@@ -75,8 +77,9 @@ namespace ST
 
         if (!mRegistered && !mRegistering && mNick.size() > 1)
         {
-            mClient->doRegistration("test", mNick,
-                                    "st 0 * :" "Small Towns 0.0.1");
+			std::string pass = "test";
+			std::string realname = "st 0 * :" "Small Towns 0.0.1";
+            mClient->doRegistration(pass, mNick, realname);
             mRegistering = true;
         }
 
@@ -109,7 +112,9 @@ namespace ST
                 conCommand->setCommand(IRC::Command::IRC_JOIN);
                 conCommand->setParams("#smalltowns");
                 mClient->sendCommand(conCommand);
-                static_cast<TextBox*>(interfaceManager->getWindow("chat"))->addRow("Connected!");
+                TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
+				if (box)
+					box->addRow("Connected!");
             } break;
 
             case IRC::Command::IRC_SAY:
@@ -121,7 +126,9 @@ namespace ST
                     text.append(command->getParam(i));
                     ++i;
                 }
-                static_cast<TextBox*>(interfaceManager->getWindow("chat"))->addRow(text);
+                TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
+				if (box)
+					box->addRow(text);
             } break;
 
             case IRC::Command::IRC_NAMES:
@@ -130,24 +137,36 @@ namespace ST
                 for (int i = 0; i < command->numParams(); ++i)
                 {
                     name = command->getParam(i);
-                    static_cast<List*>(interfaceManager->getWindow("userlist"))->addLabel(name);
+                    List *list = static_cast<List*>(interfaceManager->getWindow("userlist"));
+					if (list)
+						list->addLabel(name);
                 }
             } break;
 
             case IRC::Command::IRC_JOIN:
             {
                 std::string name = command->getUserInfo();
+				if (name == mNick)
+					return;
                 std::string msg = name + " connected";
-                static_cast<List*>(interfaceManager->getWindow("userlist"))->addLabel(name);
-                static_cast<TextBox*>(interfaceManager->getWindow("chat"))->addRow(msg);
+                List *list = static_cast<List*>(interfaceManager->getWindow("userlist"));
+				if (list)
+					list->addLabel(name);
+                TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
+				if (box)
+					box->addRow(msg);
             } break;
 
             case IRC::Command::IRC_PART:
             {
                 std::string name = command->getUserInfo();
                 std::string msg = name + " parted";
-                static_cast<List*>(interfaceManager->getWindow("userlist"))->removeLabel(name);
-                static_cast<TextBox*>(interfaceManager->getWindow("chat"))->addRow(msg);
+                List *list = static_cast<List*>(interfaceManager->getWindow("userlist"));
+				if (list)
+					list->removeLabel(name);
+                TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
+				if (box)
+					box->addRow(msg);
             } break;
         }
     }

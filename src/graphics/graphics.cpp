@@ -95,6 +95,7 @@ namespace ST
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthFunc(GL_LEQUAL);
 
+		mCamera = NULL;
 	}
 
 	GraphicsEngine::~GraphicsEngine()

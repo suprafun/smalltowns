@@ -42,6 +42,9 @@
 #include "game.h"
 #include "loginstate.h"
 
+#include "graphics/camera.h"
+#include "graphics/graphics.h"
+
 #include "interface/button.h"
 #include "interface/interfacemanager.h"
 #include "interface/label.h"
@@ -73,28 +76,30 @@ namespace ST
 		Label *hostnameLabel = new Label("HostnameLabel");
 		hostnameLabel->setPosition(260, 335);
 		hostnameLabel->setText("Server: ");
-		hostnameLabel->setFontSize(24);
+		hostnameLabel->setFontSize(20);
 		interfaceManager->addSubWindow(win, hostnameLabel);
 
 		// create label for password
 		Label *portLabel = new Label("PortLabel");
 		portLabel->setPosition(260, 285);
 		portLabel->setText("Port: ");
-		portLabel->setFontSize(24);
+		portLabel->setFontSize(20);
 		interfaceManager->addSubWindow(win, portLabel);
 
-		// create textfield for entering username and add to window
+		// create textfield for entering server name and add to window
 		TextField *hostname = new TextField("Host");
 		hostname->setPosition(335, 350);
 		hostname->setSize(180, 25);
 		hostname->setFontSize(18);
+		hostname->addBackground();
 		interfaceManager->addSubWindow(win, hostname);
 
-		// create textfield for entering password and add to window
+		// create textfield for entering port number and add to window
 		TextField *port = new TextField("Port");
 		port->setPosition(335, 300);
 		port->setSize(120, 25);
 		port->setFontSize(18);
+		port->addBackground();
 		interfaceManager->addSubWindow(win, port);
 
 		// create button for submitting details
@@ -103,6 +108,7 @@ namespace ST
         button->setSize(80,20);
         button->setText("Submit");
         button->setFontSize(18);
+		button->addBackground();
         interfaceManager->addSubWindow(win, button);
 	}
 

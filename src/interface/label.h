@@ -48,8 +48,6 @@
 
 #include <string>
 
-class FTFont;
-
 namespace ST
 {
 	class Label : public Window
@@ -63,7 +61,7 @@ namespace ST
 
     private:
         std::string mText;
-        FTFont *font;
+		int mTextSize;
 	};
 }
 

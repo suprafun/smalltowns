@@ -333,7 +333,6 @@ bool IRCClient::connectTo(const std::string &hostname, unsigned int port)
 
     if (!mConnection->getSocket()->doConnection(host, port))
     {
-        printf("%s %d", "Unable to connect to", port);
         return false;
     }
 
@@ -416,7 +415,9 @@ void IRCClient::sendCommand(Command *command)
 	std::string str = data.str();
     mConnection->sendData(str.c_str(), length);
 
+#ifdef DEBUG
     printf("%s", str.c_str());
+#endif
 
     delete command;
 }

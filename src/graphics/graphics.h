@@ -49,6 +49,7 @@
 #include <string>
 
 struct SDL_Surface;
+class FTFont;
 
 namespace ST
 {
@@ -116,6 +117,46 @@ namespace ST
 		void outputNodes();
 
 		/**
+		 * Draw Untextured Rectangle
+		 */
+		void drawRect(Rectangle &rect, bool filled);
+
+		/**
+		 * Draw Textured Rectangle
+		 */
+		void drawTexturedRect(Rectangle &rect, unsigned int texture);
+
+		/**
+		 * Draw Filled Rectangle
+		 */
+		void drawFilledRect(Rectangle &rect);
+
+		/**
+		 * Draw Text
+		 */
+		void drawText(Point &pos, const std::string &text, int fontSize);
+
+		/**
+		 * Draw Carat
+		 */
+		void drawCarat(Point &pos, const std::string &text);
+
+		/**
+		 * Set Font
+		 */
+		void setFont(const std::string &font);
+
+		/**
+		 * Get Font Height
+		 */
+		float getFontHeight();
+
+		/**
+		 * Get Font Width
+		 */
+		float getFontWidth(const std::string &text);
+
+		/**
 		 * Load Sprite Sheet
 		 * Increases Texture count if one already exists
 		 * Creates a new Texture for each one that doesn't exist already
@@ -123,6 +164,11 @@ namespace ST
 		 * @return Returns true is successfully loaded
 		 */
 		bool loadSpriteSheet(const std::string &name);
+
+		/**
+		 * Load a single texture
+		 */
+		void loadTexture(const std::string &name);
 
 		/**
 		 * Create Texture
@@ -166,6 +212,9 @@ namespace ST
 		Camera *mCamera;
 		int mWidth;
 		int mHeight;
+
+		// text stuff
+		FTFont *mFont;
 
 		// list of nodes
 		std::list<Node*> mNodes;

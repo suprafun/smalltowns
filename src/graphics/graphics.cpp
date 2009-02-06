@@ -52,6 +52,8 @@
 #include <SDL_opengl.h>
 #include <SDL_image.h>
 
+#include <FTGL/ftgl.h>
+
 namespace ST
 {
 	GraphicsEngine::GraphicsEngine()
@@ -73,14 +75,14 @@ namespace ST
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 		// Set the window title
-		SDL_WM_SetCaption("Small Towns", NULL);
+		SDL_WM_SetCaption("Towns Life", NULL);
 
 		// get bpp of desktop
 		const SDL_VideoInfo* video = SDL_GetVideoInfo();
 		int bpp = video->vfmt->BitsPerPixel;
 
-		mWidth = 800;
-		mHeight = 600;
+		mWidth = 1024;
+		mHeight = 768;
 
 		// Initialise SDL to use OpenGL
 		mScreen = SDL_SetVideoMode(mWidth, mHeight, bpp, SDL_OPENGL);
@@ -91,11 +93,12 @@ namespace ST
 		glOrtho(0.0f, mWidth, 0.0f, mHeight, -1.0f, 1.0f);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		glClearColor(0.0f, 0.0f , 0.0f, 1.0f);
+		glClearColor(1.0f, 1.0f , 1.0f, 0.5f);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthFunc(GL_LEQUAL);
 
 		mCamera = NULL;
+		mFont = NULL;
 	}
 
 	GraphicsEngine::~GraphicsEngine()
@@ -109,6 +112,12 @@ namespace ST
 			++itr;
 		}
 		mNodes.clear();
+
+		if (mFont)
+			delete mFont;
+
+		if (mCamera)
+			delete mCamera;
 
 		// Do SDL cleanup
 		SDL_Quit();
@@ -172,49 +181,174 @@ namespace ST
 				break;
 			}
 
-			// reset identity matrix
-			glLoadIdentity();
+			Rectangle rect;
 
 			// set position and size to local variables
-			int x = (*itr)->getPosition().x;
-			int y = (*itr)->getPosition().y;
-			float width = (float)(*itr)->getWidth();
-			float height = (float)(*itr)->getHeight();
+			rect.x = (*itr)->getPosition().x;
+			rect.y = (*itr)->getPosition().y;
+			rect.width = (*itr)->getWidth();
+			rect.height = (*itr)->getHeight();
 
-			// move to the correct position
-			glTranslatef((float)x, (float)y, 0.0f);
-
-			// enable transparancy
-			glEnable(GL_BLEND);
-
-			// disable depth testing
-			glDisable(GL_DEPTH_TEST);
-
-			// enable texture mapping
-			glBindTexture(GL_TEXTURE_2D, (*itr)->getGLTexture());
-			glEnable(GL_TEXTURE_2D);
-
-			glBegin(GL_QUADS);
-
-			// draw quad
-			glTexCoord2i(0, 0);
-			glVertex3f(0.0f, -height, 0.0f);
-			glTexCoord2i(1, 0);
-			glVertex3f(width, -height, 0.0f);
-			glTexCoord2i(1, 1);
-			glVertex3f(width, 0.0f, 0.0f);
-			glTexCoord2i(0, 1);
-			glVertex3f(0.0f, 0.0f, 0.0f);
-
-			glEnd();
-
-			// finish texture mapping
-			glDisable(GL_TEXTURE_2D);
-			glDisable(GL_BLEND);
-			glEnable(GL_DEPTH_TEST);
+			drawTexturedRect(rect, (*itr)->getGLTexture());
 
 			++itr;
 		}
+	}
+
+	void GraphicsEngine::drawRect(Rectangle &rect, bool filled)
+	{
+		// reset identity matrix
+		glLoadIdentity();
+
+		// set position and size from rectangle
+		float x = (float)rect.x;
+		float y = (float)rect.y;
+		float width = (float)rect.width;
+		float height = (float)rect.height;
+
+		// move to the correct position
+		glTranslatef(x, y, 0.0f);
+
+		// disable depth testing
+		glDisable(GL_DEPTH_TEST);
+
+		glColor3f(0.0f, 0.0f, 0.0f);
+
+		if (filled)
+			glPolygonMode(GL_FRONT, GL_FILL);
+		else
+			glPolygonMode(GL_FRONT, GL_LINE);
+
+        // draw the box
+		glBegin(GL_QUADS);
+
+		glTexCoord2i(0, 0);
+		glVertex3f(0.0f, -height, 0.0f);
+		glTexCoord2i(1, 0);
+		glVertex3f(width, -height, 0.0f);
+		glTexCoord2i(1, 1);
+		glVertex3f(width, 0.0f, 0.0f);
+		glTexCoord2i(0, 1);
+		glVertex3f(0.0f, 0.0f, 0.0f);
+
+		glEnd();
+
+		glEnable(GL_DEPTH_TEST);
+	}
+
+	void GraphicsEngine::drawTexturedRect(Rectangle &rect, unsigned int texture)
+	{
+		// reset identity matrix
+		glLoadIdentity();
+
+		// set position and size to local variables
+		float x = (float)rect.x;
+		float y = (float)rect.y;
+		float width = (float)rect.width;
+		float height = (float)rect.height;
+
+		// move to the correct position
+		glTranslatef(x, y, 0.0f);
+
+		// enable transparancy
+		glEnable(GL_BLEND);
+
+		// disable depth testing
+		glDisable(GL_DEPTH_TEST);
+
+		// enable texture mapping
+		glBindTexture(GL_TEXTURE_2D, (GLuint)texture);
+		glEnable(GL_TEXTURE_2D);
+		glPolygonMode(GL_FRONT, GL_FILL);
+		glColor3f(1.0f, 1.0f, 1.0f);
+
+		glBegin(GL_QUADS);
+
+		// draw quad
+		glTexCoord2i(0, 0);
+		glVertex3f(0.0f, -height, 0.0f);
+		glTexCoord2i(1, 0);
+		glVertex3f(width, -height, 0.0f);
+		glTexCoord2i(1, 1);
+		glVertex3f(width, 0.0f, 0.0f);
+		glTexCoord2i(0, 1);
+		glVertex3f(0.0f, 0.0f, 0.0f);
+
+		glEnd();
+
+		// finish texture mapping
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+	}
+
+	void GraphicsEngine::drawText(Point &pos, const std::string &text, int fontSize)
+	{
+		if (mFont && text.size() > 0)
+		{
+			glLoadIdentity();
+			glColor3f(0.0f, 0.0f, 0.0f); // black text
+			glPolygonMode(GL_FRONT, GL_FILL);
+			mFont->FaceSize(fontSize);
+			mFont->Render(text.c_str(), text.size(), FTPoint(pos.x, pos.y));
+		}
+	}
+
+	void GraphicsEngine::drawCarat(Point &pos, const std::string &text)
+	{
+		// reset identity matrix
+		glLoadIdentity();
+
+		// set position and size from rectangle
+		float x = (float)pos.x;
+		float y = (float)pos.y;
+
+		if (!mFont)
+			return;
+
+		if (text.size() > 0)
+		{
+			x += mFont->Advance(text.c_str(), text.size());
+		}
+
+		// move to the correct position
+		glTranslatef(x, y, 0.0f);
+
+		// disable depth testing
+		glDisable(GL_DEPTH_TEST);
+
+		glColor3f(0.0f, 0.0f, 0.0f);
+
+		glPolygonMode(GL_FRONT, GL_FILL);
+
+        // draw the carat
+		glBegin(GL_LINES);
+
+		    // draw a line for the carat
+		    glVertex3f(0.0f, 0.0f, 0.0f);
+			if (mFont->LineHeight() < 1.05f)
+				glVertex3f(0.0f, 25.0f, 0.0f);
+		    glVertex3f(0.0f, -mFont->LineHeight(), 0.0f);
+
+		glEnd();
+
+		glEnable(GL_DEPTH_TEST);
+		    
+	}
+
+	void GraphicsEngine::setFont(const std::string &font)
+	{
+		mFont = new FTGLTextureFont(font.c_str());
+	}
+
+	float GraphicsEngine::getFontHeight()
+	{
+		return mFont->LineHeight();
+	}
+
+	float GraphicsEngine::getFontWidth(const std::string &text)
+	{
+		return mFont->Advance(text.c_str(), text.size());
 	}
 
 	bool GraphicsEngine::loadSpriteSheet(const std::string &name)
@@ -283,6 +417,23 @@ namespace ST
 
 		logger->logError(IMG_GetError());
 		return false;
+	}
+
+	void GraphicsEngine::loadTexture(const std::string &name)
+	{
+		std::map<std::string, Texture*>::iterator itr;
+		itr = mTextures.find(name);
+		if (itr != mTextures.end())
+			itr->second->increaseCount();
+		SDL_Surface* s = NULL;
+
+		// Load in the sprite sheet
+		s = IMG_Load(name.c_str());
+		if (s)
+		{
+			Texture *texture = createTexture(s, name,
+								0, 0, s->w, s->h);
+		}
 	}
 
 	Texture* GraphicsEngine::createTexture(SDL_Surface *surface, std::string name,

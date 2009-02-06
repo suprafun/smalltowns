@@ -181,22 +181,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\graphics\animation.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\interface\button.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\graphics\camera.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\net\client.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\connectstate.cpp"
 				>
 			</File>
@@ -205,19 +189,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\graphics\graphics.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\net\host.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\input.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\interface\interfacemanager.cpp"
 				>
 			</File>
 			<File
@@ -226,14 +198,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\irc\ircserver.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\interface\label.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\interface\list.cpp"
 				>
 			</File>
 			<File
@@ -253,18 +217,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\net\networkmanager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\graphics\node.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\net\packet.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\player.cpp"
 				>
 			</File>
@@ -272,26 +224,86 @@
 				RelativePath="..\..\src\teststate.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\interface\textbox.cpp"
+			<Filter
+				Name="graphics"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\interface\textfield.cpp"
+				<File
+					RelativePath="..\..\src\graphics\animation.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\graphics\camera.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\graphics\graphics.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\graphics\node.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\graphics\texture.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\tile.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="interface"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\graphics\texture.cpp"
+				<File
+					RelativePath="..\..\src\interface\button.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\interface\interfacemanager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\interface\label.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\interface\list.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\interface\textbox.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\interface\textfield.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\interface\window.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="net"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\tile.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\interface\window.cpp"
-				>
-			</File>
+				<File
+					RelativePath="..\..\src\net\client.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\net\host.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\net\networkmanager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\net\packet.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -299,27 +311,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\graphics\animation.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\interface\button.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\graphics\camera.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\net\client.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\connectstate.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\graphics\entity.h"
 				>
 			</File>
 			<File
@@ -331,19 +323,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\graphics\graphics.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\net\host.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\input.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\interface\interfacemanager.h"
 				>
 			</File>
 			<File
@@ -352,14 +332,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\irc\ircserver.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\interface\label.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\interface\list.h"
 				>
 			</File>
 			<File
@@ -379,39 +351,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\net\networkmanager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\graphics\node.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\net\packet.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\player.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\net\protocol.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\teststate.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\interface\textbox.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\interface\textfield.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\graphics\texture.h"
 				>
 			</File>
 			<File
@@ -422,10 +366,90 @@
 				RelativePath="..\..\src\utilities\types.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\interface\window.h"
+			<Filter
+				Name="graphics"
 				>
-			</File>
+				<File
+					RelativePath="..\..\src\graphics\animation.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\graphics\camera.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\graphics\entity.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\graphics\graphics.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\graphics\node.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\graphics\texture.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="interface"
+				>
+				<File
+					RelativePath="..\..\src\interface\button.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\interface\interfacemanager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\interface\label.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\interface\list.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\interface\textbox.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\interface\textfield.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\interface\window.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="net"
+				>
+				<File
+					RelativePath="..\..\src\net\client.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\net\host.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\net\networkmanager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\net\packet.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\net\protocol.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"

@@ -41,21 +41,20 @@
 
 #include "../input.h"
 
-#include <SDL_opengl.h>
-#include <FTGL/ftgl.h>
+#include "../graphics/graphics.h"
+#include "../graphics/node.h"
 
 namespace ST
 {
 	Button::Button(const std::string &name) : Window(name)
 	{
+		graphicsEngine->loadTexture("background.png");
 	    mPressed = false;
-        font = new FTGLPixmapFont("st.ttf");
-        font->FaceSize(12);
+		mTextSize = 12;
 	}
 
     Button::~Button()
     {
-        delete font;
     }
 
     void Button::setText(const std::string &text)
@@ -65,50 +64,42 @@ namespace ST
 
 	void Button::setFontSize(int size)
 	{
-	    font->FaceSize(size);
+	    mTextSize = size;
 	}
 
 	void Button::drawWindow()
 	{
-	    // reset identity matrix
-		glLoadIdentity();
+	    Rectangle rect;
 
 		// set position and size to local variables
-		float x = (float)getPosition().x;
-		float y = (float)getPosition().y;
-		float width = (float)getWidth();
-		float height = (float)getHeight();
+		rect.x = getPosition().x;
+		rect.y = getPosition().y;
+		rect.width = getWidth();
+		rect.height = getHeight();
 
-		// move to the correct position
-		glTranslatef(x, y, 0.0f);
+		if (mBackground)
+		{
+			graphicsEngine->drawTexturedRect(rect, mBackground->getGLTexture());
+		}
+		else
+		{
+			graphicsEngine->drawRect(rect, false);
+		}
 
-		// disable depth testing
-		glDisable(GL_DEPTH_TEST);
-
-		glColor3f(1.0f, 1.0f, 1.0f);
-
-		glBegin(GL_LINE_LOOP);
-
-		// draw quad
-		glTexCoord2i(0, 0);
-		glVertex3f(0.0f, -height, 0.0f);
-		glTexCoord2i(1, 0);
-		glVertex3f(width, -height, 0.0f);
-		glTexCoord2i(1, 1);
-		glVertex3f(width, 0.0f, 0.0f);
-		glTexCoord2i(0, 1);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-
-		glEnd();
-
-		font->Render(mText.c_str(), mText.size(), FTPoint(x + 8.0f, y - 6.0f - height / 2));
-
-		glEnable(GL_DEPTH_TEST);
+		Point pos;
+		pos.x = rect.x + 10;
+		pos.y = rect.y - 18;
+		graphicsEngine->drawText(pos, mText, mTextSize);
 	}
 
 	bool Button::clicked()
 	{
 	    return mPressed;
+	}
+
+	void Button::addBackground()
+	{
+		setBackground("background.png");
 	}
 
 	void Button::processMouse(MouseButton *button)

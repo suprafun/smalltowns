@@ -39,19 +39,17 @@
 
 #include "label.h"
 
-#include <FTGL/ftgl.h>
+#include "../graphics/graphics.h"
 
 namespace ST
 {
 	Label::Label(const std::string &name) : Window(name)
 	{
-        font = new FTGLPixmapFont("st.ttf");
-        font->FaceSize(16);
+		mTextSize = 12;
 	}
 
 	Label::~Label()
 	{
-	    delete font;
 	}
 
 	void Label::setText(const std::string &text)
@@ -61,11 +59,14 @@ namespace ST
 
 	void Label::setFontSize(int size)
 	{
-	    font->FaceSize(size);
+	    mTextSize = size;
 	}
 
 	void Label::drawWindow()
 	{
-        font->Render(mText.c_str(), mText.size(), FTPoint(mPosition.x, mPosition.y));
+		Point pos;
+		pos.x = getPosition().x;
+		pos.y = getPosition().y;
+        graphicsEngine->drawText(pos, mText, mTextSize);
 	}
 }

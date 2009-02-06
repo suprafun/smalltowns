@@ -85,6 +85,7 @@ namespace ST
 		Camera *cam;
 		*/
 		IRCServer *chatServer;
+		Camera *mCam;
 	};
 }
 

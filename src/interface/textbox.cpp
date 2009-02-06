@@ -39,29 +39,28 @@
 
 #include "textbox.h"
 
+#include "../graphics/graphics.h"
+
 #include "../utilities/stringutils.h"
 
-#include <SDL_opengl.h>
-#include <FTGL/ftgl.h>
+#include <sstream>
 
 namespace ST
 {
 	TextBox::TextBox(const std::string &name) : Window(name)
 	{
-        font = new FTGLPixmapFont("st.ttf");
-        font->FaceSize(12);
         mRows = 1;
         mEditable = false;
+		mTextSize = 12;
 	}
 
     TextBox::~TextBox()
     {
-        delete font;
     }
 
 	void TextBox::setFontSize(int size)
 	{
-	    font->FaceSize(size);
+	    mTextSize = size;
 	}
 
 	void TextBox::setRows(int rows)
@@ -77,9 +76,9 @@ namespace ST
 	void TextBox::addRow(const std::string &text)
 	{
 	    int maxSize = getWidth();
-	    int totallength = text.size() * 8;
-	    int length = maxSize / 8;
-	    if (totallength > maxSize)
+		int textlength = (int)graphicsEngine->getFontWidth(text);
+		int length = maxSize / (int)graphicsEngine->getFontWidth("m");
+	    if (textlength > maxSize)
 	    {
 	        int sofar = 0;
 	        while (sofar < text.size())
@@ -98,40 +97,19 @@ namespace ST
 
 	void TextBox::drawWindow()
 	{
-	    // reset identity matrix
-		glLoadIdentity();
-
-		// set position and size to local variables
-		float x = (float)getPosition().x;
-		float y = (float)getPosition().y;
-		float width = (float)getWidth();
-		float height = (float)getHeight();
-
-		// move to the correct position
-		glTranslatef(x, y, 0.0f);
-
-		// disable depth testing
-		glDisable(GL_DEPTH_TEST);
-
-		glColor3f(1.0f, 1.0f, 1.0f);
-
-		glBegin(GL_LINE_LOOP);
-
-		// draw quad
-		glTexCoord2i(0, 0);
-		glVertex3f(0.0f, -height, 0.0f);
-		glTexCoord2i(1, 0);
-		glVertex3f(width, -height, 0.0f);
-		glTexCoord2i(1, 1);
-		glVertex3f(width, 0.0f, 0.0f);
-		glTexCoord2i(0, 1);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-
-		glEnd();
+		Rectangle rect;
+		rect.x = getPosition().x;
+		rect.y = getPosition().y;
+		rect.width = getWidth();
+		rect.height = getHeight();
+	    graphicsEngine->drawRect(rect, false);
 
         if (mEditable)
         {
-            font->Render(mText.c_str(), mText.size(), FTPoint(x + 5.0f, y - 15.0f));
+			Point pos;
+			pos.x = rect.x;
+			pos.y = rect.y;
+            graphicsEngine->drawText(pos, mText, mTextSize);
         }
         else
         {
@@ -139,17 +117,18 @@ namespace ST
             // start with latest first (subtract 1, since counting starts from 0)
             // make sure i doesnt go under 0
             int numberRows = 0;
+			Point pos;
             for (int i = mTextHistory.size() - 1; i >= 0; --i)
             {
                 if (numberRows < mRows)
                 {
-                    font->Render(mTextHistory[i].c_str(), mTextHistory[i].size(), FTPoint(x + 5.0f, y - (mRows - numberRows + 1) * 15.0f));
+					pos.x = rect.x + 5;
+					pos.y = rect.y - ((mRows - numberRows + 1) * (int)graphicsEngine->getFontHeight());
+                    graphicsEngine->drawText(pos, mTextHistory[i], mTextSize);
                 }
                 ++numberRows;
             }
         }
-
-		glEnable(GL_DEPTH_TEST);
 	}
 
 	void TextBox::processKey(SDL_keysym key)

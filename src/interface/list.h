@@ -49,8 +49,6 @@
 #include <list>
 #include <string>
 
-class FTFont;
-
 namespace ST
 {
 	class List : public Window
@@ -65,7 +63,7 @@ namespace ST
 
     private:
         std::list<std::string> mTextList;
-        FTFont *font;
+		int mTextSize;
 
         typedef std::list<std::string>::iterator ListItr;
 	};

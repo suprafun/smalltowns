@@ -48,6 +48,7 @@
 
 namespace ST
 {
+	class Camera;
 	class ConnectState : public GameState
 	{
 	public:
@@ -74,6 +75,7 @@ namespace ST
 
     private:
         void submit();
+		Camera *mCam;
 	};
 }
 

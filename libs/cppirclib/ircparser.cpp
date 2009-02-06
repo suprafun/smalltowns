@@ -80,7 +80,9 @@ Command* IRCParser::parse(char *data, unsigned int length)
 
     Command *command = parseCommand(prefix, first, params);
 
-    std::cout << p;
+#ifdef DEBUG
+	std::cout << p;
+#endif
 
     return command;
 }

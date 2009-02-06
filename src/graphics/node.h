@@ -101,6 +101,12 @@ namespace ST
 		bool getVisible() const;
 
 		/**
+		 * Set Visible
+		 * @param visible Sets if the node will be drawn
+		 */
+		void setVisible(bool visible);
+
+		/**
 		 * Move Node
 		 * Moves the node to a new position
 		 * @param position The new position for the node to be

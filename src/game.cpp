@@ -80,6 +80,9 @@ namespace ST
 		networkManager = new NetworkManager;
 		player = new Player;
 
+		// set font
+		graphicsEngine->setFont("chat.ttf");
+
 		// Create state to connect to server
 		mOldState = 0;
 		mState = new ConnectState();

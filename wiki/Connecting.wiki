@@ -1,0 +1,11 @@
+#summary How-to connect
+#labels Featured,Phase-Deploy
+
+= Introduction =
+
+When launching smalltowns you will be asked to enter a server and port. Once connected, you will be asked for a username, which should use normal ASCII characters.
+
+
+= Details =
+
+Enter casualgamer.co.uk as the server and 9601 as the port.

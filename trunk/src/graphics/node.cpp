@@ -57,6 +57,9 @@ namespace ST
 		}
 		else
 		{
+			mTexture = NULL;
+			mWidth = 1;
+			mHeight = 1;
 			logger->logError("Invalid texture assigned to node");
 		}
 
@@ -78,6 +81,11 @@ namespace ST
 	bool Node::getVisible() const
 	{
 		return mVisible;
+	}
+
+	void Node::setVisible(bool visible)
+	{
+		mVisible = visible;
 	}
 
 	const int Node::getHeight() const

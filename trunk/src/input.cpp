@@ -68,6 +68,11 @@ namespace ST
                     button->y = graphicsEngine->getScreenHeight() - event.button.y;
                     interfaceManager->sendMouse(button);
                 } break;
+			case SDL_QUIT:
+				{
+					// fake escape being pressed
+					keysDown.push_back(SDLK_ESCAPE);
+				} break;
 			}
 		}
 	}

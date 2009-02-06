@@ -39,22 +39,22 @@
 
 #include "textfield.h"
 
-#include "../utilities/stringutils.h"
+#include "../graphics/graphics.h"
+#include "../graphics/node.h"
 
-#include <SDL_opengl.h>
-#include <FTGL/ftgl.h>
+#include "../utilities/stringutils.h"
 
 namespace ST
 {
 	TextField::TextField(const std::string &name) : Window(name)
 	{
-        font = new FTGLPixmapFont("st.ttf");
-        font->FaceSize(12);
+		graphicsEngine->loadTexture("textfield.png");
+		mTextSize = 12;
 	}
 
     TextField::~TextField()
     {
-        delete font;
+        
     }
 
     void TextField::setText(const std::string &text)
@@ -69,62 +69,53 @@ namespace ST
 
 	void TextField::setFontSize(int size)
 	{
-	    font->FaceSize(size);
+	    mTextSize = size;
 	}
 
 	void TextField::drawWindow()
 	{
-	    // reset identity matrix
-		glLoadIdentity();
+	    Rectangle rect;
 
 		// set position and size to local variables
-		float x = (float)getPosition().x;
-		float y = (float)getPosition().y;
-		float width = (float)getWidth();
-		float height = (float)getHeight();
+		rect.x = getPosition().x;
+		rect.y = getPosition().y;
+		rect.width = getWidth();
+		rect.height = getHeight();
 
-		// move to the correct position
-		glTranslatef(x, y, 0.0f);
-
-		// disable depth testing
-		glDisable(GL_DEPTH_TEST);
-
-		glColor3f(1.0f, 1.0f, 1.0f);
-
-		glBegin(GL_LINE_LOOP);
-
-		// draw quad
-		glTexCoord2i(0, 0);
-		glVertex3f(0.0f, -height, 0.0f);
-		glTexCoord2i(1, 0);
-		glVertex3f(width, -height, 0.0f);
-		glTexCoord2i(1, 1);
-		glVertex3f(width, 0.0f, 0.0f);
-		glTexCoord2i(0, 1);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-
-		glEnd();
+		if (mBackground)
+		{
+			// draw textured filled rectangle
+			graphicsEngine->drawTexturedRect(rect, mBackground->getGLTexture());
+		}
+		else
+		{
+			graphicsEngine->drawRect(rect, false);
+		}
 
         int length = 0;
-        if (mText.size() * 8.0f > width)
+		if (graphicsEngine->getFontWidth(mText) > rect.width)
         {
-            length = mText.size() - width / 8;
+			length = mText.size() - rect.width / (int)graphicsEngine->getFontWidth("m");
+			if (length < 0)
+				length = 0;
         }
-		font->Render(mText.substr(length).c_str(), mText.substr(length).size(), FTPoint(x + 5.0f, y - 15.0f));
+
+		Point pos;
+		pos.x = rect.x + 5;
+		pos.y = rect.y - 18;
+		
+		graphicsEngine->drawText(pos, mText.substr(length), mTextSize);
 
 		if (mFocus)
 		{
-		    glTranslatef(5.0f + mText.substr(length).size() * 7.0f, 0.0f, 0.0f);
-		    glBegin(GL_LINES);
-
-		    // draw a line for the carat
-		    glVertex3f(0.0f, 0.0f, 0.0f);
-		    glVertex3f(0.0f, -font->LineHeight(), 0.0f);
-
-		    glEnd();
+			pos.y += 18;
+			graphicsEngine->drawCarat(pos, mText.substr(length));
 		}
+	}
 
-		glEnable(GL_DEPTH_TEST);
+	void TextField::addBackground()
+	{
+		setBackground("textfield.png");
 	}
 
 	void TextField::processKey(SDL_keysym key)

@@ -78,7 +78,7 @@ namespace ST
 		Label *usernameLabel = new Label("0");
 		usernameLabel->setPosition(240, 335);
 		usernameLabel->setText("Username: ");
-		usernameLabel->setFontSize(24);
+		usernameLabel->setFontSize(20);
 		interfaceManager->addSubWindow(win, usernameLabel);
 
 		// create label for password
@@ -90,6 +90,7 @@ namespace ST
 		username->setPosition(335, 350);
 		username->setSize(180, 25);
 		username->setFontSize(18);
+		username->addBackground();
 		interfaceManager->addSubWindow(win, username);
 
 		// create textfield for entering password and add to window
@@ -101,6 +102,7 @@ namespace ST
         button->setSize(80,20);
         button->setText("Submit");
         button->setFontSize(18);
+		button->addBackground();
         interfaceManager->addSubWindow(win, button);
 	}
 

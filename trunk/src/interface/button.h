@@ -49,8 +49,6 @@
 #include <string>
 #include <SDL.h>
 
-class FTFont;
-
 namespace ST
 {
     struct MouseButton;
@@ -64,12 +62,13 @@ namespace ST
 		void setFontSize(int size);
 		void drawWindow();
 		bool clicked();
+		void addBackground();
 
 		virtual void processMouse(MouseButton *button);
 
     private:
-        FTFont *font;
         std::string mText;
+		int mTextSize;
         bool mPressed;
 	};
 }

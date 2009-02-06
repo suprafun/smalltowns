@@ -49,8 +49,6 @@
 #include <string>
 #include <SDL.h>
 
-class FTFont;
-
 namespace ST
 {
 	class TextField : public Window
@@ -61,13 +59,14 @@ namespace ST
 		void setText(const std::string &text);
 		std::string getText();
 		void setFontSize(int size);
+		void addBackground();
 		void drawWindow();
 
 		virtual void processKey(SDL_keysym key);
 
     private:
-        FTFont *font;
         std::string mText;
+		int mTextSize;
 	};
 }
 

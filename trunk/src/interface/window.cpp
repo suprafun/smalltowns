@@ -40,13 +40,15 @@
 #include "window.h"
 
 #include "../input.h"
+#include "../graphics/node.h"
+#include "../graphics/graphics.h"
 
 #include <SDL_opengl.h>
 
 namespace ST
 {
 	Window::Window(std::string name)
-		: mName(name), mParent(NULL), mVisible(true), mFocus(false)
+		: mName(name), mParent(NULL), mBackground(NULL), mVisible(true), mFocus(false)
 	{
 		mPosition.x = 0;
 		mPosition.y = 0;
@@ -117,65 +119,48 @@ namespace ST
 	    return mChildren.size();
 	}
 
+	void Window::addBackground()
+	{
+
+	}
+
+
+	void Window::setBackground(const std::string &bg)
+	{
+		ST::Point pos = getPosition();
+		mBackground = graphicsEngine->createNode(mName, bg, &pos);
+		mBackground->setVisible(false);
+	}
+
 	void Window::drawWindow()
 	{
-	    // reset identity matrix
-		glLoadIdentity();
+	    Rectangle rect;
 
 		// set position and size to local variables
-		float x = (float)getPosition().x;
-		float y = (float)getPosition().y;
-		float width = (float)getWidth();
-		float height = (float)getHeight();
+		rect.x = getPosition().x;
+		rect.y = getPosition().y - 8; // leave space for title
+		rect.width = getWidth();
+		rect.height = getHeight();
 
-		// move to the correct position
-		glTranslatef(x, y, 0.0f);
+		// draw title
+		Rectangle titleRect;
+		titleRect.x = rect.x;
+		titleRect.y = rect.y + 8;
+		titleRect.width = getWidth();
+		titleRect.height = 8;
 
-		// enable transparancy
-//		glEnable(GL_BLEND);
-
-		// disable depth testing
-		glDisable(GL_DEPTH_TEST);
+		graphicsEngine->drawRect(titleRect, true);
 
 		// enable texture mapping
-		//glBindTexture(GL_TEXTURE_2D, (*itr)->getGLTexture());
-		//glEnable(GL_TEXTURE_2D);
-		glColor3f(1.0f, 1.0f, 1.0f);
-
-		// begin with title bar
-		glBegin(GL_QUADS);
-
-		// draw quad
-		glTexCoord2i(0, 0);
-		glVertex3f(0.0f, 8.0f, 0.0f);
-		glTexCoord2i(1, 0);
-		glVertex3f(width, 8.0f, 0.0f);
-		glTexCoord2i(1, 1);
-		glVertex3f(width, 0.0f, 0.0f);
-		glTexCoord2i(0, 1);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-
-		glEnd();
-
-        // now do the rest of the window
-		glBegin(GL_LINE_LOOP);
-
-		// draw outlines
-		glTexCoord2i(0, 0);
-		glVertex3f(0.0f, -height, 0.0f);
-		glTexCoord2i(1, 0);
-		glVertex3f(width, -height, 0.0f);
-		glTexCoord2i(1, 1);
-		glVertex3f(width, 0.0f, 0.0f);
-		glTexCoord2i(0, 1);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-
-		glEnd();
-
-		// finish texture mapping
-		//glDisable(GL_TEXTURE_2D);
-//		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
+		if (mBackground)
+		{
+			//draw filled texture mapped rectangle
+			graphicsEngine->drawTexturedRect(rect, mBackground->getGLTexture());
+		}
+		else
+		{
+			graphicsEngine->drawRect(rect, false);
+		}
 	}
 
 	void Window::processKey(SDL_keysym key)

@@ -50,8 +50,6 @@
 #include <string>
 #include <SDL.h>
 
-class FTFont;
-
 namespace ST
 {
 	class TextBox : public Window
@@ -69,9 +67,9 @@ namespace ST
         virtual void processKey(SDL_keysym key);
 
     private:
-        FTFont *font;
         std::string mText;
         std::deque<std::string> mTextHistory;
+		int mTextSize;
         int mRows;
         bool mEditable;
     };

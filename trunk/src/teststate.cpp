@@ -42,12 +42,11 @@
 #include "input.h"
 #include "player.h"
 
-/*
+
 #include "graphics/camera.h"
 #include "graphics/graphics.h"
 #include "graphics/node.h"
-#include "utilities/log.h"
-*/
+//#include "utilities/log.h"
 #include "interface/interfacemanager.h"
 #include "interface/list.h"
 #include "interface/textbox.h"
@@ -74,6 +73,14 @@ namespace ST
 	TestState::TestState()
 	{
         chatServer = new IRCServer;
+		// create camera
+		Rectangle rect;
+		rect.height = 768;
+		rect.width = 1024;
+		rect.x = 0;
+		rect.y = 0;
+		mCam = new Camera("viewport", &rect);
+		graphicsEngine->setCamera(mCam);
 	}
 
 	void TestState::enter()
@@ -143,30 +150,34 @@ namespace ST
 		p.y = 84;
 		Node *node = graphicsEngine->createNode("player", "base.png", &p);
 		*/
+		int screenWidth = graphicsEngine->getScreenWidth();
+		int screenHeight = graphicsEngine->getScreenHeight();
+
 		// create window for chat
 		Window *win = new Window("Chat Window");
-		win->setPosition(200, 400);
-		win->setSize(375, 200);
+		win->setPosition(75, screenHeight - 50);
+		win->setSize(screenWidth - 150, screenHeight - 100);
 		interfaceManager->addWindow(win);
 
 		// create textbox in non-edit mode for chat
 		TextBox *chatBox = new TextBox("chat");
-		chatBox->setPosition(260, 370);
-		chatBox->setSize(255, 125);
-		chatBox->setRows(5);
+		chatBox->setPosition(125, screenHeight - 100);
+		chatBox->setSize(win->getWidth() - 200, screenHeight - 200);
+		chatBox->setRows(11);
 		chatBox->setFontSize(18);
 		interfaceManager->addSubWindow(win, chatBox);
 
 		// create textfield for sending chat
 		TextField *chatField = new TextField("sendchat");
-		chatField->setPosition(335, 240);
-		chatField->setSize(180, 25);
+		chatField->setPosition(125, 85);
+		chatField->setSize(win->getWidth() - 200, 31);
 		chatField->setFontSize(18);
+		chatField->addBackground();
 		interfaceManager->addSubWindow(win, chatField);
 
 		// create userlist
 		List *list = new List("userlist");
-		list->setPosition(600, 550);
+		list->setPosition(screenWidth - 195, screenHeight - 100);
 		list->setSize(85, 400);
 		list->setFontSize(18);
 		interfaceManager->addWindow(list);
@@ -179,6 +190,7 @@ namespace ST
 
 	void TestState::exit()
 	{
+		delete mCam;
         interfaceManager->removeAllWindows();
 	}
 

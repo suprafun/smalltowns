@@ -39,19 +39,17 @@
 
 #include "list.h"
 
-#include <FTGL/ftgl.h>
+#include "../graphics/graphics.h"
 
 namespace ST
 {
 	List::List(const std::string &name) : Window(name)
 	{
-        font = new FTGLPixmapFont("st.ttf");
-        font->FaceSize(16);
+		mTextSize = 12;
 	}
 
 	List::~List()
 	{
-	    delete font;
 	}
 
 	void List::addLabel(const std::string &label)
@@ -73,16 +71,19 @@ namespace ST
 
 	void List::setFontSize(int size)
 	{
-	    font->FaceSize(size);
+	    mTextSize = size;
 	}
 
 	void List::drawWindow()
 	{
 	    ListItr itr_end = mTextList.end();
 	    int i = 0;
+		Point pos;
 	    for (ListItr itr = mTextList.begin(); itr != itr_end; ++itr)
 	    {
-            font->Render((*itr).c_str(), (*itr).size(), FTPoint(mPosition.x, mPosition.y - (i + 1) * 11.0f));
+			pos.x = mPosition.x;
+			pos.y = mPosition.y - ((i + 1) * (int)graphicsEngine->getFontHeight());
+            graphicsEngine->drawText(pos, (*itr), mTextSize);
             ++i;
 	    }
 	}

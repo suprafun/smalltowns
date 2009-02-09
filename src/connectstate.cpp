@@ -53,6 +53,7 @@
 
 #include "net/networkmanager.h"
 
+#include "utilities/log.h"
 #include "utilities/stringutils.h"
 
 #include <SDL.h>
@@ -61,7 +62,7 @@ namespace ST
 {
 	ConnectState::ConnectState()
 	{
-
+        mConnecting = false;
 	}
 
 	void ConnectState::enter()
@@ -126,12 +127,8 @@ namespace ST
 			return false;
 		}
 
-		if (inputManager->getKey(SDLK_RETURN))
-		{
-		    submit();
-		}
-
-		if (static_cast<Button*>(interfaceManager->getWindow("Submit"))->clicked())
+		if (inputManager->getKey(SDLK_RETURN) ||
+            static_cast<Button*>(interfaceManager->getWindow("Submit"))->clicked())
 		{
 		    submit();
 		}
@@ -151,11 +148,19 @@ namespace ST
 	{
 	    std::string hostname = static_cast<TextField*>(interfaceManager->getWindow("Host"))->getText();
         std::string port = static_cast<TextField*>(interfaceManager->getWindow("Port"))->getText();
-        if (hostname.size() > 0)
+        if (hostname.size() > 0 && !mConnecting)
         {
             if (port == "")
                 port = "0";
             networkManager->connect(hostname, utils::toInt(port));
+            mConnecting = true;
+
+            // LOG the server connecting to
+            std::string msg = "Connecting to server: ";
+            msg.append(hostname);
+            msg.append(":");
+            msg.append(port);
+            logger->logDebug(msg);
         }
 	}
 }

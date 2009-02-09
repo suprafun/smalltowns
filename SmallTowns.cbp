@@ -88,6 +88,8 @@
 		<Unit filename="src/net/protocol.h" />
 		<Unit filename="src/player.cpp" />
 		<Unit filename="src/player.h" />
+		<Unit filename="src/registerstate.cpp" />
+		<Unit filename="src/registerstate.h" />
 		<Unit filename="src/teststate.cpp" />
 		<Unit filename="src/teststate.h" />
 		<Unit filename="src/tile.cpp" />

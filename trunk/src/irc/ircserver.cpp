@@ -82,7 +82,7 @@ namespace ST
         if (!mRegistered && !mRegistering && mNick.size() > 1)
         {
 			std::string pass = "test";
-			std::string realname = "st 0 * :" "Small Towns 0.0.1";
+			std::string realname = "st 0 * :" "Small Towns 0.0.2";
             mClient->doRegistration(pass, mNick, realname);
             mRegistering = true;
         }
@@ -114,7 +114,7 @@ namespace ST
                 mRegistered = true;
                 IRC::Command *conCommand = new IRC::Command;
                 conCommand->setCommand(IRC::Command::IRC_JOIN);
-                conCommand->setParams("#smalltowns");
+                conCommand->setParams("#townslife");
                 mClient->sendCommand(conCommand);
                 TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
 				if (box)

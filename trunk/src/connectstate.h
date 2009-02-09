@@ -75,7 +75,7 @@ namespace ST
 
     private:
         void submit();
-		Camera *mCam;
+		bool mConnecting;
 	};
 }
 

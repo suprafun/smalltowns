@@ -31,62 +31,48 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-01-22
+ *	Date of file creation: 09-02-09
  *
  *	$Id$
  *
  ********************************************/
 
-#include "networkmanager.h"
-#include "host.h"
-#include "packet.h"
-#include "protocol.h"
+/**
+ * The Register State is used for registering with the game server
+ */
+
+#ifndef ST_REGISTERSTATE_HEADER
+#define ST_REGISTERSTATE_HEADER
+
+#include "gamestate.h"
 
 namespace ST
 {
-	NetworkManager::NetworkManager()
+	class RegisterState : public GameState
 	{
-		enet_initialize();
-		atexit(enet_deinitialize);
-        mHost = new Host();
-	}
+	public:
+		RegisterState();
 
-	void NetworkManager::connect(const std::string &hostname, unsigned int port)
-	{
-	    mHost->connect(hostname, port);
-	}
+		/**
+		 * Enter
+		 * Called when entering the state
+		 */
+		void enter();
 
-	void NetworkManager::process()
-	{
-        mHost->process();
+		/**
+		 * Exit
+		 * Called when leaving the state
+		 */
+		void exit();
 
-        Packet *packet = mHost->getPacket();
-        if (packet)
-        {
-            processPacket(packet);
-        }
-	}
+		/**
+		 * Update
+		 * Called every frame
+		 * Return false to exit the game
+		 */
+		bool update();
 
-	void NetworkManager::processPacket(Packet *packet)
-	{
-	    switch(packet->getId())
-	    {
-        case APMSG_CONNECT_RESPONSE:
-            {
-                if (packet->getByte() == ERR_NONE)
-                {
-                    // TODO: Change game state to login
-                }
-                else
-                {
-                    // TODO: Display error message
-                }
-            } break;
-	    }
-	}
-
-	bool NetworkManager::isConnected()
-	{
-	    return mHost->isConnected();
-	}
+	};
 }
+
+#endif

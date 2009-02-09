@@ -39,6 +39,7 @@
 
 #include "loginstate.h"
 #include "connectstate.h"
+#include "registerstate.h"
 #include "teststate.h"
 #include "input.h"
 #include "game.h"
@@ -82,8 +83,11 @@ namespace ST
 		interfaceManager->addSubWindow(win, usernameLabel);
 
 		// create label for password
-//		Label *passwordLabel = new Label("1");
-//		interfaceManager->addSubWindow(win, passwordLabel);
+		Label *passwordLabel = new Label("1");
+		passwordLabel->setPosition(240, 305);
+		passwordLabel->setText("Password: ");
+		passwordLabel->setFontSize(20);
+		interfaceManager->addSubWindow(win, passwordLabel);
 
 		// create textfield for entering username and add to window
 		TextField *username = new TextField("Username");
@@ -94,8 +98,21 @@ namespace ST
 		interfaceManager->addSubWindow(win, username);
 
 		// create textfield for entering password and add to window
-//		TextField *password = new TextField("Password");
-//		interfaceManager->addSubWindow(win, password);
+		TextField *password = new TextField("Password");
+		password->setPosition(335, 320);
+		password->setSize(180, 25);
+		password->setFontSize(18);
+		password->addBackground();
+		interfaceManager->addSubWindow(win, password);
+
+		// create button for registering
+		Button *registerButton = new Button("Register");
+		registerButton->setPosition(240, 250);
+		registerButton->setSize(120, 20);
+		registerButton->setText("Register");
+		registerButton->setFontSize(20);
+		registerButton->addBackground();
+		interfaceManager->addSubWindow(win, registerButton);
 
         Button *button = new Button("Submit");
         button->setPosition(475, 250);
@@ -119,12 +136,19 @@ namespace ST
 		{
 		    GameState *state = new ConnectState();
 			game->changeState(state);
+			return true;
 		}
 
-		if (inputManager->getKey(SDLK_RETURN) ||
+		else if (inputManager->getKey(SDLK_RETURN) ||
 			static_cast<Button*>(interfaceManager->getWindow("Submit"))->clicked())
 		{
 		    submit();
+		}
+
+		else if (static_cast<Button*>(interfaceManager->getWindow("Register"))->clicked())
+		{
+		    GameState *state = new RegisterState;
+            game->changeState(state);
 		}
 
 		SDL_Delay(0);
@@ -138,6 +162,7 @@ namespace ST
         if (username.size() > 1)
         {
             player->setName(username);
+            // TODO: Send username to game server
             GameState *state = new TestState;
             game->changeState(state);
         }

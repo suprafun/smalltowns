@@ -89,4 +89,11 @@ namespace ST
 	{
 	    return mHost->isConnected();
 	}
+
+	void NetworkManager::disconnect()
+	{
+	    mHost->disconnect();
+	    // try to disconnect right away
+	    mHost->process();
+	}
 }

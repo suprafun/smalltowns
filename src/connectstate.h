@@ -76,6 +76,7 @@ namespace ST
     private:
         void submit();
 		bool mConnecting;
+		int mTimeout;
 	};
 }
 

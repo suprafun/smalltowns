@@ -177,6 +177,8 @@ namespace ST
             changeFocus(win);
 	    }
 	    if (mFocused)
+	    {
             mFocused->processMouse(button);
+	    }
 	}
 }

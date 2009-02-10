@@ -70,6 +70,11 @@ namespace ST
 		 */
         bool isConnected();
 
+        /**
+         * Disconnect from the server (or stop trying to connect)
+         */
+        void disconnect();
+
     private:
 		/**
 		 * Process the packets

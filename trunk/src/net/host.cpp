@@ -113,4 +113,9 @@ namespace ST
     {
         return mConnected;
     }
+
+    void Host::disconnect()
+    {
+        enet_peer_disconnect(mServer, 0);
+    }
 }

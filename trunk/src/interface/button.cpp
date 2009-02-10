@@ -104,7 +104,10 @@ namespace ST
 
 	void Button::processMouse(MouseButton *button)
 	{
-        mPressed = true;
+	    if (button->state == SDL_PRESSED)
+            mPressed = true;
+        else
+            mPressed = false;
 	}
 }
 

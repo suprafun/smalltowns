@@ -45,6 +45,8 @@
 #include "game.h"
 #include "player.h"
 
+#include "net/networkmanager.h"
+
 #include "interface/button.h"
 #include "interface/interfacemanager.h"
 #include "interface/label.h"
@@ -108,7 +110,7 @@ namespace ST
 		// create button for registering
 		Button *registerButton = new Button("Register");
 		registerButton->setPosition(240, 250);
-		registerButton->setSize(120, 20);
+		registerButton->setSize(120, 24);
 		registerButton->setText("Register");
 		registerButton->setFontSize(20);
 		registerButton->addBackground();
@@ -116,7 +118,7 @@ namespace ST
 
         Button *button = new Button("Submit");
         button->setPosition(475, 250);
-        button->setSize(80,20);
+        button->setSize(80, 24);
         button->setText("Submit");
         button->setFontSize(18);
 		button->addBackground();
@@ -136,6 +138,7 @@ namespace ST
 		{
 		    GameState *state = new ConnectState();
 			game->changeState(state);
+			networkManager->disconnect();
 			return true;
 		}
 

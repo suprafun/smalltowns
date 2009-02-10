@@ -63,6 +63,7 @@ namespace ST
 	ConnectState::ConnectState()
 	{
         mConnecting = false;
+        mTimeout = 0;
 	}
 
 	void ConnectState::enter()
@@ -72,6 +73,13 @@ namespace ST
 		win->setPosition(200, 400);
 		win->setSize(375, 200);
 		interfaceManager->addWindow(win);
+
+		// create label for error messages
+		Label *errorLabel = new Label("error");
+		errorLabel->setPosition(240, 570);
+		errorLabel->setText("");
+		errorLabel->setFontSize(24);
+		interfaceManager->addSubWindow(win, errorLabel);
 
 		// create label for username
 		Label *hostnameLabel = new Label("HostnameLabel");
@@ -127,7 +135,7 @@ namespace ST
 			return false;
 		}
 
-		if (inputManager->getKey(SDLK_RETURN) ||
+		else if (inputManager->getKey(SDLK_RETURN) ||
             static_cast<Button*>(interfaceManager->getWindow("Submit"))->clicked())
 		{
 		    submit();
@@ -137,6 +145,13 @@ namespace ST
 		{
 		    GameState *state = new LoginState;
 		    game->changeState(state);
+		}
+
+		if (mTimeout && (SDL_GetTicks() - mTimeout > 5000))
+		{
+		    mConnecting = false;
+		    networkManager->disconnect();
+		    static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Error connecting: Timed out");
 		}
 
 		SDL_Delay(0);
@@ -154,6 +169,8 @@ namespace ST
                 port = "0";
             networkManager->connect(hostname, utils::toInt(port));
             mConnecting = true;
+            static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Trying Server...");
+            mTimeout = SDL_GetTicks();
 
             // LOG the server connecting to
             std::string msg = "Connecting to server: ";

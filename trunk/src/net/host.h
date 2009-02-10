@@ -80,6 +80,11 @@ namespace ST
          */
         bool isConnected();
 
+        /**
+         * Disconnect from server
+         */
+        void disconnect();
+
     private:
         ENetAddress mAddress;
         ENetPeer *mServer;

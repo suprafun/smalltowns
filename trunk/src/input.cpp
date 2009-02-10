@@ -68,6 +68,15 @@ namespace ST
                     button->y = graphicsEngine->getScreenHeight() - event.button.y;
                     interfaceManager->sendMouse(button);
                 } break;
+            case SDL_MOUSEBUTTONUP:
+                {
+                    MouseButton *button = new MouseButton;
+                    button->button = event.button.button;
+                    button->state = event.button.state;
+                    button->x = event.button.x;
+                    button->y = graphicsEngine->getScreenHeight() - event.button.y;
+                    interfaceManager->sendMouse(button);
+                } break;
 			case SDL_QUIT:
 				{
 					// fake escape being pressed

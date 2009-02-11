@@ -85,6 +85,11 @@ namespace ST
          */
         void disconnect();
 
+        /**
+         * Send data to server
+         */
+        void sendPacket(Packet *packet);
+
     private:
         ENetAddress mAddress;
         ENetPeer *mServer;

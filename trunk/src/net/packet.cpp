@@ -51,11 +51,14 @@ namespace ST
     : mSize(DEFAULT_SIZE), mId(id), mPosition(0)
     {
         mData = new char[DEFAULT_SIZE];
+        setInteger(id);
     }
 
     Packet::Packet(char *data, unsigned int length)
     : mData(data), mSize(length), mPosition(0)
     {
+        mData = new char[length];
+        memcpy(mData, data, length);
         mId = getInteger();
     }
 

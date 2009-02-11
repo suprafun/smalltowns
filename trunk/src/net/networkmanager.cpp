@@ -42,6 +42,14 @@
 #include "packet.h"
 #include "protocol.h"
 
+#include "../interface/label.h"
+#include "../interface/interfacemanager.h"
+
+#include "../gamestate.h"
+#include "../game.h"
+#include "../loginstate.h"
+#include "../teststate.h"
+
 namespace ST
 {
 	NetworkManager::NetworkManager()
@@ -75,11 +83,26 @@ namespace ST
             {
                 if (packet->getByte() == ERR_NONE)
                 {
-                    // TODO: Change game state to login
+                    GameState *state = new LoginState;
+                    game->changeState(state);
                 }
                 else
                 {
-                    // TODO: Display error message
+                    disconnect();
+                    static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Error connecting: Invalid client");
+                }
+            } break;
+
+        case APMSG_LOGIN_RESPONSE:
+            {
+                if (packet->getByte() == ERR_NONE)
+                {
+                    GameState *state = new TestState;
+                    game->changeState(state);
+                }
+                else
+                {
+                    static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Error: Invalid username or password");
                 }
             } break;
 	    }
@@ -95,5 +118,18 @@ namespace ST
 	    mHost->disconnect();
 	    // try to disconnect right away
 	    mHost->process();
+	}
+
+	void NetworkManager::sendPacket(Packet *packet)
+	{
+	    mHost->sendPacket(packet);
+	    delete packet;
+	}
+
+	void NetworkManager::sendVersion()
+	{
+	    Packet *packet = new Packet(PAMSG_CONNECT);
+        packet->setInteger(CLIENT_VERSION);
+        sendPacket(packet);
 	}
 }

@@ -333,7 +333,7 @@ namespace ST
 		glEnd();
 
 		glEnable(GL_DEPTH_TEST);
-		    
+
 	}
 
 	void GraphicsEngine::setFont(const std::string &font)
@@ -431,8 +431,7 @@ namespace ST
 		s = IMG_Load(name.c_str());
 		if (s)
 		{
-			Texture *texture = createTexture(s, name,
-								0, 0, s->w, s->h);
+			createTexture(s, name,0, 0, s->w, s->h);
 		}
 	}
 

@@ -103,6 +103,9 @@ namespace ST
         button->setFontSize(18);
 		button->addBackground();
         interfaceManager->addSubWindow(win, button);
+
+        // set focus on first text field
+        interfaceManager->changeFocus(username);
 	}
 
 	bool RegisterState::update()
@@ -113,6 +116,13 @@ namespace ST
 		    GameState *state = new LoginState();
 			game->changeState(state);
 			return true;
+		}
+		else if (inputManager->getKey(SDLK_TAB))
+		{
+		    if (interfaceManager->getFocused()->getName() == "username")
+                interfaceManager->changeFocus(interfaceManager->getWindow("password"));
+            else
+                interfaceManager->changeFocus(interfaceManager->getWindow("username"));
 		}
 		else if (inputManager->getKey(SDLK_RETURN) ||
 			static_cast<Button*>(interfaceManager->getWindow("Submit"))->clicked())

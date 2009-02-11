@@ -163,6 +163,11 @@ namespace ST
 	    mFocused = window;
 	}
 
+	Window* InterfaceManager::getFocused()
+	{
+	    return mFocused;
+	}
+
 	void InterfaceManager::sendKey(SDL_keysym key)
 	{
 	    if (mFocused)

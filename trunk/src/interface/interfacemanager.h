@@ -108,6 +108,11 @@ namespace ST
         void changeFocus(Window *window);
 
         /**
+         *
+         */
+        Window* getFocused();
+
+        /**
          * Send a key event to the interface
          */
         void sendKey(SDL_keysym key);

@@ -119,6 +119,9 @@ namespace ST
         button->setFontSize(18);
 		button->addBackground();
         interfaceManager->addSubWindow(win, button);
+
+        // set the focus on the first text field
+        interfaceManager->changeFocus(hostname);
 	}
 
 	void ConnectState::exit()
@@ -133,6 +136,13 @@ namespace ST
 		if (inputManager->getKey(SDLK_ESCAPE))
 		{
 			return false;
+		}
+		else if (inputManager->getKey(SDLK_TAB))
+		{
+		    if (interfaceManager->getFocused()->getName() == "Host")
+                interfaceManager->changeFocus(interfaceManager->getWindow("Port"));
+            else
+                interfaceManager->changeFocus(interfaceManager->getWindow("Host"));
 		}
 
 		else if (inputManager->getKey(SDLK_RETURN) ||

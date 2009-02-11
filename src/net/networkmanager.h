@@ -75,6 +75,16 @@ namespace ST
          */
         void disconnect();
 
+        /**
+         * Send a packet to the server
+         */
+        void sendPacket(Packet *packet);
+
+        /**
+         * Send client version to the server
+         */
+        void sendVersion();
+
     private:
 		/**
 		 * Process the packets

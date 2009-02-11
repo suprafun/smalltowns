@@ -118,4 +118,15 @@ namespace ST
     {
         enet_peer_disconnect(mServer, 0);
     }
+
+    void Host::sendPacket(Packet *packet)
+    {
+        if (packet)
+        {
+            ENetPacket *p = enet_packet_create(packet->getData(), packet->getSize(),
+                                        ENET_PACKET_FLAG_RELIABLE);
+            enet_peer_send(mServer, 0, p);
+            enet_host_flush(mClient);
+        }
+    }
 }

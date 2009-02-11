@@ -15,6 +15,8 @@
 #ifndef ST_PROTOCOL_H
 #define ST_PROTOCOL_H
 
+const int CLIENT_VERSION = 0x0002;
+
 enum
 {
 	// Player and Account Communication
@@ -23,12 +25,12 @@ enum
 	APMSG_CONNECT_RESPONSE  = 0x0002, // C error
 
 	// Registering
-	PAMSG_REGISTER          = 0x0005,
-	APMSG_REGISTER_RESPONSE = 0x0006,
+	PAMSG_REGISTER          = 0x0005, // S username, S password
+	APMSG_REGISTER_RESPONSE = 0x0006, // C error
 
 	// Logging In
-	PAMSG_LOGIN             = 0x0008,
-	APMSG_LOGIN_RESPONSE    = 0x0009,
+	PAMSG_LOGIN             = 0x0008, // S username, S password
+	APMSG_LOGIN_RESPONSE    = 0x0009, // C error
 
 };
 

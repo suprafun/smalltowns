@@ -46,6 +46,8 @@
 #include "player.h"
 
 #include "net/networkmanager.h"
+#include "net/packet.h"
+#include "net/protocol.h"
 
 #include "interface/button.h"
 #include "interface/interfacemanager.h"
@@ -162,12 +164,14 @@ namespace ST
 	void LoginState::submit()
 	{
 	    std::string username = static_cast<TextField*>(interfaceManager->getWindow("Username"))->getText();
-        if (username.size() > 1)
+	    std::string password = static_cast<TextField*>(interfaceManager->getWindow("Password"))->getText();
+        if (!username.empty() && !password.empty())
         {
             player->setName(username);
-            // TODO: Send username to game server
-            GameState *state = new TestState;
-            game->changeState(state);
+            Packet *packet = new Packet(PAMSG_LOGIN);
+            packet->setString(username);
+            packet->setString(password);
+            networkManager->sendPacket(packet);
         }
 	}
 }

@@ -141,10 +141,10 @@ namespace ST
 		    submit();
 		}
 
-		if (networkManager->isConnected())
+		if (networkManager->isConnected() && mConnecting)
 		{
-		    GameState *state = new LoginState;
-		    game->changeState(state);
+		    mConnecting = false;
+		    networkManager->sendVersion();
 		}
 
 		if (mTimeout && (SDL_GetTicks() - mTimeout > 5000))
@@ -152,6 +152,7 @@ namespace ST
 		    mConnecting = false;
 		    networkManager->disconnect();
 		    static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Error connecting: Timed out");
+		    mTimeout = 0;
 		}
 
 		SDL_Delay(0);

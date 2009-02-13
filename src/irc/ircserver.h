@@ -116,6 +116,7 @@ namespace ST
         IRC::IRCClient *mClient;
         bool mRegistering;
         bool mRegistered;
+        int mAttempt;
     };
 }
 

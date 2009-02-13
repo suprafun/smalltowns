@@ -51,6 +51,10 @@
 #include "interface/textfield.h"
 #include "interface/window.h"
 
+#include "net/networkmanager.h"
+#include "net/packet.h"
+#include "net/protocol.h"
+
 #include <SDL.h>
 
 namespace ST
@@ -70,27 +74,34 @@ namespace ST
 		win->setSize(600, screenHeight - 100);
 		interfaceManager->addWindow(win);
 
+		// create label for error messages
+		Label *errorLabel = new Label("error");
+		errorLabel->setPosition(240, 570);
+		errorLabel->setText("");
+		errorLabel->setFontSize(24);
+		interfaceManager->addSubWindow(win, errorLabel);
+
 		Label *usernameLabel = new Label("userLabel");
-		usernameLabel->setPosition(100, screenHeight - 200);
+		usernameLabel->setPosition(100, screenHeight - 300);
 		usernameLabel->setText("Username: ");
 		usernameLabel->setFontSize(18);
 		interfaceManager->addSubWindow(win, usernameLabel);
 
 		Label *passwordLabel = new Label("passLabel");
-		passwordLabel->setPosition(100, screenHeight - 250);
+		passwordLabel->setPosition(100, screenHeight - 350);
 		passwordLabel->setText("Password: ");
 		passwordLabel->setFontSize(18);
 		interfaceManager->addSubWindow(win, passwordLabel);
 
         TextField *username = new TextField("username");
-        username->setPosition(180, screenHeight - 185);
+        username->setPosition(200, screenHeight - 285);
         username->setSize(180, 31);
         username->setFontSize(18);
         username->addBackground();
         interfaceManager->addSubWindow(win, username);
 
         TextField *password = new TextField("password");
-        password->setPosition(180, screenHeight - 235);
+        password->setPosition(200, screenHeight - 335);
         password->setSize(180, 31);
         password->setFontSize(18);
         password->addBackground();
@@ -127,7 +138,7 @@ namespace ST
 		else if (inputManager->getKey(SDLK_RETURN) ||
 			static_cast<Button*>(interfaceManager->getWindow("Submit"))->clicked())
 		{
-		    //TODO: Send info to server
+		    submit();
 		}
 
 		SDL_Delay(0);
@@ -138,5 +149,24 @@ namespace ST
 	void RegisterState::exit()
     {
         interfaceManager->removeAllWindows();
+    }
+
+    void RegisterState::submit()
+    {
+        std::string username = static_cast<TextField*>(interfaceManager->getWindow("username"))->getText();
+        std::string password = static_cast<TextField*>(interfaceManager->getWindow("password"))->getText();
+
+        if (username.empty() || password.empty())
+        {
+            static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Invalid username or password");
+            return;
+        }
+
+        player->setName(username);
+        Packet *packet = new Packet(PAMSG_REGISTER);
+        packet->setString(username);
+        packet->setString(password);
+        networkManager->sendPacket(packet);
+        static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Sending...");
     }
 }

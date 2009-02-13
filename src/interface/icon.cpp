@@ -31,51 +31,47 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-02-09
+ *	Date of file creation: 09-02-13
  *
  *	$Id$
  *
  ********************************************/
 
-/**
- * The Register State is used for registering with the game server
- */
+#include "icon.h"
 
-#ifndef ST_REGISTERSTATE_HEADER
-#define ST_REGISTERSTATE_HEADER
-
-#include "gamestate.h"
+#include "../graphics/graphics.h"
+#include "../graphics/node.h"
 
 namespace ST
 {
-	class RegisterState : public GameState
+	Icon::Icon(const std::string &name) : Window(name)
 	{
-	public:
-		RegisterState();
+	}
 
-		/**
-		 * Enter
-		 * Called when entering the state
-		 */
-		void enter();
+	void Icon::addBackground(const std::string &bg)
+	{
+	    graphicsEngine->loadTexture(bg);
+	    setBackground(bg);
+	}
 
-		/**
-		 * Exit
-		 * Called when leaving the state
-		 */
-		void exit();
+	void Icon::drawWindow()
+	{
+        Rectangle rect;
 
-		/**
-		 * Update
-		 * Called every frame
-		 * Return false to exit the game
-		 */
-		bool update();
+		// set position and size to local variables
+		rect.x = getPosition().x;
+		rect.y = getPosition().y;
+		rect.width = getWidth();
+		rect.height = getHeight();
 
-    private:
-        void submit();
-
-	};
+		if (mBackground)
+		{
+			// draw textured filled rectangle
+			graphicsEngine->drawTexturedRect(rect, mBackground->getGLTexture());
+		}
+		else
+		{
+			graphicsEngine->drawRect(rect, false);
+		}
+	}
 }
-
-#endif

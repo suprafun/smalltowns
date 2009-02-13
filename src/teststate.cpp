@@ -47,6 +47,8 @@
 #include "graphics/graphics.h"
 #include "graphics/node.h"
 //#include "utilities/log.h"
+
+#include "interface/icon.h"
 #include "interface/interfacemanager.h"
 #include "interface/list.h"
 #include "interface/textbox.h"
@@ -168,8 +170,14 @@ namespace ST
 		interfaceManager->addSubWindow(win, chatBox);
 
 		// create textfield for sending chat
+		Icon *chatIcon = new Icon("chatbubble");
+		chatIcon->setPosition(125, 85);
+		chatIcon->setSize(50, 31);
+		chatIcon->addBackground("icon.png");
+		interfaceManager->addSubWindow(win, chatIcon);
+
 		TextField *chatField = new TextField("sendchat");
-		chatField->setPosition(125, 85);
+		chatField->setPosition(175, 85);
 		chatField->setSize(win->getWidth() - 200, 31);
 		chatField->setFontSize(18);
 		chatField->addBackground();

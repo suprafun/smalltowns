@@ -126,13 +126,18 @@ namespace ST
             ++mPosition;
         }
 
+        if (mData[mPosition] == '\0')
+            ++mPosition;
+
         return s;
     }
 
     void Packet::setString(std::string s)
     {
-        expand(mPosition + s.size());
-        memcpy(mData + mPosition, s.c_str(), s.size());
-        mPosition += s.size();
+        // be sure to include null terminator
+        int size = s.size() + 1;
+        expand(mPosition + size);
+        memcpy(mData + mPosition, s.c_str(), size);
+        mPosition += size;
     }
 }

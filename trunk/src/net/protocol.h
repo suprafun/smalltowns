@@ -36,11 +36,12 @@ enum
 
 enum
 {
-	ERR_NONE          = 0,
-	ERR_INVALID_VER   = 1,
-	ERR_INVALID_NAME  = 2,
-	ERR_INVALID_PASS  = 3,
-	ERR_INVALID_EMAIL = 4
+	ERR_NONE            = 0,
+	ERR_INVALID_VER     = 1,
+	ERR_INVALID_NAME    = 2,
+	ERR_INVALID_PASS    = 3,
+	ERR_INVALID_EMAIL   = 4,
+	ERR_TAKEN_NAME      = 5,
 };
 
 #endif

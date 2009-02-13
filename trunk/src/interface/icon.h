@@ -31,50 +31,31 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-02-09
+ *	Date of file creation: 09-02-13
  *
  *	$Id$
  *
  ********************************************/
 
 /**
- * The Register State is used for registering with the game server
+ * The icon is for displaying a static image
  */
 
-#ifndef ST_REGISTERSTATE_HEADER
-#define ST_REGISTERSTATE_HEADER
+#ifndef ST_ICON_HEADER
+#define ST_ICON_HEADER
 
-#include "gamestate.h"
+#include "window.h"
+
+#include <string>
 
 namespace ST
 {
-	class RegisterState : public GameState
+	class Icon : public Window
 	{
 	public:
-		RegisterState();
-
-		/**
-		 * Enter
-		 * Called when entering the state
-		 */
-		void enter();
-
-		/**
-		 * Exit
-		 * Called when leaving the state
-		 */
-		void exit();
-
-		/**
-		 * Update
-		 * Called every frame
-		 * Return false to exit the game
-		 */
-		bool update();
-
-    private:
-        void submit();
-
+		Icon(const std::string &name);
+		void addBackground(const std::string &bg);
+		virtual void drawWindow();
 	};
 }
 

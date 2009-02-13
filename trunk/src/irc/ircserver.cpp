@@ -42,6 +42,7 @@
 
 #include "../game.h"
 #include "../loginstate.h"
+#include "../player.h"
 
 #include "../interface/interfacemanager.h"
 #include "../interface/label.h"
@@ -49,12 +50,13 @@
 #include "../interface/textbox.h"
 
 #include <cppirclib.h>
+#include <sstream>
 
 namespace ST
 {
     IRCServer::IRCServer():
     mClient(0),
-    mRegistering(false), mRegistered(false)
+    mRegistering(false), mRegistered(false), mAttempt(0)
     {
         mClient = new IRC::IRCClient();
         mClient->init();
@@ -82,7 +84,7 @@ namespace ST
         if (!mRegistered && !mRegistering && mNick.size() > 1)
         {
 			std::string pass = "test";
-			std::string realname = "st 0 * :" "Small Towns 0.0.2";
+			std::string realname = "st 0 * :" "Towns Life 0.0.2";
             mClient->doRegistration(pass, mNick, realname);
             mRegistering = true;
         }
@@ -185,11 +187,11 @@ namespace ST
 
 			case IRC::Command::ERR_NICKINUSE:
 			{
-				GameState *state = new LoginState;
-				game->changeState(state);
-				Label *label = static_cast<Label*>(interfaceManager->getWindow("error"));
-				if (label)
-					label->setText("Username already in use");
+			    std::stringstream str;
+			    str << player->getName() << "[" << mAttempt << "]";
+				mNick = str.str();
+				mRegistering = false;
+				mAttempt++;
 			} break;
         }
     }
@@ -215,6 +217,13 @@ namespace ST
             mNick = nick;
 
         // TODO: Send nick change to server
+        if (mRegistered)
+        {
+            IRC::Command *command = new IRC::Command;
+            command->setCommand(IRC::Command::IRC_NICK);
+            command->setParams(nick);
+            mClient->sendCommand(command);
+        }
     }
 
     void IRCServer::quit()

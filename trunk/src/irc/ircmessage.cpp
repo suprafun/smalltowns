@@ -44,7 +44,7 @@ namespace ST
     IRCMessage::IRCMessage()
     {
         mType = 0;
-        mChannel = "#smalltowns";
+        mChannel = "#townslife";
     }
 
     void IRCMessage::setType(int type)

@@ -93,6 +93,23 @@ namespace ST
                 }
             } break;
 
+        case APMSG_REGISTER_RESPONSE:
+            {
+                if (packet->getByte() == ERR_NONE)
+                {
+                    GameState *state = new TestState;
+                    game->changeState(state);
+                }
+                else if (packet->getByte() == ERR_TAKEN_NAME)
+                {
+                    static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Username already taken");
+                }
+                else
+                {
+                    static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Invalid username or password");
+                }
+            } break;
+
         case APMSG_LOGIN_RESPONSE:
             {
                 if (packet->getByte() == ERR_NONE)

@@ -72,6 +72,7 @@ namespace ST
         if (packet)
         {
             processPacket(packet);
+			delete packet;
         }
 	}
 

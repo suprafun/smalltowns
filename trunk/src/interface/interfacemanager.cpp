@@ -89,6 +89,7 @@ namespace ST
 	{
 		mWindows.insert(std::pair<std::string, Window*>(window->getName(), window));
         parent->addChild(window);
+		window->addParent(parent);
 	}
 
 	void InterfaceManager::removeWindow(const std::string &name)

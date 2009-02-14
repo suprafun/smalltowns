@@ -76,6 +76,9 @@ namespace ST
 
 	void List::drawWindow()
 	{
+		if (!mVisible)
+			return;
+
 	    ListItr itr_end = mTextList.end();
 	    int i = 0;
 		Point pos;

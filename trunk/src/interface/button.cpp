@@ -48,7 +48,7 @@ namespace ST
 {
 	Button::Button(const std::string &name) : Window(name)
 	{
-		graphicsEngine->loadTexture("background.png");
+		setBackground("background.png");
 	    mPressed = false;
 		mTextSize = 12;
 	}
@@ -69,37 +69,17 @@ namespace ST
 
 	void Button::drawWindow()
 	{
-	    Rectangle rect;
-
-		// set position and size to local variables
-		rect.x = getPosition().x;
-		rect.y = getPosition().y;
-		rect.width = getWidth();
-		rect.height = getHeight();
-
-		if (mBackground)
-		{
-			graphicsEngine->drawTexturedRect(rect, mBackground->getGLTexture());
-		}
-		else
-		{
-			graphicsEngine->drawRect(rect, false);
-		}
+		Window::drawWindow();
 
 		Point pos;
-		pos.x = rect.x + 10;
-		pos.y = rect.y - 18;
+		pos.x = getPosition().x + 10;
+		pos.y = getPosition().y - 18;
 		graphicsEngine->drawText(pos, mText, mTextSize);
 	}
 
 	bool Button::clicked()
 	{
 	    return mPressed;
-	}
-
-	void Button::addBackground()
-	{
-		setBackground("background.png");
 	}
 
 	void Button::processMouse(MouseButton *button)

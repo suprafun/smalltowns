@@ -59,7 +59,6 @@ namespace ST
 		void setText(const std::string &text);
 		std::string getText();
 		void setFontSize(int size);
-		void addBackground();
 		void drawWindow();
 
 		virtual void processKey(SDL_keysym key);

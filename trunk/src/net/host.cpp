@@ -101,7 +101,6 @@ namespace ST
         if (mPackets.size() > 0)
         {
             Packet *p = mPackets.front();
-            delete mPackets.front();
             mPackets.pop_front();
             return p;
         }

@@ -66,17 +66,18 @@ namespace ST
 
 	void RegisterState::enter()
 	{
+		int screenWidth = graphicsEngine->getScreenWidth();
 	    int screenHeight = graphicsEngine->getScreenHeight();
 
         // create window for entering username and password
 		Window *win = new Window("Register Window");
 		win->setPosition(50, screenHeight - 50);
-		win->setSize(600, screenHeight - 100);
+		win->setSize(screenWidth - 100, screenHeight - 100);
 		interfaceManager->addWindow(win);
 
 		// create label for error messages
 		Label *errorLabel = new Label("error");
-		errorLabel->setPosition(240, 570);
+		errorLabel->setPosition(150, win->getHeight() - 25);
 		errorLabel->setText("");
 		errorLabel->setFontSize(24);
 		interfaceManager->addSubWindow(win, errorLabel);
@@ -95,24 +96,21 @@ namespace ST
 
         TextField *username = new TextField("username");
         username->setPosition(200, screenHeight - 285);
-        username->setSize(180, 31);
+        username->setSize(180, 21);
         username->setFontSize(18);
-        username->addBackground();
         interfaceManager->addSubWindow(win, username);
 
         TextField *password = new TextField("password");
         password->setPosition(200, screenHeight - 335);
-        password->setSize(180, 31);
+        password->setSize(180, 21);
         password->setFontSize(18);
-        password->addBackground();
         interfaceManager->addSubWindow(win, password);
 
         Button *button = new Button("Submit");
-        button->setPosition(475, 250);
+        button->setPosition(screenWidth - 100, 100);
         button->setSize(80, 24);
         button->setText("Submit");
         button->setFontSize(18);
-		button->addBackground();
         interfaceManager->addSubWindow(win, button);
 
         // set focus on first text field

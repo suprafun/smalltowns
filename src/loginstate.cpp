@@ -55,6 +55,8 @@
 #include "interface/textfield.h"
 #include "interface/window.h"
 
+#include "graphics/graphics.h"
+
 #include <SDL.h>
 
 namespace ST
@@ -66,18 +68,28 @@ namespace ST
 
 	void LoginState::enter()
 	{
+		int screenWidth = graphicsEngine->getScreenWidth();
+		int screenHeight = graphicsEngine->getScreenHeight();
+
 		// create window for entering username and password
 		Window *win = new Window("Login Window");
-		win->setPosition(200, 400);
-		win->setSize(375, 200);
+		win->setPosition(0, screenHeight);
+		win->setSize(screenWidth, screenHeight);
 		interfaceManager->addWindow(win);
 
 		// create label for error messages
 		Label *errorLabel = new Label("error");
-		errorLabel->setPosition(240, 570);
+		errorLabel->setPosition(150, screenHeight - 200);
 		errorLabel->setText("");
 		errorLabel->setFontSize(24);
 		interfaceManager->addSubWindow(win, errorLabel);
+
+		// create label
+		Label *loginLabel = new Label("LoginLabel");
+		loginLabel->setPosition(260, 385);
+		loginLabel->setText("Login");
+		loginLabel->setFontSize(24);
+		interfaceManager->addSubWindow(win, loginLabel);
 
 		// create label for username
 		Label *usernameLabel = new Label("0");
@@ -98,7 +110,6 @@ namespace ST
 		username->setPosition(335, 350);
 		username->setSize(180, 25);
 		username->setFontSize(18);
-		username->addBackground();
 		interfaceManager->addSubWindow(win, username);
 
 		// create textfield for entering password and add to window
@@ -106,7 +117,6 @@ namespace ST
 		password->setPosition(335, 320);
 		password->setSize(180, 25);
 		password->setFontSize(18);
-		password->addBackground();
 		interfaceManager->addSubWindow(win, password);
 
 		// create button for registering
@@ -115,15 +125,13 @@ namespace ST
 		registerButton->setSize(120, 24);
 		registerButton->setText("Register");
 		registerButton->setFontSize(20);
-		registerButton->addBackground();
 		interfaceManager->addSubWindow(win, registerButton);
 
         Button *button = new Button("Submit");
-        button->setPosition(475, 250);
+        button->setPosition(screenWidth - 100, 100);
         button->setSize(80, 24);
         button->setText("Submit");
         button->setFontSize(18);
-		button->addBackground();
         interfaceManager->addSubWindow(win, button);
 
         // set focus on first text field

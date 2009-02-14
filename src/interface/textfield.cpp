@@ -40,7 +40,6 @@
 #include "textfield.h"
 
 #include "../graphics/graphics.h"
-#include "../graphics/node.h"
 
 #include "../utilities/stringutils.h"
 
@@ -48,7 +47,7 @@ namespace ST
 {
 	TextField::TextField(const std::string &name) : Window(name)
 	{
-		graphicsEngine->loadTexture("textfield.png");
+		setBackground("textfield.png");
 		mTextSize = 12;
 	}
 
@@ -74,48 +73,28 @@ namespace ST
 
 	void TextField::drawWindow()
 	{
-	    Rectangle rect;
-
-		// set position and size to local variables
-		rect.x = getPosition().x;
-		rect.y = getPosition().y;
-		rect.width = getWidth();
-		rect.height = getHeight();
-
-		if (mBackground)
-		{
-			// draw textured filled rectangle
-			graphicsEngine->drawTexturedRect(rect, mBackground->getGLTexture());
-		}
-		else
-		{
-			graphicsEngine->drawRect(rect, false);
-		}
+		Window::drawWindow();
 
         int length = 0;
-		if (graphicsEngine->getFontWidth(mText) > rect.width)
+		if (graphicsEngine->getFontWidth(mText) > getWidth())
         {
-			length = mText.size() - rect.width / (int)graphicsEngine->getFontWidth("m");
+			int sizePerLetter = (int)graphicsEngine->getFontWidth("m") / mText.size();
+			length = mText.size() - (getWidth() / sizePerLetter);
 			if (length < 0)
 				length = 0;
         }
 
 		Point pos;
-		pos.x = rect.x + 5;
-		pos.y = rect.y - 18;
+		pos.x = getPosition().x + 5;
+		pos.y = getPosition().y - 18;
 		
 		graphicsEngine->drawText(pos, mText.substr(length), mTextSize);
 
 		if (mFocus)
 		{
-			pos.y += 18;
+			pos.y = getPosition().y;
 			graphicsEngine->drawCarat(pos, mText.substr(length));
 		}
-	}
-
-	void TextField::addBackground()
-	{
-		setBackground("textfield.png");
 	}
 
 	void TextField::processKey(SDL_keysym key)

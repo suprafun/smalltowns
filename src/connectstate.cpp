@@ -68,18 +68,28 @@ namespace ST
 
 	void ConnectState::enter()
 	{
+		int screenWidth = graphicsEngine->getScreenWidth();
+		int screenHeight = graphicsEngine->getScreenHeight();
+
 		// create window for entering username and password
 		Window *win = new Window("Connect Window");
-		win->setPosition(200, 400);
-		win->setSize(375, 200);
+		win->setPosition(0, screenHeight);
+		win->setSize(screenWidth, screenHeight);
 		interfaceManager->addWindow(win);
 
 		// create label for error messages
 		Label *errorLabel = new Label("error");
-		errorLabel->setPosition(240, 570);
+		errorLabel->setPosition(150, screenHeight - 200);
 		errorLabel->setText("");
 		errorLabel->setFontSize(24);
 		interfaceManager->addSubWindow(win, errorLabel);
+
+		// create label
+		Label *connectLabel = new Label("ConnectLabel");
+		connectLabel->setPosition(260, 385);
+		connectLabel->setText("Connect");
+		connectLabel->setFontSize(24);
+		interfaceManager->addSubWindow(win, connectLabel);
 
 		// create label for username
 		Label *hostnameLabel = new Label("HostnameLabel");
@@ -99,25 +109,24 @@ namespace ST
 		TextField *hostname = new TextField("Host");
 		hostname->setPosition(335, 350);
 		hostname->setSize(180, 25);
+		hostname->setText("casualgamer.co.uk");
 		hostname->setFontSize(18);
-		hostname->addBackground();
 		interfaceManager->addSubWindow(win, hostname);
 
 		// create textfield for entering port number and add to window
 		TextField *port = new TextField("Port");
 		port->setPosition(335, 300);
 		port->setSize(120, 25);
+		port->setText("9601");
 		port->setFontSize(18);
-		port->addBackground();
 		interfaceManager->addSubWindow(win, port);
 
 		// create button for submitting details
 		Button *button = new Button("Submit");
-		button->setPosition(475, 250);
+		button->setPosition(screenWidth - 100, 100);
         button->setSize(80,20);
         button->setText("Submit");
         button->setFontSize(18);
-		button->addBackground();
         interfaceManager->addSubWindow(win, button);
 
         // set the focus on the first text field

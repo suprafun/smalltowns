@@ -64,6 +64,9 @@ namespace ST
 
 	void Label::drawWindow()
 	{
+		if (!mVisible)
+			return;
+
 		Point pos;
 		pos.x = getPosition().x;
 		pos.y = getPosition().y;

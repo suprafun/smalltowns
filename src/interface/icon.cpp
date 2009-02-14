@@ -40,38 +40,16 @@
 #include "icon.h"
 
 #include "../graphics/graphics.h"
-#include "../graphics/node.h"
+#include "../graphics/texture.h"
 
 namespace ST
 {
-	Icon::Icon(const std::string &name) : Window(name)
+	Icon::Icon(const std::string &name) : Window(name), mIcon(NULL)
 	{
-	}
-
-	void Icon::addBackground(const std::string &bg)
-	{
-	    graphicsEngine->loadTexture(bg);
-	    setBackground(bg);
 	}
 
 	void Icon::drawWindow()
 	{
-        Rectangle rect;
-
-		// set position and size to local variables
-		rect.x = getPosition().x;
-		rect.y = getPosition().y;
-		rect.width = getWidth();
-		rect.height = getHeight();
-
-		if (mBackground)
-		{
-			// draw textured filled rectangle
-			graphicsEngine->drawTexturedRect(rect, mBackground->getGLTexture());
-		}
-		else
-		{
-			graphicsEngine->drawRect(rect, false);
-		}
+		Window::drawWindow();
 	}
 }

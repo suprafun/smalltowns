@@ -50,12 +50,16 @@
 
 namespace ST
 {
+	class Texture;
+
 	class Icon : public Window
 	{
 	public:
 		Icon(const std::string &name);
-		void addBackground(const std::string &bg);
 		virtual void drawWindow();
+
+	private:
+		Texture *mIcon;
 	};
 }
 

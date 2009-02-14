@@ -97,6 +97,9 @@ namespace ST
 
 	void TextBox::drawWindow()
 	{
+		if (!mVisible)
+			return;
+
 		Rectangle rect;
 		rect.x = getPosition().x;
 		rect.y = getPosition().y;

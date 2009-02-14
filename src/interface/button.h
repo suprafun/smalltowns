@@ -62,7 +62,6 @@ namespace ST
 		void setFontSize(int size);
 		void drawWindow();
 		bool clicked();
-		void addBackground();
 
 		virtual void processMouse(MouseButton *button);
 

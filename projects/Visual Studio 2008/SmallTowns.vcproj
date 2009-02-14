@@ -221,6 +221,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\registerstate.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\teststate.cpp"
 				>
 			</File>
@@ -260,6 +264,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\interface\icon.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\interface\interfacemanager.cpp"
 					>
 				</File>
@@ -269,6 +277,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\interface\list.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\interface\scrollbox.cpp"
 					>
 				</File>
 				<File
@@ -355,6 +367,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\registerstate.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\teststate.h"
 				>
 			</File>
@@ -402,6 +418,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\interface\icon.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\interface\interfacemanager.h"
 					>
 				</File>
@@ -411,6 +431,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\interface\list.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\interface\scrollbox.h"
 					>
 				</File>
 				<File

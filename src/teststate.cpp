@@ -51,6 +51,7 @@
 #include "interface/icon.h"
 #include "interface/interfacemanager.h"
 #include "interface/list.h"
+#include "interface/scrollbox.h"
 #include "interface/textbox.h"
 #include "interface/textfield.h"
 #include "interface/window.h"
@@ -161,6 +162,12 @@ namespace ST
 		win->setSize(screenWidth - 150, screenHeight - 100);
 		interfaceManager->addWindow(win);
 
+		// create scroll box for chat box
+		ScrollBox *scrollBox = new ScrollBox("scrollbox");
+		scrollBox->setPosition(125, screenHeight - 100);
+		scrollBox->setSize(win->getWidth() - 200, screenHeight - 200);
+		interfaceManager->addSubWindow(win, scrollBox);
+
 		// create textbox in non-edit mode for chat
 		TextBox *chatBox = new TextBox("chat");
 		chatBox->setPosition(125, screenHeight - 100);
@@ -173,14 +180,13 @@ namespace ST
 		Icon *chatIcon = new Icon("chatbubble");
 		chatIcon->setPosition(139, 85);
 		chatIcon->setSize(27, 21);
-		chatIcon->addBackground("icon.png");
+		chatIcon->setBackground("icon.png");
 		interfaceManager->addSubWindow(win, chatIcon);
 
 		TextField *chatField = new TextField("sendchat");
 		chatField->setPosition(174, 85);
 		chatField->setSize(win->getWidth() - 249, 21);
 		chatField->setFontSize(16);
-		chatField->addBackground();
 		interfaceManager->addSubWindow(win, chatField);
 
 		// create userlist

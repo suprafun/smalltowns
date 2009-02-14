@@ -53,7 +53,22 @@
 namespace ST
 {
     struct MouseButton;
-	class Node;
+	class Texture;
+
+	class WindowTitle
+	{
+	public:
+		WindowTitle();
+		int getHeight() const;
+		std::string getTitle();
+		void setHeight(int height);
+		void setTitle(const std::string &title);
+
+	private:
+		int mHeight;
+		std::string mTitle;
+	};
+
 
 	class Window
 	{
@@ -62,7 +77,8 @@ namespace ST
 		Window(Window *parent, std::string name);
 		
 		// Add dependant child window
-		void addChild(Window *window);
+		virtual void addChild(Window *window);
+		virtual void addParent(Window *window);
 		
 		// set visibility
 		void setVisible(bool visible);
@@ -74,16 +90,18 @@ namespace ST
 		int getWidth() const;
 		int getHeight() const;
 		int getNumChildren() const;
+		Rectangle& getClipArea();
 
 		// set info
 		void setPosition(int x, int y);
 		void setSize(int width, int height);
 		void setFocus(bool focused);
+		void setTitleHeight(int height);
+		void setClipArea(Rectangle &rect);
 		
 		// graphics
 		virtual void drawWindow();
 		void setBackground(const std::string &bg);
-		virtual void addBackground();
 
 		// input
 		virtual void processKey(SDL_keysym key);
@@ -93,10 +111,11 @@ namespace ST
 		std::string mName;
 		std::list<Window*> mChildren;
 		Window *mParent;
-		Node *mBackground;
+		WindowTitle mTitle;
+		Texture *mBackground;
+		Rectangle mClipArea;
 		Point mPosition;
 		Point mSize;
-		std::string mTitle;
 		bool mVisible;
 		bool mFocus;
 	};

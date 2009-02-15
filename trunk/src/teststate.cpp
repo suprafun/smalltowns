@@ -164,17 +164,17 @@ namespace ST
 
 		// create scroll box for chat box
 		ScrollBox *scrollBox = new ScrollBox("scrollbox");
-		scrollBox->setPosition(125, screenHeight - 100);
-		scrollBox->setSize(win->getWidth() - 200, screenHeight - 200);
+		scrollBox->setPosition(125, 375);
+		scrollBox->setSize(win->getWidth() - 200, 280);
 		interfaceManager->addSubWindow(win, scrollBox);
 
 		// create textbox in non-edit mode for chat
 		TextBox *chatBox = new TextBox("chat");
-		chatBox->setPosition(125, screenHeight - 100);
-		chatBox->setSize(win->getWidth() - 200, screenHeight - 200);
+		chatBox->setPosition(0, scrollBox->getHeight());
+		chatBox->setSize(scrollBox->getWidth() - 8, scrollBox->getHeight());
 		chatBox->setRows(11);
 		chatBox->setFontSize(18);
-		interfaceManager->addSubWindow(win, chatBox);
+		interfaceManager->addSubWindow(scrollBox, chatBox);
 
 		// create textfield for sending chat
 		Icon *chatIcon = new Icon("chatbubble");

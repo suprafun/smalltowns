@@ -127,6 +127,8 @@ namespace ST
                 {
 					pos.x = rect.x + 5;
 					pos.y = rect.y - ((mRows - numberRows + 1) * (int)graphicsEngine->getFontHeight());
+					if (pos.x > mClipArea.x && pos.y > mClipArea.y &&
+						pos.x < mClipArea.width && pos.y < mClipArea.height)
                     graphicsEngine->drawText(pos, mTextHistory[i], mTextSize);
                 }
                 ++numberRows;

@@ -128,7 +128,7 @@ namespace ST
 		interfaceManager->addSubWindow(win, registerButton);
 
         Button *button = new Button("Submit");
-        button->setPosition(screenWidth - 100, 100);
+        button->setPosition(380, 250);
         button->setSize(80, 24);
         button->setText("Submit");
         button->setFontSize(18);

@@ -98,18 +98,41 @@ namespace ST
 
 		if (mParent)
 		{
+			// get current width and height
 			int width = mSize.x;
 			int height = mSize.y;
+			// get position based on offset from parent window
+			int x = mParent->getPosition().x + mPosition.x;
+			int y = (mParent->getPosition().y - mParent->getHeight()) + mPosition.y;
+			// get boundaries
+			int max_x = mParent->getPosition().x + mParent->getWidth();
+			int max_y = mParent->getPosition().y;
 
-			if (width > mParent->getWidth())
-				width = mParent->getWidth();
-			if (mSize.y > mParent->getHeight())
-				height = mParent->getHeight();
+			// ensure the position isnt outside the parent window
+			if (x > max_x)
+			{
+				x = max_x - width;
+				if (x < mParent->getPosition().x)
+					x = mParent->getPosition().x;
+			}
+			if (y > max_y)
+			{
+				setVisible(false);
+			}
 
+			//ensure the size doesnt take it outside the parent window
+			if (x + width > max_x)
+			{
+				width = max_x - x;
+			}
+			if (y - height > max_y)
+			{
+				height = max_y - y;
+			}
+
+			// set new position and size based on parent window
 			setSize(width, height);
-
-			setPosition(mParent->getPosition().x + mPosition.x,
-				(mParent->getPosition().y - mParent->getHeight()) + mPosition.y);
+			setPosition(x, y);
 		}
 	}
 
@@ -133,8 +156,8 @@ namespace ST
 		mPosition.x = x;
 		mPosition.y = y;
 
-		mClipArea.x = mPosition.x;
-		mClipArea.y = mPosition.y;
+		mClipArea.x = x;
+		mClipArea.y = y;
     }
 
 	Point& Window::getPosition()
@@ -147,8 +170,8 @@ namespace ST
 		mSize.x = width;
 		mSize.y = height;
 
-		mClipArea.width = mSize.x;
-		mClipArea.height = mSize.y;
+		mClipArea.width = mPosition.x + width;
+		mClipArea.height = mPosition.y + height;
 	}
 
 	int Window::getWidth() const
@@ -206,15 +229,18 @@ namespace ST
 			return;
 
 		// get window, make room for title bar
-	    Rectangle rect = getClipArea();
-		rect.y = getPosition().y - mTitle.getHeight();
+	    Rectangle rect;
+		rect.x = mPosition.x;
+		rect.y = mPosition.y - mTitle.getHeight();
+		rect.width = mSize.x;
+		rect.height = mSize.y;
 
 		// draw title
 		if (mTitle.getHeight() > 0)
 		{
 			Rectangle titleRect;
 			titleRect.x = rect.x;
-			titleRect.y = getPosition().y;
+			titleRect.y = mPosition.y;
 			titleRect.width = getWidth();
 			titleRect.height = mTitle.getHeight();
 

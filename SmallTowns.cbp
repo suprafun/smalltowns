@@ -56,12 +56,16 @@
 		<Unit filename="src/input.h" />
 		<Unit filename="src/interface/button.cpp" />
 		<Unit filename="src/interface/button.h" />
+		<Unit filename="src/interface/icon.cpp" />
+		<Unit filename="src/interface/icon.h" />
 		<Unit filename="src/interface/interfacemanager.cpp" />
 		<Unit filename="src/interface/interfacemanager.h" />
 		<Unit filename="src/interface/label.cpp" />
 		<Unit filename="src/interface/label.h" />
 		<Unit filename="src/interface/list.cpp" />
 		<Unit filename="src/interface/list.h" />
+		<Unit filename="src/interface/scrollbox.cpp" />
+		<Unit filename="src/interface/scrollbox.h" />
 		<Unit filename="src/interface/textbox.cpp" />
 		<Unit filename="src/interface/textbox.h" />
 		<Unit filename="src/interface/textfield.cpp" />

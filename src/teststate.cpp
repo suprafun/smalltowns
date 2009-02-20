@@ -51,7 +51,6 @@
 #include "interface/icon.h"
 #include "interface/interfacemanager.h"
 #include "interface/list.h"
-#include "interface/scrollbox.h"
 #include "interface/textbox.h"
 #include "interface/textfield.h"
 #include "interface/window.h"
@@ -172,7 +171,7 @@ namespace ST
 
 		// create textfield for sending chat
 		Icon *chatIcon = new Icon("chatbubble");
-		chatIcon->setPosition(135, 85);
+		chatIcon->setPosition(145, 85);
 		chatIcon->setSize(27, 21);
 		chatIcon->setBackground("icon.png");
 		interfaceManager->addSubWindow(win, chatIcon);

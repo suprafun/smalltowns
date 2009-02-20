@@ -58,6 +58,8 @@ namespace ST
 		~TextField();
 		void setText(const std::string &text);
 		std::string getText();
+		void setPassword(bool value);
+		bool getPassword() const;
 		void setFontSize(int size);
 		void drawWindow();
 
@@ -66,6 +68,7 @@ namespace ST
     private:
         std::string mText;
 		int mTextSize;
+		bool mPassword;
 	};
 }
 

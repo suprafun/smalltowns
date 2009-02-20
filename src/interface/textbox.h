@@ -52,6 +52,9 @@
 
 namespace ST
 {
+    class Texture;
+    struct MouseButton;
+
 	class TextBox : public Window
     {
     public:
@@ -63,14 +66,19 @@ namespace ST
         void setEditable(bool editable);
         void addRow(const std::string &text);
         void drawWindow();
+        void scrollTo(int index);
 
         virtual void processKey(SDL_keysym key);
+        virtual void processMouse(MouseButton *button);
 
     private:
         std::string mText;
         std::deque<std::string> mTextHistory;
+        Texture *mScrollButton;
+        Texture *mScrollBar;
 		int mTextSize;
         int mRows;
+        int mStartRow;
         bool mEditable;
     };
 }

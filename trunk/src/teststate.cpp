@@ -162,30 +162,24 @@ namespace ST
 		win->setSize(screenWidth - 150, screenHeight - 100);
 		interfaceManager->addWindow(win);
 
-		// create scroll box for chat box
-		ScrollBox *scrollBox = new ScrollBox("scrollbox");
-		scrollBox->setPosition(125, 375);
-		scrollBox->setSize(win->getWidth() - 200, 280);
-		interfaceManager->addSubWindow(win, scrollBox);
-
 		// create textbox in non-edit mode for chat
 		TextBox *chatBox = new TextBox("chat");
-		chatBox->setPosition(0, scrollBox->getHeight());
-		chatBox->setSize(scrollBox->getWidth() - 8, scrollBox->getHeight());
-		chatBox->setRows(11);
+		chatBox->setPosition(135, 375);
+		chatBox->setSize(win->getWidth() - 200, 280);
+		chatBox->setRows(50);
 		chatBox->setFontSize(18);
-		interfaceManager->addSubWindow(scrollBox, chatBox);
+		interfaceManager->addSubWindow(win, chatBox);
 
 		// create textfield for sending chat
 		Icon *chatIcon = new Icon("chatbubble");
-		chatIcon->setPosition(139, 85);
+		chatIcon->setPosition(135, 85);
 		chatIcon->setSize(27, 21);
 		chatIcon->setBackground("icon.png");
 		interfaceManager->addSubWindow(win, chatIcon);
 
 		TextField *chatField = new TextField("sendchat");
-		chatField->setPosition(174, 85);
-		chatField->setSize(win->getWidth() - 249, 21);
+		chatField->setPosition(175, 85);
+		chatField->setSize(win->getWidth() - 240, 21);
 		chatField->setFontSize(16);
 		interfaceManager->addSubWindow(win, chatField);
 

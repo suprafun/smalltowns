@@ -49,11 +49,12 @@ namespace ST
 	{
 		setBackground("textfield.png");
 		mTextSize = 12;
+		mPassword = false;
 	}
 
     TextField::~TextField()
     {
-        
+
     }
 
     void TextField::setText(const std::string &text)
@@ -66,6 +67,16 @@ namespace ST
 	    return mText;
 	}
 
+	void TextField::setPassword(bool value)
+	{
+	    mPassword = value;
+	}
+
+	bool TextField::getPassword() const
+	{
+	    return mPassword;
+	}
+
 	void TextField::setFontSize(int size)
 	{
 	    mTextSize = size;
@@ -75,25 +86,37 @@ namespace ST
 	{
 		Window::drawWindow();
 
-        int length = 0;
+        int startAtLetter = 0;
 		if (graphicsEngine->getFontWidth(mText) > getWidth())
         {
-			int sizePerLetter = (int)graphicsEngine->getFontWidth("m") / mText.size();
-			length = mText.size() - (getWidth() / sizePerLetter);
-			if (length < 0)
-				length = 0;
+			int sizePerLetter = (int)graphicsEngine->getFontWidth(mText) / mText.size();
+			startAtLetter = mText.size() - (getWidth() / sizePerLetter) - 1;
+			if (startAtLetter < 0)
+				startAtLetter = 0;
         }
 
 		Point pos;
 		pos.x = getPosition().x + 5;
 		pos.y = getPosition().y - 18;
-		
-		graphicsEngine->drawText(pos, mText.substr(length), mTextSize);
+
+        if (mPassword && !mText.empty())
+        {
+            std::string password = mText;
+            for (int i = 0; i < mText.size(); ++i)
+            {
+                password.replace(i, mText.size(), "*");
+            }
+            graphicsEngine->drawText(pos, password.substr(startAtLetter), mTextSize);
+        }
+        else
+        {
+            graphicsEngine->drawText(pos, mText.substr(startAtLetter), mTextSize);
+        }
 
 		if (mFocus)
 		{
 			pos.y = getPosition().y;
-			graphicsEngine->drawCarat(pos, mText.substr(length));
+			graphicsEngine->drawCarat(pos, mText.substr(startAtLetter));
 		}
 	}
 

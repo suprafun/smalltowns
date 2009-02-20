@@ -177,14 +177,20 @@ namespace ST
 
 	void InterfaceManager::sendMouse(MouseButton *button)
 	{
-	    Window *win = getWindow(button->x, button->y);
-	    if (win && win != mFocused)
+	    if (button->state == SDL_PRESSED)
 	    {
-            changeFocus(win);
+            Window *win = getWindow(button->x, button->y);
+            if (win && win != mFocused)
+            {
+                changeFocus(win);
+            }
 	    }
+
 	    if (mFocused)
 	    {
             mFocused->processMouse(button);
 	    }
+
+	    delete button;
 	}
 }

@@ -19,17 +19,23 @@
 					<Add option="`sdl-config --cflags`" />
 					<Add option="`freetype-config --cflags`" />
 					<Add directory="libs/cppirclib" />
+					<Add directory="/usr/local/include/CEGUI" />
 				</Compiler>
 				<Linker>
 					<Add option="`sdl-config --libs`" />
 					<Add library="SDL_image" />
 					<Add library="GL" />
 					<Add library="GLU" />
-					<Add library="pthread" />
 					<Add library="tinyxml" />
 					<Add library="enet" />
 					<Add library="ftgl" />
 					<Add library="libs/cppirclib/libcppirclib.a" />
+					<Add library="CEGUIBase" />
+					<Add library="CEGUIOpenGLRenderer" />
+					<Add library="CEGUIFalagardWRBase" />
+					<Add library="CEGUITGAImageCodec" />
+					<Add library="CEGUIDevILImageCodec" />
+					<Add library="pthread" />
 				</Linker>
 			</Target>
 		</Build>
@@ -64,8 +70,6 @@
 		<Unit filename="src/interface/label.h" />
 		<Unit filename="src/interface/list.cpp" />
 		<Unit filename="src/interface/list.h" />
-		<Unit filename="src/interface/scrollbox.cpp" />
-		<Unit filename="src/interface/scrollbox.h" />
 		<Unit filename="src/interface/textbox.cpp" />
 		<Unit filename="src/interface/textbox.h" />
 		<Unit filename="src/interface/textfield.cpp" />

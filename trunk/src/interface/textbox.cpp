@@ -39,7 +39,10 @@
 
 #include "textbox.h"
 
+#include "../input.h"
+
 #include "../graphics/graphics.h"
+#include "../graphics/texture.h"
 
 #include "../utilities/stringutils.h"
 
@@ -49,9 +52,14 @@ namespace ST
 {
 	TextBox::TextBox(const std::string &name) : Window(name)
 	{
+	    mStartRow = 0;
         mRows = 1;
         mEditable = false;
 		mTextSize = 12;
+
+		graphicsEngine->loadTexture("scrollbutton.png");
+
+		mScrollButton = graphicsEngine->getTexture("scrollbutton.png");
 	}
 
     TextBox::~TextBox()
@@ -76,19 +84,21 @@ namespace ST
 	void TextBox::addRow(const std::string &text)
 	{
 	    int maxSize = getWidth();
-		int textlength = (int)graphicsEngine->getFontWidth(text);
-		int length = maxSize / (int)graphicsEngine->getFontWidth("m");
-	    if (textlength > maxSize)
+		int totalTextWidth = (int)graphicsEngine->getFontWidth(text);
+
+	    if (totalTextWidth > maxSize)
 	    {
+	        int sizePerLetter = totalTextWidth / text.size();
+	        int maxLetters = maxSize / (sizePerLetter + 1);
 	        int sofar = 0;
 	        while (sofar < text.size())
 	        {
-	            if (length + sofar > text.size())
+	            if (maxLetters + sofar > text.size())
 	            {
-	                length = text.size() - sofar;
+	                maxLetters = text.size() - sofar;
 	            }
-                mTextHistory.push_back(text.substr(sofar, length));
-                sofar += length;
+                mTextHistory.push_back(text.substr(sofar, maxLetters));
+                sofar += maxLetters;
 	        }
 	        return;
 	    }
@@ -107,33 +117,53 @@ namespace ST
 		rect.height = getHeight();
 	    graphicsEngine->drawRect(rect, false);
 
-        if (mEditable)
+        // loop through the history
+        // start with latest first (subtract 1, since counting starts from 0)
+        // make sure i doesnt go under the starting row
+        int rowNumber = mStartRow;
+        Point pos;
+        for (int i = mTextHistory.size() - 1; i >= mStartRow; --i)
         {
-			Point pos;
-			pos.x = rect.x;
-			pos.y = rect.y;
-            graphicsEngine->drawText(pos, mText, mTextSize);
-        }
-        else
-        {
-            // loop through the history
-            // start with latest first (subtract 1, since counting starts from 0)
-            // make sure i doesnt go under 0
-            int numberRows = 0;
-			Point pos;
-            for (int i = mTextHistory.size() - 1; i >= 0; --i)
+            if (rowNumber < mRows)
             {
-                if (numberRows < mRows)
-                {
-					pos.x = rect.x + 5;
-					pos.y = rect.y - ((mRows - numberRows + 1) * (int)graphicsEngine->getFontHeight());
-					if (pos.x > mClipArea.x && pos.y > mClipArea.y &&
-						pos.x < mClipArea.width && pos.y < mClipArea.height)
-                    graphicsEngine->drawText(pos, mTextHistory[i], mTextSize);
-                }
-                ++numberRows;
+                // move to the right a little
+                pos.x = rect.x + 5;
+                // calculate how low to start writing
+                // this should be maxRows - currentRow + 1 * the font height
+                pos.y = rect.y - ((11 - rowNumber + 1) * (int)graphicsEngine->getFontHeight());
+                if (pos.x > rect.x && pos.y < rect.y &&
+                    pos.x < rect.x + rect.width && pos.y > rect.y - rect.height)
+                graphicsEngine->drawText(pos, mTextHistory[i], mTextSize);
             }
+            ++rowNumber;
         }
+
+        // draw thin line
+        rect.x = getPosition().x + getWidth() - 4;
+        rect.y = getPosition().y - 4;
+        rect.width = 1;
+        rect.height = getHeight() - 4;
+
+        // if more rows than max rows
+        if (mTextHistory.size() > 11)
+        {
+            Rectangle scrollRect;
+            scrollRect.x = getPosition().x + getWidth() - 8;
+            scrollRect.y = getPosition().y - getHeight() + 8 + (mStartRow * 5);
+            scrollRect.width = 8;
+            scrollRect.height = 8;
+            graphicsEngine->drawTexturedRect(scrollRect, mScrollButton->getGLTexture());
+        }
+	}
+
+	void TextBox::scrollTo(int index)
+	{
+	    if (index < 0)
+            mStartRow = 0;
+        else if (index > mTextHistory.size() - 1)
+            mStartRow = mTextHistory.size() - 1;
+        else
+            mStartRow = index;
 	}
 
 	void TextBox::processKey(SDL_keysym key)
@@ -149,6 +179,18 @@ namespace ST
             str << c;
             mText.append(str.str());
         }
+	}
+
+	void TextBox::processMouse(MouseButton *button)
+	{
+	    if (button->state == SDL_PRESSED)
+	    {
+            if (button->x >= (getPosition().x + getWidth() - 8))
+            {
+                int index = button->y - (getPosition().y - getHeight());
+                scrollTo(index / 5);
+            }
+	    }
 	}
 }
 

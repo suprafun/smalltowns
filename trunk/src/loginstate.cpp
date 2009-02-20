@@ -117,6 +117,7 @@ namespace ST
 		password->setPosition(335, 320);
 		password->setSize(180, 25);
 		password->setFontSize(18);
+		password->setPassword(true);
 		interfaceManager->addSubWindow(win, password);
 
 		// create button for registering

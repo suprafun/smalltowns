@@ -1,0 +1,48 @@
+2008-11-14  David Athay  <ko2fan@gmail.com>
+
+	* src/interface/interfacemanager.cpp, src/interface/window.cpp,
+	src/game.cpp: Added barebones interface manager and window.
+
+2008-10-23  David Athay  <ko2fan@gmail.com>
+
+	* src/graphics/graphics.cpp, src/interface/interfacemanager.h,
+	src/interface/window.h, src/net/client.h, src/teststate.cpp,
+	src/utilities/math.h, data/grass.png, data/base.png: Added test player
+	node, and started creating interface.
+
+2008-10-15  David Athay  <ko2fan@gmail.com>
+
+	* src/game.cpp, src/graphics/graphics.cpp, src/graphics/graphics.h,
+	src/graphics/node.cpp, src/graphics/node.h, src/map.h, src/teststate.cpp,
+	src/graphics/animation.cpp, src/graphics/animation.h, src/map.cpp,
+	src/tile.cpp, src/tile.h: Added support for tiles and started on map.
+
+2008-10-03  David Athay  <ko2fan@gmail.com>
+
+	* projects/Visual Studio 2008/SmallTowns.sln,
+	projects/Visual Studio 2008/SmallTowns.vcproj, src/game.cpp, src/game.h,
+	src/graphics/camera.cpp, src/graphics/camera.h, src/graphics/graphics.cpp,
+	src/graphics/graphics.h, src/graphics/node.cpp, src/graphics/node.h,
+	src/graphics/texture.cpp, src/graphics/texture.h, src/input.cpp,
+	src/input.h, src/main.cpp, src/map.h, src/teststate.cpp, src/teststate.h,
+	src/utilities/log.cpp, src/utilities/types.h: Added drawing a test map.
+
+2008-09-23  David Athay  <ko2fan@gmail.com>
+
+	* SmallTowns.cbp, src/graphics/graphics.cpp, src/input.cpp, 
+	src/teststate.cpp, src/main.cpp, src/game.cpp, src/utilities/log.cpp: 
+	Created codeblocks project, and made it compile on FreeBSD.
+
+2008-09-21  David Athay  <ko2fan@gmail.com>
+
+	* src/game.cpp, src/game.h, src/gamestate.h, src/graphics/camera.h,
+	src/graphics/entity.h, src/graphics/graphics.cpp, src/graphics/graphics.h,
+	src/graphics/node.h, src/input.cpp, src/input.h, src/teststate.cpp,
+	src/teststate.h, src/utilities/log.cpp, src/utilities/types.h: Added game
+	states and keyboard input.
+
+2008-09-20  David Athay  <ko2fan@gmail.com>
+	* src/game.cpp, src/game.h, src/graphics/entity.h, src/graphics/graphics.h,
+	src/graphics/graphics.cpp, src/graphics/node.h, src/main.cpp,
+	src/utilities/log.cpp, src/utilities/log.h: Added logging, and initialising
+	SDL to use OpenGL.

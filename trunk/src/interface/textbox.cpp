@@ -58,8 +58,10 @@ namespace ST
 		mTextSize = 12;
 
 		graphicsEngine->loadTexture("scrollbutton.png");
+		graphicsEngine->loadTexture("scrollline.png");
 
 		mScrollButton = graphicsEngine->getTexture("scrollbutton.png");
+		mScrollBar = graphicsEngine->getTexture("scrollline.png");
 	}
 
     TextBox::~TextBox()
@@ -143,6 +145,7 @@ namespace ST
         rect.y = getPosition().y - 4;
         rect.width = 1;
         rect.height = getHeight() - 4;
+		graphicsEngine->drawTexturedRect(rect, mScrollBar->getGLTexture());
 
         // if more rows than max rows
         if (mTextHistory.size() > 11)

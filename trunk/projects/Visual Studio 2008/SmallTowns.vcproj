@@ -280,10 +280,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\interface\scrollbox.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\interface\textbox.cpp"
 					>
 				</File>
@@ -431,10 +427,6 @@
 				</File>
 				<File
 					RelativePath="..\..\src\interface\list.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\interface\scrollbox.h"
 					>
 				</File>
 				<File

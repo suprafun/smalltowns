@@ -52,7 +52,7 @@ namespace ST
 {
 	TextBox::TextBox(const std::string &name) : Window(name)
 	{
-	    mStartRow = 0;
+	    mIndex = 0;
         mRows = 1;
         mEditable = false;
 		mTextSize = 12;
@@ -122,9 +122,28 @@ namespace ST
         // loop through the history
         // start with latest first (subtract 1, since counting starts from 0)
         // make sure i doesnt go under the starting row
-        int rowNumber = mStartRow;
+        int rowNumber = 0;
+		int startRow = 0;
+		int lastRow = 0;
         Point pos;
-        for (int i = mTextHistory.size() - 1; i >= mStartRow; --i)
+
+		if (mTextHistory.size() < 11)
+		{
+			lastRow = mTextHistory.size() - 1;
+		}
+		else
+		{
+			lastRow = mTextHistory.size() - mIndex - 1;
+		}
+
+		startRow = lastRow - 11;
+
+		if (startRow < 0)
+		{
+			startRow = 0;
+		}
+
+        for (int i = lastRow; i >= startRow; --i)
         {
             if (rowNumber < mRows)
             {
@@ -152,7 +171,7 @@ namespace ST
         {
             Rectangle scrollRect;
             scrollRect.x = getPosition().x + getWidth() - 8;
-            scrollRect.y = getPosition().y - getHeight() + 8 + (mStartRow * 5);
+            scrollRect.y = getPosition().y - getHeight() + 8 + (mIndex * 5);
             scrollRect.width = 8;
             scrollRect.height = 8;
             graphicsEngine->drawTexturedRect(scrollRect, mScrollButton->getGLTexture());
@@ -162,11 +181,11 @@ namespace ST
 	void TextBox::scrollTo(int index)
 	{
 	    if (index < 0)
-            mStartRow = 0;
+            mIndex = 0;
         else if (index > mTextHistory.size() - 1)
-            mStartRow = mTextHistory.size() - 1;
+            mIndex = mTextHistory.size() - 1;
         else
-            mStartRow = index;
+            mIndex = index;
 	}
 
 	void TextBox::processKey(SDL_keysym key)

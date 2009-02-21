@@ -78,7 +78,7 @@ namespace ST
         Texture *mScrollBar;
 		int mTextSize;
         int mRows;
-        int mStartRow;
+		int mIndex;
         bool mEditable;
     };
 }

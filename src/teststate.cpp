@@ -189,6 +189,8 @@ namespace ST
 		list->setFontSize(18);
 		interfaceManager->addWindow(list);
 
+		interfaceManager->changeFocus(chatField);
+
 		std::string nick = player->getName();
 		std::string host = "london.uk.whatnet.org";
 		chatServer->setNick(nick);

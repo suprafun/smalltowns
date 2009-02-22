@@ -54,7 +54,6 @@ namespace ST
 	{
 	    mIndex = 0;
         mRows = 1;
-        mEditable = false;
 		mTextSize = 12;
 
 		graphicsEngine->loadTexture("scrollbutton.png");
@@ -76,11 +75,6 @@ namespace ST
 	void TextBox::setRows(int rows)
 	{
 	    mRows = rows;
-	}
-
-	void TextBox::setEditable(bool editable)
-	{
-	    mEditable = editable;
 	}
 
 	void TextBox::addRow(const std::string &text)
@@ -190,17 +184,7 @@ namespace ST
 
 	void TextBox::processKey(SDL_keysym key)
 	{
-	    if (!mEditable)
-            return;
-	    if (key.sym == SDLK_RETURN || key.sym == SDLK_TAB)
-            return;
-	    if (utils::isCharacter(key.unicode))
-        {
-            char c = key.unicode;
-            std::stringstream str;
-            str << c;
-            mText.append(str.str());
-        }
+	    
 	}
 
 	void TextBox::processMouse(MouseButton *button)

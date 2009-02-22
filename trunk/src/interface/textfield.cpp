@@ -49,6 +49,7 @@ namespace ST
 	{
 		setBackground("textfield.png");
 		mTextSize = 12;
+		mCaratPos = 0;
 		mPassword = false;
 	}
 
@@ -60,6 +61,7 @@ namespace ST
     void TextField::setText(const std::string &text)
 	{
 	    mText = text;
+		mCaratPos = mText.size();
 	}
 
 	std::string TextField::getText()
@@ -116,7 +118,7 @@ namespace ST
 		if (mFocus)
 		{
 			pos.y = getPosition().y;
-			graphicsEngine->drawCarat(pos, mText.substr(startAtLetter));
+			graphicsEngine->drawCarat(pos, mText.substr(startAtLetter, mCaratPos));
 		}
 	}
 
@@ -126,21 +128,48 @@ namespace ST
             return;
         else if (key.sym == SDLK_BACKSPACE)
         {
-            mText = mText.substr(0, mText.size() - 1);
+			if (mText.empty())
+				return;
+			if (mCaratPos > 0)
+			{
+				mText = mText.erase(mCaratPos - 1, 1);
+				--mCaratPos;
+			}
             return;
         }
+		else if (key.sym == SDLK_DELETE)
+		{
+			if (mText.empty())
+				return;
+			if (mCaratPos < mText.size())
+			{
+				mText = mText.erase(mCaratPos, 1);
+			}
+			return;
+		}
         else if (key.sym == SDLK_SPACE)
         {
             mText.append(" ");
             return;
         }
+		else if (key.sym == SDLK_LEFT)
+		{
+			if (mCaratPos > 0)
+				--mCaratPos;
+		}
+		else if (key.sym == SDLK_RIGHT)
+		{
+			if (mCaratPos < mText.size())
+				++mCaratPos;
+		}
 
         if (utils::isCharacter(key.unicode))
         {
             char c = key.unicode;
             std::stringstream str;
             str << c;
-            mText.append(str.str());
+            mText.insert(mCaratPos, str.str());
+			++mCaratPos;
         }
 	}
 }

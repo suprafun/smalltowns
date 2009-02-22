@@ -68,6 +68,7 @@ namespace ST
     private:
         std::string mText;
 		int mTextSize;
+		int mCaratPos;
 		bool mPassword;
 	};
 }

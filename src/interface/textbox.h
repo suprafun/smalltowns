@@ -63,7 +63,6 @@ namespace ST
 
         void setFontSize(int size);
         void setRows(int rows);
-        void setEditable(bool editable);
         void addRow(const std::string &text);
         void drawWindow();
         void scrollTo(int index);
@@ -79,7 +78,7 @@ namespace ST
 		int mTextSize;
         int mRows;
 		int mIndex;
-        bool mEditable;
+		int mCaratPos;
     };
 }
 

@@ -30,11 +30,6 @@
 					<Add library="enet" />
 					<Add library="ftgl" />
 					<Add library="libs/cppirclib/libcppirclib.a" />
-					<Add library="CEGUIBase" />
-					<Add library="CEGUIOpenGLRenderer" />
-					<Add library="CEGUIFalagardWRBase" />
-					<Add library="CEGUITGAImageCodec" />
-					<Add library="CEGUIDevILImageCodec" />
 					<Add library="pthread" />
 				</Linker>
 			</Target>

@@ -49,6 +49,8 @@
 #include "../interface/list.h"
 #include "../interface/textbox.h"
 
+#include "../utilities/log.h"
+
 #include <cppirclib.h>
 #include <sstream>
 
@@ -84,9 +86,10 @@ namespace ST
         if (!mRegistered && !mRegistering && mNick.size() > 1)
         {
 			std::string pass = "test";
-			std::string realname = "st 0 * :" "Towns Life 0.0.2";
+			std::string realname = "st 0 * :" "Towns Life 0.0.2.1";
             mClient->doRegistration(pass, mNick, realname);
             mRegistering = true;
+            logger->logDebug("Registering with IRC server");
         }
 
         int packets = mClient->ping();
@@ -121,6 +124,7 @@ namespace ST
                 TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
 				if (box)
 					box->addRow("Connected!");
+                logger->logDebug("Joining #townslife channel");
             } break;
 
             case IRC::Command::IRC_SAY:
@@ -136,6 +140,46 @@ namespace ST
                 TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
 				if (box)
 					box->addRow(text);
+            } break;
+
+            case IRC::Command::IRC_MSG:
+            {
+                int i = 0;
+                std::string text = command->getUserInfo() + " ";
+
+                while (command->getParam(i) != "" && i < 255)
+                {
+                    text.append(command->getParam(i));
+                    text.append(" ");
+                    ++i;
+                }
+
+                TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
+				if (box)
+					box->addRow(text);
+            } break;
+
+            case IRC::Command::IRC_EMOTE:
+            {
+                int i = 0;
+                std::string text = "* ";
+                text.append(command->getUserInfo() + " ");
+
+                while (command->getParam(i) != "" && i < 255)
+                {
+                    text.append(command->getParam(i));
+                    text.append(" ");
+                    ++i;
+                }
+
+                TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
+				if (box)
+					box->addRow(text);
+            } break;
+
+            case IRC::Command::IRC_NOTICE:
+            {
+                std::string params = command->getParam(0);
             } break;
 
             case IRC::Command::IRC_NAMES:
@@ -165,9 +209,10 @@ namespace ST
             } break;
 
             case IRC::Command::IRC_PART:
+            case IRC::Command::IRC_QUIT:
             {
                 std::string name = command->getUserInfo();
-                std::string msg = name + " parted";
+                std::string msg = name + " left the chat";
                 List *list = static_cast<List*>(interfaceManager->getWindow("userlist"));
 				if (list)
 					list->removeLabel(name);
@@ -183,6 +228,7 @@ namespace ST
 				Label *label = static_cast<Label*>(interfaceManager->getWindow("error"));
 				if (label)
 					label->setText("Invalid characters in nick.");
+                logger->logWarning("Invalid nickname used");
 			} break;
 
 			case IRC::Command::ERR_NICKINUSE:
@@ -192,6 +238,7 @@ namespace ST
 				mNick = str.str();
 				mRegistering = false;
 				mAttempt++;
+				logger->logWarning("Nickname already used, using alternate nick");
 			} break;
         }
     }

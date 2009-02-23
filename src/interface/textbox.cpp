@@ -154,10 +154,10 @@ namespace ST
         }
 
         // draw thin line
-        rect.x = getPosition().x + getWidth() - 4;
+        rect.x = getPosition().x + getWidth() - 12;
         rect.y = getPosition().y - 4;
         rect.width = 1;
-        rect.height = getHeight() - 4;
+        rect.height = getHeight() - 8;
 		graphicsEngine->drawTexturedRect(rect, mScrollBar->getGLTexture());
 
         // if more rows than max rows
@@ -184,7 +184,7 @@ namespace ST
 
 	void TextBox::processKey(SDL_keysym key)
 	{
-	    
+
 	}
 
 	void TextBox::processMouse(MouseButton *button)

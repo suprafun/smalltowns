@@ -48,6 +48,10 @@
 #include <netdb.h>
 #endif
 
+#ifdef DEBUG
+#include <iostream>
+#endif
+
 #include <sstream>
 
 using namespace IRC;
@@ -77,7 +81,7 @@ Socket::~Socket()
 {
 #ifdef WIN32
 	closesocket(mDescriptor);
-	WSACleanup(); 
+	WSACleanup();
 #else
     close(mDescriptor);
 #endif
@@ -390,6 +394,7 @@ void IRCClient::sendCommand(Command *command)
 			break;
 
         case Command::IRC_SAY:
+        case Command::IRC_MSG:
             data << "PRIVMSG";
             break;
 
@@ -416,7 +421,7 @@ void IRCClient::sendCommand(Command *command)
     mConnection->sendData(str.c_str(), length);
 
 #ifdef DEBUG
-    printf("%s", str.c_str());
+    std::cout << str.c_str() << std::flush;
 #endif
 
     delete command;

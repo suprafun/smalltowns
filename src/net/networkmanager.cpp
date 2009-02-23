@@ -45,6 +45,8 @@
 #include "../interface/label.h"
 #include "../interface/interfacemanager.h"
 
+#include "../utilities/log.h"
+
 #include "../gamestate.h"
 #include "../game.h"
 #include "../loginstate.h"
@@ -84,11 +86,13 @@ namespace ST
             {
                 if (packet->getByte() == ERR_NONE)
                 {
+                    logger->logDebug("Connected to Account server");
                     GameState *state = new LoginState;
                     game->changeState(state);
                 }
                 else
                 {
+                    logger->logError("Bad client");
                     disconnect();
                     static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Error connecting: Invalid client");
                 }
@@ -98,15 +102,18 @@ namespace ST
             {
                 if (packet->getByte() == ERR_NONE)
                 {
+                    logger->logDebug("Registered new account");
                     GameState *state = new TestState;
                     game->changeState(state);
                 }
                 else if (packet->getByte() == ERR_TAKEN_NAME)
                 {
+                    logger->logWarning("Username already registered");
                     static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Username already taken");
                 }
                 else
                 {
+                    logger->logWarning("Invalid username or password used to register account");
                     static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Invalid username or password");
                 }
             } break;
@@ -115,11 +122,13 @@ namespace ST
             {
                 if (packet->getByte() == ERR_NONE)
                 {
+                    logger->logDebug("Logged in successfully");
                     GameState *state = new TestState;
                     game->changeState(state);
                 }
                 else
                 {
+                    logger->logWarning("Invalid username or password used to login");
                     static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Error: Invalid username or password");
                 }
             } break;

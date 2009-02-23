@@ -149,7 +149,8 @@ namespace ST
 		}
         else if (key.sym == SDLK_SPACE)
         {
-            mText.append(" ");
+            mText.insert(mCaratPos, " ");
+            ++mCaratPos;
             return;
         }
 		else if (key.sym == SDLK_LEFT)

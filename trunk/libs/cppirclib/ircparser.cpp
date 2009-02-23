@@ -39,7 +39,10 @@
 
 #include "ircparser.h"
 #include "cppirclib.h"
+
+#ifdef DEBUG
 #include <iostream>
+#endif
 
 using namespace IRC;
 
@@ -81,7 +84,7 @@ Command* IRCParser::parse(char *data, unsigned int length)
     Command *command = parseCommand(prefix, first, params);
 
 #ifdef DEBUG
-	std::cout << p;
+	std::cout << p << std::endl;
 #endif
 
     return command;
@@ -180,15 +183,31 @@ Command* IRCParser::parseCommand(std::string &prefix,
 			c->setParams(params.substr(1));
 		} break;
 
+		case Command::IRC_QUIT:
+		{
+			// set the command
+			c->setCommand(Command::IRC_QUIT);
+
+			// set the prefix
+			std::size_t exclamation;
+			exclamation = prefix.find("!");
+			if (exclamation != std::string::npos)
+			{
+				prefix = prefix.substr(0, exclamation);
+			}
+			c->setUserInfo(prefix);
+
+			// set the params
+			c->setParams(params.substr(1));
+		} break;
+
         case Command::IRC_NAMES:
         {
             // set the command
             c->setCommand(Command::IRC_NAMES);
 
-            // set the prefix
-            //c->setChanInfo(prefix);
-
             // set the channel
+            // find where it starts, and then where it ends
             std::size_t chan, end;
             chan = params.find('#');
             if (chan == std::string::npos)
@@ -212,6 +231,58 @@ Command* IRCParser::parseCommand(std::string &prefix,
             c->setCommand(Command::IRC_SERVER);
             c->setUserInfo(prefix);
             c->setParams(params);
+        } break;
+
+        case Command::IRC_MSG:
+        {
+            c->setCommand(Command::IRC_MSG);
+           // set the user
+            std::size_t exclamation;
+            exclamation = prefix.find("!");
+            if (exclamation != std::string::npos)
+            {
+                prefix = prefix.substr(0, exclamation);
+            }
+            c->setUserInfo(prefix);
+
+            // set the channel, if present
+            // (otherwise it was a private message, not an action)
+            std::size_t space;
+            space = params.find(' ');
+            if (space == std::string::npos)
+            {
+                space = 0;
+            }
+
+            if (params[0] == '#')
+            {
+                c->setChanInfo(params.substr(0, space));
+                // set the message, find the space after channel
+                space = params.find(' ');
+                if (space == std::string::npos)
+                {
+                    space = 0;
+                }
+
+                // check for action
+                if (params[space + 2] == '\001')
+                {
+                    // change command to an emote
+                    c->setCommand(Command::IRC_EMOTE);
+                    // skip the space, colon, 001 and ACTION keyword
+                    c->setParams(params.substr(space + 10, params.size() - 1 - space - 10));
+                }
+                else
+                {
+                    // skip the space and colon
+                    c->setParams(params.substr(space + 2));
+                }
+            }
+            else
+            {
+                // set the message, skip the space and the colon
+                c->setParams(params.substr(space + 2));
+            }
         } break;
 
 		case Command::ERR_BADNICK:
@@ -268,7 +339,12 @@ unsigned int IRCParser::lookupCommand(const std::string &command)
 		return Command::IRC_PART;
 	}
 
-    else if (command == "SAY" || command == "PRIVMSG")
+	else if (command == "PRIVMSG")
+	{
+	    return Command::IRC_MSG;
+	}
+
+    else if (command == "SAY")
     {
         return Command::IRC_SAY;
     }

@@ -90,9 +90,12 @@ namespace IRC
             IRC_JOIN,
             IRC_PART,
             IRC_SAY,
+            IRC_MSG,
             IRC_OP,
             IRC_DEOP,
             IRC_NAMES,
+            IRC_EMOTE,
+            IRC_MODE,
 			ERR_BADNICK,
 			ERR_NICKINUSE,
         };

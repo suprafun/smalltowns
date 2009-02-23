@@ -428,11 +428,15 @@ namespace ST
 			itr->second->increaseCount();
 		SDL_Surface* s = NULL;
 
-		// Load in the sprite sheet
+		// Load in the texture
 		s = IMG_Load(name.c_str());
 		if (s)
 		{
 			createTexture(s, name,0, 0, s->w, s->h);
+		}
+		else
+		{
+		    logger->logError("Image not found: " + name);
 		}
 	}
 

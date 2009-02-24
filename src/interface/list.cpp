@@ -65,6 +65,7 @@ namespace ST
 	        if ((*itr) == label)
 	        {
 	            mTextList.erase(itr);
+				break;
 	        }
 	    }
 	}

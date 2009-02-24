@@ -145,7 +145,7 @@ namespace ST
             case IRC::Command::IRC_MSG:
             {
                 int i = 0;
-                std::string text = command->getUserInfo() + " ";
+				std::string text = command->getUserInfo() + ": ";
 
                 while (command->getParam(i) != "" && i < 255)
                 {

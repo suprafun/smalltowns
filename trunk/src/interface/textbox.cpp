@@ -163,8 +163,9 @@ namespace ST
         // if more rows than max rows
         if (mTextHistory.size() > 11)
         {
+			//draw scroll button
             Rectangle scrollRect;
-            scrollRect.x = getPosition().x + getWidth() - 8;
+            scrollRect.x = getPosition().x + getWidth() - 16;
             scrollRect.y = getPosition().y - getHeight() + 8 + (mIndex * 5);
             scrollRect.width = 8;
             scrollRect.height = 8;
@@ -191,7 +192,7 @@ namespace ST
 	{
 	    if (button->state == SDL_PRESSED)
 	    {
-            if (button->x >= (getPosition().x + getWidth() - 8))
+            if (button->x >= (getPosition().x + getWidth() - 16))
             {
                 int index = button->y - (getPosition().y - getHeight());
                 scrollTo(index / 5);

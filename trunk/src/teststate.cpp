@@ -171,7 +171,7 @@ namespace ST
 
 		// create textfield for sending chat
 		Icon *chatIcon = new Icon("chatbubble");
-		chatIcon->setPosition(145, 85);
+		chatIcon->setPosition(141, 85);
 		chatIcon->setSize(27, 21);
 		chatIcon->setBackground("icon.png");
 		interfaceManager->addSubWindow(win, chatIcon);

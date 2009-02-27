@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2009, The Small Towns Dev Team
+ *	Copyright (c) 2008, The Small Towns Dev Team
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -31,58 +31,49 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-02-04
+ *	Date of file creation: 09-02-25
  *
  *	$Id$
  *
  ********************************************/
 
-/**
- * The Player class is for storing player specific variables
- */
+#include "updatestate.h"
+#include "characterstate.h"
+#include "game.h"
 
-#ifndef ST_PLAYER_HEADER
-#define ST_PLAYER_HEADER
+#include "net/networkmanager.h"
+#include "net/packet.h"
+#include "net/protocol.h"
 
-#include <string>
-#include <vector>
+#include <SDL.h>
 
 namespace ST
 {
-    class Character;
-
-    class Player
+    UpdateState::UpdateState()
     {
-    public:
-        /**
-         * Constructor
-         */
-        Player();
-        ~Player();
+        mSuccess = networkManager->downloadUpdateFile("update.txt");
+    }
 
-        /**
-         * Returns name
-         */
-        std::string getName() const;
+    void UpdateState::enter()
+    {
 
-        /**
-         * Sets the player's name
-         */
-        void setName(const std::string &name);
+    }
 
-        /**
-         * Add a character to list player owns
-         */
-        void addCharacter(Character *c);
-        int getNumChars() const;
-        Character* getCharacter(unsigned int slot);
+    void UpdateState::exit()
+    {
 
-    private:
-        std::string mUsername;
-		std::vector<Character*> mCharacters;
-    };
+    }
 
-    extern Player *player;
+    bool UpdateState::update()
+    {
+        if (mSuccess)
+        {
+            Packet *packet = new Packet(PAMSG_CHAR_LIST);
+            networkManager->sendPacket(packet);
+        }
+
+        SDL_Delay(0);
+
+        return true;
+    }
 }
-
-#endif

@@ -55,8 +55,7 @@ namespace ST
 	static int toInt(const std::string &text)
 	{
 	    int i;
-	    std::stringstream str;
-	    str << text;
+	    std::stringstream str(text);
 	    str >> i;
 	    return i;
 	}
@@ -66,6 +65,13 @@ namespace ST
         return (mValue >= 32 && mValue <= 126)
             || (mValue >= 162 && mValue <= 255)
             || (mValue == 9);
+    }
+
+    static std::string toString(int num)
+    {
+        std::stringstream str;
+        str << num;
+        return str.str();
     }
     };
 }

@@ -194,6 +194,11 @@ namespace ST
 		mTitle.setHeight(height);
 	}
 
+	void Window::setTitleText(const std::string &title)
+	{
+	    mTitle.setTitle(title);
+	}
+
 	Rectangle& Window::getClipArea()
 	{
 		return mClipArea;
@@ -244,13 +249,14 @@ namespace ST
 			titleRect.width = getWidth();
 			titleRect.height = mTitle.getHeight();
 
-			graphicsEngine->drawRect(titleRect, true);
+			graphicsEngine->drawRect(titleRect, false);
 		}
 
 		if (!mTitle.getTitle().empty())
 		{
 			Point p = getPosition();
-			p.y -= mTitle.getHeight() + 2;
+			p.x += 2;
+			p.y -= 8;
 			graphicsEngine->drawText(p, mTitle.getTitle(), 10);
 		}
 

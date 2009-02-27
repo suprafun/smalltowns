@@ -54,6 +54,7 @@ namespace ST
 	{
 	public:
 		NetworkManager();
+		~NetworkManager();
 
 		/**
 		 * Connect to a server
@@ -84,6 +85,11 @@ namespace ST
          * Send client version to the server
          */
         void sendVersion();
+
+        /**
+         * Download file for updates
+         */
+        bool downloadUpdateFile(const std::string &file);
 
     private:
 		/**

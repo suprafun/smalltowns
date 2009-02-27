@@ -39,11 +39,22 @@
 
 #include "player.h"
 
+#include "character.h"
+
 namespace ST
 {
     Player::Player()
     {
 
+    }
+
+    Player::~Player()
+    {
+        for (int i = 0; i < mCharacters.size(); ++i)
+        {
+            delete mCharacters[i];
+        }
+        mCharacters.clear();
     }
 
     std::string Player::getName() const
@@ -54,5 +65,25 @@ namespace ST
     void Player::setName(const std::string &name)
     {
         mUsername = name;
+    }
+
+    void Player::addCharacter(Character *c)
+    {
+        mCharacters.push_back(c);
+    }
+
+    int Player::getNumChars() const
+    {
+        return mCharacters.size();
+    }
+
+    Character* Player::getCharacter(unsigned int slot)
+    {
+        if (slot < mCharacters.size())
+        {
+            return mCharacters[slot];
+        }
+
+        return NULL;
     }
 }

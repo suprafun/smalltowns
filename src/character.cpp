@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2009, The Small Towns Dev Team
+ *	Copyright (c) 2008, The Small Towns Dev Team
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -31,58 +31,43 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-02-04
+ *	Date of file creation: 09-02-25
  *
  *	$Id$
  *
  ********************************************/
 
-/**
- * The Player class is for storing player specific variables
- */
-
-#ifndef ST_PLAYER_HEADER
-#define ST_PLAYER_HEADER
-
-#include <string>
-#include <vector>
+#include "character.h"
 
 namespace ST
 {
-    class Character;
-
-    class Player
+    Character::Character(int id, const std::string &name) : Being(id, name)
     {
-    public:
-        /**
-         * Constructor
-         */
-        Player();
-        ~Player();
 
-        /**
-         * Returns name
-         */
-        std::string getName() const;
+    }
 
-        /**
-         * Sets the player's name
-         */
-        void setName(const std::string &name);
+    Character::~Character()
+    {
 
-        /**
-         * Add a character to list player owns
-         */
-        void addCharacter(Character *c);
-        int getNumChars() const;
-        Character* getCharacter(unsigned int slot);
+    }
 
-    private:
-        std::string mUsername;
-		std::vector<Character*> mCharacters;
-    };
+    int Character::getLevel() const
+    {
+        return mLevel;
+    }
 
-    extern Player *player;
+    void Character::setLevel(int level)
+    {
+        mLevel = level;
+    }
+
+    int Character::getRights() const
+    {
+        return mRights;
+    }
+
+    void Character::setRights(int rights)
+    {
+        mRights = rights;
+    }
 }
-
-#endif

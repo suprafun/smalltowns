@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2009, The Small Towns Dev Team
+ *	Copyright (c) 2008, The Small Towns Dev Team
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -31,58 +31,50 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-02-04
+ *	Date of file creation: 09-02-25
  *
  *	$Id$
  *
  ********************************************/
 
 /**
- * The Player class is for storing player specific variables
+ * The Character State is used for choosing a character to play with
  */
 
-#ifndef ST_PLAYER_HEADER
-#define ST_PLAYER_HEADER
+#ifndef ST_CHARACTERSTATE_HEADER
+#define ST_CHARACTERSTATE_HEADER
+
+#include "gamestate.h"
 
 #include <string>
-#include <vector>
 
 namespace ST
 {
-    class Character;
+	class CharacterState : public GameState
+	{
+	public:
+		CharacterState();
+		/**
+		 * Enter
+		 * Called when entering the state
+		 */
+		void enter();
 
-    class Player
-    {
-    public:
-        /**
-         * Constructor
-         */
-        Player();
-        ~Player();
+		/**
+		 * Exit
+		 * Called when leaving the state
+		 */
+		void exit();
 
-        /**
-         * Returns name
-         */
-        std::string getName() const;
+		/**
+		 * Update
+		 * Called every frame
+		 * Return false to exit the game
+		 */
+		bool update();
 
-        /**
-         * Sets the player's name
-         */
-        void setName(const std::string &name);
-
-        /**
-         * Add a character to list player owns
-         */
-        void addCharacter(Character *c);
-        int getNumChars() const;
-        Character* getCharacter(unsigned int slot);
-
-    private:
-        std::string mUsername;
-		std::vector<Character*> mCharacters;
-    };
-
-    extern Player *player;
+	};
 }
 
 #endif
+

@@ -81,7 +81,7 @@ namespace ST
 		player = new Player;
 
 		// set font
-		graphicsEngine->setFont("chat.ttf");
+		graphicsEngine->setFont("eurof55.ttf");
 
 		// Create state to connect to server
 		mOldState = 0;

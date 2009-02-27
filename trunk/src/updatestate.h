@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2009, The Small Towns Dev Team
+ *	Copyright (c) 2008, The Small Towns Dev Team
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -31,58 +31,52 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-02-04
+ *	Date of file creation: 09-02-25
  *
  *	$Id$
  *
  ********************************************/
 
 /**
- * The Player class is for storing player specific variables
+ * The Update state is used for downloading content updates
  */
 
-#ifndef ST_PLAYER_HEADER
-#define ST_PLAYER_HEADER
+#ifndef ST_UPDATESTATE_HEADER
+#define ST_UPDATESTATE_HEADER
+
+#include "gamestate.h"
 
 #include <string>
-#include <vector>
 
 namespace ST
 {
-    class Character;
+	class UpdateState : public GameState
+	{
+	public:
+		UpdateState();
+		/**
+		 * Enter
+		 * Called when entering the state
+		 */
+		void enter();
 
-    class Player
-    {
-    public:
-        /**
-         * Constructor
-         */
-        Player();
-        ~Player();
+		/**
+		 * Exit
+		 * Called when leaving the state
+		 */
+		void exit();
 
-        /**
-         * Returns name
-         */
-        std::string getName() const;
-
-        /**
-         * Sets the player's name
-         */
-        void setName(const std::string &name);
-
-        /**
-         * Add a character to list player owns
-         */
-        void addCharacter(Character *c);
-        int getNumChars() const;
-        Character* getCharacter(unsigned int slot);
+		/**
+		 * Update
+		 * Called every frame
+		 * Return false to exit the game
+		 */
+		bool update();
 
     private:
-        std::string mUsername;
-		std::vector<Character*> mCharacters;
-    };
+        bool mSuccess;
 
-    extern Player *player;
+	};
 }
 
 #endif

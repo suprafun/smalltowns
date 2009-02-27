@@ -169,18 +169,24 @@ namespace ST
 		chatBox->setFontSize(18);
 		interfaceManager->addSubWindow(win, chatBox);
 
+		Window *chatWindow = new Window("blah");
+		chatWindow->setPosition(130, 90);
+		chatWindow->setSize(win->getWidth() - 200, 30);
+		chatWindow->setBackground("background.png");
+		interfaceManager->addSubWindow(win, chatWindow);
+
 		// create textfield for sending chat
 		Icon *chatIcon = new Icon("chatbubble");
-		chatIcon->setPosition(141, 85);
+		chatIcon->setPosition(11, 26);
 		chatIcon->setSize(27, 21);
 		chatIcon->setBackground("icon.png");
-		interfaceManager->addSubWindow(win, chatIcon);
+		interfaceManager->addSubWindow(chatWindow, chatIcon);
 
 		TextField *chatField = new TextField("sendchat");
-		chatField->setPosition(175, 85);
-		chatField->setSize(win->getWidth() - 240, 21);
+		chatField->setPosition(45, 26);
+		chatField->setSize(chatWindow->getWidth() - 40, 21);
 		chatField->setFontSize(16);
-		interfaceManager->addSubWindow(win, chatField);
+		interfaceManager->addSubWindow(chatWindow, chatField);
 
 		// create userlist
 		List *list = new List("userlist");

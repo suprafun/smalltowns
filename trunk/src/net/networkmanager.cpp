@@ -47,10 +47,16 @@
 
 #include "../utilities/log.h"
 
+#include "../character.h"
+#include "../characterstate.h"
 #include "../gamestate.h"
 #include "../game.h"
 #include "../loginstate.h"
+#include "../player.h"
 #include "../teststate.h"
+#include "../updatestate.h"
+
+#include <curl/curl.h>
 
 namespace ST
 {
@@ -59,6 +65,12 @@ namespace ST
 		enet_initialize();
 		atexit(enet_deinitialize);
         mHost = new Host();
+	}
+
+	NetworkManager::~NetworkManager()
+	{
+	    if (mHost->isConnected())
+            disconnect();
 	}
 
 	void NetworkManager::connect(const std::string &hostname, unsigned int port)
@@ -123,13 +135,57 @@ namespace ST
                 if (packet->getByte() == ERR_NONE)
                 {
                     logger->logDebug("Logged in successfully");
-                    GameState *state = new TestState;
+                    UpdateState *state = new UpdateState;
                     game->changeState(state);
                 }
                 else
                 {
                     logger->logWarning("Invalid username or password used to login");
                     static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Error: Invalid username or password");
+                }
+            } break;
+
+        case APMSG_CHAR_LIST_RESPONSE:
+            {
+                int count = packet->getInteger();
+                for (int i = 0; i < count; ++i)
+                {
+                    int id = packet->getInteger();
+                    std::string name = packet->getString();
+                    Character *c = new Character(id, name);
+                    c->setLevel(packet->getInteger());
+                    c->setRights(packet->getInteger());
+                    player->addCharacter(c);
+                }
+
+                GameState *state = new CharacterState;
+                game->changeState(state);
+
+            } break;
+
+        case APMSG_CHAR_CREATE_RESPONSE:
+            {
+                if (packet->getByte() == ERR_NONE)
+                {
+                    GameState *state = new TestState;
+                    game->changeState(state);
+                }
+                else
+                {
+                    // TODO: Indicate error creating character
+                }
+            } break;
+
+        case APMSG_CHAR_CHOOSE_RESPONSE:
+            {
+                if (packet->getByte() == ERR_NONE)
+                {
+                    GameState *state = new TestState;
+                    game->changeState(state);
+                }
+                else
+                {
+                    // TODO: Indicate error creating character
                 }
             } break;
 	    }
@@ -158,5 +214,41 @@ namespace ST
 	    Packet *packet = new Packet(PAMSG_CONNECT);
         packet->setInteger(CLIENT_VERSION);
         sendPacket(packet);
+	}
+
+	bool NetworkManager::downloadUpdateFile(const std::string &file)
+	{
+	    CURLcode success;
+
+	    // open file for writing to
+	    FILE *outFile;
+	    outFile = fopen(file.c_str(), "w");
+
+	    // url to download from
+	    std::string url = "http://www.casualgamer.co.uk/";
+	    url.append(file);
+
+	    // initialise curl
+        CURL *handle = curl_easy_init();
+
+        // set curl options
+        curl_easy_setopt(handle, CURLOPT_WRITEDATA, outFile);
+        curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
+
+        // perform the download
+        if ((success = curl_easy_perform(handle)) != 0)
+        {
+            // error! - log it and clean up
+            logger->logError("Unable to get update file");
+            fclose(outFile);
+            curl_easy_cleanup(handle);
+            return false;
+        }
+
+        // cleanup
+        curl_easy_cleanup(handle);
+        fclose(outFile);
+
+        return true;
 	}
 }

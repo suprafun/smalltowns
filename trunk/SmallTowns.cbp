@@ -18,11 +18,13 @@
 					<Add option="-g" />
 					<Add option="`sdl-config --cflags`" />
 					<Add option="`freetype-config --cflags`" />
+					<Add option="`curl-config --cflags`" />
 					<Add directory="libs/cppirclib" />
 					<Add directory="/usr/local/include/CEGUI" />
 				</Compiler>
 				<Linker>
 					<Add option="`sdl-config --libs`" />
+					<Add option="`curl-config --libs`" />
 					<Add library="SDL_image" />
 					<Add library="GL" />
 					<Add library="GLU" />
@@ -37,6 +39,12 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="src/being.cpp" />
+		<Unit filename="src/being.h" />
+		<Unit filename="src/character.cpp" />
+		<Unit filename="src/character.h" />
+		<Unit filename="src/characterstate.cpp" />
+		<Unit filename="src/characterstate.h" />
 		<Unit filename="src/connectstate.cpp" />
 		<Unit filename="src/connectstate.h" />
 		<Unit filename="src/game.cpp" />
@@ -97,6 +105,8 @@
 		<Unit filename="src/teststate.h" />
 		<Unit filename="src/tile.cpp" />
 		<Unit filename="src/tile.h" />
+		<Unit filename="src/updatestate.cpp" />
+		<Unit filename="src/updatestate.h" />
 		<Unit filename="src/utilities/log.cpp" />
 		<Unit filename="src/utilities/log.h" />
 		<Unit filename="src/utilities/math.h" />

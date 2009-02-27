@@ -167,6 +167,8 @@ namespace ST
             Rectangle scrollRect;
             scrollRect.x = getPosition().x + getWidth() - 16;
             scrollRect.y = getPosition().y - getHeight() + 8 + (mIndex * 5);
+            if (scrollRect.y >= getPosition().y - 8)
+                scrollRect.y = getPosition().y - 8;
             scrollRect.width = 8;
             scrollRect.height = 8;
             graphicsEngine->drawTexturedRect(scrollRect, mScrollButton->getGLTexture());

@@ -75,11 +75,11 @@ namespace ST
 	public:
 		Window(std::string name);
 		Window(Window *parent, std::string name);
-		
+
 		// Add dependant child window
 		virtual void addChild(Window *window);
 		virtual void addParent(Window *window);
-		
+
 		// set visibility
 		void setVisible(bool visible);
 		bool getVisible() const;
@@ -97,8 +97,9 @@ namespace ST
 		void setSize(int width, int height);
 		void setFocus(bool focused);
 		void setTitleHeight(int height);
+		void setTitleText(const std::string &title);
 		void setClipArea(Rectangle &rect);
-		
+
 		// graphics
 		virtual void drawWindow();
 		void setBackground(const std::string &bg);

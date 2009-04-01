@@ -46,7 +46,6 @@
 #include "graphics/camera.h"
 #include "graphics/graphics.h"
 #include "graphics/node.h"
-//#include "utilities/log.h"
 
 #include "interface/icon.h"
 #include "interface/interfacemanager.h"
@@ -63,15 +62,34 @@
 #include <sstream>
 #include <SDL.h>
 
-/*
-const int tilewidth = 42;
-const int halftilewidth = 21;
-const int tileheight = 22;
-const int halftileheight = 11;
-*/
-
 namespace ST
 {
+    void submit_chat(AG_Event *event)
+    {
+        IRCServer *chatServer = static_cast<IRCServer*>(AG_PTR(1));
+        if (chatServer->isConnected())
+		{
+		    AG_Textbox *input = static_cast<AG_Textbox*>(AG_PTR(2));
+		    AG_Textbox *output = static_cast<AG_Textbox*>(AG_PTR(3));
+
+            if (input && output)
+            {
+                std::string chat = AG_TextboxDupString(input);
+                if (!chat.empty())
+                {
+                    IRCMessage *msg = new IRCMessage;
+                    msg->setType(IRCMessage::CHAT);
+                    msg->addString(chat);
+                    chatServer->sendMessage(msg);
+                    chat.insert(0, player->getName() + ": ");
+                    chat.insert(0, AG_TextboxDupString(output));
+                    AG_TextboxPrintf(output, "%s\n", chat.c_str());
+                    AG_TextboxClearString(input);
+                }
+            }
+        }
+    }
+
 	TestState::TestState()
 	{
         chatServer = new IRCServer;
@@ -87,115 +105,34 @@ namespace ST
 
 	void TestState::enter()
 	{
-	    /*
-		mFrames = 0;
-		mTime = 0;
-		mLastTime = 0;
-
-		// Create Viewport
-		Rectangle rect;
-		rect.x = 0;
-		rect.y = 0;
-		rect.width = 640;
-		rect.height = 480;
-		cam = new Camera("Default", &rect);
-
-		// Set camera
-		graphicsEngine->setCamera(cam);
-
-		// Load in images
-		if (!graphicsEngine->loadSpriteSheet("grass.png"))
-		{
-			// error
-			logger->logError("Unable to load sprite sheet");
-			return;
-		}
-
-		if (!graphicsEngine->loadSpriteSheet("base.png"))
-		{
-			// error
-			logger->logError("Unable to load sprite sheet");
-			return;
-		}
-
-		// Create Test Nodes
-		Point p;
-		p.x = 0;
-		p.y = 0;
-
-		int mapSize = ((float)rect.width / tilewidth) * ((float)rect.height / halftileheight);
-		int row = 1;
-		for (int i = 0; i < mapSize; ++i)
-		{
-			p.x += tilewidth;
-			if (p.x > rect.width)
-			{
-				if (row % 2)
-				{
-					p.x = halftilewidth;
-				}
-				else
-				{
-					p.x = 0;
-				}
-
-				p.y += halftileheight;
-				++row;
-			}
-
-			std::stringstream stream;
-			stream << "Test" << i;
-			Node *node = graphicsEngine->createNode(stream.str(), "grass.png", &p);
-		}
-
-		p.x = 0;
-		p.y = 84;
-		Node *node = graphicsEngine->createNode("player", "base.png", &p);
-		*/
 		int screenWidth = graphicsEngine->getScreenWidth();
 		int screenHeight = graphicsEngine->getScreenHeight();
+		float halfScreenWidth = screenWidth / 2.0f;
+		float halfScreenHeight = screenHeight / 2.0f;
 
-		// create window for chat
-		Window *win = new Window("Chat Window");
-		win->setPosition(75, screenHeight - 50);
-		win->setSize(screenWidth - 150, screenHeight - 100);
-		interfaceManager->addWindow(win);
+		AG_Window *chatWindow = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "ChatWindow");
+		AG_WindowSetCaption(chatWindow, "Chat");
+		AG_WindowSetSpacing(chatWindow, 12);
+		AG_WindowSetGeometry(chatWindow, 10, screenHeight - 185, 400, 175);
+		AG_WindowShow(chatWindow);
 
-		// create textbox in non-edit mode for chat
-		TextBox *chatBox = new TextBox("chat");
-		chatBox->setPosition(135, 375);
-		chatBox->setSize(win->getWidth() - 200, 280);
-		chatBox->setRows(50);
-		chatBox->setFontSize(18);
-		interfaceManager->addSubWindow(win, chatBox);
+//        AG_VBox *box = AG_VBoxNew(chatWindow, 0);
+//        AG_Notebook *book = AG_NotebookNew(box, 0);
+//        AG_NotebookTab *nbTab = AG_NotebookAddTab(book, "Global Chat", AG_BOX_VERT);
 
-		Window *chatWindow = new Window("blah");
-		chatWindow->setPosition(130, 90);
-		chatWindow->setSize(win->getWidth() - 200, 30);
-		chatWindow->setBackground("background.png");
-		interfaceManager->addSubWindow(win, chatWindow);
+        AG_Textbox *text = AG_TextboxNew(chatWindow,
+                                        AG_TEXTBOX_EXPAND|AG_TEXTBOX_MULTILINE,
+                                        NULL);
+        AG_TextboxSizeHintLines(text, 8);
+        AG_WidgetDisable(text);
+        AG_ObjectSetName(text, "Chat");
 
-		// create textfield for sending chat
-		Icon *chatIcon = new Icon("chatbubble");
-		chatIcon->setPosition(11, 26);
-		chatIcon->setSize(27, 21);
-		chatIcon->setBackground("icon.png");
-		interfaceManager->addSubWindow(chatWindow, chatIcon);
+		AG_Textbox *chatInput = AG_TextboxNew(chatWindow, AG_TEXTBOX_CATCH_TAB, NULL);
+		AG_TextboxSizeHint(chatInput, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+		AG_SetEvent(chatInput, "textbox-return", submit_chat, "%p%p%p", chatServer, chatInput, text);
 
-		TextField *chatField = new TextField("sendchat");
-		chatField->setPosition(45, 26);
-		chatField->setSize(chatWindow->getWidth() - 40, 21);
-		chatField->setFontSize(16);
-		interfaceManager->addSubWindow(chatWindow, chatField);
-
-		// create userlist
-		List *list = new List("userlist");
-		list->setPosition(screenWidth - 195, screenHeight - 100);
-		list->setSize(85, 400);
-		list->setFontSize(18);
-		interfaceManager->addWindow(list);
-
-		interfaceManager->changeFocus(chatField);
+		// add elements to interface manager
+		interfaceManager->addWindow(chatWindow);
 
 		std::string nick = player->getName();
 		std::string host = "london.uk.whatnet.org";
@@ -211,47 +148,6 @@ namespace ST
 
 	bool TestState::update()
 	{
-	    /*
-		// Add another frame
-		// Get how much time has passed
-		// Find the difference and if its a second or more
-		// Or the time has travelled backwards (possible if time wraps)
-		// Output the number of frames to log
-		mFrames++;
-		mTime = SDL_GetTicks();
-		int diff = mTime - mLastTime;
-		if (diff >= 1000 || diff < 0)
-		{
-			std::stringstream str;
-			str << mFrames;
-			logger->logDebug(str.str() + " frames per second");
-			mFrames = 0;
-			mLastTime = mTime;
-		}
-		*/
-
-		if (inputManager->getKey(SDLK_RETURN))
-		{
-		    if (chatServer->isConnected())
-		    {
-                std::string chat = static_cast<TextField*>(interfaceManager->getWindow("sendchat"))->getText();
-                if (chat.size() > 0)
-                {
-                    IRCMessage *msg = new IRCMessage;
-                    msg->setType(IRCMessage::CHAT);
-                    msg->addString(chat);
-                    chatServer->sendMessage(msg);
-                    chat.insert(0, player->getName() + ": ");
-                    static_cast<TextBox*>(interfaceManager->getWindow("chat"))->addRow(chat);
-                    static_cast<TextField*>(interfaceManager->getWindow("sendchat"))->setText("");
-                }
-		    }
-		    else
-		    {
-		        static_cast<TextBox*>(interfaceManager->getWindow("chat"))->addRow("You aren't connected yet!");
-		    }
-		}
-
 		// Check for input, if escape pressed, exit
 		if (inputManager->getKey(SDLK_ESCAPE))
 		{

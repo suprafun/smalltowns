@@ -108,11 +108,17 @@ namespace ST
          */
         bool isConnected();
 
+        /**
+         * Returns the chat buffer
+         */
+        std::string getChatBuffer() { return mChatBuffer; }
+
 
     private:
         std::string mHostname;
         std::string mNick;
         std::string mCurrentChannel;
+        std::string mChatBuffer;
         IRC::IRCClient *mClient;
         bool mRegistering;
         bool mRegistered;

@@ -61,6 +61,64 @@
 
 namespace ST
 {
+    void submit_login(AG_Event *event)
+    {
+        std::string username;
+	    std::string password;
+
+	    AG_Textbox *one = static_cast<AG_Textbox*>(AG_PTR(1));
+	    AG_Textbox *two = static_cast<AG_Textbox*>(AG_PTR(2));
+
+	    if (one && two)
+	    {
+	        username = AG_TextboxDupString(one);
+	        password = AG_TextboxDupString(two);
+	    }
+
+        if (!username.empty() && !password.empty())
+        {
+            player->setName(username);
+            Packet *packet = new Packet(PAMSG_LOGIN);
+            packet->setString(username);
+            packet->setString(password);
+            networkManager->sendPacket(packet);
+        }
+    }
+
+    void submit_register(AG_Event *event)
+    {
+        std::string username;
+	    std::string password;
+
+	    AG_Textbox *one = static_cast<AG_Textbox*>(AG_PTR(1));
+	    AG_Textbox *two = static_cast<AG_Textbox*>(AG_PTR(2));
+
+	    if (one && two)
+	    {
+	        username = AG_TextboxDupString(one);
+	        password = AG_TextboxDupString(two);
+	    }
+
+        if (!username.empty() && !password.empty())
+        {
+            player->setName(username);
+            Packet *packet = new Packet(PAMSG_REGISTER);
+            packet->setString(username);
+            packet->setString(password);
+            networkManager->sendPacket(packet);
+        }
+    }
+
+    void create_register(AG_Event *event)
+    {
+        AG_Window *log = static_cast<AG_Window*>(AG_PTR(1));
+        if (log)
+            AG_WindowHide(log);
+        AG_Window *reg = static_cast<AG_Window*>(AG_PTR(2));
+        if (reg)
+            AG_WindowShow(reg);
+    }
+
 	LoginState::LoginState()
 	{
 
@@ -70,73 +128,44 @@ namespace ST
 	{
 		int screenWidth = graphicsEngine->getScreenWidth();
 		int screenHeight = graphicsEngine->getScreenHeight();
+		float halfScreenWidth = screenWidth / 2.0f;
+		float halfScreenHeight = screenHeight / 2.0f;
 
-		// create window for entering username and password
-		Window *win = new Window("Login Window");
-		win->setPosition(0, screenHeight);
-		win->setSize(screenWidth, screenHeight);
+		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN);
+		AG_WindowShow(win);
+		AG_WindowMaximize(win);
+
+		AG_Window *login = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "Login");
+		AG_WindowSetCaption(login, "Login");
+		AG_WindowSetSpacing(login, 12);
+		AG_WindowSetGeometry(login, halfScreenWidth - 125, halfScreenHeight - 45, 225, 135);
+
+		AG_Textbox *username = AG_TextboxNew(login, 0, "Username: ");
+		AG_Textbox *password = AG_TextboxNew(login, AG_TEXTBOX_PASSWORD, "Password: ");
+
+		AG_Window *reg = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "Register");
+		AG_WindowSetCaption(reg, "Registration");
+		AG_WindowSetSpacing(reg, 12);
+		AG_WindowSetGeometry(reg, halfScreenWidth - 125, halfScreenHeight - 45, 225, 135);
+
+		AG_Textbox *reg_user = AG_TextboxNew(reg, 0, "Username: ");
+		AG_Textbox *reg_pass = AG_TextboxNew(reg, 0, "Password: ");
+		AG_HBox *reg_box = AG_HBoxNew(reg, 0);
+		AG_Button *reg_button = AG_ButtonNewFn(reg_box, 0, "Submit", submit_register, "%p%p", reg_user, reg_pass);
+		AG_ButtonJustify(reg_button, AG_TEXT_CENTER);
+
+		AG_HBox *box = AG_HBoxNew(login, 0);
+		AG_Button *button = AG_ButtonNewFn(box, 0, "Submit", submit_login, "%p%p", username, password);
+		AG_ButtonJustify(button, AG_TEXT_CENTER);
+		AG_Button *register_button = AG_ButtonNewFn(box, 0, "Register",
+                                                    create_register, "%p%p", login, reg);
+		AG_ButtonJustify(register_button, AG_TEXT_CENTER);
+
+		AG_WindowShow(login);
+
 		interfaceManager->addWindow(win);
-
-		// create label for error messages
-		Label *errorLabel = new Label("error");
-		errorLabel->setPosition(150, screenHeight - 200);
-		errorLabel->setText("");
-		errorLabel->setFontSize(24);
-		interfaceManager->addSubWindow(win, errorLabel);
-
-		// create label
-		Label *loginLabel = new Label("LoginLabel");
-		loginLabel->setPosition(260, 385);
-		loginLabel->setText("Login");
-		loginLabel->setFontSize(24);
-		interfaceManager->addSubWindow(win, loginLabel);
-
-		// create label for username
-		Label *usernameLabel = new Label("0");
-		usernameLabel->setPosition(240, 335);
-		usernameLabel->setText("Username: ");
-		usernameLabel->setFontSize(20);
-		interfaceManager->addSubWindow(win, usernameLabel);
-
-		// create label for password
-		Label *passwordLabel = new Label("1");
-		passwordLabel->setPosition(240, 305);
-		passwordLabel->setText("Password: ");
-		passwordLabel->setFontSize(20);
-		interfaceManager->addSubWindow(win, passwordLabel);
-
-		// create textfield for entering username and add to window
-		TextField *username = new TextField("Username");
-		username->setPosition(335, 350);
-		username->setSize(180, 25);
-		username->setFontSize(18);
-		interfaceManager->addSubWindow(win, username);
-
-		// create textfield for entering password and add to window
-		TextField *password = new TextField("Password");
-		password->setPosition(335, 320);
-		password->setSize(180, 25);
-		password->setFontSize(18);
-		password->setPassword(true);
-		interfaceManager->addSubWindow(win, password);
-
-		// create button for registering
-		Button *registerButton = new Button("Register");
-		registerButton->setPosition(240, 250);
-		registerButton->setSize(120, 24);
-		registerButton->setText("Register");
-		registerButton->setFontSize(20);
-		interfaceManager->addSubWindow(win, registerButton);
-
-        Button *button = new Button("Submit");
-        button->setPosition(380, 250);
-        button->setSize(80, 24);
-        button->setText("Submit");
-        button->setFontSize(18);
-        interfaceManager->addSubWindow(win, button);
-
-        // set focus on first text field
-        interfaceManager->changeFocus(username);
+		interfaceManager->addWindow(login);
+		interfaceManager->addWindow(reg);
 	}
 
 	void LoginState::exit()
@@ -155,42 +184,9 @@ namespace ST
 			networkManager->disconnect();
 			return true;
 		}
-		else if (inputManager->getKey(SDLK_TAB))
-		{
-		    if (interfaceManager->getFocused()->getName() == "Username")
-                interfaceManager->changeFocus(interfaceManager->getWindow("Password"));
-            else
-                interfaceManager->changeFocus(interfaceManager->getWindow("Username"));
-		}
-
-		else if (inputManager->getKey(SDLK_RETURN) ||
-			static_cast<Button*>(interfaceManager->getWindow("Submit"))->clicked())
-		{
-		    submit();
-		}
-
-		else if (static_cast<Button*>(interfaceManager->getWindow("Register"))->clicked())
-		{
-		    GameState *state = new RegisterState;
-            game->changeState(state);
-		}
 
 		SDL_Delay(0);
 
 		return true;
-	}
-
-	void LoginState::submit()
-	{
-	    std::string username = static_cast<TextField*>(interfaceManager->getWindow("Username"))->getText();
-	    std::string password = static_cast<TextField*>(interfaceManager->getWindow("Password"))->getText();
-        if (!username.empty() && !password.empty())
-        {
-            player->setName(username);
-            Packet *packet = new Packet(PAMSG_LOGIN);
-            packet->setString(username);
-            packet->setString(password);
-            networkManager->sendPacket(packet);
-        }
 	}
 }

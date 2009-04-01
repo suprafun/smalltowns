@@ -73,9 +73,9 @@ namespace ST
     {
         mHostname = hostname;
         mClient->connectTo(mHostname, 6667);
-        TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
-		if (box)
-			box->addRow("Connecting...");
+//        TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
+//		if (box)
+//			box->addRow("Connecting...");
     }
 
     void IRCServer::process()
@@ -86,7 +86,7 @@ namespace ST
         if (!mRegistered && !mRegistering && mNick.size() > 1)
         {
 			std::string pass = "test";
-			std::string realname = "st 0 * :" "Towns Life 0.0.2.1";
+			std::string realname = "st 0 * :" "Towns Life 0.0.3";
             mClient->doRegistration(pass, mNick, realname);
             mRegistering = true;
             logger->logDebug("Registering with IRC server");
@@ -121,25 +121,60 @@ namespace ST
                 conCommand->setCommand(IRC::Command::IRC_JOIN);
                 conCommand->setParams("#townslife");
                 mClient->sendCommand(conCommand);
-                TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
-				if (box)
-					box->addRow("Connected!");
+
+                AG_Window *window = interfaceManager->getWindow("/ChatWindow");
+                if (window)
+                {
+                    AG_Textbox *widget;
+                    AGOBJECT_FOREACH_CHILD(widget, window, ag_textbox)
+                    {
+                        if (widget)
+                        {
+                            char buffer[255];
+                            AG_ObjectCopyName(widget, buffer, 255);
+                            if (strncmp(buffer, "/ChatWindow/Chat", 16) == 0)
+                            {
+                                std::string chat = AG_TextboxDupString(widget);
+                                chat.append("Connected!");
+                                AG_TextboxPrintf(widget, "%s\n", chat.c_str());
+                            }
+                        }
+                    }
+                }
+
                 logger->logDebug("Joining #townslife channel");
             } break;
 
             case IRC::Command::IRC_SAY:
             {
                 int i = 0;
-                std::string text = command->getUserInfo() + ": ";
+                std::string msg = command->getUserInfo() + ": ";
                 while (command->getParam(i) != "" && i < 255)
                 {
-                    text.append(command->getParam(i));
-					text.append(" ");
+                    msg.append(command->getParam(i));
+					msg.append(" ");
                     ++i;
                 }
-                TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
-				if (box)
-					box->addRow(text);
+
+                AG_Window *window = interfaceManager->getWindow("/ChatWindow");
+                if (window)
+                {
+                    AG_Textbox *widget;
+                    AGOBJECT_FOREACH_CHILD(widget, window, ag_textbox)
+                    {
+                        if (widget)
+                        {
+                            char buffer[255];
+                            AG_ObjectCopyName(widget, buffer, 255);
+                            if (strncmp(buffer, "/ChatWindow/Chat", 16) == 0)
+                            {
+                                std::string chat = AG_TextboxDupString(widget);
+                                chat.append(msg);
+                                AG_TextboxPrintf(widget, "%s\n", chat.c_str());
+                            }
+                        }
+                    }
+                }
             } break;
 
             case IRC::Command::IRC_MSG:
@@ -154,9 +189,25 @@ namespace ST
                     ++i;
                 }
 
-                TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
-				if (box)
-					box->addRow(text);
+                AG_Window *window = interfaceManager->getWindow("/ChatWindow");
+                if (window)
+                {
+                    AG_Textbox *widget;
+                    AGOBJECT_FOREACH_CHILD(widget, window, ag_textbox)
+                    {
+                        if (widget)
+                        {
+                            char buffer[255];
+                            AG_ObjectCopyName(widget, buffer, 255);
+                            if (strncmp(buffer, "/ChatWindow/Chat", 16) == 0)
+                            {
+                                std::string chat = AG_TextboxDupString(widget);
+                                chat.append(text);
+                                AG_TextboxPrintf(widget, "%s\n", chat.c_str());
+                            }
+                        }
+                    }
+                }
             } break;
 
             case IRC::Command::IRC_EMOTE:
@@ -172,9 +223,25 @@ namespace ST
                     ++i;
                 }
 
-                TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
-				if (box)
-					box->addRow(text);
+                AG_Window *window = interfaceManager->getWindow("/ChatWindow");
+                if (window)
+                {
+                    AG_Textbox *widget;
+                    AGOBJECT_FOREACH_CHILD(widget, window, ag_textbox)
+                    {
+                        if (widget)
+                        {
+                            char buffer[255];
+                            AG_ObjectCopyName(widget, buffer, 255);
+                            if (strncmp(buffer, "/ChatWindow/Chat", 16) == 0)
+                            {
+                                std::string chat = AG_TextboxDupString(widget);
+                                chat.append(text);
+                                AG_TextboxPrintf(widget, "%s", chat.c_str());
+                            }
+                        }
+                    }
+                }
             } break;
 
             case IRC::Command::IRC_NOTICE:
@@ -188,9 +255,9 @@ namespace ST
                 for (int i = 0; i < command->numParams(); ++i)
                 {
                     name = command->getParam(i);
-                    List *list = static_cast<List*>(interfaceManager->getWindow("userlist"));
-					if (list)
-						list->addLabel(name);
+//                    List *list = static_cast<List*>(interfaceManager->getWindow("userlist"));
+//					if (list)
+//						list->addLabel(name);
                 }
             } break;
 
@@ -200,12 +267,29 @@ namespace ST
 				if (name == mNick)
 					return;
                 std::string msg = name + " connected";
-                List *list = static_cast<List*>(interfaceManager->getWindow("userlist"));
-				if (list)
-					list->addLabel(name);
-                TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
-				if (box)
-					box->addRow(msg);
+
+                AG_Window *window = interfaceManager->getWindow("/ChatWindow");
+                if (window)
+                {
+                    AG_Textbox *widget;
+                    AGOBJECT_FOREACH_CHILD(widget, window, ag_textbox)
+                    {
+                        if (widget)
+                        {
+                            char buffer[255];
+                            AG_ObjectCopyName(widget, buffer, 255);
+                            if (strncmp(buffer, "/ChatWindow/Chat", 16) == 0)
+                            {
+                                std::string chat = AG_TextboxDupString(widget);
+                                chat.append(msg);
+                                AG_TextboxPrintf(widget, "%s", chat.c_str());
+                            }
+                        }
+                    }
+                }
+//                List *list = static_cast<List*>(interfaceManager->getWindow("userlist"));
+//				if (list)
+//					list->addLabel(name);;
             } break;
 
             case IRC::Command::IRC_PART:
@@ -213,21 +297,38 @@ namespace ST
             {
                 std::string name = command->getUserInfo();
                 std::string msg = name + " left the chat";
-                List *list = static_cast<List*>(interfaceManager->getWindow("userlist"));
-				if (list)
-					list->removeLabel(name);
-                TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
-				if (box)
-					box->addRow(msg);
+
+                AG_Window *window = interfaceManager->getWindow("/ChatWindow");
+                if (window)
+                {
+                    AG_Textbox *widget;
+                    AGOBJECT_FOREACH_CHILD(widget, window, ag_textbox)
+                    {
+                        if (widget)
+                        {
+                            char buffer[255];
+                            AG_ObjectCopyName(widget, buffer, 255);
+                            if (strncmp(buffer, "/ChatWindow/Chat", 16) == 0)
+                            {
+                                std::string chat = AG_TextboxDupString(widget);
+                                chat.append(msg);
+                                AG_TextboxPrintf(widget, "%s", chat.c_str());
+                            }
+                        }
+                    }
+                }
+//                List *list = static_cast<List*>(interfaceManager->getWindow("userlist"));
+//				if (list)
+//					list->removeLabel(name);
             } break;
 
 			case IRC::Command::ERR_BADNICK:
 			{
 				GameState *state = new LoginState;
 				game->changeState(state);
-				Label *label = static_cast<Label*>(interfaceManager->getWindow("error"));
-				if (label)
-					label->setText("Invalid characters in nick.");
+//				Label *label = static_cast<Label*>(interfaceManager->getWindow("error"));
+//				if (label)
+//					label->setText("Invalid characters in nick.");
                 logger->logWarning("Invalid nickname used");
 			} break;
 

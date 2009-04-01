@@ -52,6 +52,8 @@ namespace ST
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
 		{
+		    AG_ProcessEvent(&event);
+
 			switch (event.type)
 			{
 			case SDL_KEYDOWN:
@@ -59,25 +61,6 @@ namespace ST
 					keysDown.push_back(event.key.keysym.sym);
 					interfaceManager->sendKey(event.key.keysym);
 				} break;
-            case SDL_MOUSEBUTTONDOWN:
-            case SDL_MOUSEBUTTONUP:
-                {
-                    MouseButton *button = new MouseButton;
-                    button->button = event.button.button;
-                    button->state = event.button.state;
-                    button->x = event.button.x;
-                    button->y = graphicsEngine->getScreenHeight() - event.button.y;
-                    interfaceManager->sendMouse(button);
-                } break;
-            case SDL_MOUSEMOTION:
-                {
-                    MouseButton *button = new MouseButton;
-                    button->button = 0;
-                    button->state = event.motion.state;
-                    button->x = event.motion.x;
-                    button->y = graphicsEngine->getScreenHeight() - event.motion.y;
-                    interfaceManager->sendMouse(button);
-                } break;
 			case SDL_QUIT:
 				{
 					// fake escape being pressed

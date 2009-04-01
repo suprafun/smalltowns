@@ -34,8 +34,8 @@ enum
 
     // Character screen
     PAMSG_CHAR_LIST             = 0x0010, //
-    APMSG_CHAR_LIST_RESPONSE    = 0x0011, // I num, { I id, S character name, I level, I rights }
-    PAMSG_CHAR_CREATE           = 0x0012, // S character name
+    APMSG_CHAR_LIST_RESPONSE    = 0x0011, // I num, { I id, S character name, I avatar, I level, I rights }
+    PAMSG_CHAR_CREATE           = 0x0012, // S character name, I avatar
     APMSG_CHAR_CREATE_RESPONSE  = 0x0013, // C error
     PAMSG_CHAR_CHOOSE           = 0x0016, // I id
     APMSG_CHAR_CHOOSE_RESPONSE  = 0x0017, // C error

@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2008, The Small Towns Dev Team
+ *	Copyright (c) 2009, The Small Towns Dev Team
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -46,12 +46,7 @@
 
 #include "graphics/graphics.h"
 
-#include "interface/button.h"
-#include "interface/icon.h"
 #include "interface/interfacemanager.h"
-#include "interface/label.h"
-#include "interface/textfield.h"
-#include "interface/window.h"
 
 #include "net/networkmanager.h"
 #include "net/packet.h"
@@ -63,7 +58,7 @@
 
 namespace ST
 {
-    int insert_avatar(AG_Socket *sock, Icon *icon)
+    int insert_avatar(AG_Socket *sock, AG_Icon *icon)
     {
         return 1;
     }

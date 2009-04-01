@@ -38,7 +38,6 @@
  ********************************************/
 
 #include "interfacemanager.h"
-#include "window.h"
 
 #include "../input.h"
 

@@ -45,11 +45,7 @@
 
 #include "graphics/graphics.h"
 
-#include "interface/button.h"
 #include "interface/interfacemanager.h"
-#include "interface/label.h"
-#include "interface/textfield.h"
-#include "interface/window.h"
 
 #include "net/networkmanager.h"
 #include "net/packet.h"
@@ -127,18 +123,6 @@ namespace ST
 			game->changeState(state);
 			return true;
 		}
-		else if (inputManager->getKey(SDLK_TAB))
-		{
-		    if (interfaceManager->getFocused()->getName() == "username")
-                interfaceManager->changeFocus(interfaceManager->getWindow("password"));
-            else
-                interfaceManager->changeFocus(interfaceManager->getWindow("username"));
-		}
-		else if (inputManager->getKey(SDLK_RETURN) ||
-			static_cast<Button*>(interfaceManager->getWindow("Submit"))->clicked())
-		{
-		    submit();
-		}
 
 		SDL_Delay(0);
 
@@ -150,22 +134,4 @@ namespace ST
         interfaceManager->removeAllWindows();
     }
 
-    void RegisterState::submit()
-    {
-        std::string username = static_cast<TextField*>(interfaceManager->getWindow("username"))->getText();
-        std::string password = static_cast<TextField*>(interfaceManager->getWindow("password"))->getText();
-
-        if (username.empty() || password.empty())
-        {
-            static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Invalid username or password");
-            return;
-        }
-
-        player->setName(username);
-        Packet *packet = new Packet(PAMSG_REGISTER);
-        packet->setString(username);
-        packet->setString(password);
-        networkManager->sendPacket(packet);
-        static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Sending...");
-    }
 }

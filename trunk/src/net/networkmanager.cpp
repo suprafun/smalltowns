@@ -42,7 +42,6 @@
 #include "packet.h"
 #include "protocol.h"
 
-#include "../interface/label.h"
 #include "../interface/interfacemanager.h"
 
 #include "../utilities/log.h"
@@ -114,7 +113,7 @@ namespace ST
                 if (packet->getByte() == ERR_NONE)
                 {
                     logger->logDebug("Registered new account");
-                    GameState *state = new TestState;
+                    GameState *state = new UpdateState;
                     game->changeState(state);
                 }
                 else if (packet->getByte() == ERR_TAKEN_NAME)
@@ -228,22 +227,27 @@ namespace ST
 	    // initialise curl
         CURL *handle = curl_easy_init();
 
-        // set curl options
-        curl_easy_setopt(handle, CURLOPT_WRITEDATA, outFile);
-        curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
+		if (handle)
+		{
 
-        // perform the download
-        if ((success = curl_easy_perform(handle)) != 0)
-        {
-            // error! - log it and clean up
-            logger->logError("Unable to get update file");
-            fclose(outFile);
-            curl_easy_cleanup(handle);
-            return false;
-        }
+			// set curl options
+/*			curl_easy_setopt(handle, CURLOPT_WRITEDATA, outFile);
+			curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
 
-        // cleanup
-        curl_easy_cleanup(handle);
+			// perform the download
+			if ((success = curl_easy_perform(handle)) != 0)
+			{
+				// error! - log it and clean up
+				logger->logError("Unable to get update file");
+				fclose(outFile);
+				curl_easy_cleanup(handle);
+				return false;
+			}
+*/
+			// cleanup
+			curl_easy_cleanup(handle);
+		}
+
         fclose(outFile);
 
         return true;

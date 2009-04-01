@@ -49,11 +49,7 @@
 #include "net/packet.h"
 #include "net/protocol.h"
 
-#include "interface/button.h"
 #include "interface/interfacemanager.h"
-#include "interface/label.h"
-#include "interface/textfield.h"
-#include "interface/window.h"
 
 #include "graphics/graphics.h"
 

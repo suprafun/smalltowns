@@ -47,12 +47,7 @@
 #include "graphics/graphics.h"
 #include "graphics/node.h"
 
-#include "interface/icon.h"
 #include "interface/interfacemanager.h"
-#include "interface/list.h"
-#include "interface/textbox.h"
-#include "interface/textfield.h"
-#include "interface/window.h"
 
 #include "net/networkmanager.h"
 

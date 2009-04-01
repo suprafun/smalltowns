@@ -45,9 +45,6 @@
 #include "../player.h"
 
 #include "../interface/interfacemanager.h"
-#include "../interface/label.h"
-#include "../interface/list.h"
-#include "../interface/textbox.h"
 
 #include "../utilities/log.h"
 
@@ -237,7 +234,7 @@ namespace ST
                             {
                                 std::string chat = AG_TextboxDupString(widget);
                                 chat.append(text);
-                                AG_TextboxPrintf(widget, "%s", chat.c_str());
+                                AG_TextboxPrintf(widget, "%s\n", chat.c_str());
                             }
                         }
                     }
@@ -282,7 +279,7 @@ namespace ST
                             {
                                 std::string chat = AG_TextboxDupString(widget);
                                 chat.append(msg);
-                                AG_TextboxPrintf(widget, "%s", chat.c_str());
+                                AG_TextboxPrintf(widget, "%s\n", chat.c_str());
                             }
                         }
                     }
@@ -312,7 +309,7 @@ namespace ST
                             {
                                 std::string chat = AG_TextboxDupString(widget);
                                 chat.append(msg);
-                                AG_TextboxPrintf(widget, "%s", chat.c_str());
+                                AG_TextboxPrintf(widget, "%s\n", chat.c_str());
                             }
                         }
                     }

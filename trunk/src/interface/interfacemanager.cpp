@@ -42,18 +42,33 @@
 
 #include "../input.h"
 
+#include "../graphics/graphics.h"
+
+#include "../utilities/log.h"
+
 #include <tinyxml.h>
+#include <agar/core.h>
+#include <agar/gui.h>
 
 namespace ST
 {
 	InterfaceManager::InterfaceManager()
 	{
-        mFocused = NULL;
+        if (AG_InitCore("townslife", 0) == -1)
+        {
+            logger->logError("Error: Unable to init agar");
+        }
+
+        if (AG_InitVideoSDL(graphicsEngine->getSurface(), 0) == -1)
+        {
+            logger->logError("Error: Unable to init video");
+        }
 	}
 
 	InterfaceManager::~InterfaceManager()
 	{
 		removeAllWindows();
+		AG_Destroy();
 	}
 
 	bool InterfaceManager::loadGuiSheet(const std::string &filename)
@@ -78,22 +93,36 @@ namespace ST
 
 	}
 
-	void InterfaceManager::addWindow(Window *window)
+	void InterfaceManager::addWindow(AG_Window *window)
 	{
-	    if (mFocused == NULL)
-            mFocused = window;
-		mWindows.insert(std::pair<std::string, Window*>(window->getName(), window));
+	    mWindows.push_back(window);
 	}
 
-	void InterfaceManager::addSubWindow(Window *parent, Window *window)
+	AG_Window* InterfaceManager::getWindow(const std::string &name)
 	{
-		mWindows.insert(std::pair<std::string, Window*>(window->getName(), window));
-        parent->addChild(window);
-		window->addParent(parent);
+        WindowItr itr = mWindows.begin();
+        WindowItr itr_end = mWindows.end();
+
+        while (itr != itr_end)
+        {
+            char object_name[255];
+
+            AG_ObjectCopyName((*itr), object_name, 255);
+
+            if (strncmp(object_name, name.c_str(), name.size()) == 0)
+            {
+                return (*itr);
+            }
+
+            ++itr;
+        }
+
+        return NULL;
 	}
 
 	void InterfaceManager::removeWindow(const std::string &name)
 	{
+	    /*
 		WindowItr itr = mWindows.find(name);
 		if (itr != mWindows.end())
 		{
@@ -102,6 +131,7 @@ namespace ST
 		    delete itr->second;
 			mWindows.erase(itr);
 		}
+		*/
 	}
 
 	void InterfaceManager::removeAllWindows()
@@ -109,88 +139,31 @@ namespace ST
 		WindowItr itr_end = mWindows.end();
 		for (WindowItr itr = mWindows.begin(); itr != itr_end; ++itr)
 		{
-			delete itr->second;
+			AG_ViewDetach(*itr);
 		}
 		mWindows.clear();
-		mFocused = NULL;
-	}
-
-	Window* InterfaceManager::getWindow(const std::string &name)
-	{
-		Window *win = 0;
-		WindowItr itr = mWindows.find(name);
-		if (itr != mWindows.end())
-		{
-			win = itr->second;
-		}
-		return win;
-	}
-
-	Window* InterfaceManager::getWindow(int x, int y)
-	{
-	    Window *window;
-	    WindowItr itr_end = mWindows.end();
-		for (WindowItr itr = mWindows.begin(); itr != itr_end; ++itr)
-		{
-		    window = itr->second;
-		    if (window->getNumChildren() > 0)
-                continue;
-			if (x >= window->getPosition().x && x <= window->getPosition().x + window->getWidth())
-			{
-			    if (y <= window->getPosition().y && y >= window->getPosition().y - window->getHeight())
-			    {
-			        return window;
-			    }
-			}
-		}
-
-		return NULL;
 	}
 
 	void InterfaceManager::drawWindows()
 	{
+	    AG_LockVFS(agView);
+	    AG_BeginRendering();
+
 		WindowItr itr_end = mWindows.end();
 		for (WindowItr itr = mWindows.begin(); itr != itr_end; ++itr)
 		{
-			if (itr->second->getVisible())
-				itr->second->drawWindow();
+			if (AG_WindowIsVisible(*itr))
+            {
+                AG_WindowDraw(*itr);
+            }
 		}
-	}
 
-	void InterfaceManager::changeFocus(Window *window)
-	{
-	    window->setFocus(true);
-	    mFocused->setFocus(false);
-	    mFocused = window;
-	}
-
-	Window* InterfaceManager::getFocused()
-	{
-	    return mFocused;
+		AG_EndRendering();
+		AG_UnlockVFS(agView);
 	}
 
 	void InterfaceManager::sendKey(SDL_keysym key)
 	{
-	    if (mFocused)
-            mFocused->processKey(key);
-	}
 
-	void InterfaceManager::sendMouse(MouseButton *button)
-	{
-	    if (button->state == SDL_PRESSED)
-	    {
-            Window *win = getWindow(button->x, button->y);
-            if (win && win != mFocused)
-            {
-                changeFocus(win);
-            }
-	    }
-
-	    if (mFocused)
-	    {
-            mFocused->processMouse(button);
-	    }
-
-	    delete button;
 	}
 }

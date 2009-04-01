@@ -89,9 +89,6 @@ namespace ST
 		mScreen = SDL_SetVideoMode(mWidth, mHeight, bpp, SDL_OPENGL);
 
 		glViewport(0, 0, mWidth, mHeight);
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(0.0f, mWidth, 0.0f, mHeight, -1.0f, 1.0f);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glClearColor(1.0f, 1.0f , 1.0f, 0.5f);
@@ -142,9 +139,16 @@ namespace ST
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0.0f, mWidth, 0.0f, mHeight, -1.0f, 1.0f);
+
 		// Display the nodes on screen (if theres a camera to view them)
 		if (mCamera)
 			outputNodes();
+
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
 
         interfaceManager->drawWindows();
 
@@ -295,48 +299,6 @@ namespace ST
 		}
 	}
 
-	void GraphicsEngine::drawCarat(Point &pos, const std::string &text)
-	{
-		// reset identity matrix
-		glLoadIdentity();
-
-		// set position and size from rectangle
-		float x = (float)pos.x;
-		float y = (float)pos.y;
-
-		if (!mFont)
-			return;
-
-		if (text.size() > 0)
-		{
-			x += mFont->Advance(text.c_str(), text.size());
-		}
-
-		// move to the correct position
-		glTranslatef(x, y, 0.0f);
-
-		// disable depth testing
-		glDisable(GL_DEPTH_TEST);
-
-		glColor3f(0.0f, 0.0f, 0.0f);
-
-		glPolygonMode(GL_FRONT, GL_FILL);
-
-        // draw the carat
-		glBegin(GL_LINES);
-
-		    // draw a line for the carat
-		    glVertex3f(0.0f, 0.0f, 0.0f);
-			if (mFont->LineHeight() < 1.05f)
-				glVertex3f(0.0f, 25.0f, 0.0f);
-		    glVertex3f(0.0f, -mFont->LineHeight(), 0.0f);
-
-		glEnd();
-
-		glEnable(GL_DEPTH_TEST);
-
-	}
-
 	void GraphicsEngine::setFont(const std::string &font)
 	{
 		mFont = new FTGLTextureFont(font.c_str());
@@ -350,74 +312,6 @@ namespace ST
 	float GraphicsEngine::getFontWidth(const std::string &text)
 	{
 		return mFont->Advance(text.c_str(), text.size());
-	}
-
-	bool GraphicsEngine::loadSpriteSheet(const std::string &name)
-	{
-		// Texture doesn't exist so create it
-		SDL_Surface* s = NULL;
-
-		// Load in the sprite sheet
-		s = IMG_Load(name.c_str());
-		if (s)
-		{
-			// We want the colour to look for the border, anchor and
-			// animation frame
-			unsigned int border = getPixel(s, 0, 0);
-			unsigned int anchor = getPixel(s, 1, 0);
-			unsigned int animation = getPixel(s, 2, 0);
-
-			// We store the initial position where each frame starts
-			// and the current position for finding the width and height
-			Point initPos;
-			initPos.x = 1;
-			initPos.y = 2;
-			Point position;
-			position.x = initPos.x;
-			position.y = initPos.y;
-
-			// Keep track of how many frames there are
-			// The number of animations
-			// The height and width of each frame
-			unsigned int numFrames = 0;
-			unsigned int currentAnimations = 0;
-			unsigned int frameHeight = 0;
-			unsigned int frameWidth = 0;
-			Animation *anim = new Animation();
-
-			while (position.y <= s->h)
-			{
-				if (getPixel(s, position.x, position.y) == border)
-				{
-					frameHeight = position.y - 2;
-					--position.y;
-					while (position.x <= s->w)
-					{
-						if (getPixel(s, position.x, position.y) == border)
-						{
-							frameWidth = position.x - 2;
-							Texture *texture = createTexture(s, name,
-								initPos.x, initPos.y, frameWidth, frameHeight);
-							if (!texture)
-							{
-								return false;
-							}
-							anim->addTexture(texture);
-							++numFrames;
-							initPos.x = position.x + 2;
-							initPos.y = position.y + 1;
-						}
-						++position.x;
-					}
-				}
-				++position.y;
-			}
-
-			return true;
-		}
-
-		logger->logError(IMG_GetError());
-		return false;
 	}
 
 	void GraphicsEngine::loadTexture(const std::string &name)
@@ -438,6 +332,20 @@ namespace ST
 		{
 		    logger->logError("Image not found: " + name);
 		}
+	}
+
+	SDL_Surface* GraphicsEngine::loadSDLTexture(const std::string &name)
+	{
+		SDL_Surface* s = NULL;
+
+		// Load in the texture
+		s = IMG_Load(name.c_str());
+		if (!s)
+		{
+			logger->logError("Image not found: " + name);
+		}
+
+		return s;
 	}
 
 	Texture* GraphicsEngine::createTexture(SDL_Surface *surface, std::string name,

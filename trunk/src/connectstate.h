@@ -46,9 +46,11 @@
 
 #include "gamestate.h"
 
+#include <agar/core.h>
+#include <agar/gui.h>
+
 namespace ST
 {
-	class Camera;
 	class ConnectState : public GameState
 	{
 	public:
@@ -72,11 +74,6 @@ namespace ST
 		 * Return false to exit the game
 		 */
 		bool update();
-
-    private:
-        void submit();
-		bool mConnecting;
-		int mTimeout;
 	};
 }
 

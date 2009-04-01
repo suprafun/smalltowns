@@ -44,15 +44,15 @@
 #ifndef ST_INTERFACE_MANAGER_HEADER
 #define ST_INTERFACE_MANAGER_HEADER
 
+#include <list>
 #include <map>
 #include <string>
 #include <SDL.h>
+#include <agar/core.h>
+#include <agar/gui.h>
 
 namespace ST
 {
-	class Window;
-	struct MouseButton;
-
 	class InterfaceManager
 	{
 	public:
@@ -73,18 +73,17 @@ namespace ST
 		/**
 		 * Add a new window
 		 */
-		void addWindow(Window *window);
+		void addWindow(AG_Window *window);
 
 		/**
-		 * Add a new window to another
+		 * Get Window by name
 		 */
-		void addSubWindow(Window *parent, Window *window);
+        AG_Window* getWindow(const std::string &name);
 
 		/**
 		 * Remove a window
 		 */
 		void removeWindow(const std::string &name);
-		void removeWindow(Window *window);
 
 		/**
 		 * Remove all windows currently added
@@ -92,46 +91,18 @@ namespace ST
 		void removeAllWindows();
 
 		/**
-		 * Returns the window
-		 */
-		Window* getWindow(const std::string &name);
-		Window* getWindow(int x, int y);
-
-		/**
 		 * Draw windows
 		 */
 		void drawWindows();
-
-		/**
-		 * Change focus
-		 */
-        void changeFocus(Window *window);
-
-        /**
-         *
-         */
-        Window* getFocused();
 
         /**
          * Send a key event to the interface
          */
         void sendKey(SDL_keysym key);
 
-        /**
-         * Send a mouse event to the interface
-         */
-        void sendMouse(MouseButton *button);
-
 	private:
-		/**
-		 * Draw window
-		 */
-		void drawWindow(Window *window);
-
-	private:
-		std::map<std::string, Window*> mWindows;
-		typedef std::map<std::string, Window*>::iterator WindowItr;
-		Window* mFocused;
+		std::list<AG_Window*> mWindows;
+		typedef std::list<AG_Window*>::iterator WindowItr;
 	};
 
 	extern InterfaceManager *interfaceManager;

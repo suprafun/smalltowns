@@ -49,13 +49,6 @@
 
 namespace ST
 {
-    struct MouseButton
-    {
-        short button;
-        short state;
-        int x, y;
-    };
-
 	class InputManager
 	{
 	public:
@@ -75,7 +68,6 @@ namespace ST
 
 	private:
 		std::list<SDLKey> keysDown;
-		std::list<MouseButton> mouseDown;
 	};
 
 	extern InputManager *inputManager;

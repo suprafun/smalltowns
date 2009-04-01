@@ -106,7 +106,6 @@ namespace ST
                 {
                     logger->logError("Bad client");
                     disconnect();
-                    static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Error connecting: Invalid client");
                 }
             } break;
 
@@ -121,12 +120,10 @@ namespace ST
                 else if (packet->getByte() == ERR_TAKEN_NAME)
                 {
                     logger->logWarning("Username already registered");
-                    static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Username already taken");
                 }
                 else
                 {
                     logger->logWarning("Invalid username or password used to register account");
-                    static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Invalid username or password");
                 }
             } break;
 
@@ -141,7 +138,6 @@ namespace ST
                 else
                 {
                     logger->logWarning("Invalid username or password used to login");
-                    static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Error: Invalid username or password");
                 }
             } break;
 
@@ -153,6 +149,7 @@ namespace ST
                     int id = packet->getInteger();
                     std::string name = packet->getString();
                     Character *c = new Character(id, name);
+                    c->setHead(packet->getInteger());
                     c->setLevel(packet->getInteger());
                     c->setRights(packet->getInteger());
                     player->addCharacter(c);

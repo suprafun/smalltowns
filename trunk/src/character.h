@@ -62,9 +62,13 @@ namespace ST
         int getRights() const;
         void setRights(int rights);
 
+        int getHead() const;
+        void setHead(int head);
+
     private:
         int mLevel;
         int mRights;
+        int mHead;
     };
 }
 

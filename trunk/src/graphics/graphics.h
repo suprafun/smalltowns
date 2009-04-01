@@ -137,11 +137,6 @@ namespace ST
 		void drawText(Point &pos, const std::string &text, int fontSize);
 
 		/**
-		 * Draw Carat
-		 */
-		void drawCarat(Point &pos, const std::string &text);
-
-		/**
 		 * Set Font
 		 */
 		void setFont(const std::string &font);
@@ -157,18 +152,15 @@ namespace ST
 		float getFontWidth(const std::string &text);
 
 		/**
-		 * Load Sprite Sheet
-		 * Increases Texture count if one already exists
-		 * Creates a new Texture for each one that doesn't exist already
-		 * @param name The name of the file the sprite sheet
-		 * @return Returns true is successfully loaded
+		 * Returns the current SDL surface
 		 */
-		bool loadSpriteSheet(const std::string &name);
+        SDL_Surface* getSurface() { return mScreen; }
 
 		/**
 		 * Load a single texture
 		 */
 		void loadTexture(const std::string &name);
+		SDL_Surface* loadSDLTexture(const std::string &name);
 
 		/**
 		 * Create Texture

@@ -57,80 +57,81 @@
 #include "utilities/stringutils.h"
 
 #include <SDL.h>
+#include <sstream>
 
 namespace ST
 {
+    int timeout = 0;
+    bool connecting = false;
+    AG_Label *error;
+
+    void submit_connect(AG_Event *event)
+    {
+        std::string hostname;
+        int port = 0;
+        // get the pointers to the input boxes
+        AG_Textbox *one = static_cast<AG_Textbox*>(AG_PTR(1));
+        AG_Textbox *two = static_cast<AG_Textbox*>(AG_PTR(2));
+
+        // check they are valid, then assign their values
+        if (one && two)
+        {
+            hostname = AG_TextboxDupString(one);
+            port = AG_TextboxInt(two);
+        }
+
+        // check the input isnt blank and not already connecting
+        if (!connecting && !hostname.empty() && port != 0)
+        {
+            // set when timeout starts, connect to server
+            timeout = SDL_GetTicks();
+            networkManager->connect(hostname, port);
+            connecting = true;
+
+            // log where they tried connecting
+            std::stringstream msg;
+            msg << "Connecting to server: " << hostname << ":" << port;
+            logger->logDebug(msg.str());
+
+            // reset any error messages
+            AG_LabelString(error, "");
+        }
+    }
+
 	ConnectState::ConnectState()
 	{
-        mConnecting = false;
-        mTimeout = 0;
 	}
 
 	void ConnectState::enter()
 	{
 		int screenWidth = graphicsEngine->getScreenWidth();
 		int screenHeight = graphicsEngine->getScreenHeight();
+		float halfScreenWidth = screenWidth / 2.0f;
+		float halfScreenHeight = screenHeight / 2.0f;
 
 		// create window for entering username and password
-		Window *win = new Window("Connect Window");
-		win->setPosition(0, screenHeight);
-		win->setSize(screenWidth, screenHeight);
+		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN);
+		error = AG_LabelNewString(win, 0, "");
+		AG_LabelSizeHint(error, 1, "XXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+		AG_LabelJustify(error, AG_TEXT_CENTER);
+		AG_WindowShow(win);
+		AG_WindowMaximize(win);
+
+		AG_Window *test = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "Connection");
+		AG_WindowSetCaption(test, "Connect to server");
+		AG_WindowSetSpacing(test, 12);
+		AG_WindowSetGeometry(test, halfScreenWidth - 125, halfScreenHeight - 45, 225, 135);
+
+		AG_Textbox *hostname = AG_TextboxNew(test, 0, "Server: ");
+		AG_Textbox *port = AG_TextboxNew(test, AG_TEXTBOX_INT_ONLY, "Port: ");
+
+		AG_Button *button = AG_ButtonNewFn(test, 0, "Submit", submit_connect, "%p%p", hostname, port);
+		AG_ButtonJustify(button, AG_TEXT_CENTER);
+
+		AG_WindowShow(test);
+
 		interfaceManager->addWindow(win);
-
-		// create label for error messages
-		Label *errorLabel = new Label("error");
-		errorLabel->setPosition(150, screenHeight - 200);
-		errorLabel->setText("");
-		errorLabel->setFontSize(24);
-		interfaceManager->addSubWindow(win, errorLabel);
-
-		// create label
-		Label *connectLabel = new Label("ConnectLabel");
-		connectLabel->setPosition(260, 385);
-		connectLabel->setText("Connect");
-		connectLabel->setFontSize(24);
-		interfaceManager->addSubWindow(win, connectLabel);
-
-		// create label for username
-		Label *hostnameLabel = new Label("HostnameLabel");
-		hostnameLabel->setPosition(260, 335);
-		hostnameLabel->setText("Server: ");
-		hostnameLabel->setFontSize(20);
-		interfaceManager->addSubWindow(win, hostnameLabel);
-
-		// create label for password
-		Label *portLabel = new Label("PortLabel");
-		portLabel->setPosition(260, 285);
-		portLabel->setText("Port: ");
-		portLabel->setFontSize(20);
-		interfaceManager->addSubWindow(win, portLabel);
-
-		// create textfield for entering server name and add to window
-		TextField *hostname = new TextField("Host");
-		hostname->setPosition(335, 350);
-		hostname->setSize(180, 25);
-		hostname->setText("casualgamer.co.uk");
-		hostname->setFontSize(18);
-		interfaceManager->addSubWindow(win, hostname);
-
-		// create textfield for entering port number and add to window
-		TextField *port = new TextField("Port");
-		port->setPosition(335, 300);
-		port->setSize(120, 25);
-		port->setText("9601");
-		port->setFontSize(18);
-		interfaceManager->addSubWindow(win, port);
-
-		// create button for submitting details
-		Button *button = new Button("Submit");
-		button->setPosition(screenWidth - 100, 100);
-        button->setSize(80,20);
-        button->setText("Submit");
-        button->setFontSize(18);
-        interfaceManager->addSubWindow(win, button);
-
-        // set the focus on the first text field
-        interfaceManager->changeFocus(hostname);
+		interfaceManager->addWindow(test);
 	}
 
 	void ConnectState::exit()
@@ -140,38 +141,30 @@ namespace ST
 
 	bool ConnectState::update()
 	{
-
-		// Check for input, if escape pressed, exit
+        // Check for input, if escape pressed, exit
 		if (inputManager->getKey(SDLK_ESCAPE))
 		{
 			return false;
 		}
-		else if (inputManager->getKey(SDLK_TAB))
-		{
-		    if (interfaceManager->getFocused()->getName() == "Host")
-                interfaceManager->changeFocus(interfaceManager->getWindow("Port"));
-            else
-                interfaceManager->changeFocus(interfaceManager->getWindow("Host"));
-		}
 
-		else if (inputManager->getKey(SDLK_RETURN) ||
-            static_cast<Button*>(interfaceManager->getWindow("Submit"))->clicked())
+        // when connected, send the version
+		if (networkManager->isConnected() && connecting)
 		{
-		    submit();
-		}
-
-		if (networkManager->isConnected() && mConnecting)
-		{
-		    mConnecting = false;
+		    connecting = false;
 		    networkManager->sendVersion();
 		}
 
-		if (mTimeout && (SDL_GetTicks() - mTimeout > 5000))
+        // check if its timedout
+		if (timeout && (SDL_GetTicks() - timeout > 5000))
 		{
-		    mConnecting = false;
+		    // set error label, and stop connecting
+		    AG_LabelString(error, "Error: Connection timed out");
+		    connecting = false;
 		    networkManager->disconnect();
-		    static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Error connecting: Timed out");
-		    mTimeout = 0;
+
+		    // reset timeout, and log the error
+		    timeout = 0;
+		    logger->logWarning("Connecting timed out");
 		}
 
 		SDL_Delay(0);
@@ -179,26 +172,5 @@ namespace ST
 		return true;
 	}
 
-	void ConnectState::submit()
-	{
-	    std::string hostname = static_cast<TextField*>(interfaceManager->getWindow("Host"))->getText();
-        std::string port = static_cast<TextField*>(interfaceManager->getWindow("Port"))->getText();
-        if (hostname.size() > 0 && !mConnecting)
-        {
-            if (port == "")
-                port = "0";
-            networkManager->connect(hostname, utils::toInt(port));
-            mConnecting = true;
-            static_cast<Label*>(interfaceManager->getWindow("error"))->setText("Trying Server...");
-            mTimeout = SDL_GetTicks();
-
-            // LOG the server connecting to
-            std::string msg = "Connecting to server: ";
-            msg.append(hostname);
-            msg.append(":");
-            msg.append(port);
-            logger->logDebug(msg);
-        }
-	}
 }
 

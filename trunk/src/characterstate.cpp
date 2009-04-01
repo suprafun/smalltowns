@@ -63,6 +63,52 @@
 
 namespace ST
 {
+    int insert_avatar(AG_Socket *sock, Icon *icon)
+    {
+        return 1;
+    }
+
+    void select_character(AG_Event *event)
+    {
+        AG_Socket *sock = static_cast<AG_Socket*>(AG_PTR(1));
+        if (sock)
+        {
+            Packet *packet = new Packet(PAMSG_CHAR_CHOOSE);
+
+            int slot = utils::toInt(AG_GetString(sock->icon, "character"));
+            packet->setInteger(slot);
+
+            networkManager->sendPacket(packet);
+        }
+    }
+
+    void create_character(AG_Event *event)
+    {
+        AG_Window *one = static_cast<AG_Window*>(AG_PTR(1));
+        if (one)
+            AG_WindowHide(one);
+
+        AG_Window *two = static_cast<AG_Window*>(AG_PTR(2));
+        if (two)
+            AG_WindowShow(two);
+    }
+
+    void submit_new(AG_Event *event)
+    {
+        AG_Socket *sock = static_cast<AG_Socket*>(AG_PTR(2));
+        AG_Icon *icon = sock->icon;
+        std::string tmpAvatar = AG_GetString(icon, "avatar");
+        int avatar = utils::toInt(tmpAvatar);
+        std::string name = AG_TextboxDupString(static_cast<AG_Textbox*>(AG_PTR(1)));
+        if (!name.empty())
+        {
+            Packet *packet = new Packet(PAMSG_CHAR_CREATE);
+            packet->setString(name);
+            packet->setInteger(avatar);
+            networkManager->sendPacket(packet);
+        }
+    }
+
     CharacterState::CharacterState()
     {
 
@@ -73,86 +119,107 @@ namespace ST
         // When we enter character state
         // player should already contain a list
         // of existing characters from the game server
-
         int screenWidth = graphicsEngine->getScreenWidth();
-        int screenHeight = graphicsEngine->getScreenHeight();
+		int screenHeight = graphicsEngine->getScreenHeight();
+		float halfScreenWidth = screenWidth / 2.0f;
+		float halfScreenHeight = screenHeight / 2.0f;
 
-        // get number of characters already created
-        int numChars = player->getNumChars();
+		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN);
+		AG_WindowShow(win);
+		AG_WindowMaximize(win);
 
-        Window *win = new Window("Character Selection");
-        win->setPosition(0, screenHeight);
-        win->setSize(screenWidth, screenHeight);
-        interfaceManager->addWindow(win);
+		AG_Window *charSelect = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "CharSelect");
+		AG_WindowSetCaption(charSelect, "Select Character");
+		AG_WindowSetSpacing(charSelect, 12);
+		AG_WindowSetGeometry(charSelect, halfScreenWidth - 125, halfScreenHeight - 90, 225, 180);
 
-        Label *countLabel = new Label("Count Label");
-        countLabel->setPosition(10, screenHeight - 50);
-        countLabel->setText("Number of Characters: " + utils::toString(numChars));
-        countLabel->setFontSize(20);
-        interfaceManager->addSubWindow(win, countLabel);
+		// load in the avatars to choose from
+		const int avatarCount = 6;
+		SDL_Surface *surface[avatarCount];
 
-        for (int i = 0; i < numChars; ++i)
+		surface[0] = graphicsEngine->loadSDLTexture("head1.png");
+		surface[1] = graphicsEngine->loadSDLTexture("head2.png");
+		surface[2] = graphicsEngine->loadSDLTexture("head3.png");
+        surface[3] = graphicsEngine->loadSDLTexture("head4.png");
+        surface[4] = graphicsEngine->loadSDLTexture("head5.png");
+        surface[5] = graphicsEngine->loadSDLTexture("head6.png");
+
+        AG_Surface *head[avatarCount];
+        for (int i = 0; i < avatarCount; ++i)
         {
-            // get the character for the slot
-            Character *c = player->getCharacter(i);
-
-            // create label for character name
-            Label *label = new Label(utils::toString(i));
-            label->setPosition(50 + 10 * i, 150);
-            label->setText(c->getName());
-            label->setFontSize(16);
-            // create icon for character avatar
-            Icon *icon = new Icon("Character" + utils::toString(i));
-            icon->setPosition(50 + 10 * i, 200);
-            icon->setSize(64, 64);
-            // create button for selecting the character
-            Button *button = new Button("Button" + utils::toString(i));
-            button->setPosition(50 + 10 * i, 130);
-            button->setSize(80, 24);
-            button->setText("Select");
-            button->setFontSize(18);
-
-            interfaceManager->addSubWindow(win, label);
-            interfaceManager->addSubWindow(win, icon);
-            interfaceManager->addSubWindow(win, button);
+            head[i] = AG_SurfaceFromSDL(surface[i]);
+            SDL_FreeSurface(surface[i]);
         }
 
-        Window *nameWindow = new Window("Create Character");
-        nameWindow->setPosition(395, 600);
-        nameWindow->setSize(260, 90);
-        nameWindow->setTitleHeight(10);
-        nameWindow->setTitleText("Create Character");
-        interfaceManager->addWindow(nameWindow);
+        AG_HBox *hbox = AG_HBoxNew(charSelect, 0);
 
-        Label *nameLabel = new Label("Name Label");
-        nameLabel->setPosition(5, 50);
-        nameLabel->setText("Character Name:");
-        nameLabel->setFontSize(18);
-        nameLabel->setVisible(false);
-        interfaceManager->addSubWindow(nameWindow, nameLabel);
+        // create number of characters based on number of characters a player has
+        for (int i = 0; i < player->getNumChars(); ++i)
+        {
+            Character *c = player->getCharacter(i);
+            if (c)
+            {
+                AG_Icon *icon = NULL;
+                AG_Socket *avatars = AG_SocketNew(hbox, 0);
+                for (int j = 0; j < avatarCount; ++j)
+                {
+                    if (head[j] && c->getHead() == j+1)
+                    {
+                        icon = AG_IconNew(avatars, 0);
+                        AG_IconSetSurface(icon, head[j]);
+                    }
+                }
+                if (icon)
+                {
+                    AG_SetString(icon, "character", utils::toString(i).c_str());
+                    AG_SocketInsertIcon(avatars, icon);
+                    AG_Label *level = AG_LabelNew(avatars, 0, "%s\n%d", c->getName().c_str(), c->getLevel());
+                }
 
-        TextField *nameField = new TextField("Character Name");
-        nameField->setPosition(130, 70);
-        nameField->setSize(120, 25);
-        nameField->setFontSize(18);
-        nameField->setVisible(false);
-        interfaceManager->addSubWindow(nameWindow, nameField);
+            }
+        }
 
-        Button *nameButton = new Button("Submit Character");
-        nameButton->setPosition(5, 25);
-        nameButton->setSize(80, 24);
-        nameButton->setText("Submit");
-        nameButton->setFontSize(18);
-        nameButton->setVisible(false);
-        interfaceManager->addSubWindow(nameWindow, nameButton);
+        AG_Socket *selected = AG_SocketNew(charSelect, 0);
 
-        Button *newButton = new Button("New Character");
-        newButton->setPosition(400, 490);
-        newButton->setSize(180, 24);
-        newButton->setText("Create New Character");
-        newButton->setFontSize(18);
-        interfaceManager->addSubWindow(win, newButton);
+		AG_Window *charNew = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "CharNew");
+		AG_WindowSetCaption(charNew, "Create new Character");
+		AG_WindowSetSpacing(charNew, 12);
+		AG_WindowSetGeometry(charNew, halfScreenWidth - 140, halfScreenHeight - 90, 280, 175);
 
+        AG_VBox *new_box = AG_VBoxNew(charNew, 0);
+
+        // create avatars to choose from
+        AG_HBox *horizBox = AG_HBoxNew(new_box, 0);
+        AG_Icon *avatarIcon[avatarCount];
+        AG_Socket *avatarSocket[avatarCount];
+        for (int i = 0; i < avatarCount; ++i)
+        {
+            avatarSocket[i] = AG_SocketNew(horizBox, 0);
+            avatarIcon[i] = AG_IconNew(avatarSocket[i], 0);
+            AG_IconSetSurface(avatarIcon[i], head[i]);
+            AG_SetString(avatarIcon[i], "avatar", utils::toString(i+1).c_str());
+            AG_SocketInsertIcon(avatarSocket[i], avatarIcon[i]);
+        }
+
+        AG_Socket *avatar = AG_SocketNew(new_box, 0);
+
+		AG_Textbox *charNick = AG_TextboxNew(new_box, 0, "Nickname: ");
+
+		AG_Button *new_button = AG_ButtonNewFn(new_box, 0, "Submit", submit_new, "%p%p", charNick, avatar);
+		AG_ButtonJustify(new_button, AG_TEXT_CENTER);
+
+		AG_HBox *box = AG_HBoxNew(charSelect, 0);
+		AG_Button *button = AG_ButtonNewFn(box, 0, "Choose", select_character, "%p", selected);
+		AG_ButtonJustify(button, AG_TEXT_CENTER);
+		AG_Button *create_button = AG_ButtonNewFn(box, 0, "Create New",
+                                                    create_character, "%p%p", charSelect, charNew);
+		AG_ButtonJustify(create_button, AG_TEXT_CENTER);
+
+		AG_WindowShow(charSelect);
+
+		interfaceManager->addWindow(win);
+		interfaceManager->addWindow(charSelect);
+		interfaceManager->addWindow(charNew);
     }
 
     void CharacterState::exit()
@@ -169,23 +236,6 @@ namespace ST
 		    GameState *state = new ConnectState();
 			game->changeState(state);
 			return true;
-		}
-		else if (static_cast<Button*>(interfaceManager->getWindow("New Character"))->clicked())
-		{
-		    interfaceManager->getWindow("Name Label")->setVisible(true);
-		    interfaceManager->getWindow("Character Name")->setVisible(true);
-		    interfaceManager->getWindow("Submit Character")->setVisible(true);
-		    interfaceManager->changeFocus(interfaceManager->getWindow("Character Name"));
-		}
-		else if (static_cast<Button*>(interfaceManager->getWindow("Submit Character"))->clicked())
-		{
-		    std::string username = static_cast<TextField*>(interfaceManager->getWindow("Character Name"))->getText();
-		    if (!username.empty())
-		    {
-                Packet *packet = new Packet(PAMSG_CHAR_CREATE);
-                packet->setString(username);
-                networkManager->sendPacket(packet);
-		    }
 		}
 
         SDL_Delay(0);

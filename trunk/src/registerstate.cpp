@@ -66,7 +66,7 @@ namespace ST
 
 	void RegisterState::enter()
 	{
-		int screenWidth = graphicsEngine->getScreenWidth();
+/*		int screenWidth = graphicsEngine->getScreenWidth();
 	    int screenHeight = graphicsEngine->getScreenHeight();
 
         // create window for entering username and password
@@ -115,6 +115,7 @@ namespace ST
 
         // set focus on first text field
         interfaceManager->changeFocus(username);
+        */
 	}
 
 	bool RegisterState::update()

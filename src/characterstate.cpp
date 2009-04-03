@@ -131,6 +131,7 @@ namespace ST
 		// load in the avatars to choose from
 		std::vector<SDL_Surface*> surfaces;
 
+        surfaces.push_back(graphicsEngine->loadSDLTexture("head0.png"));
 		surfaces.push_back(graphicsEngine->loadSDLTexture("head1.png"));
 		surfaces.push_back(graphicsEngine->loadSDLTexture("head2.png"));
 		surfaces.push_back(graphicsEngine->loadSDLTexture("head3.png"));
@@ -159,7 +160,7 @@ namespace ST
                 AG_Socket *avatars = AG_SocketNew(hbox, 0);
                 for (int j = 0; j < avatarCount; ++j)
                 {
-                    if (heads.size() >= j && c->getHead() == j+1)
+                    if (heads.size() > j && c->getHead() == j)
                     {
                         icon = AG_IconNew(avatars, 0);
                         AG_IconSetSurface(icon, heads[j]);
@@ -193,7 +194,7 @@ namespace ST
             avatarSockets.push_back(AG_SocketNew(horizBox, 0));
             avatarIcons.push_back(AG_IconNew(avatarSockets[i], 0));
             AG_IconSetSurface(avatarIcons[i], heads[i]);
-            AG_SetString(avatarIcons[i], "avatar", utils::toString(i+1).c_str());
+            AG_SetString(avatarIcons[i], "avatar", utils::toString(i).c_str());
             AG_SocketInsertIcon(avatarSockets[i], avatarIcons[i]);
         }
 

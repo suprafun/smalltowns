@@ -129,7 +129,7 @@ namespace ST
                         AG_ObjectCopyName(widget, widgetName, 30);
                         if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
                         {
-                            AG_ConsoleAppendLine(widget, "Connected!\n");
+                            AG_ConsoleAppendLine(widget, "Connected!");
                         }
                     }
                 }
@@ -158,7 +158,7 @@ namespace ST
                         AG_ObjectCopyName(widget, widgetName, 30);
                         if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
                         {
-                            AG_ConsoleMsg(widget, "%s\n", msg.c_str());
+                            AG_ConsoleMsg(widget, "%s", msg.c_str());
                         }
                     }
                 }
@@ -186,7 +186,7 @@ namespace ST
                         AG_ObjectCopyName(widget, widgetName, 30);
                         if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
                         {
-                            AG_ConsoleMsg(widget, "%s\n", msg.c_str());
+                            AG_ConsoleMsg(widget, "%s", msg.c_str());
                         }
                     }
                 }
@@ -215,7 +215,7 @@ namespace ST
                         AG_ObjectCopyName(widget, widgetName, 30);
                         if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
                         {
-                            AG_ConsoleMsg(widget, "%s\n", msg.c_str());
+                            AG_ConsoleMsg(widget, "%s", msg.c_str());
                         }
                     }
                 }
@@ -236,6 +236,23 @@ namespace ST
 //					if (list)
 //						list->addLabel(name);
                 }
+
+                AG_Window *window = interfaceManager->getWindow("/ChatWindow");
+                if (window)
+                {
+                    AG_Console *widget;
+                    AGOBJECT_FOREACH_CHILD(widget, window, ag_console)
+                    {
+                        char widgetName[32];
+                        AG_ObjectCopyName(widget, widgetName, 30);
+                        if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
+                        {
+                            std::stringstream str;
+                            str << "There are " << command->numParams() << " users online.";
+                            AG_ConsoleMsg(widget, "%s", str.str().c_str());
+                        }
+                    }
+                }
             } break;
 
             case IRC::Command::IRC_JOIN:
@@ -255,7 +272,7 @@ namespace ST
                         AG_ObjectCopyName(widget, widgetName, 30);
                         if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
                         {
-                            AG_ConsoleMsg(widget, "%s\n", msg.c_str());
+                            AG_ConsoleMsg(widget, "%s", msg.c_str());
                         }
                     }
                 }

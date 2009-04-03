@@ -80,7 +80,6 @@ namespace ST
 
                     // add message to chat window
                     chat.insert(0, player->getName() + ": ");
-                    chat.append("\n");
                     AG_ConsoleAppendLine(output, chat.c_str());
 
                     // clear input textbox
@@ -112,7 +111,7 @@ namespace ST
 
 		AG_Window *chatWindow = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "ChatWindow");
 		AG_WindowSetCaption(chatWindow, "Chat");
-		AG_WindowSetSpacing(chatWindow, 12);
+		AG_WindowSetSpacing(chatWindow, 4);
 		AG_WindowSetGeometry(chatWindow, 10, screenHeight - 185, 400, 175);
 		AG_WindowShow(chatWindow);
 

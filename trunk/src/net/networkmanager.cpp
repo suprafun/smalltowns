@@ -56,6 +56,7 @@
 #include "../updatestate.h"
 
 #include <curl/curl.h>
+#include <sstream>
 
 namespace ST
 {
@@ -153,6 +154,10 @@ namespace ST
                     c->setRights(packet->getInteger());
                     player->addCharacter(c);
                 }
+
+                std::stringstream str;
+                str << "Found " << count << " character.";
+                logger->logDebug(str.str());
 
                 GameState *state = new CharacterState;
                 game->changeState(state);

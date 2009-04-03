@@ -106,20 +106,24 @@ namespace ST
 		float halfScreenHeight = screenHeight / 2.0f;
 
 		// create window for entering username and password
-		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN);
+		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN|AG_WINDOW_KEEPBELOW);
 		error = AG_LabelNewString(win, 0, "");
 		AG_LabelSizeHint(error, 1, "XXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		AG_LabelJustify(error, AG_TEXT_CENTER);
 		AG_WindowShow(win);
 		AG_WindowMaximize(win);
 
-		AG_Window *test = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "Connection");
+		AG_Window *test = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "Connection");
 		AG_WindowSetCaption(test, "Connect to server");
 		AG_WindowSetSpacing(test, 12);
 		AG_WindowSetGeometry(test, halfScreenWidth - 125, halfScreenHeight - 45, 225, 135);
 
 		AG_Textbox *hostname = AG_TextboxNew(test, 0, "Server: ");
 		AG_Textbox *port = AG_TextboxNew(test, AG_TEXTBOX_INT_ONLY, "Port: ");
+
+		// set defaults
+		AG_TextboxSetString(hostname, "server.casualgamer.co.uk");
+		AG_TextboxSetString(port, "9910");
 
 		AG_Button *button = AG_ButtonNewFn(test, 0, "Submit", submit_connect, "%p%p", hostname, port);
 		AG_ButtonJustify(button, AG_TEXT_CENTER);

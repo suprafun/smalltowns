@@ -105,14 +105,15 @@ namespace ST
         }
     }
 
-    void create_register(AG_Event *event)
+    void switch_login_window(AG_Event *event)
     {
-        AG_Window *log = static_cast<AG_Window*>(AG_PTR(1));
-        if (log)
-            AG_WindowHide(log);
-        AG_Window *reg = static_cast<AG_Window*>(AG_PTR(2));
-        if (reg)
-            AG_WindowShow(reg);
+        AG_Window *one = static_cast<AG_Window*>(AG_PTR(1));
+        if (one)
+            AG_WindowHide(one);
+
+        AG_Window *two = static_cast<AG_Window*>(AG_PTR(2));
+        if (two)
+            AG_WindowShow(two);
     }
 
 	LoginState::LoginState()
@@ -127,11 +128,11 @@ namespace ST
 		float halfScreenWidth = screenWidth / 2.0f;
 		float halfScreenHeight = screenHeight / 2.0f;
 
-		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN);
+		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN|AG_WINDOW_DENYFOCUS);
 		AG_WindowShow(win);
 		AG_WindowMaximize(win);
 
-		AG_Window *login = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "Login");
+		AG_Window *login = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "LoginWindow");
 		AG_WindowSetCaption(login, "Login");
 		AG_WindowSetSpacing(login, 12);
 		AG_WindowSetGeometry(login, halfScreenWidth - 125, halfScreenHeight - 45, 225, 135);
@@ -145,16 +146,20 @@ namespace ST
 		AG_WindowSetGeometry(reg, halfScreenWidth - 125, halfScreenHeight - 45, 225, 135);
 
 		AG_Textbox *reg_user = AG_TextboxNew(reg, 0, "Username: ");
-		AG_Textbox *reg_pass = AG_TextboxNew(reg, 0, "Password: ");
+		AG_Textbox *reg_pass = AG_TextboxNew(reg, AG_TEXTBOX_PASSWORD, "Password: ");
+
 		AG_HBox *reg_box = AG_HBoxNew(reg, 0);
 		AG_Button *reg_button = AG_ButtonNewFn(reg_box, 0, "Submit", submit_register, "%p%p", reg_user, reg_pass);
 		AG_ButtonJustify(reg_button, AG_TEXT_CENTER);
+		AG_Button *back_button = AG_ButtonNewFn(reg_box, 0, "Back",
+                                                    switch_login_window, "%p%p", reg, login);
+        AG_ButtonJustify(back_button, AG_TEXT_CENTER);
 
 		AG_HBox *box = AG_HBoxNew(login, 0);
 		AG_Button *button = AG_ButtonNewFn(box, 0, "Submit", submit_login, "%p%p", username, password);
 		AG_ButtonJustify(button, AG_TEXT_CENTER);
 		AG_Button *register_button = AG_ButtonNewFn(box, 0, "Register",
-                                                    create_register, "%p%p", login, reg);
+                                                    switch_login_window, "%p%p", login, reg);
 		AG_ButtonJustify(register_button, AG_TEXT_CENTER);
 
 		AG_WindowShow(login);

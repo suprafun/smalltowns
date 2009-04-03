@@ -122,19 +122,14 @@ namespace ST
                 AG_Window *window = interfaceManager->getWindow("/ChatWindow");
                 if (window)
                 {
-                    AG_Textbox *widget;
-                    AGOBJECT_FOREACH_CHILD(widget, window, ag_textbox)
+                    AG_Console *widget = 0;
+                    AGOBJECT_FOREACH_CHILD(widget, window, ag_console)
                     {
-                        if (widget)
+                        char widgetName[32];
+                        AG_ObjectCopyName(widget, widgetName, 30);
+                        if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
                         {
-                            char buffer[255];
-                            AG_ObjectCopyName(widget, buffer, 255);
-                            if (strncmp(buffer, "/ChatWindow/Chat", 16) == 0)
-                            {
-                                std::string chat = AG_TextboxDupString(widget);
-                                chat.append("Connected!");
-                                AG_TextboxPrintf(widget, "%s\n", chat.c_str());
-                            }
+                            AG_ConsoleAppendLine(widget, "Connected!\n");
                         }
                     }
                 }
@@ -156,19 +151,14 @@ namespace ST
                 AG_Window *window = interfaceManager->getWindow("/ChatWindow");
                 if (window)
                 {
-                    AG_Textbox *widget;
-                    AGOBJECT_FOREACH_CHILD(widget, window, ag_textbox)
+                    AG_Console *widget;
+                    AGOBJECT_FOREACH_CHILD(widget, window, ag_console)
                     {
-                        if (widget)
+                        char widgetName[32];
+                        AG_ObjectCopyName(widget, widgetName, 30);
+                        if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
                         {
-                            char buffer[255];
-                            AG_ObjectCopyName(widget, buffer, 255);
-                            if (strncmp(buffer, "/ChatWindow/Chat", 16) == 0)
-                            {
-                                std::string chat = AG_TextboxDupString(widget);
-                                chat.append(msg);
-                                AG_TextboxPrintf(widget, "%s\n", chat.c_str());
-                            }
+                            AG_ConsoleMsg(widget, "%s\n", msg.c_str());
                         }
                     }
                 }
@@ -177,31 +167,26 @@ namespace ST
             case IRC::Command::IRC_MSG:
             {
                 int i = 0;
-				std::string text = command->getUserInfo() + ": ";
+				std::string msg = command->getUserInfo() + ": ";
 
                 while (command->getParam(i) != "" && i < 255)
                 {
-                    text.append(command->getParam(i));
-                    text.append(" ");
+                    msg.append(command->getParam(i));
+                    msg.append(" ");
                     ++i;
                 }
 
                 AG_Window *window = interfaceManager->getWindow("/ChatWindow");
                 if (window)
                 {
-                    AG_Textbox *widget;
-                    AGOBJECT_FOREACH_CHILD(widget, window, ag_textbox)
+                    AG_Console *widget;
+                    AGOBJECT_FOREACH_CHILD(widget, window, ag_console)
                     {
-                        if (widget)
+                        char widgetName[32];
+                        AG_ObjectCopyName(widget, widgetName, 30);
+                        if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
                         {
-                            char buffer[255];
-                            AG_ObjectCopyName(widget, buffer, 255);
-                            if (strncmp(buffer, "/ChatWindow/Chat", 16) == 0)
-                            {
-                                std::string chat = AG_TextboxDupString(widget);
-                                chat.append(text);
-                                AG_TextboxPrintf(widget, "%s\n", chat.c_str());
-                            }
+                            AG_ConsoleMsg(widget, "%s\n", msg.c_str());
                         }
                     }
                 }
@@ -210,32 +195,27 @@ namespace ST
             case IRC::Command::IRC_EMOTE:
             {
                 int i = 0;
-                std::string text = "* ";
-                text.append(command->getUserInfo() + " ");
+                std::string msg = "* ";
+                msg.append(command->getUserInfo() + " ");
 
                 while (command->getParam(i) != "" && i < 255)
                 {
-                    text.append(command->getParam(i));
-                    text.append(" ");
+                    msg.append(command->getParam(i));
+                    msg.append(" ");
                     ++i;
                 }
 
                 AG_Window *window = interfaceManager->getWindow("/ChatWindow");
                 if (window)
                 {
-                    AG_Textbox *widget;
-                    AGOBJECT_FOREACH_CHILD(widget, window, ag_textbox)
+                    AG_Console *widget;
+                    AGOBJECT_FOREACH_CHILD(widget, window, ag_console)
                     {
-                        if (widget)
+                        char widgetName[32];
+                        AG_ObjectCopyName(widget, widgetName, 30);
+                        if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
                         {
-                            char buffer[255];
-                            AG_ObjectCopyName(widget, buffer, 255);
-                            if (strncmp(buffer, "/ChatWindow/Chat", 16) == 0)
-                            {
-                                std::string chat = AG_TextboxDupString(widget);
-                                chat.append(text);
-                                AG_TextboxPrintf(widget, "%s\n", chat.c_str());
-                            }
+                            AG_ConsoleMsg(widget, "%s\n", msg.c_str());
                         }
                     }
                 }
@@ -268,19 +248,14 @@ namespace ST
                 AG_Window *window = interfaceManager->getWindow("/ChatWindow");
                 if (window)
                 {
-                    AG_Textbox *widget;
-                    AGOBJECT_FOREACH_CHILD(widget, window, ag_textbox)
+                    AG_Console *widget;
+                    AGOBJECT_FOREACH_CHILD(widget, window, ag_console)
                     {
-                        if (widget)
+                        char widgetName[32];
+                        AG_ObjectCopyName(widget, widgetName, 30);
+                        if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
                         {
-                            char buffer[255];
-                            AG_ObjectCopyName(widget, buffer, 255);
-                            if (strncmp(buffer, "/ChatWindow/Chat", 16) == 0)
-                            {
-                                std::string chat = AG_TextboxDupString(widget);
-                                chat.append(msg);
-                                AG_TextboxPrintf(widget, "%s\n", chat.c_str());
-                            }
+                            AG_ConsoleMsg(widget, "%s\n", msg.c_str());
                         }
                     }
                 }
@@ -298,19 +273,14 @@ namespace ST
                 AG_Window *window = interfaceManager->getWindow("/ChatWindow");
                 if (window)
                 {
-                    AG_Textbox *widget;
-                    AGOBJECT_FOREACH_CHILD(widget, window, ag_textbox)
+                    AG_Console *widget;
+                    AGOBJECT_FOREACH_CHILD(widget, window, ag_console)
                     {
-                        if (widget)
+                        char widgetName[32];
+                        AG_ObjectCopyName(widget, widgetName, 30);
+                        if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
                         {
-                            char buffer[255];
-                            AG_ObjectCopyName(widget, buffer, 255);
-                            if (strncmp(buffer, "/ChatWindow/Chat", 16) == 0)
-                            {
-                                std::string chat = AG_TextboxDupString(widget);
-                                chat.append(msg);
-                                AG_TextboxPrintf(widget, "%s\n", chat.c_str());
-                            }
+                            AG_ConsoleMsg(widget, "%s\n", msg.c_str());
                         }
                     }
                 }

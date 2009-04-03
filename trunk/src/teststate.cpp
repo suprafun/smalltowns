@@ -65,20 +65,25 @@ namespace ST
         if (chatServer->isConnected())
 		{
 		    AG_Textbox *input = static_cast<AG_Textbox*>(AG_PTR(2));
-		    AG_Textbox *output = static_cast<AG_Textbox*>(AG_PTR(3));
+		    AG_Console *output = static_cast<AG_Console*>(AG_PTR(3));
 
             if (input && output)
             {
                 std::string chat = AG_TextboxDupString(input);
                 if (!chat.empty())
                 {
+                    // send message to IRC
                     IRCMessage *msg = new IRCMessage;
                     msg->setType(IRCMessage::CHAT);
                     msg->addString(chat);
                     chatServer->sendMessage(msg);
+
+                    // add message to chat window
                     chat.insert(0, player->getName() + ": ");
-                    chat.insert(0, AG_TextboxDupString(output));
-                    AG_TextboxPrintf(output, "%s\n", chat.c_str());
+                    chat.append("\n");
+                    AG_ConsoleAppendLine(output, chat.c_str());
+
+                    // clear input textbox
                     AG_TextboxClearString(input);
                 }
             }
@@ -115,16 +120,12 @@ namespace ST
 //        AG_Notebook *book = AG_NotebookNew(box, 0);
 //        AG_NotebookTab *nbTab = AG_NotebookAddTab(book, "Global Chat", AG_BOX_VERT);
 
-        AG_Textbox *text = AG_TextboxNew(chatWindow,
-                                        AG_TEXTBOX_EXPAND|AG_TEXTBOX_MULTILINE,
-                                        NULL);
-        AG_TextboxSizeHintLines(text, 8);
-        AG_WidgetDisable(text);
-        AG_ObjectSetName(text, "Chat");
+        AG_Console *console = AG_ConsoleNew(chatWindow, AG_CONSOLE_HFILL|AG_CONSOLE_VFILL);
+        AG_ObjectSetName(console, "Chat");
 
 		AG_Textbox *chatInput = AG_TextboxNew(chatWindow, AG_TEXTBOX_CATCH_TAB, NULL);
 		AG_TextboxSizeHint(chatInput, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-		AG_SetEvent(chatInput, "textbox-return", submit_chat, "%p%p%p", chatServer, chatInput, text);
+		AG_SetEvent(chatInput, "textbox-return", submit_chat, "%p%p%p", chatServer, chatInput, console);
 
 		// add elements to interface manager
 		interfaceManager->addWindow(chatWindow);

@@ -77,7 +77,7 @@ namespace ST
         }
     }
 
-    void create_character(AG_Event *event)
+    void switch_char_window(AG_Event *event)
     {
         AG_Window *one = static_cast<AG_Window*>(AG_PTR(1));
         if (one)
@@ -119,31 +119,32 @@ namespace ST
 		float halfScreenWidth = screenWidth / 2.0f;
 		float halfScreenHeight = screenHeight / 2.0f;
 
-		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN);
+		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN|AG_WINDOW_KEEPBELOW);
 		AG_WindowShow(win);
 		AG_WindowMaximize(win);
 
-		AG_Window *charSelect = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "CharSelect");
+		AG_Window *charSelect = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "CharSelect");
 		AG_WindowSetCaption(charSelect, "Select Character");
 		AG_WindowSetSpacing(charSelect, 12);
 		AG_WindowSetGeometry(charSelect, halfScreenWidth - 125, halfScreenHeight - 90, 225, 180);
 
 		// load in the avatars to choose from
-		const int avatarCount = 6;
-		SDL_Surface *surface[avatarCount];
+		std::vector<SDL_Surface*> surfaces;
 
-		surface[0] = graphicsEngine->loadSDLTexture("head1.png");
-		surface[1] = graphicsEngine->loadSDLTexture("head2.png");
-		surface[2] = graphicsEngine->loadSDLTexture("head3.png");
-        surface[3] = graphicsEngine->loadSDLTexture("head4.png");
-        surface[4] = graphicsEngine->loadSDLTexture("head5.png");
-        surface[5] = graphicsEngine->loadSDLTexture("head6.png");
+		surfaces.push_back(graphicsEngine->loadSDLTexture("head1.png"));
+		surfaces.push_back(graphicsEngine->loadSDLTexture("head2.png"));
+		surfaces.push_back(graphicsEngine->loadSDLTexture("head3.png"));
+		surfaces.push_back(graphicsEngine->loadSDLTexture("head4.png"));
+		surfaces.push_back(graphicsEngine->loadSDLTexture("head5.png"));
+		surfaces.push_back(graphicsEngine->loadSDLTexture("head6.png"));
 
-        AG_Surface *head[avatarCount];
+		int avatarCount = surfaces.size();
+
+        std::vector<AG_Surface*> heads;
         for (int i = 0; i < avatarCount; ++i)
         {
-            head[i] = AG_SurfaceFromSDL(surface[i]);
-            SDL_FreeSurface(surface[i]);
+            heads.push_back(AG_SurfaceFromSDL(surfaces[i]));
+            SDL_FreeSurface(surfaces[i]);
         }
 
         AG_HBox *hbox = AG_HBoxNew(charSelect, 0);
@@ -158,10 +159,10 @@ namespace ST
                 AG_Socket *avatars = AG_SocketNew(hbox, 0);
                 for (int j = 0; j < avatarCount; ++j)
                 {
-                    if (head[j] && c->getHead() == j+1)
+                    if (heads.size() >= j && c->getHead() == j+1)
                     {
                         icon = AG_IconNew(avatars, 0);
-                        AG_IconSetSurface(icon, head[j]);
+                        AG_IconSetSurface(icon, heads[j]);
                     }
                 }
                 if (icon)
@@ -176,7 +177,7 @@ namespace ST
 
         AG_Socket *selected = AG_SocketNew(charSelect, 0);
 
-		AG_Window *charNew = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "CharNew");
+		AG_Window *charNew = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "CharNew");
 		AG_WindowSetCaption(charNew, "Create new Character");
 		AG_WindowSetSpacing(charNew, 12);
 		AG_WindowSetGeometry(charNew, halfScreenWidth - 140, halfScreenHeight - 90, 280, 175);
@@ -185,15 +186,15 @@ namespace ST
 
         // create avatars to choose from
         AG_HBox *horizBox = AG_HBoxNew(new_box, 0);
-        AG_Icon *avatarIcon[avatarCount];
-        AG_Socket *avatarSocket[avatarCount];
+        std::vector<AG_Icon*> avatarIcons;
+        std::vector<AG_Socket*> avatarSockets;
         for (int i = 0; i < avatarCount; ++i)
         {
-            avatarSocket[i] = AG_SocketNew(horizBox, 0);
-            avatarIcon[i] = AG_IconNew(avatarSocket[i], 0);
-            AG_IconSetSurface(avatarIcon[i], head[i]);
-            AG_SetString(avatarIcon[i], "avatar", utils::toString(i+1).c_str());
-            AG_SocketInsertIcon(avatarSocket[i], avatarIcon[i]);
+            avatarSockets.push_back(AG_SocketNew(horizBox, 0));
+            avatarIcons.push_back(AG_IconNew(avatarSockets[i], 0));
+            AG_IconSetSurface(avatarIcons[i], heads[i]);
+            AG_SetString(avatarIcons[i], "avatar", utils::toString(i+1).c_str());
+            AG_SocketInsertIcon(avatarSockets[i], avatarIcons[i]);
         }
 
         AG_Socket *avatar = AG_SocketNew(new_box, 0);
@@ -202,12 +203,14 @@ namespace ST
 
 		AG_Button *new_button = AG_ButtonNewFn(new_box, 0, "Submit", submit_new, "%p%p", charNick, avatar);
 		AG_ButtonJustify(new_button, AG_TEXT_CENTER);
+		AG_Button *back_button = AG_ButtonNewFn(new_box, 0, "Back", switch_char_window, "%p%p", charNew, charSelect);
+		AG_ButtonJustify(back_button, AG_TEXT_CENTER);
 
 		AG_HBox *box = AG_HBoxNew(charSelect, 0);
 		AG_Button *button = AG_ButtonNewFn(box, 0, "Choose", select_character, "%p", selected);
 		AG_ButtonJustify(button, AG_TEXT_CENTER);
 		AG_Button *create_button = AG_ButtonNewFn(box, 0, "Create New",
-                                                    create_character, "%p%p", charSelect, charNew);
+                                                    switch_char_window, "%p%p", charSelect, charNew);
 		AG_ButtonJustify(create_button, AG_TEXT_CENTER);
 
 		AG_WindowShow(charSelect);

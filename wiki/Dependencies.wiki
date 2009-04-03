@@ -12,3 +12,5 @@ Below is the list of dependencies required to build the client. These should eas
   * [http://enet.bespin.org enet]
   * [http://ftgl.wiki.sourceforge.net FTGL]
   * [http://www.grinninglizard.com/tinyxml tinyxml]
+  * [http://libagar.org agar]
+  * [http://www.freetype.org FreeType 2]

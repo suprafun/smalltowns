@@ -71,6 +71,16 @@ namespace ST
         void setName(const std::string &name);
 
         /**
+         * Gets the player's id
+         */
+        int getId() const;
+
+        /**
+         * Sets the player's id
+         */
+        void setId(int id);
+
+        /**
          * Add a character to list player owns
          */
         void addCharacter(Character *c);
@@ -80,6 +90,7 @@ namespace ST
     private:
         std::string mUsername;
 		std::vector<Character*> mCharacters;
+		int mId;
     };
 
     extern Player *player;

@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2008, The Small Towns Dev Team
+ *	Copyright (c) 2009, The Small Towns Dev Team
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -31,101 +31,28 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-09-27
+ *	Date of file creation: 09-04-08
  *
  *	$Id$
  *
  ********************************************/
 
 /**
- * The Map class contains the map data
+ * The Base64 class decodes map layer data
  */
 
-#ifndef ST_MAP_HEADER
-#define ST_MAP_HEADER
+#ifndef ST_BASE64_HEADER
+#define ST_BASE64_HEADER
 
-#include <list>
 #include <string>
-#include <vector>
 
 namespace ST
 {
-	class Node;
-	class Texture;
-
-	class Layer
+	class Base64
 	{
-	public:
-		Layer();
-		~Layer();
-
-		/**
-		 * Set data
-		 * Sets the data for the layer
-		 */
-        void setData(char *data, Texture *texture);
-
-        /**
-         * Set Depth
-         * Sets where the layer appears when drawn
-         */
-        void setDepth(unsigned int);
-
-		/**
-		 * Add Tile
-		 * Adds a tile to the layer
-		 * @param tile The tile to add
-		 */
-		void addNode(Node *node);
-
-		/**
-		 * Get Tile At
-		 * Returns the tile at x, y
-		 * @param x The x position of the tile to return
-		 * @param y The y position of the tile to return
-		 * @return Returns the Tile found at the given location
-		 */
-		Node* getNodeAt(unsigned int x, unsigned int y);
-
-	private:
-		std::list<Node*> mNodes;
+    public:
+        static void decode(const std::string &inStr, std::string &outStr);
 	};
-
-	class Map
-	{
-	public:
-		/**
-		 * Constructor
-		 */
-		Map();
-		~Map();
-
-		/**
-		 * Load
-		 * Reads the map from a file
-		 * @param filename The name of the file to read the map from
-		 * @return Returns true if successfully read in map
-		 */
-		bool loadMap(const std::string &filename);
-
-    private:
-		/**
-		 * Add Layer
-		 * Adds a layer to the map
-		 */
-        void addLayer(unsigned int width, unsigned int height, char *data,
-                      Texture *texture, unsigned int layer);
-
-
-	private:
-		std::vector<Layer*> mLayers;
-		int mWidth;
-		int mHeight;
-		int mTileWidth;
-		int mTileHeight;
-	};
-
-	extern Map *mapEngine;
 }
 
 #endif

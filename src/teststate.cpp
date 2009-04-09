@@ -92,6 +92,7 @@ namespace ST
 	TestState::TestState()
 	{
         chatServer = new IRCServer;
+
 		// create camera
 		Rectangle rect;
 		rect.height = 768;

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
+<map version="1.0" orientation="isometric" width="32" height="32" tilewidth="32" tileheight="24">
+ <tileset name="Grass" firstgid="1" tilewidth="32" tileheight="24">
+  <image source="test.png"/>
+ </tileset>
+ <layer name="Layer 0" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAAO3U0QoAEAxG4fH+D+12LZPUftI55fozwoyI6H7tYCn9/oDvl8LvNreVfjT9vqr8zPTnUeVnM8f7qPCze1bNvzO78vxv+qt3oPZf+H9/94mIlA3p9/4jABAAAA==
+  </data>
+ </layer>
+</map>

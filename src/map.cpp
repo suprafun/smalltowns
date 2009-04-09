@@ -40,12 +40,15 @@
 #include "map.h"
 #include "tile.h"
 
+#include "graphics/graphics.h"
 #include "graphics/node.h"
 
+#include "utilities/base64.h"
 #include "utilities/log.h"
 #include "utilities/math.h"
 
 #include <sstream>
+#include <tinyxml.h>
 
 namespace ST
 {
@@ -55,6 +58,16 @@ namespace ST
 	}
 
 	Layer::~Layer()
+	{
+
+	}
+
+	void Layer::setData(char *data, Texture *texture)
+	{
+
+	}
+
+	void Layer::setDepth(unsigned int depth)
 	{
 
 	}
@@ -88,7 +101,10 @@ namespace ST
 
 	Map::Map()
 	{
-
+        mWidth = 0;
+        mHeight = 0;
+        mTileWidth = 0;
+        mTileHeight = 0;
 	}
 
 	Map::~Map()
@@ -96,26 +112,125 @@ namespace ST
 
 	}
 
-	bool Map::load(const std::string &filename)
+	bool Map::loadMap(const std::string &filename)
 	{
-		// Open the file
-		mFile.open(filename.c_str(), std::fstream::in);
-		
-		//Check the file opened successfully
-		if (!mFile.is_open())
-		{
-			logger->logError("Error opening map file");
-			return false;
-		}
+		logger->logDebug("Loading map " + filename);
 
-		// TODO: Read in the file
+        TiXmlDocument doc(filename.c_str());
+        bool loaded = doc.LoadFile();
+        if (!loaded)
+        {
+            logger->logError("Error loading map");
+            return false;
+        }
 
-		mFile.close();
+        TiXmlHandle hDoc(&doc);
+        TiXmlElement* e;
+        TiXmlHandle map = hDoc.FirstChild("map");
+
+        e = map.ToElement();
+        if (!e)
+        {
+            logger->logError("Invalid map format");
+            return false;
+        }
+
+        if (e->QueryIntAttribute("width", &mWidth) != TIXML_SUCCESS)
+        {
+            logger->logError("Invalid map width");
+            return false;
+        }
+
+        if (e->QueryIntAttribute("height", &mHeight) != TIXML_SUCCESS)
+        {
+            logger->logError("Invalid map height");
+            return false;
+        }
+
+        if (e->QueryIntAttribute("tilewidth", &mTileWidth) != TIXML_SUCCESS)
+        {
+            logger->logError("Invalid tile width");
+            return false;
+        }
+
+        if (e->QueryIntAttribute("tileheight", &mTileHeight) != TIXML_SUCCESS)
+        {
+            logger->logError("Invalid tile height");
+            return false;
+        }
+
+        e = map.Child("tileset", 0).ToElement();
+        if (!e)
+        {
+            logger->logError("No tilesets defined!");
+            return false;
+        }
+
+        e = e->FirstChild("image")->ToElement();
+        if (!e)
+        {
+            logger->logError("No images for tilesets defined!");
+            return false;
+        }
+
+        std::string tile = e->Attribute("source");
+
+        if (tile.empty())
+        {
+            logger->logError("No source for image");
+            return false;
+        }
+
+        graphicsEngine->loadTexture(tile);
+        Texture *tex = graphicsEngine->getTexture(tile);
+
+        e = map.Child("layer", 0).ToElement();
+        if (!e)
+        {
+            logger->logError("No layers");
+            return false;
+        }
+
+        int layerWidth, layerHeight;
+
+        if (e->QueryIntAttribute("width", &layerWidth) != TIXML_SUCCESS)
+        {
+            logger->logError("No layer width");
+            return false;
+        }
+
+        if (e->QueryIntAttribute("height", &layerHeight) != TIXML_SUCCESS)
+        {
+            logger->logError("No layer height");
+            return false;
+        }
+
+        //TODO: Load in compressed base64 map
+        e = e->FirstChild("data")->ToElement();
+        std::string data = e->GetText();
+        if (data.empty())
+        {
+            logger->logError("No data");
+            return false;
+        }
+
+        std::string layerData;
+
+        // convert from base 64
+        Base64::decode(data, layerData);
+
+        if (layerData.empty())
+        {
+            logger->logError("Unable to convert from base64");
+            return false;
+        }
+
+        logger->logDebug("Finished loading map");
 
 		return true;
 	}
 
-	void Map::addTile(unsigned int tile, Texture *texture, unsigned int layer, bool blocking)
+/*	void Map::addTile(unsigned int tile, Texture *texture, unsigned int layer, bool blocking)
 	{
 		if (layer > mLayers.size())
 		{
@@ -128,6 +243,16 @@ namespace ST
 
 		mLayers[layer]->addNode(t);
 	}
+	*/
+	void Map::addLayer(unsigned int width, unsigned int height, char *data,
+                       Texture *texture, unsigned int layer)
+    {
+        Layer *layer = new Layer(width, height);
+        layer->setData(data, texture);
+        layer->setDepth(layer);
+
+        mLayers.push_back(layer);
+    }
 }
 
 

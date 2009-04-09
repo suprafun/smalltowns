@@ -67,6 +67,16 @@ namespace ST
         mUsername = name;
     }
 
+    int Player::getId() const
+    {
+        return mId;
+    }
+
+    void Player::setId(int id)
+    {
+        mId = id;
+    }
+
     void Player::addCharacter(Character *c)
     {
         mCharacters.push_back(c);

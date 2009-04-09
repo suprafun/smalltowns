@@ -15,7 +15,7 @@
 #ifndef ST_PROTOCOL_H
 #define ST_PROTOCOL_H
 
-const int CLIENT_VERSION = 0x0003;
+const int CLIENT_VERSION = 0x0004;
 
 enum
 {
@@ -37,8 +37,19 @@ enum
     APMSG_CHAR_LIST_RESPONSE    = 0x0011, // I num, { I id, S character name, I avatar, I level, I rights }
     PAMSG_CHAR_CREATE           = 0x0012, // S character name, I avatar
     APMSG_CHAR_CREATE_RESPONSE  = 0x0013, // C error
-    PAMSG_CHAR_CHOOSE           = 0x0016, // I id
-    APMSG_CHAR_CHOOSE_RESPONSE  = 0x0017, // C error
+    PAMSG_CHAR_CHOOSE           = 0x0016, // I slot
+    APMSG_CHAR_CHOOSE_RESPONSE  = 0x0017, // C error [ I id ]
+
+    // Game server info
+    APMSG_GAME_SERVER           = 0x0100, // S ip/hostname, I port, I tag
+
+    // Player and Game Communication
+    // Connecting
+    PGMSG_CONNECT               = 0x0800, // I id, I tag
+    GPMSG_CONNECT_RESPONSE      = 0x0801, // C error
+
+    // map info
+    GPMSG_LOAD_MAP              = 0x0810, // S name of map
 
 };
 
@@ -53,6 +64,8 @@ enum
 
 	ERR_TOO_MANY        = 6,
 	ERR_INVALID_CHAR    = 7,
+
+	ERR_INVALID_TAG     = 8,
 };
 
 #endif

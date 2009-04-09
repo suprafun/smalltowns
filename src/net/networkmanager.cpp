@@ -51,6 +51,7 @@
 #include "../gamestate.h"
 #include "../game.h"
 #include "../loginstate.h"
+#include "../map.h"
 #include "../player.h"
 #include "../teststate.h"
 #include "../updatestate.h"
@@ -87,6 +88,7 @@ namespace ST
         {
             processPacket(packet);
 			delete packet;
+			packet = NULL;
         }
 	}
 
@@ -181,13 +183,55 @@ namespace ST
             {
                 if (packet->getByte() == ERR_NONE)
                 {
-                    GameState *state = new TestState;
-                    game->changeState(state);
+                    int id = packet->getInteger();
+                    player->setId(id);
                 }
                 else
                 {
                     // TODO: Indicate error creating character
                 }
+            } break;
+
+        case APMSG_GAME_SERVER:
+            {
+                std::string host = packet->getString();
+                int port = packet->getInteger();
+                int tag = packet->getInteger();
+
+                disconnect();
+
+                while (mHost->isConnected())
+                    mHost->process();
+
+                connect(host, port);
+
+                while (!mHost->isConnected())
+                    mHost->process();
+
+                Packet *p = new Packet(PGMSG_CONNECT);
+                p->setInteger(player->getId());
+                p->setInteger(tag);
+                sendPacket(p);
+            } break;
+
+
+        case GPMSG_CONNECT_RESPONSE:
+            {
+                if (packet->getByte() == ERR_NONE)
+                {
+                    GameState *state = new TestState;
+                    game->changeState(state);
+                }
+                else
+                {
+                    // TODO: Indicate error connecting to game server
+                }
+            } break;
+
+        case GPMSG_LOAD_MAP:
+            {
+                std::string mapFile = packet->getString();
+                mapEngine->loadMap(mapFile);
             } break;
 	    }
 	}

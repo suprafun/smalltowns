@@ -197,7 +197,6 @@ namespace ST
          */
         int getScreenHeight() const;
 
-
 	private:
 		// graphics stuff
 		SDL_Surface *mScreen;

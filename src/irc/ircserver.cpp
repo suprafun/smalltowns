@@ -83,7 +83,7 @@ namespace ST
         if (!mRegistered && !mRegistering && mNick.size() > 1)
         {
 			std::string pass = "test";
-			std::string realname = "st 0 * :" "Towns Life 0.0.3";
+			std::string realname = "st 0 * :" "Towns Life 0.0.4";
             mClient->doRegistration(pass, mNick, realname);
             mRegistering = true;
             logger->logDebug("Registering with IRC server");
@@ -310,9 +310,13 @@ namespace ST
 			{
 				GameState *state = new LoginState;
 				game->changeState(state);
-//				Label *label = static_cast<Label*>(interfaceManager->getWindow("error"));
-//				if (label)
-//					label->setText("Invalid characters in nick.");
+
+				AG_Window *win = AG_WindowNew(AG_WINDOW_NORESIZE);
+				AG_WindowSetCaption(win, "Error");
+				AG_WindowShow(win);
+
+				AG_Label *label = AG_LabelNewString(win, 0, "Invalid characters in nickname");
+
                 logger->logWarning("Invalid nickname used");
 			} break;
 

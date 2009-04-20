@@ -70,7 +70,9 @@ namespace ST
         {
             Packet *packet = new Packet(PAMSG_CHAR_CHOOSE);
 
-            int slot = utils::toInt(AG_GetString(sock->icon, "character"));
+            char name[255];
+            AG_GetString(sock->icon, "character", name, 255);
+            int slot = utils::toInt(name);
             packet->setInteger(slot);
 
             networkManager->sendPacket(packet);
@@ -92,7 +94,8 @@ namespace ST
     {
         AG_Socket *sock = static_cast<AG_Socket*>(AG_PTR(2));
         AG_Icon *icon = sock->icon;
-        std::string tmpAvatar = AG_GetString(icon, "avatar");
+        char tmpAvatar[255];
+        AG_GetString(icon, "avatar", tmpAvatar, 255);
         int avatar = utils::toInt(tmpAvatar);
         std::string name = AG_TextboxDupString(static_cast<AG_Textbox*>(AG_PTR(1)));
         if (!name.empty())

@@ -44,6 +44,7 @@
 #include "graphics/node.h"
 
 #include "utilities/base64.h"
+#include "utilities/gzip.h"
 #include "utilities/log.h"
 #include "utilities/math.h"
 
@@ -52,7 +53,9 @@
 
 namespace ST
 {
-	Layer::Layer()
+	Layer::Layer(unsigned int width, unsigned int height) :
+        mWidth(width),
+        mHeight(height)
 	{
 
 	}
@@ -62,9 +65,38 @@ namespace ST
 
 	}
 
-	void Layer::setData(char *data, Texture *texture)
+	void Layer::setData(unsigned char *data, int len, Texture *texture)
 	{
+	    // set layer texture
+	    mTexture = texture;
 
+	    // load in the layer data
+	    int length = len - 3;
+	    int x = 0;
+	    int y = 0;
+
+        for (int i = 0; i < length; i += 4)
+        {
+            int gid = data[i] | data[i + 1] << 8 |
+                            data[i + 2] << 16 | data[i + 3] << 24;
+
+            setTile(x, y, gid);
+            ++x;
+
+            // reached the end of the row
+            if (x == mWidth)
+            {
+                x = 0;
+                ++y;
+
+                // reached the end of the map
+                if (y == mHeight)
+                    break;
+            }
+        }
+
+        // finished with the data now, free it
+        free(data);
 	}
 
 	void Layer::setDepth(unsigned int depth)
@@ -72,9 +104,23 @@ namespace ST
 
 	}
 
+	void Layer::setTile(int x, int y, int gid)
+	{
+	    std::stringstream str;
+	    Point p;
+
+	    str << "tile" << x << y;
+	    p.x = x; p.y = y;
+
+	    // add node and set its position
+        Node *node = new Node(str.str(), mTexture);
+        node->moveNode(&p);
+        addNode(node);
+	}
+
 	void Layer::addNode(Node *node)
 	{
-
+        mNodes.push_back(node);
 	}
 
 	Node* Layer::getNodeAt(unsigned int x, unsigned int y)
@@ -184,6 +230,12 @@ namespace ST
         graphicsEngine->loadTexture(tile);
         Texture *tex = graphicsEngine->getTexture(tile);
 
+        if (!tex)
+        {
+            logger->logError("Unable to load texture for map");
+            //return false;
+        }
+
         e = map.Child("layer", 0).ToElement();
         if (!e)
         {
@@ -205,26 +257,39 @@ namespace ST
             return false;
         }
 
-        //TODO: Load in compressed base64 map
         e = e->FirstChild("data")->ToElement();
-        std::string data = e->GetText();
-        if (data.empty())
+        const char *data = e->GetText();
+        if (!data)
         {
             logger->logError("No data");
             return false;
         }
 
-        std::string layerData;
-
         // convert from base 64
-        Base64::decode(data, layerData);
+        int length = Base64::decodeSize(strlen(data));
+        unsigned char *compressedData = new unsigned char[length];
+        compressedData = Base64::decode(data, compressedData);
 
-        if (layerData.empty())
+        if (length == 0)
         {
+            delete compressedData;
             logger->logError("Unable to convert from base64");
             return false;
         }
 
+        unsigned char *layerData;
+
+        unsigned int inflatedSize = Gzip::inflateMemory(compressedData, length, layerData);
+
+        delete compressedData;
+
+        if (inflatedSize == 0)
+        {
+            logger->logError("Unable to uncompress map data");
+            return false;
+        }
+
+        addLayer(layerWidth, layerHeight, layerData, inflatedSize, tex, 0);
         logger->logDebug("Finished loading map");
 
 		return true;
@@ -244,14 +309,14 @@ namespace ST
 		mLayers[layer]->addNode(t);
 	}
 	*/
-	void Map::addLayer(unsigned int width, unsigned int height, char *data,
-                       Texture *texture, unsigned int layer)
+	void Map::addLayer(unsigned int width, unsigned int height, unsigned char *data,
+                       unsigned int length, Texture *texture, unsigned int layer)
     {
-        Layer *layer = new Layer(width, height);
-        layer->setData(data, texture);
-        layer->setDepth(layer);
+        Layer *l = new Layer(width, height);
+        l->setData(data, length, texture);
+        l->setDepth(layer);
 
-        mLayers.push_back(layer);
+        mLayers.push_back(l);
     }
 }
 

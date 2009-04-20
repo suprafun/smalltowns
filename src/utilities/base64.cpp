@@ -71,21 +71,14 @@ namespace ST
             return -1;
     	return decoding[(int)value];
     }
-    void Base64::decode(const std::string &inStr, std::string &outStr)
+
+    unsigned char* Base64::decode(const char *inStr, unsigned char *outStr)
     {
-        // get the length
-        int length = (inStr.size() / 4) * 3;
-
-        // add remainder
-        if ((inStr.size() % 4) == 3)
-            length += 2;
-        if ((inStr.size() % 4) == 2)
-            length += 1;
-
         int shift = 0;
         int accum = 0;
+        int n = 0;
 
-        for (unsigned int i = 0; i < inStr.size(); ++i)
+        for (int i = 0; i < strlen(inStr); ++i)
         {
             int value = decode_value(inStr[i]);
 
@@ -98,9 +91,28 @@ namespace ST
                 if(shift >= 8)
                 {
                     shift -= 8;
-                    outStr.push_back((char) ((accum >> shift) & 0xFF));
+                    outStr[n] = (char)((accum >> shift) & 0xFF);
+                    ++n;
                 }
             }
         }
+
+        return outStr;
+    }
+
+    int Base64::decodeSize(int stringSize)
+    {
+        // get the length
+        int len = stringSize;
+
+        int length = (len / 4) * 3;
+
+        // add remainder
+        if ((len % 4) == 3)
+            length += 2;
+        if ((len % 4) == 2)
+            length += 1;
+
+        return length;
     }
 }

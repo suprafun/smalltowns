@@ -56,20 +56,25 @@ namespace ST
 	class Layer
 	{
 	public:
-		Layer();
+		Layer(unsigned int, unsigned int);
 		~Layer();
 
 		/**
 		 * Set data
 		 * Sets the data for the layer
 		 */
-        void setData(char *data, Texture *texture);
+        void setData(unsigned char *data, int len, Texture *texture);
 
         /**
          * Set Depth
          * Sets where the layer appears when drawn
          */
         void setDepth(unsigned int);
+
+        /**
+         * Set a tile
+         */
+        void setTile(int x, int y, int gid);
 
 		/**
 		 * Add Tile
@@ -89,6 +94,9 @@ namespace ST
 
 	private:
 		std::list<Node*> mNodes;
+		unsigned int mWidth;
+		unsigned int mHeight;
+		Texture *mTexture;
 	};
 
 	class Map
@@ -113,8 +121,8 @@ namespace ST
 		 * Add Layer
 		 * Adds a layer to the map
 		 */
-        void addLayer(unsigned int width, unsigned int height, char *data,
-                      Texture *texture, unsigned int layer);
+        void addLayer(unsigned int width, unsigned int height, unsigned char *data,
+                      unsigned int length, Texture *texture, unsigned int layer);
 
 
 	private:

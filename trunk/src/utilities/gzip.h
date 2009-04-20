@@ -31,28 +31,30 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-04-08
+ *	Date of file creation: 09-04-20
  *
  *	$Id$
  *
  ********************************************/
 
 /**
- * The Base64 class decodes map layer data
+ * The Gzip class decompresses data
  */
 
-#ifndef ST_BASE64_HEADER
-#define ST_BASE64_HEADER
+#ifndef ST_GZIP_HEADER
+#define ST_GZIP_HEADER
 
 #include <string>
 
 namespace ST
 {
-	class Base64
+	class Gzip
 	{
     public:
-        static unsigned char* decode(const char *inStr, unsigned char *outStr);
-        static int decodeSize(int stringSize);
+        static int inflateMemory(unsigned char *in, unsigned int inLength,
+                      unsigned char *&out, unsigned int &outLength);
+        static int inflateMemory(unsigned char *in, unsigned int inLength,
+                      unsigned char *&out);
 	};
 }
 

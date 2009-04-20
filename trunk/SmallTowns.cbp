@@ -34,6 +34,7 @@
 					<Add library="enet" />
 					<Add library="ftgl" />
 					<Add library="libs/cppirclib/libcppirclib.a" />
+					<Add library="modpbase64" />
 					<Add library="pthread" />
 				</Linker>
 			</Target>
@@ -94,6 +95,10 @@
 		<Unit filename="src/tile.h" />
 		<Unit filename="src/updatestate.cpp" />
 		<Unit filename="src/updatestate.h" />
+		<Unit filename="src/utilities/base64.cpp" />
+		<Unit filename="src/utilities/base64.h" />
+		<Unit filename="src/utilities/gzip.cpp" />
+		<Unit filename="src/utilities/gzip.h" />
 		<Unit filename="src/utilities/log.cpp" />
 		<Unit filename="src/utilities/log.h" />
 		<Unit filename="src/utilities/math.h" />

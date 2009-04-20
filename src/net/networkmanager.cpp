@@ -56,7 +56,8 @@
 #include "../teststate.h"
 #include "../updatestate.h"
 
-#include <curl/curl.h>
+//#include <curl/curl.h>
+#include <time.h>
 #include <sstream>
 
 namespace ST
@@ -205,8 +206,14 @@ namespace ST
 
                 connect(host, port);
 
-                while (!mHost->isConnected())
-                    mHost->process();
+				int timeout = time(NULL) + 10;
+				int curTime = time(NULL);
+
+                while (!mHost->isConnected() && curTime <= timeout)
+				{
+					mHost->process();
+					curTime = time(NULL);
+				}
 
                 Packet *p = new Packet(PGMSG_CONNECT);
                 p->setInteger(player->getId());
@@ -263,7 +270,7 @@ namespace ST
 
 	bool NetworkManager::downloadUpdateFile(const std::string &file)
 	{
-	    CURLcode success;
+/*	    CURLcode success;
 
 	    // open file for writing to
 	    FILE *outFile;
@@ -280,7 +287,7 @@ namespace ST
 		{
 
 			// set curl options
-/*			curl_easy_setopt(handle, CURLOPT_WRITEDATA, outFile);
+			curl_easy_setopt(handle, CURLOPT_WRITEDATA, outFile);
 			curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
 
 			// perform the download
@@ -292,13 +299,13 @@ namespace ST
 				curl_easy_cleanup(handle);
 				return false;
 			}
-*/
+
 			// cleanup
 			curl_easy_cleanup(handle);
 		}
 
         fclose(outFile);
-
+*/
         return true;
 	}
 }

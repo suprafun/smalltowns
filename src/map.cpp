@@ -54,8 +54,8 @@
 namespace ST
 {
 	Layer::Layer(unsigned int width, unsigned int height) :
-        mWidth(width),
-        mHeight(height)
+		mWidth(width),
+		mHeight(height)
 	{
 
 	}
@@ -257,6 +257,7 @@ namespace ST
             return false;
         }
 
+        // Load in compressed base64 map
         e = e->FirstChild("data")->ToElement();
         const char *data = e->GetText();
         if (!data)

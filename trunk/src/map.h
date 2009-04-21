@@ -74,7 +74,7 @@ namespace ST
         /**
          * Set a tile
          */
-        void setTile(int x, int y, int gid);
+        void setTile(int x, int y, int tile_id);
 
 		/**
 		 * Add Tile

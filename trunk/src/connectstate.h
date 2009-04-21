@@ -74,6 +74,9 @@ namespace ST
 		 * Return false to exit the game
 		 */
 		bool update();
+
+    private:
+        AG_Label *error;
 	};
 }
 

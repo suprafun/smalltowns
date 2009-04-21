@@ -91,6 +91,13 @@ namespace ST
 		void removeAllWindows();
 
 		/**
+		 * Show window
+		 * @param name The name of the window to show
+		 * @param value Whether to show it or not
+		 */
+        void showWindow(const std::string &name, bool value);
+
+		/**
 		 * Draw windows
 		 */
 		void drawWindows();

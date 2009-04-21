@@ -107,6 +107,7 @@ namespace ST
                 }
                 else
                 {
+                    interfaceManager->showWindow("/Error", true);
                     logger->logError("Bad client");
                     disconnect();
                 }
@@ -123,10 +124,12 @@ namespace ST
                 else if (packet->getByte() == ERR_TAKEN_NAME)
                 {
                     logger->logWarning("Username already registered");
+                    interfaceManager->showWindow("/Error", true);
                 }
                 else
                 {
                     logger->logWarning("Invalid username or password used to register account");
+                    interfaceManager->showWindow("/Error", true);
                 }
             } break;
 
@@ -141,6 +144,7 @@ namespace ST
                 else
                 {
                     logger->logWarning("Invalid username or password used to login");
+                    interfaceManager->showWindow("/Error", true);
                 }
             } break;
 

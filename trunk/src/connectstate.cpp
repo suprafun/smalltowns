@@ -59,7 +59,6 @@ namespace ST
 {
     int timeout = 0;
     bool connecting = false;
-    AG_Label *error;
 
     void submit_connect(AG_Event *event)
     {
@@ -68,6 +67,7 @@ namespace ST
         // get the pointers to the input boxes
         AG_Textbox *one = static_cast<AG_Textbox*>(AG_PTR(1));
         AG_Textbox *two = static_cast<AG_Textbox*>(AG_PTR(2));
+        AG_Label *error = static_cast<AG_Label*>(AG_PTR(3));
 
         // check they are valid, then assign their values
         if (one && two)
@@ -91,6 +91,27 @@ namespace ST
 
             // reset any error messages
             AG_LabelString(error, "");
+
+            interfaceManager->showWindow("/Error", false);
+        }
+        else
+        {
+            if (connecting)
+            {
+                AG_LabelString(error, "Already connecting, please be patient.");
+            }
+
+            else if (hostname.empty())
+            {
+                AG_LabelString(error, "Invalid hostname, please enter a server to connect to.");
+            }
+
+            else if (port == 0)
+            {
+                AG_LabelString(error, "Invalid port number, please enter the port to connect to.");
+            }
+
+            interfaceManager->showWindow("/Error", true);
         }
     }
 
@@ -107,11 +128,15 @@ namespace ST
 
 		// create window for entering username and password
 		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN|AG_WINDOW_KEEPBELOW);
-		error = AG_LabelNewString(win, 0, "");
-		AG_LabelSizeHint(error, 1, "XXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-		AG_LabelJustify(error, AG_TEXT_CENTER);
 		AG_WindowShow(win);
 		AG_WindowMaximize(win);
+
+		AG_Window *errorWindow = AG_WindowNewNamed(0, "Error");
+		AG_WindowSetCaption(errorWindow, "Error");
+		AG_WindowSetGeometry(errorWindow, halfScreenWidth - 300, 50, 300, 75);
+		error = AG_LabelNewString(errorWindow, 0, "");
+		AG_LabelSizeHint(error, 1, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+		AG_LabelJustify(error, AG_TEXT_CENTER);
 
 		AG_Window *test = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "Connection");
 		AG_WindowSetCaption(test, "Connect to server");
@@ -125,12 +150,13 @@ namespace ST
 		AG_TextboxSetString(hostname, "server.casualgamer.co.uk");
 		AG_TextboxSetString(port, "9601");
 
-		AG_Button *button = AG_ButtonNewFn(test, 0, "Submit", submit_connect, "%p%p", hostname, port);
+		AG_Button *button = AG_ButtonNewFn(test, 0, "Submit", submit_connect, "%p%p", hostname, port, error);
 		AG_ButtonJustify(button, AG_TEXT_CENTER);
 
 		AG_WindowShow(test);
 
 		interfaceManager->addWindow(win);
+		interfaceManager->addWindow(errorWindow);
 		interfaceManager->addWindow(test);
 	}
 
@@ -159,6 +185,8 @@ namespace ST
 		{
 		    // set error label, and stop connecting
 		    AG_LabelString(error, "Error: Connection timed out");
+		    interfaceManager->showWindow("/Error", true);
+
 		    connecting = false;
 		    networkManager->disconnect();
 

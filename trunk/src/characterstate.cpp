@@ -60,6 +60,7 @@ namespace ST
 {
     int insert_avatar(AG_Socket *sock, AG_Icon *icon)
     {
+        AG_SocketInsertIcon(sock, icon);
         return 1;
     }
 
@@ -137,7 +138,7 @@ namespace ST
 		AG_Window *charSelect = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "CharSelect");
 		AG_WindowSetCaption(charSelect, "Select Character");
 		AG_WindowSetSpacing(charSelect, 12);
-		AG_WindowSetGeometry(charSelect, halfScreenWidth - 125, halfScreenHeight - 90, 225, 180);
+		AG_WindowSetGeometry(charSelect, halfScreenWidth - 125, halfScreenHeight - 125, 225, 225);
 
 		// load in the avatars to choose from
 		std::vector<SDL_Surface*> surfaces;
@@ -159,7 +160,9 @@ namespace ST
             SDL_FreeSurface(surfaces[i]);
         }
 
-        AG_HBox *hbox = AG_HBoxNew(charSelect, 0);
+        AG_VBox *vbox = AG_VBoxNew(charSelect, 0);
+        AG_HBox *hboxav = AG_HBoxNew(vbox, 0);
+        AG_HBox *hboxname = AG_HBoxNew(vbox, 0);
 
         // create number of characters based on number of characters a player has
         for (int i = 0; i < player->getNumChars(); ++i)
@@ -168,7 +171,9 @@ namespace ST
             if (c)
             {
                 AG_Icon *icon = NULL;
-                AG_Socket *avatars = AG_SocketNew(hbox, 0);
+                AG_Socket *avatars = AG_SocketNew(hboxav, 0);
+                AG_SocketInsertFn(avatars, insert_avatar);
+
                 for (int j = 0; j < avatarCount; ++j)
                 {
                     if (heads.size() > j && c->getHead() == j)
@@ -181,7 +186,7 @@ namespace ST
                 {
                     AG_SetString(icon, "character", utils::toString(i).c_str());
                     AG_SocketInsertIcon(avatars, icon);
-                    AG_Label *level = AG_LabelNew(avatars, 0, "%s\n%d", c->getName().c_str(), c->getLevel());
+                    AG_Label *level = AG_LabelNew(hboxname, 0, "%s\n%d", c->getName().c_str(), c->getLevel());
                 }
 
             }
@@ -202,14 +207,17 @@ namespace ST
         std::vector<AG_Socket*> avatarSockets;
         for (int i = 0; i < avatarCount; ++i)
         {
-            avatarSockets.push_back(AG_SocketNew(horizBox, 0));
-            avatarIcons.push_back(AG_IconNew(avatarSockets[i], 0));
+            AG_Socket *avSock = AG_SocketNew(horizBox, 0);
+            AG_SocketInsertFn(avSock, insert_avatar);
+            avatarSockets.push_back(avSock);
+            avatarIcons.push_back(AG_IconNew(avSock, 0));
             AG_IconSetSurface(avatarIcons[i], heads[i]);
-            AG_SetString(avatarIcons[i], "avatar", utils::toString(i).c_str());
-            AG_SocketInsertIcon(avatarSockets[i], avatarIcons[i]);
+            AG_SetString(avSock, "avatar", utils::toString(i).c_str());
+            AG_SocketInsertIcon(avSock, avatarIcons[i]);
         }
 
         AG_Socket *avatar = AG_SocketNew(new_box, 0);
+        AG_SocketInsertFn(avatar, insert_avatar);
 
 		AG_Textbox *charNick = AG_TextboxNew(new_box, 0, "Nickname: ");
 

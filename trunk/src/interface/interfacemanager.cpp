@@ -143,6 +143,15 @@ namespace ST
 		mWindows.clear();
 	}
 
+	void InterfaceManager::showWindow(const std::string &name, bool value)
+	{
+	    AG_Window *win = getWindow(name);
+	    if (win)
+	    {
+            value ? AG_WindowShow(win) : AG_WindowHide(win);
+	    }
+	}
+
 	void InterfaceManager::drawWindows()
 	{
 	    AG_LockVFS(agView);

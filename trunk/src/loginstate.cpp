@@ -64,6 +64,7 @@ namespace ST
 
 	    AG_Textbox *one = static_cast<AG_Textbox*>(AG_PTR(1));
 	    AG_Textbox *two = static_cast<AG_Textbox*>(AG_PTR(2));
+	    AG_Label *error = static_cast<AG_Label*>(AG_PTR(3));
 
 	    if (one && two)
 	    {
@@ -78,6 +79,14 @@ namespace ST
             packet->setString(username);
             packet->setString(password);
             networkManager->sendPacket(packet);
+
+            AG_LabelString(error, "");
+            interfaceManager->showWindow("/Error", false);
+        }
+        else if (error)
+        {
+            AG_LabelString(error, "Invalid username or password entered.");
+            interfaceManager->showWindow("/Error", true);
         }
     }
 
@@ -88,6 +97,7 @@ namespace ST
 
 	    AG_Textbox *one = static_cast<AG_Textbox*>(AG_PTR(1));
 	    AG_Textbox *two = static_cast<AG_Textbox*>(AG_PTR(2));
+	    AG_Label *error = static_cast<AG_Label*>(AG_PTR(3));
 
 	    if (one && two)
 	    {
@@ -102,6 +112,14 @@ namespace ST
             packet->setString(username);
             packet->setString(password);
             networkManager->sendPacket(packet);
+
+            AG_LabelString(error, "");
+            interfaceManager->showWindow("/Error", false);
+        }
+        else if (error)
+        {
+            AG_LabelString(error, "Invalid username or password entered.");
+            interfaceManager->showWindow("/Error", true);
         }
     }
 
@@ -132,6 +150,13 @@ namespace ST
 		AG_WindowShow(win);
 		AG_WindowMaximize(win);
 
+		AG_Window *errorWindow = AG_WindowNewNamed(0, "Error");
+		AG_WindowSetCaption(errorWindow, "Error");
+		AG_WindowSetGeometry(errorWindow, halfScreenWidth - 300, 50, 300, 75);
+		error = AG_LabelNewString(errorWindow, 0, "");
+		AG_LabelSizeHint(error, 1, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+		AG_LabelJustify(error, AG_TEXT_CENTER);
+
 		AG_Window *login = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "LoginWindow");
 		AG_WindowSetCaption(login, "Login");
 		AG_WindowSetSpacing(login, 12);
@@ -149,14 +174,14 @@ namespace ST
 		AG_Textbox *reg_pass = AG_TextboxNew(reg, AG_TEXTBOX_PASSWORD, "Password: ");
 
 		AG_HBox *reg_box = AG_HBoxNew(reg, 0);
-		AG_Button *reg_button = AG_ButtonNewFn(reg_box, 0, "Submit", submit_register, "%p%p", reg_user, reg_pass);
+		AG_Button *reg_button = AG_ButtonNewFn(reg_box, 0, "Submit", submit_register, "%p%p", reg_user, reg_pass, error);
 		AG_ButtonJustify(reg_button, AG_TEXT_CENTER);
 		AG_Button *back_button = AG_ButtonNewFn(reg_box, 0, "Back",
                                                     switch_login_window, "%p%p", reg, login);
         AG_ButtonJustify(back_button, AG_TEXT_CENTER);
 
 		AG_HBox *box = AG_HBoxNew(login, 0);
-		AG_Button *button = AG_ButtonNewFn(box, 0, "Submit", submit_login, "%p%p", username, password);
+		AG_Button *button = AG_ButtonNewFn(box, 0, "Submit", submit_login, "%p%p", username, password, error);
 		AG_ButtonJustify(button, AG_TEXT_CENTER);
 		AG_Button *register_button = AG_ButtonNewFn(box, 0, "Register",
                                                     switch_login_window, "%p%p", login, reg);
@@ -165,6 +190,7 @@ namespace ST
 		AG_WindowShow(login);
 
 		interfaceManager->addWindow(win);
+		interfaceManager->addWindow(errorWindow);
 		interfaceManager->addWindow(login);
 		interfaceManager->addWindow(reg);
 	}

@@ -42,6 +42,7 @@
 
 #include "graphics/graphics.h"
 #include "graphics/node.h"
+#include "graphics/texture.h"
 
 #include "utilities/base64.h"
 #include "utilities/gzip.h"
@@ -77,10 +78,12 @@ namespace ST
 
         for (int i = 0; i < length; i += 4)
         {
-            int gid = data[i] | data[i + 1] << 8 |
+            // get the tile id by putting
+            // the data bytes into an integer
+            int tile_id = data[i] | data[i + 1] << 8 |
                             data[i + 2] << 16 | data[i + 3] << 24;
 
-            setTile(x, y, gid);
+            setTile(x, y, tile_id);
             ++x;
 
             // reached the end of the row
@@ -104,17 +107,16 @@ namespace ST
 
 	}
 
-	void Layer::setTile(int x, int y, int gid)
+	void Layer::setTile(int x, int y, int tile_id)
 	{
 	    std::stringstream str;
 	    Point p;
 
 	    str << "tile" << x << y;
-	    p.x = x; p.y = y;
+	    p.x = x * mTexture->getWidth(); p.y = y * mTexture->getHeight();
 
 	    // add node and set its position
-        Node *node = new Node(str.str(), mTexture);
-        node->moveNode(&p);
+        Node *node = graphicsEngine->createNode(str.str(), mTexture->getName(), &p);
         addNode(node);
 	}
 

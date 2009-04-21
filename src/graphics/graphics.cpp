@@ -204,6 +204,9 @@ namespace ST
 		// reset identity matrix
 		glLoadIdentity();
 
+		glPushAttrib(GL_POLYGON_BIT|GL_LIGHTING_BIT|GL_DEPTH_BUFFER_BIT);
+		glPushMatrix();
+
 		// set position and size from rectangle
 		float x = (float)rect.x;
 		float y = (float)rect.y;
@@ -237,13 +240,17 @@ namespace ST
 
 		glEnd();
 
-		glEnable(GL_DEPTH_TEST);
+		glPopMatrix();
+		glPopAttrib();
 	}
 
 	void GraphicsEngine::drawTexturedRect(Rectangle &rect, unsigned int texture)
 	{
 		// reset identity matrix
 		glLoadIdentity();
+
+		glPushAttrib(GL_POLYGON_BIT|GL_LIGHTING_BIT|GL_ENABLE_BIT|GL_DEPTH_BUFFER_BIT|GL_TEXTURE_BIT);
+		glPushMatrix();
 
 		// set position and size to local variables
 		float x = (float)rect.x;
@@ -280,10 +287,12 @@ namespace ST
 
 		glEnd();
 
-		// finish texture mapping
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
+
+		glPopMatrix();
+		glPopAttrib();
 	}
 
 	void GraphicsEngine::drawText(Point &pos, const std::string &text, int fontSize)

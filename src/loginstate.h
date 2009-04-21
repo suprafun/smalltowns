@@ -46,6 +46,9 @@
 
 #include "gamestate.h"
 
+#include <agar/core.h>
+#include <agar/gui.h>
+
 namespace ST
 {
 	class LoginState : public GameState
@@ -71,6 +74,9 @@ namespace ST
 		 * Return false to exit the game
 		 */
 		bool update();
+
+    private:
+        AG_Label *error;
 	};
 }
 

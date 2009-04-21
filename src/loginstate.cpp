@@ -174,14 +174,14 @@ namespace ST
 		AG_Textbox *reg_pass = AG_TextboxNew(reg, AG_TEXTBOX_PASSWORD, "Password: ");
 
 		AG_HBox *reg_box = AG_HBoxNew(reg, 0);
-		AG_Button *reg_button = AG_ButtonNewFn(reg_box, 0, "Submit", submit_register, "%p%p", reg_user, reg_pass, error);
+		AG_Button *reg_button = AG_ButtonNewFn(reg_box, 0, "Submit", submit_register, "%p%p%p", reg_user, reg_pass, error);
 		AG_ButtonJustify(reg_button, AG_TEXT_CENTER);
 		AG_Button *back_button = AG_ButtonNewFn(reg_box, 0, "Back",
                                                     switch_login_window, "%p%p", reg, login);
         AG_ButtonJustify(back_button, AG_TEXT_CENTER);
 
 		AG_HBox *box = AG_HBoxNew(login, 0);
-		AG_Button *button = AG_ButtonNewFn(box, 0, "Submit", submit_login, "%p%p", username, password, error);
+		AG_Button *button = AG_ButtonNewFn(box, 0, "Submit", submit_login, "%p%p%p", username, password, error);
 		AG_ButtonJustify(button, AG_TEXT_CENTER);
 		AG_Button *register_button = AG_ButtonNewFn(box, 0, "Register",
                                                     switch_login_window, "%p%p", login, reg);

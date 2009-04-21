@@ -52,6 +52,7 @@
 #include <SDL_opengl.h>
 #include <SDL_image.h>
 #include <FTGL/ftgl.h>
+#include <sstream>
 
 namespace ST
 {
@@ -142,12 +143,20 @@ namespace ST
 		glLoadIdentity();
 		glOrtho(0.0f, mWidth, 0.0f, mHeight, -1.0f, 1.0f);
 
+		glPushMatrix();
+		glMatrixMode(GL_MODELVIEW);
+
 		// Display the nodes on screen (if theres a camera to view them)
 		if (mCamera)
 			outputNodes();
+		glPopMatrix();
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
+		glOrtho(0.0f, mWidth, mHeight, 0.0f, -1.0f, 1.0f);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 
         interfaceManager->drawWindows();
 
@@ -258,6 +267,21 @@ namespace ST
 		float width = (float)rect.width;
 		float height = (float)rect.height;
 
+		float data[12];
+		data[0] = 0.0f; data[1] = -height; data[2] = 0.0f;
+		data[3] = width; data[4] = -height; data[5] = 0.0f;
+		data[6] = width; data[7] = 0.0f; data[8] = 0.0f;
+		data[9] = 0.0f; data[10] = 0.0f; data[11] = 0.0f;
+
+		int coords[8];
+		coords[0] = 0; coords[1] = 0;
+		coords[2] = 1; coords[3] = 0;
+		coords[4] = 1; coords[5] = 1;
+		coords[6] = 0; coords[7] = 1;
+
+		unsigned int indices[4];
+		indices[0] = 0; indices[1] = 1; indices[2] = 2; indices[3] = 3;
+
 		// move to the correct position
 		glTranslatef(x, y, 0.0f);
 
@@ -273,19 +297,15 @@ namespace ST
 		glPolygonMode(GL_FRONT, GL_FILL);
 		glColor3f(1.0f, 1.0f, 1.0f);
 
-		glBegin(GL_QUADS);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glVertexPointer(3, GL_FLOAT, 0, data);
+		glTexCoordPointer(2, GL_INT, 0, coords);
 
-		// draw quad
-		glTexCoord2i(0, 0);
-		glVertex3f(0.0f, -height, 0.0f);
-		glTexCoord2i(1, 0);
-		glVertex3f(width, -height, 0.0f);
-		glTexCoord2i(1, 1);
-		glVertex3f(width, 0.0f, 0.0f);
-		glTexCoord2i(0, 1);
-		glVertex3f(0.0f, 0.0f, 0.0f);
+		glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, indices);
 
-		glEnd();
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);
@@ -322,36 +342,83 @@ namespace ST
 		return mFont->Advance(text.c_str(), text.size());
 	}
 
-	void GraphicsEngine::loadTexture(const std::string &name)
+	Texture* GraphicsEngine::loadTexture(const std::string &name)
 	{
 		std::map<std::string, Texture*>::iterator itr;
 		itr = mTextures.find(name);
 		if (itr != mTextures.end())
+		{
 			itr->second->increaseCount();
+			return itr->second;
+		}
+
 		SDL_Surface* s = NULL;
 
 		// Load in the texture
 		s = IMG_Load(name.c_str());
+		Texture *tex = NULL;
 		if (s)
 		{
-			createTexture(s, name,0, 0, s->w, s->h);
+			tex = createTexture(s, name,0, 0, s->w, s->h);
+			SDL_FreeSurface(s);
+			s = NULL;
 		}
 		else
 		{
 		    logger->logError("Image not found: " + name);
 		}
+
+		return tex;
 	}
 
-	SDL_Surface* GraphicsEngine::loadSDLTexture(const std::string &name)
+	bool GraphicsEngine::loadTextureSet(const std::string &name, int w, int h)
 	{
-		SDL_Surface* s = NULL;
+		// Load in the texture set
+		SDL_Surface *s = IMG_Load(name.c_str());
 
-		// Load in the texture
-		s = IMG_Load(name.c_str());
-		if (!s)
+		if (s)
 		{
-			logger->logError("Image not found: " + name);
+			if (w && h)
+			{
+				// keep creating textures
+				int imgX = s->w / w;
+				int imgY = s->h / h;
+				int id = 1;
+				for (int i = 0; i < imgY; ++i)
+				{
+					for (int j = 0; j < imgX; ++j)
+					{
+						std::stringstream str;
+						str << name << id;
+						createTexture(s, str.str(), j*w, i*h, w, h);
+						++id;
+					}
+				}
+				SDL_FreeSurface(s);
+				s = NULL;
+				return true;
+			}
+			else
+			{
+				SDL_FreeSurface(s);
+				s = NULL;
+				logger->logError("Bad dimension for image: " + name);
+			}
 		}
+		else
+		{
+		    logger->logError("Image not found: " + name);
+		}
+
+		return false;
+	}
+
+	SDL_Surface *GraphicsEngine::loadSDLTexture(const std::string &name)
+	{
+		SDL_Surface *s = IMG_Load(name.c_str());
+
+		if (!s)
+			logger->logError("File not found");
 
 		return s;
 	}
@@ -374,6 +441,12 @@ namespace ST
 		amask = 0xff000000;
 		#endif
 
+		if (!surface)
+		{
+			logger->logError("Invalid surface");
+			return NULL;
+		}
+
 		// Put the frame into new surface
 		SDL_Surface *tex = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height,
 			surface->format->BitsPerPixel, rmask, gmask, bmask, amask);
@@ -383,6 +456,7 @@ namespace ST
 			// error
 			logger->logError("Could not create new surface");
 			SDL_FreeSurface(surface);
+			surface = NULL;
 			return NULL;
 		}
 
@@ -398,7 +472,6 @@ namespace ST
 		SDL_SetAlpha(surface, 0, 0);
 		SDL_BlitSurface(surface, &rect, tex, NULL);
 		SDL_SetAlpha(tex, SDL_SRCALPHA, alpha);
-		SDL_FreeSurface(surface);
 
 		// Create texture from frame
 		Texture *texture = new Texture(name, width, height);

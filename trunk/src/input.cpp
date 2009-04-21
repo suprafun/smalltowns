@@ -59,7 +59,6 @@ namespace ST
 			case SDL_KEYDOWN:
 				{
 					keysDown.push_back(event.key.keysym.sym);
-					interfaceManager->sendKey(event.key.keysym);
 				} break;
 			case SDL_QUIT:
 				{

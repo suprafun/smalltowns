@@ -90,12 +90,15 @@ namespace ST
             logger->logDebug(msg.str());
 
             // reset any error messages
-            AG_LabelString(error, "");
+			if (error)
+	            AG_LabelString(error, "");
 
             interfaceManager->showWindow("/Error", false);
         }
         else
         {
+			if (!error)
+				return;
             if (connecting)
             {
                 AG_LabelString(error, "Already connecting, please be patient.");
@@ -150,7 +153,7 @@ namespace ST
 		AG_TextboxSetString(hostname, "server.casualgamer.co.uk");
 		AG_TextboxSetString(port, "9601");
 
-		AG_Button *button = AG_ButtonNewFn(test, 0, "Submit", submit_connect, "%p%p", hostname, port, error);
+		AG_Button *button = AG_ButtonNewFn(test, 0, "Submit", submit_connect, "%p%p%p", hostname, port, error);
 		AG_ButtonJustify(button, AG_TEXT_CENTER);
 
 		AG_WindowShow(test);

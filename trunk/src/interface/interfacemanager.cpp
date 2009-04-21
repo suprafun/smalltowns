@@ -121,16 +121,24 @@ namespace ST
 
 	void InterfaceManager::removeWindow(const std::string &name)
 	{
-	    /*
-		WindowItr itr = mWindows.find(name);
-		if (itr != mWindows.end())
-		{
-		    if (mFocused == itr->second)
-                mFocused = NULL;
-		    delete itr->second;
-			mWindows.erase(itr);
-		}
-		*/
+	    WindowItr itr = mWindows.begin();
+        WindowItr itr_end = mWindows.end();
+
+        while (itr != itr_end)
+        {
+            char object_name[255];
+
+            AG_ObjectCopyName(*itr, object_name, 255);
+
+            if (strncmp(object_name, name.c_str(), name.size()) == 0)
+            {
+                AG_ViewDetach(*itr);
+				mWindows.erase(itr);
+				return;
+            }
+
+            ++itr;
+        }
 	}
 
 	void InterfaceManager::removeAllWindows()
@@ -155,7 +163,6 @@ namespace ST
 	void InterfaceManager::drawWindows()
 	{
 	    AG_LockVFS(agView);
-	    AG_BeginRendering();
 
 		WindowItr itr_end = mWindows.end();
 		for (WindowItr itr = mWindows.begin(); itr != itr_end; ++itr)
@@ -166,12 +173,6 @@ namespace ST
             }
 		}
 
-		AG_EndRendering();
 		AG_UnlockVFS(agView);
-	}
-
-	void InterfaceManager::sendKey(SDL_keysym key)
-	{
-
 	}
 }

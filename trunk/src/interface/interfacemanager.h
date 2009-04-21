@@ -102,11 +102,6 @@ namespace ST
 		 */
 		void drawWindows();
 
-        /**
-         * Send a key event to the interface
-         */
-        void sendKey(SDL_keysym key);
-
 	private:
 		std::list<AG_Window*> mWindows;
 		typedef std::list<AG_Window*>::iterator WindowItr;

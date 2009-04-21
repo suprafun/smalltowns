@@ -66,10 +66,8 @@ namespace ST
 
 	}
 
-	void Layer::setData(unsigned char *data, int len, Texture *texture)
+	void Layer::setData(unsigned char *data, int len, const std::string &tileset)
 	{
-	    // set layer texture
-	    mTexture = texture;
 
 	    // load in the layer data
 	    int length = len - 3;
@@ -83,7 +81,13 @@ namespace ST
             int tile_id = data[i] | data[i + 1] << 8 |
                             data[i + 2] << 16 | data[i + 3] << 24;
 
-            setTile(x, y, tile_id);
+			if (tile_id > 0)
+			{
+				std::stringstream str;
+				str << tileset << tile_id;
+				Texture *tex = graphicsEngine->getTexture(str.str());
+				setTile(x, y, tex);
+			}
             ++x;
 
             // reached the end of the row
@@ -107,16 +111,18 @@ namespace ST
 
 	}
 
-	void Layer::setTile(int x, int y, int tile_id)
+	void Layer::setTile(int x, int y, Texture *tex)
 	{
 	    std::stringstream str;
 	    Point p;
 
 	    str << "tile" << x << y;
-	    p.x = x * mTexture->getWidth(); p.y = y * mTexture->getHeight();
+	    p.x = x * tex->getWidth(); p.y = y * tex->getHeight();
+		p.x += p.y * 0.5;
+		p.y -= p.x * 0.5;
 
 	    // add node and set its position
-        Node *node = graphicsEngine->createNode(str.str(), mTexture->getName(), &p);
+        Node *node = graphicsEngine->createNode(str.str(), tex->getName(), &p);
         addNode(node);
 	}
 
@@ -221,18 +227,16 @@ namespace ST
             return false;
         }
 
-        std::string tile = e->Attribute("source");
+		// load the tileset
+        std::string tileset = e->Attribute("source");
 
-        if (tile.empty())
+        if (tileset.empty())
         {
             logger->logError("No source for image");
             return false;
         }
 
-        graphicsEngine->loadTexture(tile);
-        Texture *tex = graphicsEngine->getTexture(tile);
-
-        if (!tex)
+        if (graphicsEngine->loadTextureSet(tileset, mTileWidth, mTileHeight))
         {
             logger->logError("Unable to load texture for map");
             //return false;
@@ -292,7 +296,7 @@ namespace ST
             return false;
         }
 
-        addLayer(layerWidth, layerHeight, layerData, inflatedSize, tex, 0);
+        addLayer(layerWidth, layerHeight, layerData, inflatedSize, tileset, 0);
         logger->logDebug("Finished loading map");
 
 		return true;
@@ -313,10 +317,10 @@ namespace ST
 	}
 	*/
 	void Map::addLayer(unsigned int width, unsigned int height, unsigned char *data,
-                       unsigned int length, Texture *texture, unsigned int layer)
+		unsigned int length, const std::string &tileset, unsigned int layer)
     {
         Layer *l = new Layer(width, height);
-        l->setData(data, length, texture);
+        l->setData(data, length, tileset);
         l->setDepth(layer);
 
         mLayers.push_back(l);

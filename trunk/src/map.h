@@ -48,6 +48,8 @@
 #include <string>
 #include <vector>
 
+class TiXmlElement;
+
 namespace ST
 {
 	class Node;
@@ -121,11 +123,32 @@ namespace ST
 		 * Adds a layer to the map
 		 */
         void addLayer(unsigned int width, unsigned int height, unsigned char *data,
-			unsigned int length, const std::string &tileset, unsigned int layer);
+			unsigned int length, unsigned int layer);
 
+        /**
+         * Load Map Info from xml file
+         * Gets the attributes from the XML element and stores them
+         * @return Returns whether it succeeded
+         */
+        bool loadMapInfo(TiXmlElement *e);
+
+        /**
+         * Load Tileset from xml file
+         * Load in images for tileset
+         * @return Returns whether it succeeded
+         */
+        bool loadTileset(TiXmlElement *e);
+
+        /**
+         * Load Layer from xml file
+         * Load in data for layer
+         * @return Returns whether it succeeded
+         */
+        bool loadLayer(TiXmlElement *e);
 
 	private:
 		std::vector<Layer*> mLayers;
+		std::string mTileset;
 		int mWidth;
 		int mHeight;
 		int mTileWidth;

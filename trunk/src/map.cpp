@@ -117,9 +117,9 @@ namespace ST
 	    Point p;
 
 	    str << "tile" << x << y;
-	    p.x = x * tex->getWidth(); p.y = y * tex->getHeight();
-		p.x += p.y * 0.5;
-		p.y -= p.x * 0.5;
+	    int tempx = x * tex->getWidth(), tempy = y * tex->getHeight();
+		p.x = tempx + (tempy * 0.5) - (tempx * 0.5);
+		p.y = tempy - (tempx * 0.5) + (tempy * 0.5);
 
 	    // add node and set its position
         Node *node = graphicsEngine->createNode(str.str(), tex->getName(), &p);
@@ -179,17 +179,42 @@ namespace ST
         }
 
         TiXmlHandle hDoc(&doc);
-        TiXmlElement* e;
+        TiXmlElement *e;
         TiXmlHandle map = hDoc.FirstChild("map");
 
-        e = map.ToElement();
-        if (!e)
+        if (!loadMapInfo(map.ToElement()))
+        {
+            return false;
+        }
+
+        e = map.Child("tileset", 0).ToElement();
+
+        if (!loadTileset(e))
+        {
+            return false;
+        }
+
+        e = map.Child("layer", 0).ToElement();
+
+        if (!loadLayer(e))
+        {
+            return false;
+        }
+
+        logger->logDebug("Finished loading map");
+
+		return true;
+	}
+
+	bool Map::loadMapInfo(TiXmlElement* e)
+	{
+	    if (!e)
         {
             logger->logError("Invalid map format");
             return false;
         }
 
-        if (e->QueryIntAttribute("width", &mWidth) != TIXML_SUCCESS)
+	    if (e->QueryIntAttribute("width", &mWidth) != TIXML_SUCCESS)
         {
             logger->logError("Invalid map width");
             return false;
@@ -213,7 +238,11 @@ namespace ST
             return false;
         }
 
-        e = map.Child("tileset", 0).ToElement();
+        return true;
+	}
+
+	bool Map::loadTileset(TiXmlElement *e)
+	{
         if (!e)
         {
             logger->logError("No tilesets defined!");
@@ -227,23 +256,26 @@ namespace ST
             return false;
         }
 
-		// load the tileset
-        std::string tileset = e->Attribute("source");
+        mTileset = e->Attribute("source");
 
-        if (tileset.empty())
+        if (mTileset.empty())
         {
             logger->logError("No source for image");
             return false;
         }
 
-        if (graphicsEngine->loadTextureSet(tileset, mTileWidth, mTileHeight))
+        if (!graphicsEngine->loadTextureSet(mTileset, mTileWidth, mTileHeight))
         {
             logger->logError("Unable to load texture for map");
-            //return false;
+            return false;
         }
 
-        e = map.Child("layer", 0).ToElement();
-        if (!e)
+        return true;
+	}
+
+	bool Map::loadLayer(TiXmlElement *e)
+	{
+	    if (!e)
         {
             logger->logError("No layers");
             return false;
@@ -296,31 +328,16 @@ namespace ST
             return false;
         }
 
-        addLayer(layerWidth, layerHeight, layerData, inflatedSize, tileset, 0);
-        logger->logDebug("Finished loading map");
+        addLayer(layerWidth, layerHeight, layerData, inflatedSize, 0);
 
-		return true;
+        return true;
 	}
 
-/*	void Map::addTile(unsigned int tile, Texture *texture, unsigned int layer, bool blocking)
-	{
-		if (layer > mLayers.size())
-		{
-			logger->logError("Failed to add tile");
-			return;
-		}
-
-		Tile *t = new Tile(tile, texture);
-		t->setBlocking(blocking);
-
-		mLayers[layer]->addNode(t);
-	}
-	*/
 	void Map::addLayer(unsigned int width, unsigned int height, unsigned char *data,
-		unsigned int length, const std::string &tileset, unsigned int layer)
+		unsigned int length, unsigned int layer)
     {
         Layer *l = new Layer(width, height);
-        l->setData(data, length, tileset);
+        l->setData(data, length, mTileset);
         l->setDepth(layer);
 
         mLayers.push_back(l);

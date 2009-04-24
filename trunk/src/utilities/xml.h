@@ -31,60 +31,38 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-01-30
+ *	Date of file creation: 09-04-24
  *
  *	$Id$
  *
  ********************************************/
 
 /**
- * The Connect State is used for connecting to a game server
+ * The XMLFile class deals with xml files
  */
 
-#ifndef ST_CONNECTSTATE_HEADER
-#define ST_CONNECTSTATE_HEADER
+#ifndef ST_XML_HEADER
+#define ST_XML_HEADER
 
-#include "gamestate.h"
-
-#include <agar/core.h>
-#include <agar/gui.h>
+#include <string>
+#include <tinyxml.h>
 
 namespace ST
 {
-	class ConnectState : public GameState
-	{
-	public:
-		ConnectState();
+    class XMLFile
+    {
+    public:
+        XMLFile();
 
-		/**
-		 * Enter
-		 * Called when entering the state
-		 */
-		void enter();
-
-		/**
-		 * Exit
-		 * Called when leaving the state
-		 */
-		void exit();
-
-		/**
-		 * Update
-		 * Called every frame
-		 * Return false to exit the game
-		 */
-		bool update();
+        bool load(const std::string &file);
+        std::string readString(const std::string &element, const std::string &attribute);
+        int readInt(const std::string &element, const std::string &attribute);
 
     private:
-		/**
-		 * Do connections
-		 * Connects to the server
-		 */
-        void doConnection();
+        TiXmlDocument *mDoc;
+        TiXmlHandle *mHandle;
 
-    private:
-        AG_Label *error;
-	};
+    };
 }
 
 #endif

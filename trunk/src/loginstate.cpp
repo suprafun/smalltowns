@@ -206,10 +206,8 @@ namespace ST
 		// Check for input, if escape pressed, exit
 		if (inputManager->getKey(SDLK_ESCAPE))
 		{
-		    GameState *state = new ConnectState();
-			game->changeState(state);
 			networkManager->disconnect();
-			return true;
+			return false;
 		}
 
 		SDL_Delay(0);

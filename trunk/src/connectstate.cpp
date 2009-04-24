@@ -84,11 +84,6 @@ namespace ST
             networkManager->connect(hostname, port);
             connecting = true;
 
-            // log where they tried connecting
-            std::stringstream msg;
-            msg << "Connecting to server: " << hostname << ":" << port;
-            logger->logDebug(msg.str());
-
             // reset any error messages
 			if (error)
 	            AG_LabelString(error, "");
@@ -156,12 +151,16 @@ namespace ST
 		AG_Button *button = AG_ButtonNewFn(test, 0, "Submit", submit_connect, "%p%p%p", hostname, port, error);
 		AG_ButtonJustify(button, AG_TEXT_CENTER);
 
-		AG_WindowShow(test);
+		AG_WindowHide(test);
 
 		interfaceManager->addWindow(win);
 		interfaceManager->addWindow(errorWindow);
 		interfaceManager->addWindow(test);
-	}
+
+		timeout = SDL_GetTicks();
+        networkManager->connect();
+        connecting = true;
+    }
 
 	void ConnectState::exit()
 	{
@@ -196,6 +195,7 @@ namespace ST
 		    // reset timeout, and log the error
 		    timeout = 0;
 		    logger->logWarning("Connecting timed out");
+		    interfaceManager->showWindow("/Connection", true);
 		}
 
 		SDL_Delay(0);

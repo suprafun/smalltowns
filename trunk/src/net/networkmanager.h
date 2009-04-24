@@ -59,7 +59,8 @@ namespace ST
 		/**
 		 * Connect to a server
 		 */
-		void connect(const std::string &hostname, unsigned int port);
+		void connect();
+		void connect(const std::string &hostname, int port);
 
 		/**
 		 * Process is called every frame to get packets and process them
@@ -91,6 +92,11 @@ namespace ST
          */
         bool downloadUpdateFile(const std::string &file);
 
+        /**
+         * Set default settings
+         */
+        void setDefault(const std::string &hostname, int port);
+
     private:
 		/**
 		 * Process the packets
@@ -99,6 +105,8 @@ namespace ST
 
 	private:
 		Host *mHost;
+		std::string mDefaultHost;
+		int mDefaultPort;
 	};
 
 	extern NetworkManager *networkManager;

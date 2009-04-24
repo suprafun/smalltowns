@@ -75,9 +75,24 @@ namespace ST
             disconnect();
 	}
 
-	void NetworkManager::connect(const std::string &hostname, unsigned int port)
+	void NetworkManager::connect()
+	{
+	    mHost->connect(mDefaultHost, mDefaultPort);
+
+	    // log where they tried connecting
+        std::stringstream msg;
+        msg << "Connecting to server: " << mDefaultHost << ":" << mDefaultPort;
+        logger->logDebug(msg.str());
+	}
+
+	void NetworkManager::connect(const std::string &hostname, int port)
 	{
 	    mHost->connect(hostname, port);
+
+	    // log where they tried connecting
+        std::stringstream msg;
+        msg << "Connecting to server: " << hostname << ":" << port;
+        logger->logDebug(msg.str());
 	}
 
 	void NetworkManager::process()
@@ -311,5 +326,11 @@ namespace ST
         fclose(outFile);
 */
         return true;
+	}
+
+	void NetworkManager::setDefault(const std::string &hostname, int port)
+	{
+	    mDefaultHost = hostname;
+	    mDefaultPort = port;
 	}
 }

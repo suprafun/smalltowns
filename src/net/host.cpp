@@ -115,7 +115,8 @@ namespace ST
 
     void Host::disconnect()
     {
-        enet_peer_disconnect(mServer, 0);
+        if (mServer)
+            enet_peer_disconnect(mServer, 0);
     }
 
     void Host::sendPacket(Packet *packet)

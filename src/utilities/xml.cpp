@@ -31,60 +31,60 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-01-30
+ *	Date of file creation: 09-04-24
  *
  *	$Id$
  *
  ********************************************/
 
-/**
- * The Connect State is used for connecting to a game server
- */
-
-#ifndef ST_CONNECTSTATE_HEADER
-#define ST_CONNECTSTATE_HEADER
-
-#include "gamestate.h"
-
-#include <agar/core.h>
-#include <agar/gui.h>
+#include "xml.h"
+#include "log.h"
 
 namespace ST
 {
-	class ConnectState : public GameState
+	XMLFile::XMLFile()
 	{
-	public:
-		ConnectState();
 
-		/**
-		 * Enter
-		 * Called when entering the state
-		 */
-		void enter();
+	}
 
-		/**
-		 * Exit
-		 * Called when leaving the state
-		 */
-		void exit();
+	bool XMLFile::load(const std::string &file)
+	{
+	    mDoc = new TiXmlDocument(file.c_str());
+        bool loaded = mDoc->LoadFile();
+        if (!loaded)
+        {
+            logger->logWarning("File not found: " + file);
+            return false;
+        }
 
-		/**
-		 * Update
-		 * Called every frame
-		 * Return false to exit the game
-		 */
-		bool update();
+        mHandle = new TiXmlHandle(mDoc);
+        return true;
+	}
 
-    private:
-		/**
-		 * Do connections
-		 * Connects to the server
-		 */
-        void doConnection();
+	std::string XMLFile::readString(const std::string &element, const std::string &attribute)
+	{
+        std::string str;
+        TiXmlElement *e;
 
-    private:
-        AG_Label *error;
-	};
+        e = mHandle->FirstChild(element.c_str()).ToElement();
+        if (e)
+        {
+            str = e->Attribute(attribute.c_str());
+        }
+
+        return str;
+	}
+
+	int XMLFile::readInt(const std::string &element, const std::string &attribute)
+	{
+	    int value = 0;
+	    TiXmlElement *e;
+
+	    e = mHandle->FirstChild(element.c_str()).ToElement();
+        if (e)
+        {
+            e->QueryIntAttribute(attribute.c_str(), &value);
+        }
+	    return value;
+	}
 }
-
-#endif

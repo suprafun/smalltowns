@@ -47,6 +47,7 @@
 #include "interface/interfacemanager.h"
 #include "net/networkmanager.h"
 #include "utilities/log.h"
+#include "utilities/xml.h"
 
 namespace ST
 {
@@ -79,6 +80,27 @@ namespace ST
 		interfaceManager = new InterfaceManager;
 		networkManager = new NetworkManager;
 		player = new Player;
+
+		// load in configuration file
+		XMLFile file;
+		std::string hostname;
+		int port = 0;
+
+		if (file.load("townslife.cfg"))
+        {
+            hostname = file.readString("server", "host");
+            port = file.readInt("server", "port");
+        }
+
+		if (hostname.empty() || port == 0)
+		{
+		    logger->logWarning("Error loading configuration, using defaults");
+		    networkManager->setDefault("localhost", 9910);
+		}
+		else
+		{
+		    networkManager->setDefault(hostname, port);
+		}
 
 		// set font
 		graphicsEngine->setFont("eurof55.ttf");

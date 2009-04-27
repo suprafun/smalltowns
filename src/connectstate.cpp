@@ -146,7 +146,7 @@ namespace ST
 
 		// set defaults
 		AG_TextboxSetString(hostname, "server.casualgamer.co.uk");
-		AG_TextboxSetString(port, "9601");
+		AG_TextboxSetString(port, "9910");
 
 		AG_Button *button = AG_ButtonNewFn(test, 0, "Submit", submit_connect, "%p%p%p", hostname, port, error);
 		AG_ButtonJustify(button, AG_TEXT_CENTER);

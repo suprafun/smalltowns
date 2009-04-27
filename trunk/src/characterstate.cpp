@@ -70,13 +70,14 @@ namespace ST
         if (sock)
         {
             Packet *packet = new Packet(PAMSG_CHAR_CHOOSE);
+            int slot = -1;
 
 #ifndef WIN32
             char name[255];
             AG_GetString(sock->icon, "character", name, 255);
-            int slot = utils::toInt(name);
+            slot = utils::toInt(name);
 #else
-			int slot = utils::toInt(AG_GetString(sock->icon, "character"));
+			slot = utils::toInt(AG_GetString(sock->icon, "character"));
 #endif
             packet->setInteger(slot);
 
@@ -137,7 +138,7 @@ namespace ST
 
 		AG_Window *charSelect = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "CharSelect");
 		AG_WindowSetCaption(charSelect, "Select Character");
-		AG_WindowSetSpacing(charSelect, 12);
+		AG_WindowSetSpacing(charSelect, 5);
 		AG_WindowSetGeometry(charSelect, halfScreenWidth - 125, halfScreenHeight - 125, 225, 225);
 
 		// load in the avatars to choose from

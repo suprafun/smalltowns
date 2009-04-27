@@ -48,6 +48,7 @@
 
 #include "../character.h"
 #include "../characterstate.h"
+#include "../connectstate.h"
 #include "../gamestate.h"
 #include "../game.h"
 #include "../loginstate.h"
@@ -209,6 +210,9 @@ namespace ST
                 else
                 {
                     // TODO: Indicate error creating character
+                    logger->logWarning("Invalid character chosen");
+                    GameState *state = new CharacterState;
+                    game->changeState(state);
                 }
             } break;
 
@@ -251,6 +255,10 @@ namespace ST
                 else
                 {
                     // TODO: Indicate error connecting to game server
+                    logger->logWarning("Invalid token");
+                    disconnect();
+                    GameState *state = new ConnectState;
+                    game->changeState(state);
                 }
             } break;
 

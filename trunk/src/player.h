@@ -84,8 +84,21 @@ namespace ST
          * Add a character to list player owns
          */
         void addCharacter(Character *c);
+
+        /**
+         * Return number of characters the player has
+         */
         int getNumChars() const;
+
+        /**
+         * Return the character in the specified slot
+         */
         Character* getCharacter(unsigned int slot);
+
+        /**
+         * Removes all the currently added characters
+         */
+        void removeCharacters();
 
     private:
         std::string mUsername;

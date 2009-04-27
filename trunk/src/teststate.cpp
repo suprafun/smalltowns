@@ -97,7 +97,7 @@ namespace ST
 		Rectangle rect;
 		rect.height = 768;
 		rect.width = 1024;
-		rect.x = 0;
+		rect.x = -512;
 		rect.y = 0;
 		mCam = new Camera("viewport", &rect);
 		graphicsEngine->setCamera(mCam);
@@ -112,7 +112,7 @@ namespace ST
 
 		AG_Window *chatWindow = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "ChatWindow");
 		AG_WindowSetCaption(chatWindow, "Chat");
-		AG_WindowSetSpacing(chatWindow, 4);
+		AG_WindowSetSpacing(chatWindow, 5);
 		AG_WindowSetGeometry(chatWindow, 10, screenHeight - 185, 400, 175);
 		AG_WindowShow(chatWindow);
 
@@ -120,7 +120,7 @@ namespace ST
 //        AG_Notebook *book = AG_NotebookNew(box, 0);
 //        AG_NotebookTab *nbTab = AG_NotebookAddTab(book, "Global Chat", AG_BOX_VERT);
 
-        AG_Console *console = AG_ConsoleNew(chatWindow, AG_CONSOLE_HFILL|AG_CONSOLE_VFILL);
+        AG_Console *console = AG_ConsoleNew(chatWindow, AG_CONSOLE_EXPAND);
         AG_ObjectSetName(console, "Chat");
 
 		AG_Textbox *chatInput = AG_TextboxNew(chatWindow, AG_TEXTBOX_CATCH_TAB, NULL);

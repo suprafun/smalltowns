@@ -50,11 +50,7 @@ namespace ST
 
     Player::~Player()
     {
-        for (int i = 0; i < mCharacters.size(); ++i)
-        {
-            delete mCharacters[i];
-        }
-        mCharacters.clear();
+        removeCharacters();
     }
 
     std::string Player::getName() const
@@ -79,6 +75,15 @@ namespace ST
 
     void Player::addCharacter(Character *c)
     {
+        std::vector<Character*>::iterator itr, itr_end;
+        itr_end = mCharacters.end();
+        for (itr = mCharacters.begin(); itr != itr_end; ++itr)
+        {
+            if ((*itr)->getName() == c->getName())
+            {
+                return;
+            }
+        }
         mCharacters.push_back(c);
     }
 
@@ -95,5 +100,14 @@ namespace ST
         }
 
         return NULL;
+    }
+
+    void Player::removeCharacters()
+    {
+        for (size_t i = 0; i < mCharacters.size(); ++i)
+        {
+            delete mCharacters[i];
+        }
+        mCharacters.clear();
     }
 }

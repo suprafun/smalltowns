@@ -89,11 +89,16 @@ namespace ST
 		mScreen = SDL_SetVideoMode(mWidth, mHeight, bpp, SDL_OPENGL);
 
 		glViewport(0, 0, mWidth, mHeight);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0.0f, mWidth, mHeight, 0.0f, -1.0f, 1.0f);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glClearColor(1.0f, 1.0f , 1.0f, 0.5f);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthFunc(GL_LEQUAL);
+
+
 
 		mCamera = NULL;
 		mFont = NULL;
@@ -136,32 +141,20 @@ namespace ST
 
 	void GraphicsEngine::renderFrame()
 	{
-		// Clear the screen
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		AG_LockVFS(agView);
+	    AG_BeginRendering();
 
-		glMatrixMode(GL_PROJECTION);
+        glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		glOrtho(0.0f, mWidth, 0.0f, mHeight, -1.0f, 1.0f);
-
-		glPushMatrix();
-		glMatrixMode(GL_MODELVIEW);
 
 		// Display the nodes on screen (if theres a camera to view them)
 		if (mCamera)
 			outputNodes();
-		glPopMatrix();
-
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-		glOrtho(0.0f, mWidth, mHeight, 0.0f, -1.0f, 1.0f);
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
 
         interfaceManager->drawWindows();
 
-        // Swap between front and back buffer
-		SDL_GL_SwapBuffers();
+        AG_EndRendering();
+		AG_UnlockVFS(agView);
 	}
 
 	void GraphicsEngine::outputNodes()
@@ -197,8 +190,8 @@ namespace ST
 			Rectangle rect;
 
 			// set position and size to local variables
-			rect.x = (*itr)->getPosition().x;
-			rect.y = (*itr)->getPosition().y;
+			rect.x = (*itr)->getPosition().x - pt.x;
+			rect.y = (*itr)->getPosition().y - pt.y;
 			rect.width = (*itr)->getWidth();
 			rect.height = (*itr)->getHeight();
 

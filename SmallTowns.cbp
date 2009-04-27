@@ -104,6 +104,8 @@
 		<Unit filename="src/utilities/math.h" />
 		<Unit filename="src/utilities/stringutils.h" />
 		<Unit filename="src/utilities/types.h" />
+		<Unit filename="src/utilities/xml.cpp" />
+		<Unit filename="src/utilities/xml.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

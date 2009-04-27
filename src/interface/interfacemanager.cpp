@@ -162,8 +162,6 @@ namespace ST
 
 	void InterfaceManager::drawWindows()
 	{
-	    AG_LockVFS(agView);
-
 		WindowItr itr_end = mWindows.end();
 		for (WindowItr itr = mWindows.begin(); itr != itr_end; ++itr)
 		{
@@ -172,7 +170,5 @@ namespace ST
                 AG_WindowDraw(*itr);
             }
 		}
-
-		AG_UnlockVFS(agView);
 	}
 }

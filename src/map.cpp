@@ -117,9 +117,8 @@ namespace ST
 	    Point p;
 
 	    str << "tile" << x << y;
-	    int tempx = x * tex->getWidth(), tempy = y * tex->getHeight();
-		p.x = tempx + (tempy * 0.5) - (tempx * 0.5);
-		p.y = tempy - (tempx * 0.5) + (tempy * 0.5);
+		p.x = (x - y) * (tex->getWidth() >> 1);
+		p.y = (x + y) * (tex->getHeight() >> 1);
 
 	    // add node and set its position
         Node *node = graphicsEngine->createNode(str.str(), tex->getName(), &p);

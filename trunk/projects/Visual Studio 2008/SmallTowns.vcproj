@@ -248,6 +248,10 @@
 				RelativePath="..\..\src\updatestate.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\utilities\xml.cpp"
+				>
+			</File>
 			<Filter
 				Name="graphics"
 				>
@@ -392,6 +396,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\updatestate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\utilities\xml.h"
 				>
 			</File>
 			<Filter

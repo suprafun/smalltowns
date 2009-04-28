@@ -72,7 +72,7 @@ namespace ST
             Packet *packet = new Packet(PAMSG_CHAR_CHOOSE);
             int slot = -1;
 
-#ifndef WIN32
+#if AGAR_PATCHLEVEL > 3
             char name[255];
             AG_GetString(sock->icon, "character", name, 255);
             slot = utils::toInt(name);
@@ -100,7 +100,7 @@ namespace ST
     {
         AG_Socket *sock = static_cast<AG_Socket*>(AG_PTR(2));
         AG_Icon *icon = sock->icon;
-#ifndef WIN32
+#if AGAR_PATCHLEVEL > 3
         char tmpAvatar[255];
         AG_GetString(icon, "avatar", tmpAvatar, 255);
 #else

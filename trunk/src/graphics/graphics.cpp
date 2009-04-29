@@ -170,7 +170,7 @@ namespace ST
 		const int h = mCamera->getViewHeight();
 
 		// keep looping until reached the end of the list
-		while (itr != itr_end)
+		for (; itr != itr_end; ++itr)
 		{
 			// dont draw if not on screen
 			if ((*itr)->getPosition().x + (*itr)->getWidth() < pt.x ||
@@ -178,13 +178,13 @@ namespace ST
 				(*itr)->getPosition().y + (*itr)->getHeight() < pt.y ||
 				(*itr)->getPosition().y > pt.y + h)
 			{
-				break;
+				continue;
 			}
 
 			// dont draw if not visible
 			if (!(*itr)->getVisible())
 			{
-				break;
+				continue;
 			}
 
 			Rectangle rect;
@@ -196,8 +196,6 @@ namespace ST
 			rect.height = (*itr)->getHeight();
 
 			drawTexturedRect(rect, (*itr)->getGLTexture());
-
-			++itr;
 		}
 	}
 

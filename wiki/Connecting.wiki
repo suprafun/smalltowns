@@ -3,9 +3,12 @@
 
 = Introduction =
 
-When launching smalltowns you will be asked to enter a server and port. Once connected, you will be asked for a username and password. You may register a new username and password for free by clicking Register. Once registered or logged in, you will be asked to selected a character. You may create up to 3 different characters. Once you create a new one, in the future you can select it by dragging the avatar to the empty space and clicking choose.
+When launching Town's Life version 0.0.4 or higher, the client will automatically connect to the server. Once connected, you will be asked for a username and password. 
 
+You may register a new username and password for free by clicking Register.
 
-= Details =
+Once registered or logged in, you will be asked to selected a character. You may create up to 3 different characters. Once you create a new one, in the future you can select it by dragging the avatar head to the empty space and clicking choose.
 
-Enter server.casualgamer.co.uk as the server and 9910 as the port.
+= Troubleshooting =
+
+If it tells you it timed out connecting to the server, it will most likely ask you what server and port to connect to. The defaults are set in the townslife.cfg file which can be opened with a plain text editor.

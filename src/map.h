@@ -55,28 +55,25 @@ namespace ST
 	class Node;
 	class Texture;
 
+	class Tileset
+	{
+	public:
+		int id;
+		int width;
+		int height;
+		std::string tilename;
+	};
+
 	class Layer
 	{
 	public:
 		Layer(unsigned int, unsigned int);
 		~Layer();
 
-		/**
-		 * Set data
-		 * Sets the data for the layer
-		 */
-		void setData(unsigned char *data, int len, const std::string &tileset);
-
-        /**
-         * Set Depth
-         * Sets where the layer appears when drawn
-         */
-        void setDepth(unsigned int);
-
         /**
          * Set a tile
          */
-        void setTile(int x, int y, Texture *tex);
+        void setTile(int x, int y, Texture *tex, int width, int height);
 
 		/**
 		 * Add Tile
@@ -123,7 +120,7 @@ namespace ST
 		 * Adds a layer to the map
 		 */
         void addLayer(unsigned int width, unsigned int height, unsigned char *data,
-			unsigned int length, unsigned int layer);
+			unsigned int len);
 
         /**
          * Load Map Info from xml file
@@ -148,7 +145,7 @@ namespace ST
 
 	private:
 		std::vector<Layer*> mLayers;
-		std::string mTileset;
+		std::vector<Tileset*> mTilesets; 
 		int mWidth;
 		int mHeight;
 		int mTileWidth;

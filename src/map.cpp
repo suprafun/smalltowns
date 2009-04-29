@@ -66,59 +66,14 @@ namespace ST
 
 	}
 
-	void Layer::setData(unsigned char *data, int len, const std::string &tileset)
-	{
-
-	    // load in the layer data
-	    int length = len - 3;
-	    int x = 0;
-	    int y = 0;
-
-        for (int i = 0; i < length; i += 4)
-        {
-            // get the tile id by putting
-            // the data bytes into an integer
-            int tile_id = data[i] | data[i + 1] << 8 |
-                            data[i + 2] << 16 | data[i + 3] << 24;
-
-			if (tile_id > 0)
-			{
-				std::stringstream str;
-				str << tileset << tile_id;
-				Texture *tex = graphicsEngine->getTexture(str.str());
-				setTile(x, y, tex);
-			}
-            ++x;
-
-            // reached the end of the row
-            if (x == mWidth)
-            {
-                x = 0;
-                ++y;
-
-                // reached the end of the map
-                if (y == mHeight)
-                    break;
-            }
-        }
-
-        // finished with the data now, free it
-        free(data);
-	}
-
-	void Layer::setDepth(unsigned int depth)
-	{
-
-	}
-
-	void Layer::setTile(int x, int y, Texture *tex)
+	void Layer::setTile(int x, int y, Texture *tex, int width, int height)
 	{
 	    std::stringstream str;
 	    Point p;
 
 	    str << "tile" << x << y;
-		p.x = (x - y) * (tex->getWidth() >> 1);
-		p.y = (x + y) * (tex->getHeight() >> 1);
+		p.x = (x - y) * (width >> 1);
+		p.y = (x + y) * (height >> 1);
 
 	    // add node and set its position
         Node *node = graphicsEngine->createNode(str.str(), tex->getName(), &p);
@@ -186,19 +141,41 @@ namespace ST
             return false;
         }
 
-        e = map.Child("tileset", 0).ToElement();
+		int numTilesets = 0;
 
-        if (!loadTileset(e))
-        {
-            return false;
-        }
+		while(1)
+		{
+			e = map.Child("tileset", numTilesets).ToElement();
 
-        e = map.Child("layer", 0).ToElement();
+			if (!loadTileset(e))
+			{
+				break;
+			}
+			++numTilesets;
+		}
 
-        if (!loadLayer(e))
-        {
-            return false;
-        }
+		if (numTilesets == 0)
+		{
+			logger->logError("No tilesets found.");
+			return false;
+		}
+
+		int numLayers = 0;
+		while(1)
+		{
+			e = map.Child("layer", numLayers).ToElement();
+
+			if (!loadLayer(e))
+			{
+				break;
+			}
+			++numLayers;
+		}
+		if (numLayers == 0)
+		{
+			logger->logError("No layers found!");
+			return false;
+		}
 
         logger->logDebug("Finished loading map");
 
@@ -244,9 +221,26 @@ namespace ST
 	{
         if (!e)
         {
-            logger->logError("No tilesets defined!");
             return false;
         }
+
+		int id = 0;
+		if (e->QueryIntAttribute("firstgid", &id) != TIXML_SUCCESS)
+		{
+			logger->logError("No tile id found");
+            return false;
+		}
+
+		int width = 0;
+		int height = 0;
+		if (e->QueryIntAttribute("tilewidth", &width) != TIXML_SUCCESS)
+		{
+			width = mTileWidth;
+		}
+		if (e->QueryIntAttribute("tileheight", &height) != TIXML_SUCCESS)
+		{
+			height = mTileHeight;
+		}
 
         e = e->FirstChild("image")->ToElement();
         if (!e)
@@ -255,19 +249,26 @@ namespace ST
             return false;
         }
 
-        mTileset = e->Attribute("source");
+		std::string imagefile = e->Attribute("source");
 
-        if (mTileset.empty())
+        if (imagefile.empty())
         {
             logger->logError("No source for image");
             return false;
         }
 
-        if (!graphicsEngine->loadTextureSet(mTileset, mTileWidth, mTileHeight))
+        if (!graphicsEngine->loadTextureSet(imagefile, width, height))
         {
             logger->logError("Unable to load texture for map");
             return false;
         }
+		
+		Tileset *tileset = new Tileset;
+		tileset->id = id;
+		tileset->width = width;
+		tileset->height = height;
+		tileset->tilename = imagefile;
+		mTilesets.push_back(tileset);
 
         return true;
 	}
@@ -276,7 +277,6 @@ namespace ST
 	{
 	    if (!e)
         {
-            logger->logError("No layers");
             return false;
         }
 
@@ -327,17 +327,62 @@ namespace ST
             return false;
         }
 
-        addLayer(layerWidth, layerHeight, layerData, inflatedSize, 0);
+        addLayer(layerWidth, layerHeight, layerData, inflatedSize);
 
         return true;
 	}
 
 	void Map::addLayer(unsigned int width, unsigned int height, unsigned char *data,
-		unsigned int length, unsigned int layer)
+		unsigned int len)
     {
         Layer *l = new Layer(width, height);
-        l->setData(data, length, mTileset);
-        l->setDepth(layer);
+
+        // load in the layer data
+	    int length = len - 3;
+	    int x = 0;
+	    int y = 0;
+
+        for (int i = 0; i < length; i += 4)
+        {
+            // get the tile id by putting
+            // the data bytes into an integer
+            int tile_id = data[i] | data[i + 1] << 8 |
+                            data[i + 2] << 16 | data[i + 3] << 24;
+
+			if (tile_id > 0)
+			{
+				// search out the tilset the tile_id belongs to
+				for (size_t j = mTilesets.size()-1; j >= 0; --j)
+				{
+					// since we are searching backwards,
+					// we assume that the later tilesets
+					// have a greater tile_id, when tile_id
+					// is then greater, it means its part of the tileset
+					if (tile_id >= mTilesets[j]->id)
+					{
+						std::stringstream str;
+						str << mTilesets[j]->tilename << (tile_id - mTilesets[j]->id) + 1;
+						l->setTile(x, y, graphicsEngine->getTexture(str.str()), mTileWidth, mTileHeight);
+						break;
+					}
+				}
+			}
+            ++x;
+
+            // reached the end of the row
+            if (x == mWidth)
+            {
+                x = 0;
+                ++y;
+
+                // reached the end of the map
+                if (y == mHeight)
+                    break;
+            }
+        }
+
+        // finished with the data now, free it
+        free(data);
 
         mLayers.push_back(l);
     }

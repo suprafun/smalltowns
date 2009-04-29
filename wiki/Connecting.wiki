@@ -8,4 +8,4 @@ When launching smalltowns you will be asked to enter a server and port. Once con
 
 = Details =
 
-Enter server.casualgamer.co.uk as the server and 9601 as the port.
+Enter server.casualgamer.co.uk as the server and 9910 as the port.

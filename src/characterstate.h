@@ -47,6 +47,8 @@
 #include "gamestate.h"
 
 #include <string>
+#include <agar/core.h>
+#include <agar/gui.h>
 
 namespace ST
 {
@@ -72,6 +74,9 @@ namespace ST
 		 * Return false to exit the game
 		 */
 		bool update();
+
+    private:
+        AG_Label *error;
 
 	};
 }

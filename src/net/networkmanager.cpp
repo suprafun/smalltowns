@@ -196,7 +196,8 @@ namespace ST
                 }
                 else
                 {
-                    // TODO: Indicate error creating character
+                    logger->logWarning("Invalid username or password used to login");
+                    interfaceManager->showWindow("/Error", true);
                 }
             } break;
 
@@ -209,8 +210,8 @@ namespace ST
                 }
                 else
                 {
-                    // TODO: Indicate error creating character
                     logger->logWarning("Invalid character chosen");
+                    interfaceManager->showWindow("/Error", true);
                     GameState *state = new CharacterState;
                     game->changeState(state);
                 }
@@ -238,10 +239,13 @@ namespace ST
 					curTime = time(NULL);
 				}
 
-                Packet *p = new Packet(PGMSG_CONNECT);
-                p->setInteger(player->getId());
-                p->setInteger(tag);
-                sendPacket(p);
+				if (mHost->isConnected())
+                {
+                    Packet *p = new Packet(PGMSG_CONNECT);
+                    p->setInteger(player->getId());
+                    p->setInteger(tag);
+                    sendPacket(p);
+                }
             } break;
 
 

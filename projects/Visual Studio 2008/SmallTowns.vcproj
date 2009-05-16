@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="uuid.lib msvcrtd.lib msvcprtd.lib SDLMain.lib SDL.lib SDL_image.lib opengl32.lib glu32.lib tinyxml.lib ftgl.lib WS2_32.lib winmm.lib enet.lib cppirclibd.lib zlib.lib ag_core.lib ag_gui.lib freetype238mt.lib"
+				AdditionalDependencies="uuid.lib msvcrtd.lib msvcprtd.lib SDLMain.lib SDL.lib SDL_image.lib opengl32.lib glu32.lib tinyxml.lib WS2_32.lib winmm.lib enet.lib cppirclibd.lib zlib.lib ag_core.lib ag_gui.lib freetype238mt.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="Debug"
 				IgnoreAllDefaultLibraries="true"
@@ -139,7 +139,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="uuid.lib msvcrt.lib msvcprt.lib SDLMain.lib SDL.lib SDL_image.lib opengl32.lib glu32.lib tinyxml.lib ftgl.lib enet.lib ws2_32.lib winmm.lib cppirclib.lib ag_core.lib ag_gui.lib freetype238mt.lib"
+				AdditionalDependencies="uuid.lib msvcrt.lib msvcprt.lib SDLMain.lib SDL.lib SDL_image.lib opengl32.lib glu32.lib tinyxml.lib enet.lib ws2_32.lib winmm.lib cppirclib.lib ag_core.lib ag_gui.lib freetype238mt.lib zlib.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="Release"
 				IgnoreAllDefaultLibraries="true"

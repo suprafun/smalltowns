@@ -51,7 +51,6 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_image.h>
-#include <FTGL/ftgl.h>
 #include <sstream>
 
 namespace ST
@@ -98,10 +97,7 @@ namespace ST
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthFunc(GL_LEQUAL);
 
-
-
 		mCamera = NULL;
-		mFont = NULL;
 	}
 
 	GraphicsEngine::~GraphicsEngine()
@@ -115,9 +111,6 @@ namespace ST
 			++itr;
 		}
 		mNodes.clear();
-
-		if (mFont)
-			delete mFont;
 
 		if (mCamera)
 			delete mCamera;
@@ -304,33 +297,6 @@ namespace ST
 
 		glPopMatrix();
 		glPopAttrib();
-	}
-
-	void GraphicsEngine::drawText(Point &pos, const std::string &text, int fontSize)
-	{
-		if (mFont && text.size() > 0)
-		{
-			glLoadIdentity();
-			glColor3f(0.0f, 0.0f, 0.0f); // black text
-			glPolygonMode(GL_FRONT, GL_FILL);
-			mFont->FaceSize(fontSize);
-			mFont->Render(text.c_str(), text.size(), FTPoint(pos.x, pos.y));
-		}
-	}
-
-	void GraphicsEngine::setFont(const std::string &font)
-	{
-		mFont = new FTGLTextureFont(font.c_str());
-	}
-
-	float GraphicsEngine::getFontHeight()
-	{
-		return mFont->LineHeight();
-	}
-
-	float GraphicsEngine::getFontWidth(const std::string &text)
-	{
-		return mFont->Advance(text.c_str(), text.size());
 	}
 
 	Texture* GraphicsEngine::loadTexture(const std::string &name)

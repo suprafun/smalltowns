@@ -164,6 +164,7 @@ namespace ST
 
 		AG_Textbox *username = AG_TextboxNew(login, 0, "Username: ");
 		AG_Textbox *password = AG_TextboxNew(login, AG_TEXTBOX_PASSWORD, "Password: ");
+		AG_SetEvent(password, "textbox-return", submit_login, "%p%p%p", username, password, error);
 
 		AG_Window *reg = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "Register");
 		AG_WindowSetCaption(reg, "Registration");
@@ -172,6 +173,7 @@ namespace ST
 
 		AG_Textbox *reg_user = AG_TextboxNew(reg, 0, "Username: ");
 		AG_Textbox *reg_pass = AG_TextboxNew(reg, AG_TEXTBOX_PASSWORD, "Password: ");
+		AG_SetEvent(reg_pass, "textbox-return", submit_register, "%p%p%p", reg_user, reg_pass, error);
 
 		AG_HBox *reg_box = AG_HBoxNew(reg, 0);
 		AG_Button *reg_button = AG_ButtonNewFn(reg_box, 0, "Submit", submit_register, "%p%p%p", reg_user, reg_pass, error);

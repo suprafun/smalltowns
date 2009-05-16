@@ -150,6 +150,7 @@ namespace ST
 
 		AG_Button *button = AG_ButtonNewFn(test, 0, "Submit", submit_connect, "%p%p%p", hostname, port, error);
 		AG_ButtonJustify(button, AG_TEXT_CENTER);
+		AG_WidgetFocus(button);
 
 		AG_WindowHide(test);
 

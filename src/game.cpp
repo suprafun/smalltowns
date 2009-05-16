@@ -102,9 +102,6 @@ namespace ST
 		    networkManager->setDefault(hostname, port);
 		}
 
-		// set font
-		graphicsEngine->setFont("eurof55.ttf");
-
 		// Create state to connect to server
 		mOldState = 0;
 		mState = new ConnectState();

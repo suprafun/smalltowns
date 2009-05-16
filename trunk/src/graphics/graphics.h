@@ -49,7 +49,6 @@
 #include <string>
 
 struct SDL_Surface;
-class FTFont;
 
 namespace ST
 {
@@ -132,26 +131,6 @@ namespace ST
 		void drawFilledRect(Rectangle &rect);
 
 		/**
-		 * Draw Text
-		 */
-		void drawText(Point &pos, const std::string &text, int fontSize);
-
-		/**
-		 * Set Font
-		 */
-		void setFont(const std::string &font);
-
-		/**
-		 * Get Font Height
-		 */
-		float getFontHeight();
-
-		/**
-		 * Get Font Width
-		 */
-		float getFontWidth(const std::string &text);
-
-		/**
 		 * Returns the current SDL surface
 		 */
         SDL_Surface* getSurface() { return mScreen; }
@@ -204,9 +183,6 @@ namespace ST
 		Camera *mCamera;
 		int mWidth;
 		int mHeight;
-
-		// text stuff
-		FTFont *mFont;
 
 		// list of nodes
 		std::list<Node*> mNodes;

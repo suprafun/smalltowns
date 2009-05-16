@@ -44,8 +44,8 @@
 #include "../graphics/graphics.h"
 
 #include "../utilities/log.h"
+#include "../utilities/xml.h"
 
-#include <tinyxml.h>
 #include <agar/core.h>
 #include <agar/gui.h>
 
@@ -62,6 +62,8 @@ namespace ST
         {
             logger->logError("Error: Unable to init video");
         }
+
+		mGuiSheet = 0;
 	}
 
 	InterfaceManager::~InterfaceManager()
@@ -72,14 +74,11 @@ namespace ST
 
 	bool InterfaceManager::loadGuiSheet(const std::string &filename)
 	{
-	    bool loaded = false;
-
-        // Open XML file
-        TiXmlDocument doc(filename.c_str());
-        loaded = doc.LoadFile();
+		if (mGuiSheet == 0)
+			mGuiSheet = new XMLFile;
 
         // Check it opened successfully
-        if (!loaded)
+        if (!mGuiSheet->load(filename))
         {
             return false;
         }

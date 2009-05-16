@@ -230,8 +230,8 @@ namespace ST
 
                 connect(host, port);
 
-				int timeout = time(NULL) + 10;
-				int curTime = time(NULL);
+				time_t timeout = time(NULL) + 10;
+				time_t curTime = time(NULL);
 
                 while (!mHost->isConnected() && curTime <= timeout)
 				{

@@ -53,6 +53,7 @@
 
 namespace ST
 {
+	class XMLFile;
 	class InterfaceManager
 	{
 	public:
@@ -105,6 +106,7 @@ namespace ST
 	private:
 		std::list<AG_Window*> mWindows;
 		typedef std::list<AG_Window*>::iterator WindowItr;
+		XMLFile *mGuiSheet;
 	};
 
 	extern InterfaceManager *interfaceManager;

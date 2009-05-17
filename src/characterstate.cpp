@@ -68,7 +68,6 @@ namespace ST
     void select_character(AG_Event *event)
     {
         AG_Socket *sock = static_cast<AG_Socket*>(AG_PTR(1));
-        AG_Label *error = static_cast<AG_Label*>(AG_PTR(2));
         if (sock)
         {
             Packet *packet = new Packet(PAMSG_CHAR_CHOOSE);
@@ -85,13 +84,13 @@ namespace ST
 
             networkManager->sendPacket(packet);
 
-            AG_LabelString(error, "");
-            interfaceManager->showWindow("/Error", false);
+			interfaceManager->setErrorMessage("");
+			interfaceManager->showErrorWindow(false);
         }
-        else if (error)
+        else
         {
-            AG_LabelString(error, "Invalid character chosen");
-            interfaceManager->showWindow("/Error", true);
+			interfaceManager->setErrorMessage("Invalid character chosen");
+            interfaceManager->showErrorWindow(true);
         }
     }
 
@@ -109,7 +108,6 @@ namespace ST
     void submit_new(AG_Event *event)
     {
         AG_Socket *sock = static_cast<AG_Socket*>(AG_PTR(2));
-        AG_Label *error = static_cast<AG_Label*>(AG_PTR(3));
         AG_Icon *icon = sock->icon;
 #if AGAR_PATCHLEVEL > 3
         char tmpAvatar[255];
@@ -126,13 +124,13 @@ namespace ST
             packet->setInteger(avatar);
             networkManager->sendPacket(packet);
 
-            AG_LabelString(error, "");
-            interfaceManager->showWindow("/Error", false);
+            interfaceManager->setErrorMessage("");
+			interfaceManager->showErrorWindow(false);
         }
-        else if (error)
+        else
         {
-            AG_LabelString(error, "Invalid character name");
-            interfaceManager->showWindow("/Error", true);
+            interfaceManager->setErrorMessage("Invalid character name");
+            interfaceManager->showErrorWindow(true);
         }
     }
 
@@ -154,13 +152,6 @@ namespace ST
 		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN|AG_WINDOW_KEEPBELOW);
 		AG_WindowShow(win);
 		AG_WindowMaximize(win);
-
-		AG_Window *errorWindow = AG_WindowNewNamed(0, "Error");
-		AG_WindowSetCaption(errorWindow, "Error");
-		AG_WindowSetGeometry(errorWindow, halfScreenWidth - 300, 50, 300, 75);
-		error = AG_LabelNewString(errorWindow, 0, "");
-		AG_LabelSizeHint(error, 1, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-		AG_LabelJustify(error, AG_TEXT_CENTER);
 
 		AG_Window *charSelect = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "CharSelect");
 		AG_WindowSetCaption(charSelect, "Select Character");
@@ -255,13 +246,13 @@ namespace ST
 		AG_FixedMove(fxNew, charNick, 6, 85);
 
 		AG_HBox *hbox = AG_HBoxNew(charNew, 0);
-		AG_Button *new_button = AG_ButtonNewFn(hbox, 0, "Submit", submit_new, "%p%p%p", charNick, avatar, error);
+		AG_Button *new_button = AG_ButtonNewFn(hbox, 0, "Submit", submit_new, "%p%p", charNick, avatar);
 		AG_ButtonJustify(new_button, AG_TEXT_CENTER);
 		AG_Button *back_button = AG_ButtonNewFn(hbox, 0, "Back", switch_char_window, "%p%p", charNew, charSelect);
 		AG_ButtonJustify(back_button, AG_TEXT_CENTER);
 
 		AG_HBox *box = AG_HBoxNew(charSelect, 0);
-		AG_Button *button = AG_ButtonNewFn(box, 0, "Choose", select_character, "%p%p", selected, error);
+		AG_Button *button = AG_ButtonNewFn(box, 0, "Choose", select_character, "%p", selected);
 		AG_ButtonJustify(button, AG_TEXT_CENTER);
 		AG_Button *create_button = AG_ButtonNewFn(box, 0, "Create New",
                                                     switch_char_window, "%p%p", charSelect, charNew);
@@ -271,7 +262,6 @@ namespace ST
 		AG_WindowHide(charNew);
 
 		interfaceManager->addWindow(win);
-		interfaceManager->addWindow(errorWindow);
 		interfaceManager->addWindow(charSelect);
 		interfaceManager->addWindow(charNew);
     }

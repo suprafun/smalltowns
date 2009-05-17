@@ -81,9 +81,6 @@ namespace ST
 		 * Connects to the server
 		 */
         void doConnection();
-
-    private:
-        AG_Label *error;
 	};
 }
 

@@ -70,6 +70,7 @@ namespace ST
         {
             Packet *packet = new Packet(PAMSG_CHAR_LIST);
             networkManager->sendPacket(packet);
+			mSuccess = false;
         }
 
         SDL_Delay(0);

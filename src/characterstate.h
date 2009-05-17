@@ -75,9 +75,6 @@ namespace ST
 		 */
 		bool update();
 
-    private:
-        AG_Label *error;
-
 	};
 }
 

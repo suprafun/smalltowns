@@ -123,7 +123,8 @@ namespace ST
                 }
                 else
                 {
-                    interfaceManager->showWindow("/Error", true);
+					interfaceManager->setErrorMessage("Invalid client version, please update.");
+                    interfaceManager->showErrorWindow(true);
                     logger->logError("Bad client");
                     disconnect();
                 }
@@ -139,13 +140,15 @@ namespace ST
                 }
                 else if (packet->getByte() == ERR_TAKEN_NAME)
                 {
+					interfaceManager->setErrorMessage("Username taken.");
                     logger->logWarning("Username already registered");
-                    interfaceManager->showWindow("/Error", true);
+                    interfaceManager->showErrorWindow(true);
                 }
                 else
                 {
+					interfaceManager->setErrorMessage("Invalid username or password");
                     logger->logWarning("Invalid username or password used to register account");
-                    interfaceManager->showWindow("/Error", true);
+                    interfaceManager->showErrorWindow(true);
                 }
             } break;
 
@@ -159,8 +162,9 @@ namespace ST
                 }
                 else
                 {
+					interfaceManager->setErrorMessage("Invalid username or password");
                     logger->logWarning("Invalid username or password used to login");
-                    interfaceManager->showWindow("/Error", true);
+                    interfaceManager->showErrorWindow(true);
                 }
             } break;
 
@@ -196,8 +200,9 @@ namespace ST
                 }
                 else
                 {
-                    logger->logWarning("Invalid username or password used to login");
-                    interfaceManager->showWindow("/Error", true);
+					interfaceManager->setErrorMessage("Invalid character");
+                    logger->logWarning("Invalid character");
+                    interfaceManager->showErrorWindow(true);
                 }
             } break;
 
@@ -211,7 +216,8 @@ namespace ST
                 else
                 {
                     logger->logWarning("Invalid character chosen");
-                    interfaceManager->showWindow("/Error", true);
+					interfaceManager->setErrorMessage("Invalid character chosen");
+                    interfaceManager->showErrorWindow(true);
                     GameState *state = new CharacterState;
                     game->changeState(state);
                 }
@@ -258,7 +264,8 @@ namespace ST
                 }
                 else
                 {
-                    // TODO: Indicate error connecting to game server
+                    interfaceManager->setErrorMessage("Unable to connect to Game Server");
+					interfaceManager->showErrorWindow(true);
                     logger->logWarning("Invalid token");
                     disconnect();
                     GameState *state = new ConnectState;

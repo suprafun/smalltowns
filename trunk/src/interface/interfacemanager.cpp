@@ -64,10 +64,18 @@ namespace ST
         }
 
 		mGuiSheet = 0;
+		int halfScreenWidth = graphicsEngine->getScreenWidth() * 0.5;
+		mErrorWindow = AG_WindowNewNamed(0, "Error");
+		AG_WindowSetCaption(mErrorWindow, "Error");
+		AG_WindowSetGeometry(mErrorWindow, halfScreenWidth - 150, 50, 300, 75);
+		mErrorCaption = AG_LabelNewString(mErrorWindow, 0, "");
+		AG_LabelSizeHint(mErrorCaption, 1, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+		AG_LabelJustify(mErrorCaption, AG_TEXT_CENTER);
 	}
 
 	InterfaceManager::~InterfaceManager()
 	{
+		AG_ViewDetach(mErrorWindow);
 		removeAllWindows();
 		AG_Destroy();
 	}
@@ -88,7 +96,6 @@ namespace ST
 
 	void InterfaceManager::unloadGuiSheet()
 	{
-
 	}
 
 	void InterfaceManager::addWindow(AG_Window *window)
@@ -169,5 +176,15 @@ namespace ST
                 AG_WindowDraw(*itr);
             }
 		}
+	}
+
+	void InterfaceManager::setErrorMessage(const std::string &msg)
+	{
+		AG_LabelString(mErrorCaption, msg.c_str());
+	}
+
+	void InterfaceManager::showErrorWindow(bool show)
+	{
+		show ? AG_WindowShow(mErrorWindow) : AG_WindowHide(mErrorWindow);
 	}
 }

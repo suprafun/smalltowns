@@ -103,10 +103,22 @@ namespace ST
 		 */
 		void drawWindows();
 
+		/**
+		 * Set Error Message
+		 */
+		void setErrorMessage(const std::string &msg);
+
+		/**
+		 * Show Error Window
+		 */
+		void showErrorWindow(bool show);
+
 	private:
 		std::list<AG_Window*> mWindows;
 		typedef std::list<AG_Window*>::iterator WindowItr;
 		XMLFile *mGuiSheet;
+		AG_Window *mErrorWindow;
+		AG_Label *mErrorCaption;
 	};
 
 	extern InterfaceManager *interfaceManager;

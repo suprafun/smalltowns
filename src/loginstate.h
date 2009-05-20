@@ -51,6 +51,7 @@
 
 namespace ST
 {
+	class XMLFile;
 	class LoginState : public GameState
 	{
 	public:
@@ -74,6 +75,17 @@ namespace ST
 		 * Return false to exit the game
 		 */
 		bool update();
+
+	private:
+		void createLoginWidgets();
+		void createRegisterWidgets();
+
+	private:
+		XMLFile *file;
+		int mHalfScreenWidth;
+		int mHalfScreenHeight;
+		AG_Window *mLoginWindow;
+		AG_Window *mRegisterWindow;
 	};
 }
 

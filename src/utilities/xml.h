@@ -53,10 +53,14 @@ namespace ST
     {
     public:
         XMLFile();
+		~XMLFile();
 
         bool load(const std::string &file);
         std::string readString(const std::string &element, const std::string &attribute);
         int readInt(const std::string &element, const std::string &attribute);
+		void changeString(const std::string &element, const std::string &attribute,
+						  const std::string &value);
+		void changeInt(const std::string &element, const std::string &attribute, int value);
 
     private:
         TiXmlDocument *mDoc;

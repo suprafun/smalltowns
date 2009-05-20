@@ -58,28 +58,15 @@
 
 namespace ST
 {
-    int insert_avatar(AG_Socket *sock, AG_Icon *icon)
-    {
-        if (sock->count < 1)
-            AG_SocketInsertIcon(sock, icon);
-        return 1;
-    }
-
     void select_character(AG_Event *event)
     {
-        AG_Socket *sock = static_cast<AG_Socket*>(AG_PTR(1));
-        if (sock)
+        AG_Radio *selected = static_cast<AG_Radio*>(AG_PTR(1));
+        if (selected)
         {
             Packet *packet = new Packet(PAMSG_CHAR_CHOOSE);
             int slot = -1;
 
-#if AGAR_PATCHLEVEL > 3
-            char name[255];
-            AG_GetString(sock->icon, "character", name, 255);
-            slot = utils::toInt(name);
-#else
-			slot = utils::toInt(AG_GetString(sock->icon, "character"));
-#endif
+			slot = selected->value;
             packet->setInteger(slot);
 
             networkManager->sendPacket(packet);
@@ -107,18 +94,12 @@ namespace ST
 
     void submit_new(AG_Event *event)
     {
-        AG_Socket *sock = static_cast<AG_Socket*>(AG_PTR(2));
-        AG_Icon *icon = sock->icon;
-#if AGAR_PATCHLEVEL > 3
-        char tmpAvatar[255];
-        AG_GetString(icon, "avatar", tmpAvatar, 255);
-#else
-		std::string tmpAvatar = AG_GetString(icon, "avatar");
-#endif
-        int avatar = utils::toInt(tmpAvatar);
+        AG_Radio *created = static_cast<AG_Radio*>(AG_PTR(2));
+
         std::string name = AG_TextboxDupString(static_cast<AG_Textbox*>(AG_PTR(1)));
-        if (!name.empty())
+        if (!name.empty() && created)
         {
+			int avatar = created->value;
             Packet *packet = new Packet(PAMSG_CHAR_CREATE);
             packet->setString(name);
             packet->setInteger(avatar);
@@ -146,8 +127,8 @@ namespace ST
         // of existing characters from the game server
         int screenWidth = graphicsEngine->getScreenWidth();
 		int screenHeight = graphicsEngine->getScreenHeight();
-		float halfScreenWidth = screenWidth / 2.0f;
-		float halfScreenHeight = screenHeight / 2.0f;
+		int halfScreenWidth = screenWidth / 2;
+		int halfScreenHeight = screenHeight / 2;
 
 		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN|AG_WINDOW_KEEPBELOW);
 		AG_WindowShow(win);
@@ -178,81 +159,62 @@ namespace ST
             SDL_FreeSurface(surfaces[i]);
         }
 
-        AG_Fixed *fx = AG_FixedNew(charSelect, AG_FIXED_EXPAND);
+		AG_Radio *selection = AG_RadioNew(charSelect, 0, NULL);
 
-        // create number of characters based on number of characters a player has
+		// create number of characters based on number of characters a player has
         for (int i = 0; i < player->getNumChars(); ++i)
         {
             Character *c = player->getCharacter(i);
             if (c)
             {
-                AG_Icon *icon = NULL;
-                AG_Socket *avatars = AG_SocketNew(fx, 0);
-                AG_FixedMove(fx, avatars, 6 + i * 32, 6);
-                AG_SocketInsertFn(avatars, insert_avatar);
+				AG_Icon *icon = NULL;
 
-                for (int j = 0; j < avatarCount; ++j)
+				for (int j = 0; j < avatarCount; ++j)
                 {
                     // find the correct avatar for this character
                     if (heads.size() > j && c->getHead() == j)
                     {
-                        icon = AG_IconFromSurface(heads[j]);
+                        icon = AG_IconNew(charSelect, 0);
+						AG_IconSetSurface(icon, heads[j]);
                         break;
                     }
                 }
                 if (icon)
                 {
                     AG_SetString(icon, "character", utils::toString(i).c_str());
-                    AG_SocketInsertIcon(avatars, icon);
-                    AG_Label *charInfo = AG_LabelNew(fx, 0, "%s\n%d", c->getName().c_str(), c->getLevel());
-                    AG_FixedMove(fx, charInfo, 12 + i * 32, 45);
+                    AG_Label *charInfo = AG_LabelNew(icon, 0, "%d", c->getLevel());
+					AG_RadioAddItem(selection, "%s", c->getName().c_str());
                 }
-
-            }
-        }
-
-        AG_Socket *selected = AG_SocketNew(fx, 0);
-        AG_SocketInsertFn(selected, insert_avatar);
-        AG_FixedMove(fx, selected, 6, 75);
+			}
+		}
 
 		AG_Window *charNew = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "CharNew");
 		AG_WindowSetCaption(charNew, "Create new Character");
 		AG_WindowSetSpacing(charNew, 12);
 		AG_WindowSetGeometry(charNew, halfScreenWidth - 140, halfScreenHeight + 10, 280, 175);
 
-        // create avatars to choose from
-        AG_Fixed *fxNew = AG_FixedNew(charNew, AG_FIXED_EXPAND);
-        std::vector<AG_Icon*> avatarIcons;
-        std::vector<AG_Socket*> avatarSockets;
+		std::vector<AG_Icon*> avatarIcons;
+		AG_Radio *creation = AG_RadioNew(charNew, 0, NULL);
 
-        // skip head0, its just for characters without avatars
+		// skip head0, its just for characters without avatars
         for (int i = 0; i < avatarCount - 1; ++i)
         {
-            AG_Socket *avSock = AG_SocketNew(fxNew, 0);
-            AG_FixedMove(fxNew, avSock, 6 + i * 32, 6);
-            AG_SocketInsertFn(avSock, insert_avatar);
-            avatarSockets.push_back(avSock);
-            avatarIcons.push_back(AG_IconFromSurface(heads[i+1]));
-            AG_SetString(avSock, "avatar", utils::toString(i).c_str());
-            AG_SocketInsertIcon(avSock, avatarIcons[i]);
+			AG_Icon *icon = AG_IconNew(charNew, 0);
+			AG_IconSetSurface(icon, heads[i+1]);
+            avatarIcons.push_back(icon);
         }
 
-        AG_Socket *avatar = AG_SocketNew(fxNew, 0);
-        AG_FixedMove(fxNew, avatar, 6, 45);
-        AG_SocketInsertFn(avatar, insert_avatar);
-
-		AG_Textbox *charNick = AG_TextboxNew(fxNew, 0, "Nickname: ");
+		AG_Textbox *charNick = AG_TextboxNew(charNew, 0, "Nickname: ");
 		AG_TextboxSizeHint(charNick, "XXXXXXXXXXXXXXXX");
-		AG_FixedMove(fxNew, charNick, 6, 85);
 
 		AG_HBox *hbox = AG_HBoxNew(charNew, 0);
-		AG_Button *new_button = AG_ButtonNewFn(hbox, 0, "Submit", submit_new, "%p%p", charNick, avatar);
+		AG_Button *new_button = AG_ButtonNewFn(hbox, 0, "Submit", submit_new, "%p%p", charNick, creation);
 		AG_ButtonJustify(new_button, AG_TEXT_CENTER);
 		AG_Button *back_button = AG_ButtonNewFn(hbox, 0, "Back", switch_char_window, "%p%p", charNew, charSelect);
 		AG_ButtonJustify(back_button, AG_TEXT_CENTER);
 
 		AG_HBox *box = AG_HBoxNew(charSelect, 0);
-		AG_Button *button = AG_ButtonNewFn(box, 0, "Choose", select_character, "%p", selected);
+		AG_Button *button = AG_ButtonNewFn(box, 0, "Choose", select_character, "%p", selection);
 		AG_ButtonJustify(button, AG_TEXT_CENTER);
 		AG_Button *create_button = AG_ButtonNewFn(box, 0, "Create New",
                                                     switch_char_window, "%p%p", charSelect, charNew);

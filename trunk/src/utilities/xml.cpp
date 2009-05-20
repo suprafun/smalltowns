@@ -42,9 +42,17 @@
 
 namespace ST
 {
-	XMLFile::XMLFile()
+	XMLFile::XMLFile() : mDoc(NULL), mHandle(NULL)
 	{
 
+	}
+
+	XMLFile::~XMLFile()
+	{
+		delete mHandle;
+		mHandle = NULL;
+		delete mDoc;
+		mDoc = NULL;
 	}
 
 	bool XMLFile::load(const std::string &file)
@@ -86,5 +94,30 @@ namespace ST
             e->QueryIntAttribute(attribute.c_str(), &value);
         }
 	    return value;
+	}
+
+	void XMLFile::changeString(const std::string &element, const std::string &attribute,
+		const std::string &value)
+	{
+		TiXmlElement *e;
+
+	    e = mHandle->FirstChild(element.c_str()).ToElement();
+        if (e)
+        {
+			e->SetAttribute(attribute.c_str(), value.c_str());
+        }
+		mDoc->SaveFile();
+	}
+
+	void XMLFile::changeInt(const std::string &element, const std::string &attribute, int value)
+	{
+		TiXmlElement *e;
+
+	    e = mHandle->FirstChild(element.c_str()).ToElement();
+        if (e)
+        {
+			e->SetAttribute(attribute.c_str(), value);
+        }
+		mDoc->SaveFile();
 	}
 }

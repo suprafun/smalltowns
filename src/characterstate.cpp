@@ -58,6 +58,32 @@
 
 namespace ST
 {
+	void checked(AG_Event *event)
+	{
+		CharacterState *state = static_cast<CharacterState*>(AG_PTR(1));
+
+		AG_Checkbox *box = static_cast<AG_Checkbox*>(AG_SELF());
+		if (box->state == 1)
+		{
+			state->mSelected = box;
+			std::map<AG_Checkbox*, int>::iterator itr = state->mItems.begin(),
+				itr_end = state->mItems.end();
+			while(itr != itr_end)
+			{
+				if (itr->first != box && itr->first->state == 1)
+				{
+					itr->first->state = 0;
+					break;
+				}
+				++itr;
+			}
+		}
+		else
+		{
+			state->mSelected = 0;
+		}
+	}
+
     void select_character(AG_Event *event)
     {
         AG_Radio *selected = static_cast<AG_Radio*>(AG_PTR(1));
@@ -94,12 +120,19 @@ namespace ST
 
     void submit_new(AG_Event *event)
     {
-        AG_Radio *created = static_cast<AG_Radio*>(AG_PTR(2));
+        CharacterState *state = static_cast<CharacterState*>(AG_PTR(2));
 
         std::string name = AG_TextboxDupString(static_cast<AG_Textbox*>(AG_PTR(1)));
-        if (!name.empty() && created)
+        if (!name.empty() && state)
         {
-			int avatar = created->value;
+			int avatar = 0;
+			std::map<AG_Checkbox*, int>::iterator itr = state->mItems.find(state->mSelected);
+
+			if (itr != state->mItems.end())
+			{
+				avatar = itr->second;
+			}
+
             Packet *packet = new Packet(PAMSG_CHAR_CREATE);
             packet->setString(name);
             packet->setInteger(avatar);
@@ -117,7 +150,7 @@ namespace ST
 
     CharacterState::CharacterState()
     {
-
+		mSelected = 0;
     }
 
     void CharacterState::enter()
@@ -137,7 +170,7 @@ namespace ST
 		AG_Window *charSelect = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "CharSelect");
 		AG_WindowSetCaption(charSelect, "Select Character");
 		AG_WindowSetSpacing(charSelect, 5);
-		AG_WindowSetGeometry(charSelect, halfScreenWidth - 125, halfScreenHeight - 125, 225, 225);
+		AG_WindowSetGeometry(charSelect, halfScreenWidth - 100, halfScreenHeight - 80, 200, 160);
 
 		// load in the avatars to choose from
 		std::vector<SDL_Surface*> surfaces;
@@ -174,16 +207,14 @@ namespace ST
                     // find the correct avatar for this character
                     if (heads.size() > j && c->getHead() == j)
                     {
-                        icon = AG_IconNew(charSelect, 0);
+                        icon = AG_IconNew(NULL, 0);
 						AG_IconSetSurface(icon, heads[j]);
                         break;
                     }
                 }
                 if (icon)
                 {
-                    AG_SetString(icon, "character", utils::toString(i).c_str());
-                    AG_Label *charInfo = AG_LabelNew(icon, 0, "%d", c->getLevel());
-					AG_RadioAddItem(selection, "%s", c->getName().c_str());
+					AG_RadioAddItem(selection, "%s - Level %i", c->getName().c_str(), c->getLevel());
                 }
 			}
 		}
@@ -191,24 +222,28 @@ namespace ST
 		AG_Window *charNew = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "CharNew");
 		AG_WindowSetCaption(charNew, "Create new Character");
 		AG_WindowSetSpacing(charNew, 12);
-		AG_WindowSetGeometry(charNew, halfScreenWidth - 140, halfScreenHeight + 10, 280, 175);
+		AG_WindowSetGeometry(charNew, halfScreenWidth - 200, halfScreenHeight - 95, 400, 190);
 
 		std::vector<AG_Icon*> avatarIcons;
-		AG_Radio *creation = AG_RadioNew(charNew, 0, NULL);
+		AG_HBox *createBox = AG_HBoxNew(charNew, 0);
 
 		// skip head0, its just for characters without avatars
-        for (int i = 0; i < avatarCount - 1; ++i)
+        for (int i = 1; i < avatarCount; ++i)
         {
-			AG_Icon *icon = AG_IconNew(charNew, 0);
-			AG_IconSetSurface(icon, heads[i+1]);
+			AG_VBox *iconBox = AG_VBoxNew(createBox, 0);
+			AG_Icon *icon = AG_IconNew(iconBox, 0);
+			AG_IconSetSurface(icon, heads[i]);
             avatarIcons.push_back(icon);
+			AG_Checkbox *creation = AG_CheckboxNewFn(iconBox, AG_CHECKBOX_EXPAND, "select", 
+				checked, "%p", this);
+			mItems.insert(std::pair<AG_Checkbox*, int>(creation, i));
         }
 
 		AG_Textbox *charNick = AG_TextboxNew(charNew, 0, "Nickname: ");
 		AG_TextboxSizeHint(charNick, "XXXXXXXXXXXXXXXX");
 
 		AG_HBox *hbox = AG_HBoxNew(charNew, 0);
-		AG_Button *new_button = AG_ButtonNewFn(hbox, 0, "Submit", submit_new, "%p%p", charNick, creation);
+		AG_Button *new_button = AG_ButtonNewFn(hbox, 0, "Submit", submit_new, "%p%p", charNick, this);
 		AG_ButtonJustify(new_button, AG_TEXT_CENTER);
 		AG_Button *back_button = AG_ButtonNewFn(hbox, 0, "Back", switch_char_window, "%p%p", charNew, charSelect);
 		AG_ButtonJustify(back_button, AG_TEXT_CENTER);

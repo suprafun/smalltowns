@@ -206,7 +206,7 @@ namespace ST
 		// create the login window's widgets
 		AG_WindowSetCaption(mLoginWindow, "Login");
 		AG_WindowSetSpacing(mLoginWindow, 12);
-		AG_WindowSetGeometry(mLoginWindow, mHalfScreenWidth - 125, mHalfScreenHeight - 45, 225, 135);
+		AG_WindowSetGeometry(mLoginWindow, mHalfScreenWidth - 125, mHalfScreenHeight - 75, 225, 152);
 
 		AG_Textbox *username = AG_TextboxNew(mLoginWindow, 0, "Username: ");
 		if (!savedUser.empty())

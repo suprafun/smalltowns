@@ -46,6 +46,7 @@
 
 #include "gamestate.h"
 
+#include <map>
 #include <string>
 #include <agar/core.h>
 #include <agar/gui.h>
@@ -74,7 +75,10 @@ namespace ST
 		 * Return false to exit the game
 		 */
 		bool update();
-
+	
+	public:
+		AG_Checkbox *mSelected;
+		std::map<AG_Checkbox*, int> mItems;
 	};
 }
 

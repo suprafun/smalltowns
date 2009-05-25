@@ -65,7 +65,7 @@ namespace ST
 
 		mGuiSheet = 0;
 		int halfScreenWidth = graphicsEngine->getScreenWidth() * 0.5;
-		mErrorWindow = AG_WindowNewNamed(0, "Error");
+		mErrorWindow = AG_WindowNewNamed(AG_WINDOW_KEEPABOVE, "Error");
 		AG_WindowSetCaption(mErrorWindow, "Error");
 		AG_WindowSetGeometry(mErrorWindow, halfScreenWidth - 150, 50, 300, 75);
 		mErrorCaption = AG_LabelNewString(mErrorWindow, 0, "");
@@ -186,5 +186,40 @@ namespace ST
 	void InterfaceManager::showErrorWindow(bool show)
 	{
 		show ? AG_WindowShow(mErrorWindow) : AG_WindowHide(mErrorWindow);
+	}
+
+	void InterfaceManager::sendToChat(const std::string &msg)
+	{
+		int lines = 0;
+		const int lineSize = 50;
+
+		lines = msg.size() / lineSize;
+		if ((msg.size() % lineSize) > 0)
+			++lines;
+
+        AG_Window *window = getWindow("/ChatWindow");
+        if (window)
+        {
+            AG_Console *widget;
+            AGOBJECT_FOREACH_CHILD(widget, window, ag_console)
+            {
+                char widgetName[32];
+                AG_ObjectCopyName(widget, widgetName, 30);
+                if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
+                {
+					int pos = 0;
+					int npos = msg.size();
+					if (npos > lineSize)
+						npos = lineSize;
+					for (int line = 0; line < lines; ++line)
+					{
+						AG_ConsoleMsg(widget, "%s", msg.substr(pos, npos).c_str());
+						pos += npos;
+						if (pos + npos > msg.size())
+							npos = msg.size() - pos;
+					}
+                }
+            }
+        }
 	}
 }

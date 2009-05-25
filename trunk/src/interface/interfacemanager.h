@@ -113,6 +113,11 @@ namespace ST
 		 */
 		void showErrorWindow(bool show);
 
+		/**
+		 * Send to chat window
+		 */
+		void sendToChat(const std::string &msg);
+
 	private:
 		std::list<AG_Window*> mWindows;
 		typedef std::list<AG_Window*>::iterator WindowItr;

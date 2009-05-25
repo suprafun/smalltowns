@@ -15,7 +15,7 @@
 #ifndef ST_PROTOCOL_H
 #define ST_PROTOCOL_H
 
-const int CLIENT_VERSION = 0x0004;
+const int CLIENT_VERSION = 0x0005;
 
 enum
 {

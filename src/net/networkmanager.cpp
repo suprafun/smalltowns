@@ -301,6 +301,7 @@ namespace ST
 
 	void NetworkManager::sendVersion()
 	{
+		logger->logDebug("Sending client version");
 	    Packet *packet = new Packet(PAMSG_CONNECT);
         packet->setInteger(CLIENT_VERSION);
         sendPacket(packet);

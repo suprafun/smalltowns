@@ -70,9 +70,7 @@ namespace ST
     {
         mHostname = hostname;
         mClient->connectTo(mHostname, 6667);
-//        TextBox *box = static_cast<TextBox*>(interfaceManager->getWindow("chat"));
-//		if (box)
-//			box->addRow("Connecting...");
+		interfaceManager->sendToChat("Connecting to chat server..");
     }
 
     void IRCServer::process()
@@ -83,7 +81,7 @@ namespace ST
         if (!mRegistered && !mRegistering && mNick.size() > 1)
         {
 			std::string pass = "test";
-			std::string realname = "st 0 * :" "Towns Life 0.0.4";
+			std::string realname = "st 0 * :" "Towns Life 0.0.5";
             mClient->doRegistration(pass, mNick, realname);
             mRegistering = true;
             logger->logDebug("Registering with IRC server");
@@ -119,20 +117,7 @@ namespace ST
                 conCommand->setParams("#townslife");
                 mClient->sendCommand(conCommand);
 
-                AG_Window *window = interfaceManager->getWindow("/ChatWindow");
-                if (window)
-                {
-                    AG_Console *widget = 0;
-                    AGOBJECT_FOREACH_CHILD(widget, window, ag_console)
-                    {
-                        char widgetName[32];
-                        AG_ObjectCopyName(widget, widgetName, 30);
-                        if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
-                        {
-                            AG_ConsoleAppendLine(widget, "Connected!");
-                        }
-                    }
-                }
+                interfaceManager->sendToChat("Connected!");
 
                 logger->logDebug("Joining #townslife channel");
             } break;
@@ -148,20 +133,7 @@ namespace ST
                     ++i;
                 }
 
-                AG_Window *window = interfaceManager->getWindow("/ChatWindow");
-                if (window)
-                {
-                    AG_Console *widget;
-                    AGOBJECT_FOREACH_CHILD(widget, window, ag_console)
-                    {
-                        char widgetName[32];
-                        AG_ObjectCopyName(widget, widgetName, 30);
-                        if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
-                        {
-                            AG_ConsoleMsg(widget, "%s", msg.c_str());
-                        }
-                    }
-                }
+                interfaceManager->sendToChat(msg);
             } break;
 
             case IRC::Command::IRC_MSG:
@@ -176,20 +148,7 @@ namespace ST
                     ++i;
                 }
 
-                AG_Window *window = interfaceManager->getWindow("/ChatWindow");
-                if (window)
-                {
-                    AG_Console *widget;
-                    AGOBJECT_FOREACH_CHILD(widget, window, ag_console)
-                    {
-                        char widgetName[32];
-                        AG_ObjectCopyName(widget, widgetName, 30);
-                        if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
-                        {
-                            AG_ConsoleMsg(widget, "%s", msg.c_str());
-                        }
-                    }
-                }
+				interfaceManager->sendToChat(msg);
             } break;
 
             case IRC::Command::IRC_EMOTE:
@@ -205,20 +164,7 @@ namespace ST
                     ++i;
                 }
 
-                AG_Window *window = interfaceManager->getWindow("/ChatWindow");
-                if (window)
-                {
-                    AG_Console *widget;
-                    AGOBJECT_FOREACH_CHILD(widget, window, ag_console)
-                    {
-                        char widgetName[32];
-                        AG_ObjectCopyName(widget, widgetName, 30);
-                        if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
-                        {
-                            AG_ConsoleMsg(widget, "%s", msg.c_str());
-                        }
-                    }
-                }
+                interfaceManager->sendToChat(msg);
             } break;
 
             case IRC::Command::IRC_NOTICE:
@@ -237,22 +183,9 @@ namespace ST
 //						list->addLabel(name);
                 }
 
-                AG_Window *window = interfaceManager->getWindow("/ChatWindow");
-                if (window)
-                {
-                    AG_Console *widget;
-                    AGOBJECT_FOREACH_CHILD(widget, window, ag_console)
-                    {
-                        char widgetName[32];
-                        AG_ObjectCopyName(widget, widgetName, 30);
-                        if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
-                        {
-                            std::stringstream str;
-                            str << "There are " << command->numParams() << " users online.";
-                            AG_ConsoleMsg(widget, "%s", str.str().c_str());
-                        }
-                    }
-                }
+                std::stringstream str;
+                str << "There are " << command->numParams() << " users online.";
+				interfaceManager->sendToChat(str.str());
             } break;
 
             case IRC::Command::IRC_JOIN:
@@ -262,23 +195,7 @@ namespace ST
 					return;
                 std::string msg = name + " connected";
 
-                AG_Window *window = interfaceManager->getWindow("/ChatWindow");
-                if (window)
-                {
-                    AG_Console *widget;
-                    AGOBJECT_FOREACH_CHILD(widget, window, ag_console)
-                    {
-                        char widgetName[32];
-                        AG_ObjectCopyName(widget, widgetName, 30);
-                        if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
-                        {
-                            AG_ConsoleMsg(widget, "%s", msg.c_str());
-                        }
-                    }
-                }
-//                List *list = static_cast<List*>(interfaceManager->getWindow("userlist"));
-//				if (list)
-//					list->addLabel(name);;
+                interfaceManager->sendToChat(msg);
             } break;
 
             case IRC::Command::IRC_PART:
@@ -287,23 +204,7 @@ namespace ST
                 std::string name = command->getUserInfo();
                 std::string msg = name + " left the chat";
 
-                AG_Window *window = interfaceManager->getWindow("/ChatWindow");
-                if (window)
-                {
-                    AG_Console *widget;
-                    AGOBJECT_FOREACH_CHILD(widget, window, ag_console)
-                    {
-                        char widgetName[32];
-                        AG_ObjectCopyName(widget, widgetName, 30);
-                        if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
-                        {
-                            AG_ConsoleMsg(widget, "%s\n", msg.c_str());
-                        }
-                    }
-                }
-//                List *list = static_cast<List*>(interfaceManager->getWindow("userlist"));
-//				if (list)
-//					list->removeLabel(name);
+				interfaceManager->sendToChat(msg);
             } break;
 
 			case IRC::Command::ERR_BADNICK:

@@ -121,7 +121,7 @@ namespace ST
 
     void Host::sendPacket(Packet *packet)
     {
-        if (packet)
+        if (packet && mServer)
         {
             ENetPacket *p = enet_packet_create(packet->getData(), packet->getSize(),
                                         ENET_PACKET_FLAG_RELIABLE);

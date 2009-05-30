@@ -10,7 +10,7 @@ Below is the list of dependencies required to build the client. These should eas
   * [http://www.libsdl.org SDL]
   * [http://www.libsdl.org/projects/sdl_image SDL_image]
   * [http://enet.bespin.org enet]
-  * [http://ftgl.wiki.sourceforge.net FTGL]
   * [http://www.grinninglizard.com/tinyxml tinyxml]
   * [http://libagar.org agar]
   * [http://www.freetype.org FreeType 2]
+  * [http://www.zlib.net zlib]

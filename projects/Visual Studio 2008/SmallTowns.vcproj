@@ -181,10 +181,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\utilities\base64.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\being.cpp"
 				>
 			</File>
@@ -205,10 +201,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\utilities\gzip.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\input.cpp"
 				>
 			</File>
@@ -218,10 +210,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\irc\ircserver.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\utilities\log.cpp"
 				>
 			</File>
 			<File
@@ -245,11 +233,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\updatestate.cpp"
+				RelativePath="..\..\src\tile.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\utilities\xml.cpp"
+				RelativePath="..\..\src\updatestate.cpp"
 				>
 			</File>
 			<Filter
@@ -272,11 +260,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\graphics\texture.cpp"
+					RelativePath="..\..\src\graphics\opengl.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\tile.cpp"
+					RelativePath="..\..\src\graphics\sdl2d.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\graphics\texture.cpp"
 					>
 				</File>
 			</Filter>
@@ -308,16 +300,32 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="utilities"
+				>
+				<File
+					RelativePath="..\..\src\utilities\base64.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\utilities\gzip.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\utilities\log.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\utilities\xml.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath="..\..\src\utilities\base64.h"
-				>
-			</File>
 			<File
 				RelativePath="..\..\src\being.h"
 				>
@@ -343,10 +351,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\utilities\gzip.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\input.h"
 				>
 			</File>
@@ -359,19 +363,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\utilities\log.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\loginstate.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\map.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\utilities\math.h"
 				>
 			</File>
 			<File
@@ -391,15 +387,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\utilities\types.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\updatestate.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\utilities\xml.h"
 				>
 			</File>
 			<Filter
@@ -423,6 +411,14 @@
 				</File>
 				<File
 					RelativePath="..\..\src\graphics\node.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\graphics\opengl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\graphics\sdl2d.h"
 					>
 				</File>
 				<File
@@ -459,6 +455,34 @@
 				</File>
 				<File
 					RelativePath="..\..\src\net\protocol.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="utilities"
+				>
+				<File
+					RelativePath="..\..\src\utilities\base64.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\utilities\gzip.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\utilities\log.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\utilities\math.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\utilities\types.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\utilities\xml.h"
 					>
 				</File>
 			</Filter>

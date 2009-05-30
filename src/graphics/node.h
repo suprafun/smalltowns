@@ -117,7 +117,7 @@ namespace ST
 		 * Get GL Texture
 		 * @return Returns the GL Texture for drawing
 		 */
-		virtual GLuint getGLTexture();
+		virtual Texture* getTexture();
 
 	protected:
 		std::string mName;

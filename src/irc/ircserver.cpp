@@ -126,6 +126,7 @@ namespace ST
             {
                 int i = 0;
                 std::string msg = command->getUserInfo() + ": ";
+
                 while (command->getParam(i) != "" && i < 255)
                 {
                     msg.append(command->getParam(i));

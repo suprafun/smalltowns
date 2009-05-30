@@ -75,7 +75,12 @@ namespace ST
 		 * Destructor
 		 * Cleans up class
 		 */
-		~GraphicsEngine();
+		virtual ~GraphicsEngine();
+
+		/**
+		 * Initialise the engine
+		 */
+		virtual bool init() = 0;
 
 		/**
 		 * Create Node
@@ -118,17 +123,12 @@ namespace ST
 		/**
 		 * Draw Untextured Rectangle
 		 */
-		void drawRect(Rectangle &rect, bool filled);
+		virtual void drawRect(Rectangle &rect, bool filled) = 0;
 
 		/**
 		 * Draw Textured Rectangle
 		 */
-		void drawTexturedRect(Rectangle &rect, unsigned int texture);
-
-		/**
-		 * Draw Filled Rectangle
-		 */
-		void drawFilledRect(Rectangle &rect);
+		virtual void drawTexturedRect(Rectangle &rect, Texture *texture) = 0;
 
 		/**
 		 * Returns the current SDL surface
@@ -177,12 +177,17 @@ namespace ST
          */
         int getScreenHeight() const;
 
-	private:
-		// graphics stuff
+	protected:
 		SDL_Surface *mScreen;
-		Camera *mCamera;
 		int mWidth;
 		int mHeight;
+		int mOpenGL;
+
+		virtual void setupScene() = 0;
+		virtual void endScene() = 0;
+
+	private:
+		Camera *mCamera;
 
 		// list of nodes
 		std::list<Node*> mNodes;

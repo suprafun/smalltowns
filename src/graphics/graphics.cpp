@@ -49,7 +49,6 @@
 #include "../utilities/types.h"
 
 #include <SDL.h>
-#include <SDL_opengl.h>
 #include <SDL_image.h>
 #include <sstream>
 
@@ -68,34 +67,11 @@ namespace ST
 		SDL_EnableUNICODE(true);
 		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
-		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
 		// Set the window title
 		SDL_WM_SetCaption("Towns Life", NULL);
 
-		// get bpp of desktop
-		const SDL_VideoInfo* video = SDL_GetVideoInfo();
-		int bpp = video->vfmt->BitsPerPixel;
-
 		mWidth = 1024;
 		mHeight = 768;
-
-		// Initialise SDL to use OpenGL
-		mScreen = SDL_SetVideoMode(mWidth, mHeight, bpp, SDL_OPENGL);
-
-		glViewport(0, 0, mWidth, mHeight);
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(0.0f, mWidth, mHeight, 0.0f, -1.0f, 1.0f);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		glClearColor(1.0f, 1.0f , 1.0f, 0.5f);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDepthFunc(GL_LEQUAL);
 
 		mCamera = NULL;
 	}
@@ -137,12 +113,13 @@ namespace ST
 		AG_LockVFS(agView);
 	    AG_BeginRendering();
 
-        glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+        setupScene();
 
 		// Display the nodes on screen (if theres a camera to view them)
 		if (mCamera)
 			outputNodes();
+
+		endScene();
 
         interfaceManager->drawWindows();
 
@@ -188,115 +165,8 @@ namespace ST
 			rect.width = (*itr)->getWidth();
 			rect.height = (*itr)->getHeight();
 
-			drawTexturedRect(rect, (*itr)->getGLTexture());
+			drawTexturedRect(rect, (*itr)->getTexture());
 		}
-	}
-
-	void GraphicsEngine::drawRect(Rectangle &rect, bool filled)
-	{
-		// reset identity matrix
-		glLoadIdentity();
-
-		glPushAttrib(GL_POLYGON_BIT|GL_LIGHTING_BIT|GL_DEPTH_BUFFER_BIT);
-		glPushMatrix();
-
-		// set position and size from rectangle
-		float x = (float)rect.x;
-		float y = (float)rect.y;
-		float width = (float)rect.width;
-		float height = (float)rect.height;
-
-		// move to the correct position
-		glTranslatef(x, y, 0.0f);
-
-		// disable depth testing
-		glDisable(GL_DEPTH_TEST);
-
-		glColor3f(0.0f, 0.0f, 0.0f);
-
-		if (filled)
-			glPolygonMode(GL_FRONT, GL_FILL);
-		else
-			glPolygonMode(GL_FRONT, GL_LINE);
-
-        // draw the box
-		glBegin(GL_QUADS);
-
-		glTexCoord2i(0, 0);
-		glVertex3f(0.0f, -height, 0.0f);
-		glTexCoord2i(1, 0);
-		glVertex3f(width, -height, 0.0f);
-		glTexCoord2i(1, 1);
-		glVertex3f(width, 0.0f, 0.0f);
-		glTexCoord2i(0, 1);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-
-		glEnd();
-
-		glPopMatrix();
-		glPopAttrib();
-	}
-
-	void GraphicsEngine::drawTexturedRect(Rectangle &rect, unsigned int texture)
-	{
-		// reset identity matrix
-		glLoadIdentity();
-
-		glPushAttrib(GL_POLYGON_BIT|GL_LIGHTING_BIT|GL_ENABLE_BIT|GL_DEPTH_BUFFER_BIT|GL_TEXTURE_BIT);
-		glPushMatrix();
-
-		// set position and size to local variables
-		float x = (float)rect.x;
-		float y = (float)rect.y;
-		float width = (float)rect.width;
-		float height = (float)rect.height;
-
-		float data[12];
-		data[0] = 0.0f; data[1] = -height; data[2] = 0.0f;
-		data[3] = width; data[4] = -height; data[5] = 0.0f;
-		data[6] = width; data[7] = 0.0f; data[8] = 0.0f;
-		data[9] = 0.0f; data[10] = 0.0f; data[11] = 0.0f;
-
-		int coords[8];
-		coords[0] = 0; coords[1] = 0;
-		coords[2] = 1; coords[3] = 0;
-		coords[4] = 1; coords[5] = 1;
-		coords[6] = 0; coords[7] = 1;
-
-		unsigned int indices[4];
-		indices[0] = 0; indices[1] = 1; indices[2] = 2; indices[3] = 3;
-
-		// move to the correct position
-		glTranslatef(x, y, 0.0f);
-
-		// enable transparancy
-		glEnable(GL_BLEND);
-
-		// disable depth testing
-		glDisable(GL_DEPTH_TEST);
-
-		// enable texture mapping
-		glBindTexture(GL_TEXTURE_2D, (GLuint)texture);
-		glEnable(GL_TEXTURE_2D);
-		glPolygonMode(GL_FRONT, GL_FILL);
-		glColor3f(1.0f, 1.0f, 1.0f);
-
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, data);
-		glTexCoordPointer(2, GL_INT, 0, coords);
-
-		glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, indices);
-
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
-
-		glPopMatrix();
-		glPopAttrib();
 	}
 
 	Texture* GraphicsEngine::loadTexture(const std::string &name)
@@ -432,12 +302,18 @@ namespace ST
 
 		// Create texture from frame
 		Texture *texture = new Texture(name, width, height);
-		texture->setPixels(tex);
+		if (mOpenGL)
+		{
+			texture->setPixels(tex);
+			SDL_FreeSurface(tex);
+		}
+		else
+		{
+			texture->setImage(tex);
+		}
 
 		mTextures.insert(std::pair<std::string, Texture*>(texture->getName(),
 			texture));
-
-		SDL_FreeSurface(tex);
 
 		return texture;
 	}

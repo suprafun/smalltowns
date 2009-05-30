@@ -72,6 +72,12 @@ namespace ST
 		void setPixels(SDL_Surface *surface);
 
 		/**
+		 * Set Image
+		 * Stores the SDL Surface
+		 */
+		void setImage(SDL_Surface *surface);
+
+		/**
 		 * Increase instance count
 		 */
 		void increaseCount() { ++mInstances; }
@@ -95,10 +101,16 @@ namespace ST
 		int getWidth() const;
 
 		/**
-		* Get GL Texture
-		* @return Returns the GL Texture
-		*/
+		 * Get GL Texture
+		 * @return Returns the GL Texture
+		 */
 		GLuint getGLTexture();
+
+		/**
+		 * Get SDL Surface
+		 * @return Returns the SDL Surface
+		 */
+		SDL_Surface* getSDLSurface();
 
 		/**
 		 * Remove
@@ -113,6 +125,7 @@ namespace ST
 		int mWidth;
 		int mHeight;
 		GLuint mGLTexture;
+		SDL_Surface *mSurface;
 	};
 }
 

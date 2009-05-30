@@ -117,8 +117,8 @@ namespace ST
 
 	}
 
-	GLuint Node::getGLTexture()
+	Texture* Node::getTexture()
 	{
-		return mTexture->getGLTexture();
+		return mTexture;
 	}
 }

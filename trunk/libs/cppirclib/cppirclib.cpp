@@ -69,7 +69,6 @@ Socket::Socket()
     //WSAData wsaData; // then try this instead
 
     if (WSAStartup(MAKEWORD(1, 1), &wsaData) != 0) {
-        fprintf(stderr, "WSAStartup failed.\n");
         exit(1);
     }
 #endif
@@ -135,6 +134,9 @@ void Command::setParams(const std::string &params)
     // previous position
     int prev = 0;
 	mParams.clear();
+
+	position = params.find_first_not_of(' ', prev);
+	prev = position;
 
     // keep looping until out of params
     while(1)

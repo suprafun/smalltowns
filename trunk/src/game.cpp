@@ -44,6 +44,8 @@
 #include "map.h"
 #include "player.h"
 #include "graphics/graphics.h"
+#include "graphics/opengl.h"
+#include "graphics/sdl2d.h"
 #include "interface/interfacemanager.h"
 #include "net/networkmanager.h"
 #include "utilities/log.h"
@@ -74,7 +76,8 @@ namespace ST
 	void Game::run()
 	{
 		logger = new Log;
-		graphicsEngine = new GraphicsEngine;
+		graphicsEngine = new OpenGLGraphics;
+		graphicsEngine->init();
 		inputManager = new InputManager;
 		mapEngine = new Map;
 		interfaceManager = new InterfaceManager;

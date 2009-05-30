@@ -65,7 +65,7 @@ namespace ST
 
 		mGuiSheet = 0;
 		int halfScreenWidth = graphicsEngine->getScreenWidth() * 0.5;
-		mErrorWindow = AG_WindowNewNamed(AG_WINDOW_KEEPABOVE, "Error");
+		mErrorWindow = AG_WindowNewNamed(0, "Error");
 		AG_WindowSetCaption(mErrorWindow, "Error");
 		AG_WindowSetGeometry(mErrorWindow, halfScreenWidth - 150, 50, 300, 75);
 		mErrorCaption = AG_LabelNewString(mErrorWindow, 0, "");
@@ -176,6 +176,8 @@ namespace ST
                 AG_WindowDraw(*itr);
             }
 		}
+
+		AG_WindowDraw(mErrorWindow);
 	}
 
 	void InterfaceManager::setErrorMessage(const std::string &msg)
@@ -185,7 +187,15 @@ namespace ST
 
 	void InterfaceManager::showErrorWindow(bool show)
 	{
-		show ? AG_WindowShow(mErrorWindow) : AG_WindowHide(mErrorWindow);
+		if (show)
+		{
+			AG_WindowShow(mErrorWindow);
+			AG_WindowFocus(mErrorWindow);
+		}
+		else
+		{
+			AG_WindowHide(mErrorWindow);
+		}
 	}
 
 	void InterfaceManager::sendToChat(const std::string &msg)

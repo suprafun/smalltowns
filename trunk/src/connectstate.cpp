@@ -173,10 +173,6 @@ namespace ST
         // check if its timedout
 		if (timeout && (SDL_GetTicks() - timeout > 5000))
 		{
-		    // set error label, and stop connecting
-		    interfaceManager->setErrorMessage("Error: Connection timed out");
-		    interfaceManager->showErrorWindow(true);
-
 		    connecting = false;
 		    networkManager->disconnect();
 
@@ -184,6 +180,10 @@ namespace ST
 		    timeout = 0;
 		    logger->logWarning("Connecting timed out");
 		    interfaceManager->showWindow("/Connection", true);
+
+			// set error label, and stop connecting
+		    interfaceManager->setErrorMessage("Error: Connection timed out");
+		    interfaceManager->showErrorWindow(true);
 		}
 
 		SDL_Delay(0);

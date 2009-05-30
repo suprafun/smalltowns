@@ -43,7 +43,7 @@
 
 namespace ST
 {
-	Texture::Texture(std::string name) : mName(name), mInstances(1)
+	Texture::Texture(std::string name) : mName(name), mInstances(1), mGLTexture(0), mSurface(0)
 	{
 		mWidth = 0;
 		mHeight = 0;
@@ -53,13 +53,18 @@ namespace ST
 		: mName(name),
 		mInstances(1),
 		mWidth(width),
-		mHeight(height)
+		mHeight(height),
+		mGLTexture(0),
+		mSurface(0)
 	{
 	}
 
 	Texture::~Texture()
 	{
-		glDeleteTextures(1, &mGLTexture);
+		if (mSurface)
+			SDL_FreeSurface(mSurface);
+		if (mGLTexture)
+			glDeleteTextures(1, &mGLTexture);
 	}
 
 	void Texture::setPixels(SDL_Surface *surface)
@@ -96,8 +101,11 @@ namespace ST
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	}
 
-
+	void Texture::setImage(SDL_Surface *surface)
+	{
+		mSurface = surface;
 	}
 
 	std::string Texture::getName() const
@@ -118,6 +126,11 @@ namespace ST
 	GLuint Texture::getGLTexture()
 	{
 		return mGLTexture;
+	}
+
+	SDL_Surface* Texture::getSDLSurface()
+	{
+		return mSurface;
 	}
 
 	void Texture::remove()

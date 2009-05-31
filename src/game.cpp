@@ -76,24 +76,28 @@ namespace ST
 	void Game::run()
 	{
 		logger = new Log;
-		graphicsEngine = new OpenGLGraphics;
+
+		// load in configuration file
+		XMLFile file;
+		std::string hostname;
+		int port = 0;
+		int opengl = 0;
+
+		if (file.load("townslife.cfg"))
+        {
+            hostname = file.readString("server", "host");
+            port = file.readInt("server", "port");
+			opengl = file.readInt("graphics", "opengl");
+        }
+
+		// check whether opengl should be used
+		opengl ? graphicsEngine = new OpenGLGraphics : graphicsEngine = new SDLGraphics;
 		graphicsEngine->init();
 		inputManager = new InputManager;
 		mapEngine = new Map;
 		interfaceManager = new InterfaceManager;
 		networkManager = new NetworkManager;
 		player = new Player;
-
-		// load in configuration file
-		XMLFile file;
-		std::string hostname;
-		int port = 0;
-
-		if (file.load("townslife.cfg"))
-        {
-            hostname = file.readString("server", "host");
-            port = file.readInt("server", "port");
-        }
 
 		if (hostname.empty() || port == 0)
 		{

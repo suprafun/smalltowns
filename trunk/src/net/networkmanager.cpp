@@ -195,8 +195,8 @@ namespace ST
             {
                 if (packet->getByte() == ERR_NONE)
                 {
-                    GameState *state = new TestState;
-                    game->changeState(state);
+					int id = packet->getInteger();
+					player->setId(id);
                 }
                 else
                 {

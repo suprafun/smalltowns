@@ -119,9 +119,9 @@ namespace ST
 		if (mCamera)
 			outputNodes();
 
-		endScene();
-
         interfaceManager->drawWindows();
+
+		endScene();
 
         AG_EndRendering();
 		AG_UnlockVFS(agView);

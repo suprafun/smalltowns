@@ -72,19 +72,35 @@ namespace ST
                 std::string chat = AG_TextboxDupString(input);
                 if (!chat.empty())
                 {
-                    // send message to IRC
-                    IRCMessage *msg = new IRCMessage;
-                    msg->setType(IRCMessage::CHAT);
-                    msg->addString(chat);
-                    chatServer->sendMessage(msg);
+					if (chat.substr(0, 1) != "/")
+					{
+						// send message to IRC
+						IRCMessage *msg = new IRCMessage;
+						msg->setType(IRCMessage::CHAT);
+						msg->addString(chat);
+						chatServer->sendMessage(msg);
 
-                    // add message to chat window
-                    chat.insert(0, player->getName() + ": ");
-                    AG_ConsoleAppendLine(output, chat.c_str());
+						// add message to chat window
+						chat.insert(0, player->getName() + ": ");
+						AG_ConsoleAppendLine(output, chat.c_str());
+					}
+					else if (chat.substr(1, 3) == "me ")
+					{
+						IRCMessage *msg = new IRCMessage;
+						msg->setType(IRCMessage::EMOTE);
+						msg->addString(chat.substr(4));
+						chatServer->sendMessage(msg);
 
-                    // clear input textbox
-                    AG_TextboxClearString(input);
+						// add message to chat window
+						chat = chat.substr(4);
+						chat.insert(0, "* " + player->getName() + " ");
+						AG_ConsoleAppendLine(output, chat.c_str());
+
+						
+					}
                 }
+				// clear input textbox
+				AG_TextboxClearString(input);
             }
         }
     }

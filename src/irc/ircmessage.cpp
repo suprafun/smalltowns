@@ -69,6 +69,17 @@ namespace ST
                 }
             } break;
 
+			case EMOTE:
+            {
+                if (mChannel != "" && mMessage.size() == 0)
+                {
+                    mMessage = mChannel + " :\001ACTION ";
+					mMessage.append(text);
+					mMessage.append("\001");
+					return;
+                }
+            } break;
+
             case JOIN:
             {
                 if (mMessage.size() == 0)

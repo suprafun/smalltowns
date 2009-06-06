@@ -128,7 +128,7 @@ Command* IRCParser::parseCommand(std::string &prefix,
             c->setChanInfo(params.substr(0, space));
 
             // set the message, skip the space and the colon
-            c->setParams(params.substr(space+2));
+            c->setMessage(params.substr(space+2));
         } break;
 
         case Command::IRC_NOTICE:
@@ -137,7 +137,7 @@ Command* IRCParser::parseCommand(std::string &prefix,
             c->setCommand(Command::IRC_NOTICE);
 
             // set the params
-            c->setParams(params);
+            c->setMessage(params);
         } break;
 
         case Command::IRC_PING:
@@ -180,7 +180,7 @@ Command* IRCParser::parseCommand(std::string &prefix,
 			c->setUserInfo(prefix);
 
 			// set the params
-			c->setParams(params.substr(1));
+			c->setMessage(params.substr(1));
 		} break;
 
 		case Command::IRC_QUIT:
@@ -198,7 +198,7 @@ Command* IRCParser::parseCommand(std::string &prefix,
 			c->setUserInfo(prefix);
 
 			// set the params
-			c->setParams(params.substr(1));
+			c->setMessage(params.substr(1));
 		} break;
 
         case Command::IRC_NAMES:
@@ -270,18 +270,18 @@ Command* IRCParser::parseCommand(std::string &prefix,
                     // change command to an emote
                     c->setCommand(Command::IRC_EMOTE);
                     // skip the space, colon, 001 and ACTION keyword
-                    c->setParams(params.substr(space + 10, params.size() - 1 - space - 10));
+                    c->setMessage(params.substr(space + 10, params.size() - 1 - space - 10));
                 }
                 else
                 {
                     // skip the space and colon
-                    c->setParams(params.substr(space + 2));
+                    c->setMessage(params.substr(space + 2));
                 }
             }
             else
             {
                 // set the message, skip the space and the colon
-                c->setParams(params.substr(space + 2));
+                c->setMessage(params.substr(space + 2));
             }
         } break;
 

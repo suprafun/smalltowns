@@ -59,7 +59,8 @@ namespace ST
             CHAT    = 0,
             NOTICE  = 1,
             PRIVMSG = 2,
-            JOIN    = 3
+            JOIN    = 3,
+			EMOTE	= 4
         };
 
     private:

@@ -125,6 +125,7 @@ namespace IRC
          */
         EXPORT void setUserInfo(const std::string &info);
         EXPORT void setChanInfo(const std::string &info);
+		EXPORT void setMessage(const std::string &msg);
 
         /**
          * Get Command
@@ -142,12 +143,14 @@ namespace IRC
          */
         EXPORT std::string getUserInfo() const;
         EXPORT std::string getChanInfo() const;
+		EXPORT std::string getMessage() const;
 
     private:
         unsigned int mCommand;
         std::vector<std::string> mParams;
         std::string mUserInfo;
         std::string mChanInfo;
+		std::string mMessage;
     };
 
     class IRCConnection

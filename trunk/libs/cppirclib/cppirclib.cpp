@@ -165,6 +165,11 @@ void Command::setChanInfo(const std::string &info)
     mChanInfo = info;
 }
 
+void Command::setMessage(const std::string &msg)
+{
+	mMessage = msg;
+}
+
 unsigned int Command::getCommand() const
 {
     return mCommand;
@@ -192,6 +197,11 @@ std::string Command::getUserInfo() const
 std::string Command::getChanInfo() const
 {
     return mChanInfo;
+}
+
+std::string Command::getMessage() const
+{
+	return mMessage;
 }
 
 /****************
@@ -399,6 +409,10 @@ void IRCClient::sendCommand(Command *command)
         case Command::IRC_MSG:
             data << "PRIVMSG";
             break;
+
+		case Command::IRC_EMOTE:
+			data << "PRIVMSG";
+			break;
 
         case Command::IRC_QUIT:
             data << "QUIT";

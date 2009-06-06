@@ -126,13 +126,7 @@ namespace ST
             {
                 int i = 0;
                 std::string msg = command->getUserInfo() + ": ";
-
-                while (command->getParam(i) != "" && i < 255)
-                {
-                    msg.append(command->getParam(i));
-					msg.append(" ");
-                    ++i;
-                }
+				msg.append(command->getMessage());
 
                 interfaceManager->sendToChat(msg);
             } break;
@@ -141,15 +135,9 @@ namespace ST
             {
                 int i = 0;
 				std::string msg = command->getUserInfo() + ": ";
+				msg.append(command->getMessage());
 
-                while (command->getParam(i) != "" && i < 255)
-                {
-                    msg.append(command->getParam(i));
-                    msg.append(" ");
-                    ++i;
-                }
-
-				interfaceManager->sendToChat(msg);
+		 		interfaceManager->sendToChat(msg);
             } break;
 
             case IRC::Command::IRC_EMOTE:
@@ -157,20 +145,14 @@ namespace ST
                 int i = 0;
                 std::string msg = "* ";
                 msg.append(command->getUserInfo() + " ");
-
-                while (command->getParam(i) != "" && i < 255)
-                {
-                    msg.append(command->getParam(i));
-                    msg.append(" ");
-                    ++i;
-                }
+				msg.append(command->getMessage());
 
                 interfaceManager->sendToChat(msg);
             } break;
 
             case IRC::Command::IRC_NOTICE:
             {
-                std::string params = command->getParam(0);
+                std::string params = command->getMessage();
             } break;
 
             case IRC::Command::IRC_NAMES:
@@ -235,13 +217,17 @@ namespace ST
     }
 
     void IRCServer::sendMessage(IRCMessage *msg)
-    {
+	{
         IRC::Command *command = new IRC::Command;
         switch (msg->getType())
         {
             case IRCMessage::CHAT:
                 command->setCommand(IRC::Command::IRC_SAY);
                 break;
+
+			case IRCMessage::EMOTE:
+				command->setCommand(IRC::Command::IRC_EMOTE);
+				break;
         }
         command->setParams(msg->getText());
         mClient->sendCommand(command);

@@ -44,10 +44,23 @@
 #ifndef ST_BEING_HEADER
 #define ST_BEING_HEADER
 
+#include "utilities/types.h"
+
 #include <string>
 
 namespace ST
 {
+    struct Look
+    {
+        int hair;
+        int face;
+        int body;
+        int gender;
+        Colour hairColour;
+        Colour eyeColour;
+        Colour skinColour;
+    };
+
     class Being
     {
     public:
@@ -56,6 +69,9 @@ namespace ST
 
         virtual std::string getName();
         virtual int getId() const;
+
+    public:
+        Look look;
 
     protected:
         int mId;

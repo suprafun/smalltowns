@@ -45,7 +45,6 @@ namespace ST
     {
         mLevel = 0;
         mRights = 0;
-        mHead = 0;
     }
 
     Character::~Character()
@@ -71,15 +70,5 @@ namespace ST
     void Character::setRights(int rights)
     {
         mRights = rights;
-    }
-
-    int Character::getHead() const
-    {
-        return mHead;
-    }
-
-    void Character::setHead(int head)
-    {
-        mHead = head;
     }
 }

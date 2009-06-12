@@ -363,11 +363,11 @@ bool IRCClient::isConnected() const
 
 int IRCClient::ping()
 {
-	char data[512];
+	char data[256]= { '\0' };
     int len;
 
     // check for new data to arrive from irc server
-    if ((len = mConnection->checkForData(data, 512)) > 0)
+    if ((len = mConnection->checkForData(data, 256)) > 0)
     {
         addCommand(data, len);
         return 1;

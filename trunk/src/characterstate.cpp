@@ -172,26 +172,6 @@ namespace ST
 		AG_WindowSetSpacing(charSelect, 5);
 		AG_WindowSetGeometry(charSelect, halfScreenWidth - 100, halfScreenHeight - 80, 200, 160);
 
-		// load in the avatars to choose from
-		std::vector<SDL_Surface*> surfaces;
-
-        surfaces.push_back(graphicsEngine->loadSDLTexture("head0.png"));
-		surfaces.push_back(graphicsEngine->loadSDLTexture("head1.png"));
-		surfaces.push_back(graphicsEngine->loadSDLTexture("head2.png"));
-		surfaces.push_back(graphicsEngine->loadSDLTexture("head3.png"));
-		surfaces.push_back(graphicsEngine->loadSDLTexture("head4.png"));
-		surfaces.push_back(graphicsEngine->loadSDLTexture("head5.png"));
-		surfaces.push_back(graphicsEngine->loadSDLTexture("head6.png"));
-
-		int avatarCount = surfaces.size();
-
-        std::vector<AG_Surface*> heads;
-        for (int i = 0; i < avatarCount; ++i)
-        {
-            heads.push_back(AG_SurfaceFromSDL(surfaces[i]));
-            SDL_FreeSurface(surfaces[i]);
-        }
-
 		AG_Radio *selection = AG_RadioNew(charSelect, 0, NULL);
 
 		// create number of characters based on number of characters a player has
@@ -200,22 +180,12 @@ namespace ST
             Character *c = player->getCharacter(i);
             if (c)
             {
-				AG_Icon *icon = NULL;
+				// Load in each sprite layer
 
-				for (int j = 0; j < avatarCount; ++j)
-                {
-                    // find the correct avatar for this character
-                    if (heads.size() > j && c->getHead() == j)
-                    {
-                        icon = AG_IconNew(NULL, 0);
-						AG_IconSetSurface(icon, heads[j]);
-                        break;
-                    }
-                }
-                if (icon)
-                {
-					AG_RadioAddItem(selection, "%s - Level %i", c->getName().c_str(), c->getLevel());
-                }
+                // Put them together to make up the character
+
+                // Allow user to select the character
+                AG_RadioAddItem(selection, "%s - Level %i", c->getName().c_str(), c->getLevel());
 			}
 		}
 
@@ -224,20 +194,9 @@ namespace ST
 		AG_WindowSetSpacing(charNew, 12);
 		AG_WindowSetGeometry(charNew, halfScreenWidth - 200, halfScreenHeight - 95, 400, 190);
 
-		std::vector<AG_Icon*> avatarIcons;
 		AG_HBox *createBox = AG_HBoxNew(charNew, 0);
 
-		// skip head0, its just for characters without avatars
-        for (int i = 1; i < avatarCount; ++i)
-        {
-			AG_VBox *iconBox = AG_VBoxNew(createBox, 0);
-			AG_Icon *icon = AG_IconNew(iconBox, 0);
-			AG_IconSetSurface(icon, heads[i]);
-            avatarIcons.push_back(icon);
-			AG_Checkbox *creation = AG_CheckboxNewFn(iconBox, AG_CHECKBOX_EXPAND, "select", 
-				checked, "%p", this);
-			mItems.insert(std::pair<AG_Checkbox*, int>(creation, i));
-        }
+        //TODO: display different sprite layer choices
 
 		AG_Textbox *charNick = AG_TextboxNew(charNew, 0, "Nickname: ");
 		AG_TextboxSizeHint(charNick, "XXXXXXXXXXXXXXXX");

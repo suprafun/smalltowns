@@ -176,7 +176,7 @@ namespace ST
                     int id = packet->getInteger();
                     std::string name = packet->getString();
                     Character *c = new Character(id, name);
-                    c->setHead(packet->getInteger());
+                    //TODO: load look for character avatar
                     c->setLevel(packet->getInteger());
                     c->setRights(packet->getInteger());
                     player->addCharacter(c);

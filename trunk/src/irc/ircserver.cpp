@@ -124,7 +124,6 @@ namespace ST
 
             case IRC::Command::IRC_SAY:
             {
-                int i = 0;
                 std::string msg = command->getUserInfo() + ": ";
 				msg.append(command->getMessage());
 
@@ -133,7 +132,6 @@ namespace ST
 
             case IRC::Command::IRC_MSG:
             {
-                int i = 0;
 				std::string msg = command->getUserInfo() + ": ";
 				msg.append(command->getMessage());
 
@@ -142,7 +140,6 @@ namespace ST
 
             case IRC::Command::IRC_EMOTE:
             {
-                int i = 0;
                 std::string msg = "* ";
                 msg.append(command->getUserInfo() + " ");
 				msg.append(command->getMessage());
@@ -195,11 +192,7 @@ namespace ST
 				GameState *state = new LoginState;
 				game->changeState(state);
 
-				AG_Window *win = AG_WindowNew(AG_WINDOW_NORESIZE);
-				AG_WindowSetCaption(win, "Error");
-				AG_WindowShow(win);
-
-				AG_Label *label = AG_LabelNewString(win, 0, "Invalid characters in nickname");
+				interfaceManager->setErrorMessage("Invalid nick.");
 
                 logger->logWarning("Invalid nickname used");
 			} break;

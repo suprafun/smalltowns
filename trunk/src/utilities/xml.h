@@ -56,6 +56,7 @@ namespace ST
 		~XMLFile();
 
         bool load(const std::string &file);
+        bool next(const std::string &element);
         std::string readString(const std::string &element, const std::string &attribute);
         int readInt(const std::string &element, const std::string &attribute);
 		void changeString(const std::string &element, const std::string &attribute,
@@ -65,6 +66,7 @@ namespace ST
     private:
         TiXmlDocument *mDoc;
         TiXmlHandle *mHandle;
+        int mNextChild;
 
     };
 }

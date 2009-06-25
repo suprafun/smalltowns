@@ -46,13 +46,48 @@
 
 #include "gamestate.h"
 
-#include <map>
-#include <string>
 #include <agar/core.h>
 #include <agar/gui.h>
 
+#include <map>
+#include <string>
+#include <vector>
+
 namespace ST
 {
+    enum { PART_BODY = 0, PART_HAIR, PART_LEGS, PART_FEET };
+
+    struct Body
+    {
+        int id;
+        std::string file;
+        int part;
+    };
+
+    struct PossibleChoices
+    {
+        std::vector<Body*> choices;
+        int bodypart;
+        unsigned int lastchoice;
+    };
+
+    class Choices
+    {
+    public:
+        Choices(int numBodyParts);
+        ~Choices();
+        Body* next(int bodypart);
+        Body* prev(int bodypart);
+
+        void addPart(Body* part);
+        Body* getPart(int partId, int type);
+        int getCount(int bodypart);
+
+    private:
+        std::map<int, PossibleChoices*> mPossible;
+        typedef std::map<int, PossibleChoices*>::iterator PossibleItr;
+    };
+
 	class CharacterState : public GameState
 	{
 	public:
@@ -75,10 +110,23 @@ namespace ST
 		 * Return false to exit the game
 		 */
 		bool update();
-	
+
+    protected:
+        void createSelectionWindow();
+        void createCreationWindow();
+
 	public:
 		AG_Checkbox *mSelected;
-		std::map<AG_Checkbox*, int> mItems;
+		std::vector<std::string> mDefaults;
+		std::vector<std::string> mChosen;
+		Choices *mChoices;
+
+    private:
+		int mNumBodyParts;
+		int mHalfScreenWidth;
+		int mHalfScreenHeight;
+		AG_Window *mSelectWindow;
+		AG_Window *mCreateWindow;
 	};
 }
 

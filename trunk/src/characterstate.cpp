@@ -45,6 +45,7 @@
 #include "player.h"
 
 #include "graphics/graphics.h"
+#include "graphics/texture.h"
 
 #include "interface/interfacemanager.h"
 
@@ -53,36 +54,22 @@
 #include "net/protocol.h"
 
 #include "utilities/stringutils.h"
+#include "utilities/xml.h"
 
 #include <SDL.h>
 
 namespace ST
 {
-	void checked(AG_Event *event)
-	{
-		CharacterState *state = static_cast<CharacterState*>(AG_PTR(1));
+    void change_hair(AG_Event *event)
+    {
+        // get chosen body part
+        Body *body = static_cast<Body*>(AG_PTR(1));
 
-		AG_Checkbox *box = static_cast<AG_Checkbox*>(AG_SELF());
-		if (box->state == 1)
-		{
-			state->mSelected = box;
-			std::map<AG_Checkbox*, int>::iterator itr = state->mItems.begin(),
-				itr_end = state->mItems.end();
-			while(itr != itr_end)
-			{
-				if (itr->first != box && itr->first->state == 1)
-				{
-					itr->first->state = 0;
-					break;
-				}
-				++itr;
-			}
-		}
-		else
-		{
-			state->mSelected = 0;
-		}
-	}
+        // get state
+        CharacterState *state = static_cast<CharacterState*>(AG_PTR(2));
+
+        state->mChosen[PART_HAIR] = body->file;
+    }
 
     void select_character(AG_Event *event)
     {
@@ -125,17 +112,11 @@ namespace ST
         std::string name = AG_TextboxDupString(static_cast<AG_Textbox*>(AG_PTR(1)));
         if (!name.empty() && state)
         {
-			int avatar = 0;
-			std::map<AG_Checkbox*, int>::iterator itr = state->mItems.find(state->mSelected);
-
-			if (itr != state->mItems.end())
-			{
-				avatar = itr->second;
-			}
+			int hair = 0;
 
             Packet *packet = new Packet(PAMSG_CHAR_CREATE);
             packet->setString(name);
-            packet->setInteger(avatar);
+            packet->setInteger(hair);
             networkManager->sendPacket(packet);
 
             interfaceManager->setErrorMessage("");
@@ -148,9 +129,120 @@ namespace ST
         }
     }
 
+    Choices::Choices(int numBodyParts)
+    {
+        for (int i = 0; i < numBodyParts; ++i)
+        {
+            PossibleChoices *pc = new PossibleChoices;
+            pc->lastchoice = 0;
+            pc->bodypart = i;
+            mPossible.insert(std::pair<int, PossibleChoices*>(i, pc));
+        }
+    }
+
+    Choices::~Choices()
+    {
+        PossibleItr itr = mPossible.begin(), itr_end = mPossible.end();
+        while (itr != itr_end)
+        {
+            for (unsigned int i = 0; i < itr->second->choices.size(); ++i)
+            {
+                delete itr->second->choices[i];
+            }
+            delete itr->second;
+            ++itr;
+        }
+
+        mPossible.clear();
+    }
+
+    Body* Choices::next(int bodypart)
+    {
+        PossibleItr itr = mPossible.find(bodypart);
+        if (itr != mPossible.end())
+        {
+            PossibleChoices *pc = itr->second;
+            ++(pc->lastchoice);
+            if (pc->lastchoice == pc->choices.size())
+            {
+                pc->lastchoice = 0;
+            }
+            return pc->choices[pc->lastchoice];
+        }
+
+        return NULL;
+    }
+
+    void Choices::addPart(Body *part)
+    {
+        PossibleItr itr = mPossible.find(part->part);
+        if (itr != mPossible.end())
+        {
+            itr->second->choices.push_back(part);
+        }
+    }
+
+    Body* Choices::getPart(int partId, int type)
+    {
+        PossibleItr itr = mPossible.find(type);
+        if (itr != mPossible.end())
+        {
+            PossibleChoices *pc = itr->second;
+            for (unsigned int i = 0; i < pc->choices.size(); ++i)
+            {
+                if (pc->choices[i]->id == partId)
+                {
+                    return pc->choices[i];
+                }
+            }
+        }
+
+        return NULL;
+    }
+
+    int Choices::getCount(int bodypart)
+    {
+        PossibleItr itr = mPossible.find(bodypart);
+        if (itr != mPossible.end())
+        {
+            return itr->second->choices.size();
+        }
+
+        return 0;
+    }
+
     CharacterState::CharacterState()
     {
 		mSelected = 0;
+		mChoices = 0;
+
+		XMLFile file;
+		if (file.load("body.cfg"))
+		{
+		    // read number of body parts available
+		    mNumBodyParts = file.readInt("parts", "count");
+
+		    // read defaults
+		    mDefaults.push_back(file.readString("default", "body"));
+		    mDefaults.push_back(file.readString("default", "hair"));
+
+            // set defaults as chosen
+		    mChosen.push_back(mDefaults[0]);
+		    mChosen.push_back(mDefaults[1]);
+
+            // add all available choices for body parts
+            mChoices = new Choices(mNumBodyParts);
+
+            do
+            {
+                Body *body = new Body;
+                body->id = file.readInt("body", "id");
+                body->file = file.readString("body", "file");
+                body->part = file.readInt("body", "part");
+
+                mChoices->addPart(body);
+            } while (file.next("body"));
+		}
     }
 
     void CharacterState::enter()
@@ -160,71 +252,29 @@ namespace ST
         // of existing characters from the game server
         int screenWidth = graphicsEngine->getScreenWidth();
 		int screenHeight = graphicsEngine->getScreenHeight();
-		int halfScreenWidth = screenWidth / 2;
-		int halfScreenHeight = screenHeight / 2;
+		mHalfScreenWidth = screenWidth / 2;
+		mHalfScreenHeight = screenHeight / 2;
 
 		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN|AG_WINDOW_KEEPBELOW);
 		AG_WindowShow(win);
 		AG_WindowMaximize(win);
-
-		AG_Window *charSelect = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "CharSelect");
-		AG_WindowSetCaption(charSelect, "Select Character");
-		AG_WindowSetSpacing(charSelect, 5);
-		AG_WindowSetGeometry(charSelect, halfScreenWidth - 100, halfScreenHeight - 80, 200, 160);
-
-		AG_Radio *selection = AG_RadioNew(charSelect, 0, NULL);
-
-		// create number of characters based on number of characters a player has
-        for (int i = 0; i < player->getNumChars(); ++i)
-        {
-            Character *c = player->getCharacter(i);
-            if (c)
-            {
-				// Load in each sprite layer
-
-                // Put them together to make up the character
-
-                // Allow user to select the character
-                AG_RadioAddItem(selection, "%s - Level %i", c->getName().c_str(), c->getLevel());
-			}
-		}
-
-		AG_Window *charNew = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "CharNew");
-		AG_WindowSetCaption(charNew, "Create new Character");
-		AG_WindowSetSpacing(charNew, 12);
-		AG_WindowSetGeometry(charNew, halfScreenWidth - 200, halfScreenHeight - 95, 400, 190);
-
-		AG_HBox *createBox = AG_HBoxNew(charNew, 0);
-
-        //TODO: display different sprite layer choices
-
-		AG_Textbox *charNick = AG_TextboxNew(charNew, 0, "Nickname: ");
-		AG_TextboxSizeHint(charNick, "XXXXXXXXXXXXXXXX");
-
-		AG_HBox *hbox = AG_HBoxNew(charNew, 0);
-		AG_Button *new_button = AG_ButtonNewFn(hbox, 0, "Submit", submit_new, "%p%p", charNick, this);
-		AG_ButtonJustify(new_button, AG_TEXT_CENTER);
-		AG_Button *back_button = AG_ButtonNewFn(hbox, 0, "Back", switch_char_window, "%p%p", charNew, charSelect);
-		AG_ButtonJustify(back_button, AG_TEXT_CENTER);
-
-		AG_HBox *box = AG_HBoxNew(charSelect, 0);
-		AG_Button *button = AG_ButtonNewFn(box, 0, "Choose", select_character, "%p", selection);
-		AG_ButtonJustify(button, AG_TEXT_CENTER);
-		AG_Button *create_button = AG_ButtonNewFn(box, 0, "Create New",
-                                                    switch_char_window, "%p%p", charSelect, charNew);
-		AG_ButtonJustify(create_button, AG_TEXT_CENTER);
-
-		AG_WindowShow(charSelect);
-		AG_WindowHide(charNew);
-
 		interfaceManager->addWindow(win);
-		interfaceManager->addWindow(charSelect);
-		interfaceManager->addWindow(charNew);
+
+		mSelectWindow = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "CharSelect");
+		mCreateWindow = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "CharNew");
+
+		createSelectionWindow();
+		createCreationWindow();
     }
 
     void CharacterState::exit()
     {
         interfaceManager->removeAllWindows();
+        if (mChoices)
+        {
+            delete mChoices;
+            mChoices = 0;
+        }
     }
 
     bool CharacterState::update()
@@ -238,5 +288,157 @@ namespace ST
         SDL_Delay(0);
 
         return true;
+    }
+
+    void CharacterState::createSelectionWindow()
+    {
+        AG_WindowSetCaption(mSelectWindow, "Select Character");
+		AG_WindowSetSpacing(mSelectWindow, 5);
+		AG_WindowSetGeometry(mSelectWindow, mHalfScreenWidth - 100, mHalfScreenHeight - 80, 200, 160);
+
+		AG_Radio *selection = AG_RadioNew(mSelectWindow, 0, NULL);
+
+		AG_HBox *layout = AG_HBoxNew(mSelectWindow, 0);
+		AG_Fixed *position = AG_FixedNew(layout, 0);
+
+		// create number of characters based on number of characters a player has
+        for (int i = 0; i < player->getNumChars(); ++i)
+        {
+            Character *c = player->getCharacter(i);
+            if (c)
+            {
+                AG_Pixmap *pixmap;
+
+                // TODO: Add selectable body (for different genders)
+				// load the texture
+                Texture *tex = graphicsEngine->loadTexture(mDefaults[0]);
+
+                // put the texture into the pixmap
+                if (graphicsEngine->isOpenGL())
+                {
+                    pixmap = AG_PixmapFromTexture(0, 0, tex->getGLTexture(), 0);
+                }
+                else
+                {
+                    AG_Surface *s = AG_SurfaceFromSDL(tex->getSDLSurface());
+                    pixmap = AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, s);
+                }
+
+                // put the pixmap on the screen
+                AG_FixedPut(position, pixmap, 100, 10);
+
+                pixmap = 0;
+                tex = 0;
+
+                // now add hair
+                Body *hair = mChoices->getPart(c->look.hair, PART_HAIR);
+                if (hair)
+                {
+                    // Load texture
+                    tex = graphicsEngine->loadTexture(hair->file);
+
+                    // put the texture into the pixmap
+                    if (graphicsEngine->isOpenGL())
+                    {
+                        pixmap = AG_PixmapFromTexture(0, 0, tex->getGLTexture(), 0);
+                    }
+                    else
+                    {
+                        AG_Surface *s = AG_SurfaceFromSDL(tex->getSDLSurface());
+                        pixmap = AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, s);
+                    }
+
+                    // put the pixmap on the screen
+                    AG_FixedPut(position, pixmap, 100, 10);
+                    break;
+                }
+
+                // Allow user to select the character
+                AG_RadioAddItem(selection, "%s - Level %i", c->getName().c_str(), c->getLevel());
+			}
+		}
+
+		AG_HBox *box = AG_HBoxNew(mSelectWindow, 0);
+		AG_Button *button = AG_ButtonNewFn(box, 0, "Choose", select_character, "%p", selection);
+		AG_ButtonJustify(button, AG_TEXT_CENTER);
+		AG_Button *create_button = AG_ButtonNewFn(box, 0, "Create New",
+                                                  switch_char_window, "%p%p",
+                                                  mSelectWindow, mCreateWindow);
+		AG_ButtonJustify(create_button, AG_TEXT_CENTER);
+
+		AG_WindowShow(mSelectWindow);
+		interfaceManager->addWindow(mSelectWindow);
+    }
+
+    void CharacterState::createCreationWindow()
+    {
+        // set window paramaters
+        AG_WindowSetCaption(mCreateWindow, "Create new Character");
+		AG_WindowSetSpacing(mCreateWindow, 12);
+		AG_WindowSetGeometry(mCreateWindow, mHalfScreenWidth - 140, mHalfScreenHeight - 150, 280, 300);
+
+        // create layout
+		AG_HBox *charBox = AG_HBoxNew(mCreateWindow, 0);
+		AG_Fixed *charPos = AG_FixedNew(charBox, 0);
+
+        //TODO: display different sprite layer choices
+        AG_Pixmap **pixmap;
+        pixmap = new AG_Pixmap*[mNumBodyParts];
+        for (int i = 0; i < mNumBodyParts; ++i)
+        {
+            // load the texture
+            Texture *tex = graphicsEngine->loadTexture(mChosen[i]);
+
+            // put the texture into the pixmap
+            if (graphicsEngine->isOpenGL())
+            {
+                pixmap[i] = AG_PixmapFromTexture(NULL, 0, tex->getGLTexture(), 0);
+            }
+            else
+            {
+                AG_Surface *s = AG_SurfaceFromSDL(tex->getSDLSurface());
+                pixmap[i] = AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, s);
+            }
+
+            // put the pixmap on the screen
+            AG_FixedPut(charPos, pixmap[i], 10, 10);
+        }
+
+        AG_Expand(charBox);
+        AG_Expand(charPos);
+
+        // list all the hair styles to choose from
+        int hairCount = mChoices->getCount(PART_HAIR);
+        AG_Button **hairs;
+        hairs = new AG_Button*[hairCount];
+        for (int i = 0; i < hairCount; ++i)
+        {
+            // get the body
+            Body *body = mChoices->next(PART_HAIR);
+            // load the texture
+            Texture *tex = graphicsEngine->loadTexture(body->file);
+
+            // TODO: Add creating surface from opengl texture for 3d mode
+            hairs[i] = AG_ButtonNewFn(charBox, 0, 0, change_hair, "%p%p", body, this);
+            AG_ButtonJustify(hairs[i], AG_TEXT_CENTER);
+            AG_ButtonValign(hairs[i], AG_TEXT_TOP);
+            AG_Surface *s = AG_SurfaceFromSDL(tex->getSDLSurface());
+            AG_Rect rect = AG_RECT(16, 16, 32, 32);
+            AG_SetClipRect(s, &rect);
+            AG_ButtonSurface(hairs[i], s);
+        }
+
+
+		AG_Textbox *charNick = AG_TextboxNew(mCreateWindow, 0, "Nickname: ");
+		AG_TextboxSizeHint(charNick, "XXXXXXXXXXXXXXXX");
+
+		AG_HBox *hbox = AG_HBoxNew(mCreateWindow, 0);
+		AG_Button *backButton = AG_ButtonNewFn(hbox, 0, "Cancel", switch_char_window, "%p%p",
+                                                mCreateWindow, mSelectWindow);
+		AG_ButtonJustify(backButton, AG_TEXT_CENTER);
+		AG_Button *button = AG_ButtonNewFn(hbox, 0, "Create", submit_new, "%p%p", charNick, this);
+		AG_ButtonJustify(button, AG_TEXT_CENTER);
+
+		interfaceManager->addWindow(mCreateWindow);
     }
 }

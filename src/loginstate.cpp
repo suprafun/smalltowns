@@ -147,7 +147,7 @@ namespace ST
 
 	LoginState::LoginState()
 	{
-
+        file = 0;
 	}
 
 	void LoginState::enter()
@@ -176,6 +176,8 @@ namespace ST
 	void LoginState::exit()
 	{
 		interfaceManager->removeAllWindows();
+		if (file)
+            delete file;
 	}
 
 	bool LoginState::update()
@@ -246,7 +248,7 @@ namespace ST
 		AG_SetEvent(reg_pass, "textbox-return", submit_register, "%p%p", reg_user, reg_pass);
 
 		AG_HBox *reg_box = AG_HBoxNew(mRegisterWindow, 0);
-		AG_Button *reg_button = AG_ButtonNewFn(reg_box, 0, "Submit", submit_register, "%p%p", 
+		AG_Button *reg_button = AG_ButtonNewFn(reg_box, 0, "Submit", submit_register, "%p%p",
 											   reg_user, reg_pass);
 		AG_ButtonJustify(reg_button, AG_TEXT_CENTER);
 		AG_Button *back_button = AG_ButtonNewFn(reg_box, 0, "Back",

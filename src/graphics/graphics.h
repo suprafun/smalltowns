@@ -177,6 +177,11 @@ namespace ST
          */
         int getScreenHeight() const;
 
+        /**
+         * Get whether using OpenGL
+         */
+        int isOpenGL() const { return mOpenGL; }
+
 	protected:
 		SDL_Surface *mScreen;
 		int mWidth;

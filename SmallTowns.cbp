@@ -62,6 +62,10 @@
 		<Unit filename="src/graphics/graphics.h" />
 		<Unit filename="src/graphics/node.cpp" />
 		<Unit filename="src/graphics/node.h" />
+		<Unit filename="src/graphics/opengl.cpp" />
+		<Unit filename="src/graphics/opengl.h" />
+		<Unit filename="src/graphics/sdl2d.cpp" />
+		<Unit filename="src/graphics/sdl2d.h" />
 		<Unit filename="src/graphics/texture.cpp" />
 		<Unit filename="src/graphics/texture.h" />
 		<Unit filename="src/input.cpp" />

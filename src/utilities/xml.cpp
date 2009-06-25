@@ -42,7 +42,7 @@
 
 namespace ST
 {
-	XMLFile::XMLFile() : mDoc(NULL), mHandle(NULL)
+	XMLFile::XMLFile() : mDoc(NULL), mHandle(NULL), mNextChild(0)
 	{
 
 	}
@@ -69,12 +69,18 @@ namespace ST
         return true;
 	}
 
+	bool XMLFile::next(const std::string &element)
+	{
+        ++mNextChild;
+        return mHandle->Child(element.c_str(), mNextChild).ToElement() ? true : false;
+	}
+
 	std::string XMLFile::readString(const std::string &element, const std::string &attribute)
 	{
         std::string str;
         TiXmlElement *e;
 
-        e = mHandle->FirstChild(element.c_str()).ToElement();
+        e = mHandle->Child(element.c_str(), mNextChild).ToElement();
         if (e)
         {
             str = e->Attribute(attribute.c_str());
@@ -88,7 +94,7 @@ namespace ST
 	    int value = 0;
 	    TiXmlElement *e;
 
-	    e = mHandle->FirstChild(element.c_str()).ToElement();
+	    e = mHandle->Child(element.c_str(), mNextChild).ToElement();
         if (e)
         {
             e->QueryIntAttribute(attribute.c_str(), &value);
@@ -101,7 +107,7 @@ namespace ST
 	{
 		TiXmlElement *e;
 
-	    e = mHandle->FirstChild(element.c_str()).ToElement();
+	    e = mHandle->Child(element.c_str(), mNextChild).ToElement();
         if (e)
         {
 			e->SetAttribute(attribute.c_str(), value.c_str());
@@ -113,7 +119,7 @@ namespace ST
 	{
 		TiXmlElement *e;
 
-	    e = mHandle->FirstChild(element.c_str()).ToElement();
+	    e = mHandle->Child(element.c_str(), mNextChild).ToElement();
         if (e)
         {
 			e->SetAttribute(attribute.c_str(), value);

@@ -61,7 +61,13 @@ namespace ST
     {
         int id;
         std::string file;
+        std::string icon;
         int part;
+    };
+
+    struct Avatar
+    {
+        std::vector<AG_Pixmap*> bodyparts;
     };
 
     struct PossibleChoices
@@ -111,9 +117,15 @@ namespace ST
 		 */
 		bool update();
 
-    protected:
+		/**
+		 * Used to update the character
+		 */
+        void updateAvatar(Body *body);
+
+    private:
         void createSelectionWindow();
         void createCreationWindow();
+        void createAvatar();
 
 	public:
 		AG_Checkbox *mSelected;
@@ -127,6 +139,7 @@ namespace ST
 		int mHalfScreenHeight;
 		AG_Window *mSelectWindow;
 		AG_Window *mCreateWindow;
+		Avatar *mAvatar;
 	};
 }
 

@@ -68,7 +68,8 @@ namespace ST
         // get state
         CharacterState *state = static_cast<CharacterState*>(AG_PTR(2));
 
-        state->mChosen[PART_HAIR] = body->file;
+        //state->mChosen[PART_HAIR] = body->file;
+        state->updateAvatar(body);
     }
 
     void select_character(AG_Event *event)
@@ -215,6 +216,7 @@ namespace ST
     {
 		mSelected = 0;
 		mChoices = 0;
+		mAvatar = 0;
 
 		XMLFile file;
 		if (file.load("body.cfg"))
@@ -222,13 +224,9 @@ namespace ST
 		    // read number of body parts available
 		    mNumBodyParts = file.readInt("parts", "count");
 
-		    // read defaults
+            // set defaults
 		    mDefaults.push_back(file.readString("default", "body"));
 		    mDefaults.push_back(file.readString("default", "hair"));
-
-            // set defaults as chosen
-		    mChosen.push_back(mDefaults[0]);
-		    mChosen.push_back(mDefaults[1]);
 
             // add all available choices for body parts
             mChoices = new Choices(mNumBodyParts);
@@ -238,6 +236,7 @@ namespace ST
                 Body *body = new Body;
                 body->id = file.readInt("body", "id");
                 body->file = file.readString("body", "file");
+                body->icon = file.readString("body", "icon");
                 body->part = file.readInt("body", "part");
 
                 mChoices->addPart(body);
@@ -270,11 +269,10 @@ namespace ST
     void CharacterState::exit()
     {
         interfaceManager->removeAllWindows();
-        if (mChoices)
-        {
-            delete mChoices;
-            mChoices = 0;
-        }
+        delete mChoices;
+        mChoices = 0;
+        delete mAvatar;
+        mAvatar = 0;
     }
 
     bool CharacterState::update()
@@ -358,6 +356,9 @@ namespace ST
 			}
 		}
 
+		AG_Expand(layout);
+		AG_Expand(position);
+
 		AG_HBox *box = AG_HBoxNew(mSelectWindow, 0);
 		AG_Button *button = AG_ButtonNewFn(box, 0, "Choose", select_character, "%p", selection);
 		AG_ButtonJustify(button, AG_TEXT_CENTER);
@@ -381,27 +382,12 @@ namespace ST
 		AG_HBox *charBox = AG_HBoxNew(mCreateWindow, 0);
 		AG_Fixed *charPos = AG_FixedNew(charBox, 0);
 
-        //TODO: display different sprite layer choices
-        AG_Pixmap **pixmap;
-        pixmap = new AG_Pixmap*[mNumBodyParts];
-        for (int i = 0; i < mNumBodyParts; ++i)
+        // build default avatar
+        mAvatar = new Avatar;
+        createAvatar();
+        for (unsigned int i = 0; i < mAvatar->bodyparts.size(); ++i)
         {
-            // load the texture
-            Texture *tex = graphicsEngine->loadTexture(mChosen[i]);
-
-            // put the texture into the pixmap
-            if (graphicsEngine->isOpenGL())
-            {
-                pixmap[i] = AG_PixmapFromTexture(NULL, 0, tex->getGLTexture(), 0);
-            }
-            else
-            {
-                AG_Surface *s = AG_SurfaceFromSDL(tex->getSDLSurface());
-                pixmap[i] = AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, s);
-            }
-
-            // put the pixmap on the screen
-            AG_FixedPut(charPos, pixmap[i], 10, 10);
+            AG_FixedPut(charPos, mAvatar->bodyparts[i], 10, 10);
         }
 
         AG_Expand(charBox);
@@ -409,23 +395,18 @@ namespace ST
 
         // list all the hair styles to choose from
         int hairCount = mChoices->getCount(PART_HAIR);
-        AG_Button **hairs;
-        hairs = new AG_Button*[hairCount];
         for (int i = 0; i < hairCount; ++i)
         {
             // get the body
             Body *body = mChoices->next(PART_HAIR);
             // load the texture
-            Texture *tex = graphicsEngine->loadTexture(body->file);
+            Texture *tex = graphicsEngine->loadTexture(body->icon);
 
-            // TODO: Add creating surface from opengl texture for 3d mode
-            hairs[i] = AG_ButtonNewFn(charBox, 0, 0, change_hair, "%p%p", body, this);
-            AG_ButtonJustify(hairs[i], AG_TEXT_CENTER);
-            AG_ButtonValign(hairs[i], AG_TEXT_TOP);
+            AG_Button *hair = AG_ButtonNewFn(charBox, 0, 0, change_hair, "%p%p", body, this);
+            AG_ButtonJustify(hair, AG_TEXT_CENTER);
+            AG_ButtonValign(hair, AG_TEXT_MIDDLE);
             AG_Surface *s = AG_SurfaceFromSDL(tex->getSDLSurface());
-            AG_Rect rect = AG_RECT(16, 16, 32, 32);
-            AG_SetClipRect(s, &rect);
-            AG_ButtonSurface(hairs[i], s);
+            AG_ButtonSurface(hair, s);
         }
 
 
@@ -440,5 +421,63 @@ namespace ST
 		AG_ButtonJustify(button, AG_TEXT_CENTER);
 
 		interfaceManager->addWindow(mCreateWindow);
+    }
+
+    void CharacterState::createAvatar()
+    {
+        for (int i = 0; i < mNumBodyParts; ++i)
+        {
+            // load the texture
+            Texture *tex = graphicsEngine->loadTexture(mDefaults[i]);
+
+            // put the texture into the pixmap
+            if (graphicsEngine->isOpenGL())
+            {
+                mAvatar->bodyparts.push_back(AG_PixmapFromTexture(NULL, 0, tex->getGLTexture(), 0));
+            }
+            else
+            {
+                AG_Surface *s = AG_SurfaceFromSDL(tex->getSDLSurface());
+                mAvatar->bodyparts.push_back(AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, s));
+            }
+        }
+    }
+
+    void CharacterState::updateAvatar(Body *body)
+    {
+        // load the new graphic
+        Texture *tex = graphicsEngine->loadTexture(body->file);
+
+        AG_Pixmap *pixmap = mAvatar->bodyparts.at(body->part);
+
+        AG_Surface *surface = 0;
+
+        if (graphicsEngine->isOpenGL())
+        {
+            glBindTexture(GL_TEXTURE_2D, tex->getGLTexture());
+            surface = AG_SurfaceRGBA(tex->getWidth(), tex->getHeight(), 32, 0,
+#if AG_BYTEORDER == AG_BIG_ENDIAN
+                                0xff000000,
+                                0x00ff0000,
+                                0x0000ff00,
+                                0x000000ff
+#else
+                                0x000000ff,
+                                0x0000ff00,
+                                0x00ff0000,
+                                0xff000000
+#endif
+                                );
+            glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+            glBindTexture(GL_TEXTURE_2D, 0);
+
+        }
+        else
+        {
+            surface = AG_SurfaceFromSDL(tex->getSDLSurface());
+        }
+
+        AG_PixmapReplaceSurface(pixmap, 0, surface);
+        AG_WindowUpdate(mCreateWindow);
     }
 }

@@ -182,6 +182,11 @@ namespace ST
          */
         int isOpenGL() const { return mOpenGL; }
 
+        /**
+         * Create a texture based on body parts
+         */
+        Texture* createAvatar(int body, int hair);
+
 	protected:
 		SDL_Surface *mScreen;
 		int mWidth;

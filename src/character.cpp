@@ -41,7 +41,7 @@
 
 namespace ST
 {
-    Character::Character(int id, const std::string &name) : Being(id, name)
+    Character::Character(int id, const std::string &name, Texture *avatar) : Being(id, name, avatar)
     {
         mLevel = 0;
         mRights = 0;

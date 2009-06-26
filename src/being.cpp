@@ -38,10 +38,12 @@
  ********************************************/
 
 #include "being.h"
+#include "graphics/texture.h"
 
 namespace ST
 {
-    Being::Being(int id, const std::string &name) : mId(id), mName(name)
+    Being::Being(int id, const std::string &name, Texture *avatar):
+        Node::Node(name, avatar), mId(id)
     {
 
     }

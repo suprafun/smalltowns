@@ -375,4 +375,10 @@ namespace ST
     {
         return mHeight;
     }
+
+    Texture* GraphicsEngine::createAvatar(int body, int hair)
+    {
+        // TODO: Create avatar based on part ids
+        return NULL;
+    }
 }

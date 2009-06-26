@@ -44,6 +44,7 @@
 #ifndef ST_BEING_HEADER
 #define ST_BEING_HEADER
 
+#include "graphics/node.h"
 #include "utilities/types.h"
 
 #include <string>
@@ -61,10 +62,12 @@ namespace ST
         Colour skinColour;
     };
 
-    class Being
+    class Texture;
+
+    class Being : public Node
     {
     public:
-        Being(int id, const std::string &name);
+        Being(int id, const std::string &name, Texture *avatar);
         virtual ~Being();
 
         virtual std::string getName();
@@ -75,7 +78,6 @@ namespace ST
 
     protected:
         int mId;
-        std::string mName;
     };
 }
 

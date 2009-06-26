@@ -96,7 +96,7 @@ namespace ST
 						chat.insert(0, "* " + player->getName() + " ");
 						AG_ConsoleAppendLine(output, chat.c_str());
 
-						
+
 					}
                 }
 				// clear input textbox
@@ -123,8 +123,6 @@ namespace ST
 	{
 		int screenWidth = graphicsEngine->getScreenWidth();
 		int screenHeight = graphicsEngine->getScreenHeight();
-		float halfScreenWidth = screenWidth / 2.0f;
-		float halfScreenHeight = screenHeight / 2.0f;
 
 		AG_Window *chatWindow = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "ChatWindow");
 		AG_WindowSetCaption(chatWindow, "Chat");

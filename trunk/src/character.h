@@ -53,7 +53,7 @@ namespace ST
     class Character : public Being
     {
     public:
-        Character(int id, const std::string &name);
+        Character(int id, const std::string &name, Texture *avatar);
         ~Character();
 
         int getLevel() const;

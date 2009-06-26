@@ -42,6 +42,9 @@
 #include "packet.h"
 #include "protocol.h"
 
+#include "../graphics/graphics.h"
+#include "../graphics/texture.h"
+
 #include "../interface/interfacemanager.h"
 
 #include "../utilities/log.h"
@@ -175,8 +178,9 @@ namespace ST
                 {
                     int id = packet->getInteger();
                     std::string name = packet->getString();
-                    Character *c = new Character(id, name);
-                    //TODO: load look for character avatar
+                    int hair = packet->getInteger();
+                    Texture *avatar = graphicsEngine->createAvatar(0, hair);
+                    Character *c = new Character(id, name, avatar);
                     c->setLevel(packet->getInteger());
                     c->setRights(packet->getInteger());
                     player->addCharacter(c);

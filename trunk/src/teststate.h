@@ -78,12 +78,6 @@ namespace ST
 		bool update();
 
 	private:
-	/*
-		int mFrames;
-		int mTime;
-		int mLastTime;
-		Camera *cam;
-		*/
 		IRCServer *chatServer;
 		Camera *mCam;
 	};

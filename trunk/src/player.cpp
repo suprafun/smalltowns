@@ -38,14 +38,15 @@
  ********************************************/
 
 #include "player.h"
-
 #include "character.h"
+
+#include "graphics/texture.h"
 
 namespace ST
 {
     Player::Player()
     {
-
+        mSelected = NULL;
     }
 
     Player::~Player()
@@ -109,5 +110,21 @@ namespace ST
             delete mCharacters[i];
         }
         mCharacters.clear();
+    }
+
+    void Player::setCharacter(int slot)
+    {
+        if (slot < mCharacters.size())
+        {
+            mSelected = mCharacters[slot];
+        }
+    }
+
+    void Player::createAvatar()
+    {
+        if (mSelected)
+        {
+            Texture *avatar = new Texture("Player");
+        }
     }
 }

@@ -104,6 +104,11 @@ namespace ST
 		void drawWindows();
 
 		/**
+		 * Get a child
+		 */
+        AG_Widget* getChild(AG_Widget *parent, const std::string &name);
+
+		/**
 		 * Set Error Message
 		 */
 		void setErrorMessage(const std::string &msg);

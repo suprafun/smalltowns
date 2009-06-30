@@ -60,7 +60,7 @@
 
 namespace ST
 {
-    void change_hair(AG_Event *event)
+    void change_part(AG_Event *event)
     {
         // get chosen body part
         Body *body = static_cast<Body*>(AG_PTR(1));
@@ -68,8 +68,15 @@ namespace ST
         // get state
         CharacterState *state = static_cast<CharacterState*>(AG_PTR(2));
 
-        //state->mChosen[PART_HAIR] = body->file;
+        state->mChosen[body->part] = body->id;
         state->updateAvatar(body);
+    }
+
+    void radio_selected(AG_Event *event)
+    {
+        AG_Button *button = static_cast<AG_Button*>(AG_PTR(1));
+        if (button)
+            AG_WidgetEnable(button);
     }
 
     void select_character(AG_Event *event)
@@ -78,10 +85,9 @@ namespace ST
         if (selected)
         {
             Packet *packet = new Packet(PAMSG_CHAR_CHOOSE);
-            int slot = -1;
-
-			slot = selected->value;
+            int slot = selected->value;
             packet->setInteger(slot);
+            player->setCharacter(slot);
 
             networkManager->sendPacket(packet);
 
@@ -113,7 +119,7 @@ namespace ST
         std::string name = AG_TextboxDupString(static_cast<AG_Textbox*>(AG_PTR(1)));
         if (!name.empty() && state)
         {
-			int hair = 0;
+			int hair = state->mChosen[PART_HAIR];
 
             Packet *packet = new Packet(PAMSG_CHAR_CREATE);
             packet->setString(name);
@@ -294,10 +300,9 @@ namespace ST
 		AG_WindowSetSpacing(mSelectWindow, 5);
 		AG_WindowSetGeometry(mSelectWindow, mHalfScreenWidth - 100, mHalfScreenHeight - 80, 200, 160);
 
-		AG_Radio *selection = AG_RadioNew(mSelectWindow, 0, NULL);
-
-		AG_HBox *layout = AG_HBoxNew(mSelectWindow, 0);
-		AG_Fixed *position = AG_FixedNew(layout, 0);
+        AG_VBox *selectBox = AG_VBoxNew(mSelectWindow, 0);
+        AG_Radio *selection = AG_RadioNew(selectBox, 0, NULL);
+		AG_Fixed *position = AG_FixedNew(selectBox, 0);
 
 		// create number of characters based on number of characters a player has
         for (int i = 0; i < player->getNumChars(); ++i)
@@ -323,7 +328,7 @@ namespace ST
                 }
 
                 // put the pixmap on the screen
-                AG_FixedPut(position, pixmap, 100, 10);
+                AG_FixedPut(position, pixmap, 64 * i, 0);
 
                 pixmap = 0;
                 tex = 0;
@@ -347,7 +352,7 @@ namespace ST
                     }
 
                     // put the pixmap on the screen
-                    AG_FixedPut(position, pixmap, 100, 10);
+                    AG_FixedPut(position, pixmap, 64 * i, 0);
                     break;
                 }
 
@@ -355,17 +360,20 @@ namespace ST
                 AG_RadioAddItem(selection, "%s - Level %i", c->getName().c_str(), c->getLevel());
 			}
 		}
-
-		AG_Expand(layout);
 		AG_Expand(position);
+		AG_Expand(selectBox);
 
 		AG_HBox *box = AG_HBoxNew(mSelectWindow, 0);
+		AG_ObjectSetName(box, "Container");
 		AG_Button *button = AG_ButtonNewFn(box, 0, "Choose", select_character, "%p", selection);
 		AG_ButtonJustify(button, AG_TEXT_CENTER);
 		AG_Button *create_button = AG_ButtonNewFn(box, 0, "Create New",
                                                   switch_char_window, "%p%p",
                                                   mSelectWindow, mCreateWindow);
 		AG_ButtonJustify(create_button, AG_TEXT_CENTER);
+		AG_WidgetDisable(button);
+
+		AG_SetEvent(selection, "radio-changed", radio_selected, "%p", button);
 
 		AG_WindowShow(mSelectWindow);
 		interfaceManager->addWindow(mSelectWindow);
@@ -402,11 +410,37 @@ namespace ST
             // load the texture
             Texture *tex = graphicsEngine->loadTexture(body->icon);
 
-            AG_Button *hair = AG_ButtonNewFn(charBox, 0, 0, change_hair, "%p%p", body, this);
+            AG_Button *hair = AG_ButtonNewFn(charBox, 0, 0, change_part, "%p%p", body, this);
             AG_ButtonJustify(hair, AG_TEXT_CENTER);
             AG_ButtonValign(hair, AG_TEXT_MIDDLE);
-            AG_Surface *s = AG_SurfaceFromSDL(tex->getSDLSurface());
-            AG_ButtonSurface(hair, s);
+
+            // make each haair style into a button with hair style icon
+            AG_Surface *surface;
+            if (graphicsEngine->isOpenGL())
+            {
+                glBindTexture(GL_TEXTURE_2D, tex->getGLTexture());
+                surface = AG_SurfaceRGBA(tex->getWidth(), tex->getHeight(), 32, 0,
+#if AG_BYTEORDER == AG_BIG_ENDIAN
+                                    0xff000000,
+                                    0x00ff0000,
+                                    0x0000ff00,
+                                    0x000000ff
+#else
+                                    0x000000ff,
+                                    0x0000ff00,
+                                    0x00ff0000,
+                                    0xff000000
+#endif
+                                    );
+                glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+                glBindTexture(GL_TEXTURE_2D, 0);
+
+            }
+            else
+            {
+                surface = AG_SurfaceFromSDL(tex->getSDLSurface());
+            }
+            AG_ButtonSurface(hair, surface);
         }
 
 

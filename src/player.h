@@ -100,9 +100,20 @@ namespace ST
          */
         void removeCharacters();
 
+        /**
+         * Set which character player will use to play
+         */
+        void setCharacter(int slot);
+
+        /**
+         * Create avatar based on selected character's looks
+         */
+        void createAvatar();
+
     private:
         std::string mUsername;
 		std::vector<Character*> mCharacters;
+		Character *mSelected;
 		int mId;
     };
 

@@ -109,6 +109,9 @@ namespace ST
 	{
         chatServer = new IRCServer;
 
+        // create player avatar
+        player->createAvatar();
+
 		// create camera
 		Rectangle rect;
 		rect.height = 768;
@@ -130,11 +133,12 @@ namespace ST
 		AG_WindowSetGeometry(chatWindow, 10, screenHeight - 185, 400, 175);
 		AG_WindowShow(chatWindow);
 
-//        AG_VBox *box = AG_VBoxNew(chatWindow, 0);
-//        AG_Notebook *book = AG_NotebookNew(box, 0);
-//        AG_NotebookTab *nbTab = AG_NotebookAddTab(book, "Global Chat", AG_BOX_VERT);
+        AG_Notebook *book = AG_NotebookNew(chatWindow, AG_NOTEBOOK_EXPAND);
+        AG_ObjectSetName(book, "ChannelsFolder");
+        AG_NotebookTab *nbTab = AG_NotebookAddTab(book, "Global Chat", AG_BOX_VERT);
+        AG_ObjectSetName(nbTab, "GlobalChat");
 
-        AG_Console *console = AG_ConsoleNew(chatWindow, AG_CONSOLE_EXPAND);
+        AG_Console *console = AG_ConsoleNew(nbTab, AG_CONSOLE_EXPAND);
         AG_ObjectSetName(console, "Chat");
 
 		AG_Textbox *chatInput = AG_TextboxNew(chatWindow, AG_TEXTBOX_CATCH_TAB, NULL);
@@ -153,6 +157,7 @@ namespace ST
 	void TestState::exit()
 	{
 		delete mCam;
+		delete chatServer;
         interfaceManager->removeAllWindows();
 	}
 

@@ -180,6 +180,22 @@ namespace ST
 		AG_WindowDraw(mErrorWindow);
 	}
 
+	AG_Widget* InterfaceManager::getChild(AG_Widget *parent, const std::string &name)
+	{
+	    AG_Widget *widget;
+	    AGOBJECT_FOREACH_CHILD(widget, parent, ag_widget)
+        {
+            char widgetName[64];
+            AG_ObjectCopyName(widget, widgetName, 30);
+            if (strncmp(widgetName, name.c_str(), name.size()) == 0)
+            {
+                return widget;
+            }
+        }
+
+        return NULL;
+	}
+
 	void InterfaceManager::setErrorMessage(const std::string &msg)
 	{
 		AG_LabelString(mErrorCaption, msg.c_str());
@@ -207,28 +223,19 @@ namespace ST
 		if ((msg.size() % lineSize) > 0)
 			++lines;
 
-        AG_Window *window = getWindow("/ChatWindow");
-        if (window)
+        AG_Console *chat = static_cast<AG_Console*>(AG_WidgetFind(agView, "/ChatWindow/ChannelsFolder/GlobalChat/Chat"));
+        if (chat)
         {
-            AG_Console *widget;
-            AGOBJECT_FOREACH_CHILD(widget, window, ag_console)
+            int pos = 0;
+            int npos = msg.size();
+            if (npos > lineSize)
+                npos = lineSize;
+            for (int line = 0; line < lines; ++line)
             {
-                char widgetName[32];
-                AG_ObjectCopyName(widget, widgetName, 30);
-                if (strncmp(widgetName, "/ChatWindow/Chat", 16) == 0)
-                {
-					int pos = 0;
-					int npos = msg.size();
-					if (npos > lineSize)
-						npos = lineSize;
-					for (int line = 0; line < lines; ++line)
-					{
-						AG_ConsoleMsg(widget, "%s", msg.substr(pos, npos).c_str());
-						pos += npos;
-						if (pos + npos > msg.size())
-							npos = msg.size() - pos;
-					}
-                }
+                AG_ConsoleMsg(chat, "%s", msg.substr(pos, npos).c_str());
+                pos += npos;
+                if (pos + npos > msg.size())
+                    npos = msg.size() - pos;
             }
         }
 	}

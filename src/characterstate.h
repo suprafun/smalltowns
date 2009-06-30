@@ -130,7 +130,7 @@ namespace ST
 	public:
 		AG_Checkbox *mSelected;
 		std::vector<std::string> mDefaults;
-		std::vector<std::string> mChosen;
+		std::vector<int> mChosen;
 		Choices *mChoices;
 
     private:

@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2008, The Small Towns Dev Team
+ *	Copyright (c) 2009, The Small Towns Dev Team
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -31,9 +31,9 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 08-09-20
+ *	Date of file creation: 09-07-01
  *
- *	$Id: graphics.h 82 2009-06-25 17:15:15Z ko2fan $
+ *	$Id$
  *
  ********************************************/
 
@@ -44,12 +44,29 @@
 #ifndef ST_RESOURCEMANAGER_HEADER
 #define ST_RESOURCEMANAGER_HEADER
 
+#include <string>
+#include <vector>
+
 namespace ST
 {
+    class BodyPart;
     class ResourceManager
     {
+    public:
+        ~ResourceManager();
+        void loadBodyParts(const std::string &filename);
+        BodyPart* getBodyPart(int id);
+        BodyPart* getDefaultBody(int type);
+        int getNumberOfBody(int type);
 
+    private:
+        int mDefaultBody;
+        int mDefaultHair;
+        std::vector<BodyPart*> mBodyParts;
+        typedef std::vector<BodyPart*>::iterator BodyPartItr;
     };
+
+    extern ResourceManager *resourceManager;
 }
 
 #endif

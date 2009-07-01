@@ -56,6 +56,9 @@ namespace ST
         int hair;
         int face;
         int body;
+        int chest;
+        int legs;
+        int feet;
         int gender;
         Colour hairColour;
         Colour eyeColour;

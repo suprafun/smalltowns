@@ -55,29 +55,14 @@
 
 namespace ST
 {
-    enum { PART_BODY = 0, PART_HAIR, PART_LEGS, PART_FEET };
-
-    struct Body
-    {
-        int id;
-        std::string file;
-        std::string icon;
-        int part;
-    };
+    class BodyPart;
 
     struct Avatar
     {
         std::vector<AG_Pixmap*> bodyparts;
     };
 
-    struct PossibleChoices
-    {
-        std::vector<Body*> choices;
-        int bodypart;
-        unsigned int lastchoice;
-    };
-
-    class Choices
+/*    class Choices
     {
     public:
         Choices(int numBodyParts);
@@ -93,7 +78,7 @@ namespace ST
         std::map<int, PossibleChoices*> mPossible;
         typedef std::map<int, PossibleChoices*>::iterator PossibleItr;
     };
-
+*/
 	class CharacterState : public GameState
 	{
 	public:
@@ -120,7 +105,7 @@ namespace ST
 		/**
 		 * Used to update the character
 		 */
-        void updateAvatar(Body *body);
+        void updateAvatar(BodyPart *body);
 
     private:
         void createSelectionWindow();
@@ -129,12 +114,10 @@ namespace ST
 
 	public:
 		AG_Checkbox *mSelected;
-		std::vector<std::string> mDefaults;
 		std::vector<int> mChosen;
-		Choices *mChoices;
+//		Choices *mChoices;
 
     private:
-		int mNumBodyParts;
 		int mHalfScreenWidth;
 		int mHalfScreenHeight;
 		AG_Window *mSelectWindow;

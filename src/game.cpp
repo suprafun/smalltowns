@@ -43,6 +43,7 @@
 #include "input.h"
 #include "map.h"
 #include "player.h"
+#include "resourcemanager.h"
 #include "graphics/graphics.h"
 #include "graphics/opengl.h"
 #include "graphics/sdl2d.h"
@@ -60,11 +61,13 @@ namespace ST
 	Map *mapEngine = NULL;
 	InterfaceManager *interfaceManager = NULL;
 	NetworkManager *networkManager = NULL;
+	ResourceManager *resourceManager = NULL;
 	Player *player = NULL;
 
 	Game::~Game()
 	{
 	    delete player;
+	    delete resourceManager;
 		delete networkManager;
 		delete interfaceManager;
 		delete mapEngine;
@@ -97,6 +100,7 @@ namespace ST
 		mapEngine = new Map;
 		interfaceManager = new InterfaceManager;
 		networkManager = new NetworkManager;
+		resourceManager = new ResourceManager;
 		player = new Player;
 
 		if (hostname.empty() || port == 0)

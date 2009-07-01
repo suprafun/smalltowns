@@ -43,6 +43,7 @@
 #include "input.h"
 #include "game.h"
 #include "player.h"
+#include "resourcemanager.h"
 
 #include "graphics/graphics.h"
 #include "graphics/texture.h"
@@ -52,6 +53,8 @@
 #include "net/networkmanager.h"
 #include "net/packet.h"
 #include "net/protocol.h"
+
+#include "resources/bodypart.h"
 
 #include "utilities/stringutils.h"
 #include "utilities/xml.h"
@@ -63,12 +66,12 @@ namespace ST
     void change_part(AG_Event *event)
     {
         // get chosen body part
-        Body *body = static_cast<Body*>(AG_PTR(1));
+        BodyPart *body = static_cast<BodyPart*>(AG_PTR(1));
 
         // get state
         CharacterState *state = static_cast<CharacterState*>(AG_PTR(2));
 
-        state->mChosen[body->part] = body->id;
+        state->mChosen[body->getType()] = body->getId();
         state->updateAvatar(body);
     }
 
@@ -87,7 +90,6 @@ namespace ST
             Packet *packet = new Packet(PAMSG_CHAR_CHOOSE);
             int slot = selected->value;
             packet->setInteger(slot);
-            player->setCharacter(slot);
 
             networkManager->sendPacket(packet);
 
@@ -136,7 +138,7 @@ namespace ST
         }
     }
 
-    Choices::Choices(int numBodyParts)
+/*    Choices::Choices(int numBodyParts)
     {
         for (int i = 0; i < numBodyParts; ++i)
         {
@@ -217,37 +219,13 @@ namespace ST
 
         return 0;
     }
-
+*/
     CharacterState::CharacterState()
     {
 		mSelected = 0;
-		mChoices = 0;
 		mAvatar = 0;
 
-		XMLFile file;
-		if (file.load("body.cfg"))
-		{
-		    // read number of body parts available
-		    mNumBodyParts = file.readInt("parts", "count");
-
-            // set defaults
-		    mDefaults.push_back(file.readString("default", "body"));
-		    mDefaults.push_back(file.readString("default", "hair"));
-
-            // add all available choices for body parts
-            mChoices = new Choices(mNumBodyParts);
-
-            do
-            {
-                Body *body = new Body;
-                body->id = file.readInt("body", "id");
-                body->file = file.readString("body", "file");
-                body->icon = file.readString("body", "icon");
-                body->part = file.readInt("body", "part");
-
-                mChoices->addPart(body);
-            } while (file.next("body"));
-		}
+		resourceManager->loadBodyParts("body.cfg");
     }
 
     void CharacterState::enter()
@@ -275,8 +253,6 @@ namespace ST
     void CharacterState::exit()
     {
         interfaceManager->removeAllWindows();
-        delete mChoices;
-        mChoices = 0;
         delete mAvatar;
         mAvatar = 0;
     }
@@ -314,7 +290,14 @@ namespace ST
 
                 // TODO: Add selectable body (for different genders)
 				// load the texture
-                Texture *tex = graphicsEngine->loadTexture(mDefaults[0]);
+                Texture *tex = 0;
+                BodyPart *body = resourceManager->getDefaultBody(PART_BODY);
+                if (!body)
+                {
+                    // error need a default body
+                    return;
+                }
+                tex = body->getTexture();
 
                 // put the texture into the pixmap
                 if (graphicsEngine->isOpenGL())
@@ -334,11 +317,11 @@ namespace ST
                 tex = 0;
 
                 // now add hair
-                Body *hair = mChoices->getPart(c->look.hair, PART_HAIR);
+                BodyPart *hair = resourceManager->getBodyPart(c->look.hair);
                 if (hair)
                 {
                     // Load texture
-                    tex = graphicsEngine->loadTexture(hair->file);
+                    tex = hair->getTexture();
 
                     // put the texture into the pixmap
                     if (graphicsEngine->isOpenGL())
@@ -402,13 +385,19 @@ namespace ST
         AG_Expand(charPos);
 
         // list all the hair styles to choose from
-        int hairCount = mChoices->getCount(PART_HAIR);
+        int hairCount = resourceManager->getNumberOfBody(PART_HAIR);
         for (int i = 0; i < hairCount; ++i)
         {
             // get the body
-            Body *body = mChoices->next(PART_HAIR);
+            BodyPart *body = 0;
+
+            if (!body)
+            {
+                // error
+                break;
+            }
             // load the texture
-            Texture *tex = graphicsEngine->loadTexture(body->icon);
+            Texture *tex = body->getIcon();
 
             AG_Button *hair = AG_ButtonNewFn(charBox, 0, 0, change_part, "%p%p", body, this);
             AG_ButtonJustify(hair, AG_TEXT_CENTER);
@@ -459,10 +448,13 @@ namespace ST
 
     void CharacterState::createAvatar()
     {
-        for (int i = 0; i < mNumBodyParts; ++i)
+        for (int i = 0; i < 2; ++i)
         {
             // load the texture
-            Texture *tex = graphicsEngine->loadTexture(mDefaults[i]);
+            BodyPart *body = resourceManager->getDefaultBody(i);
+            if (!body)
+                break;
+            Texture *tex = body->getTexture();
 
             // put the texture into the pixmap
             if (graphicsEngine->isOpenGL())
@@ -477,12 +469,12 @@ namespace ST
         }
     }
 
-    void CharacterState::updateAvatar(Body *body)
+    void CharacterState::updateAvatar(BodyPart *body)
     {
         // load the new graphic
-        Texture *tex = graphicsEngine->loadTexture(body->file);
+        Texture *tex = body->getTexture();
 
-        AG_Pixmap *pixmap = mAvatar->bodyparts.at(body->part);
+        AG_Pixmap *pixmap = mAvatar->bodyparts.at(body->getType());
 
         AG_Surface *surface = 0;
 

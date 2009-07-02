@@ -43,7 +43,11 @@
 #include "node.h"
 #include "texture.h"
 
+#include "../resourcemanager.h"
+
 #include "../interface/interfacemanager.h"
+
+#include "../resources/bodypart.h"
 
 #include "../utilities/log.h"
 #include "../utilities/types.h"
@@ -101,6 +105,12 @@ namespace ST
 		node->moveNode(point);
 		mNodes.push_back(node);
 		return node;
+	}
+
+	void GraphicsEngine::addNode(Node *node)
+	{
+	    assert(node);
+	    mNodes.push_back(node);
 	}
 
 	void GraphicsEngine::setCamera(Camera *cam)
@@ -376,9 +386,52 @@ namespace ST
         return mHeight;
     }
 
-    Texture* GraphicsEngine::createAvatar(int body, int hair)
+    Texture* GraphicsEngine::createAvatar(int slot, int bodyId, int hairId)
     {
-        // TODO: Create avatar based on part ids
-        return NULL;
+        // create surface to render to
+        SDL_Surface *surface = new SDL_Surface;
+
+        Texture *hairTex = 0;
+        Texture *bodyTex = 0;
+        Texture *chestTex = 0;
+        Texture *legsTex = 0;
+        Texture *feetTex = 0;
+
+        // all the body parts that make up the avatar
+        BodyPart *hair = resourceManager->getBodyPart(hairId);
+        BodyPart *body = resourceManager->getBodyPart(bodyId);
+        BodyPart *chest = 0;
+        BodyPart *legs = 0;
+        BodyPart *feet = 0;
+
+        // load all the textures
+        if (hair)
+            hairTex = hair->getTexture();
+        if (body)
+            bodyTex = body->getTexture();
+        if (chest)
+            chestTex = chest->getTexture();
+        if (legs)
+            legsTex = legs->getTexture();
+        if (feet)
+            feetTex = feet->getTexture();
+
+        // write all the textures to the surface
+        if (hairTex)
+            SDL_BlitSurface(hairTex->getSDLSurface(), NULL, surface, NULL);
+        if (bodyTex)
+            SDL_BlitSurface(bodyTex->getSDLSurface(), NULL, surface, NULL);
+        if (chestTex)
+            SDL_BlitSurface(chestTex->getSDLSurface(), NULL, surface, NULL);
+        if (legsTex)
+            SDL_BlitSurface(legsTex->getSDLSurface(), NULL, surface, NULL);
+        if (feetTex)
+            SDL_BlitSurface(feetTex->getSDLSurface(), NULL, surface, NULL);
+
+        std::stringstream str;
+        str << "Character" << slot;
+        Texture *tex = new Texture(str.str());
+        tex->setImage(surface);
+        return tex;
     }
 }

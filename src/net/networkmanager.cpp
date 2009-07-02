@@ -48,6 +48,7 @@
 #include "../interface/interfacemanager.h"
 
 #include "../utilities/log.h"
+#include "../utilities/stringutils.h"
 
 #include "../character.h"
 #include "../characterstate.h"
@@ -177,13 +178,17 @@ namespace ST
                 for (int i = 0; i < count; ++i)
                 {
                     int id = packet->getInteger();
+                    int slot = packet->getInteger();
                     std::string name = packet->getString();
+                    int body = packet->getInteger();
                     int hair = packet->getInteger();
-                    Texture *avatar = graphicsEngine->createAvatar(0, hair);
+                    Texture *avatar = graphicsEngine->createAvatar(slot, 0, hair);
                     Character *c = new Character(id, name, avatar);
+                    c->setLook(body, hair);
                     c->setLevel(packet->getInteger());
                     c->setRights(packet->getInteger());
-                    player->addCharacter(c);
+                    player->addCharacter(c, slot);
+                    graphicsEngine->addNode(c);
                 }
 
                 std::stringstream str;
@@ -197,15 +202,30 @@ namespace ST
 
         case APMSG_CHAR_CREATE_RESPONSE:
             {
-                if (packet->getByte() == ERR_NONE)
+                int error = packet->getByte();
+                if (error == ERR_NONE)
                 {
 					int id = packet->getInteger();
 					player->setId(id);
+
+                    int slot = packet->getInteger();
+                    std::string name = packet->getString();
+					int charId = packet->getInteger();
+					int body = packet->getInteger();
+					int hair = packet->getInteger();
+
+					Texture *avatar = graphicsEngine->createAvatar(0, 0, hair);
+					Character *c = new Character(charId, name, avatar);
+					c->setLook(body, hair);
+                    c->setLevel(packet->getInteger());
+                    c->setRights(packet->getInteger());
+                    player->addCharacter(c, slot);
+                    graphicsEngine->addNode(c);
                 }
                 else
                 {
 					interfaceManager->setErrorMessage("Invalid character");
-                    logger->logWarning("Invalid character");
+                    logger->logWarning("Invalid character: Error " + utils::toString(error));
                     interfaceManager->showErrorWindow(true);
                 }
             } break;

@@ -44,10 +44,13 @@
 #ifndef ST_BODYPART_HEADER
 #define ST_BODYPART_HEADER
 
+#include <string>
+
 namespace ST
 {
     enum { PART_BODY = 0, PART_HAIR, PART_CHEST, PART_LEGS, PART_FEET };
 
+    class Texture;
     class BodyPart// : class GameObject
     {
     public:

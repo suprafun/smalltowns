@@ -39,14 +39,6 @@
 
 #include "player.h"
 #include "character.h"
-#include "resourcemanager.h"
-
-#include "graphics/graphics.h"
-#include "graphics/texture.h"
-
-#include "resources/bodypart.h"
-
-#include <SDL/SDL.h>
 
 namespace ST
 {
@@ -80,18 +72,14 @@ namespace ST
         mId = id;
     }
 
-    void Player::addCharacter(Character *c)
+    void Player::addCharacter(Character *c, int slot)
     {
-        std::vector<Character*>::iterator itr, itr_end;
-        itr_end = mCharacters.end();
-        for (itr = mCharacters.begin(); itr != itr_end; ++itr)
+        CharacterMap::iterator itr = mCharacters.find(slot);
+        if (itr != mCharacters.end())
         {
-            if ((*itr)->getName() == c->getName())
-            {
-                return;
-            }
+            return;
         }
-        mCharacters.push_back(c);
+        mCharacters.insert(std::pair<int, Character*>(slot, c));
     }
 
     int Player::getNumChars() const
@@ -101,9 +89,10 @@ namespace ST
 
     Character* Player::getCharacter(unsigned int slot)
     {
-        if (slot < mCharacters.size())
+        CharacterMap::iterator itr = mCharacters.find(slot);
+        if (itr != mCharacters.end())
         {
-            return mCharacters[slot];
+            return itr->second;
         }
 
         return NULL;
@@ -111,67 +100,22 @@ namespace ST
 
     void Player::removeCharacters()
     {
-        for (size_t i = 0; i < mCharacters.size(); ++i)
+        CharacterMap::iterator itr = mCharacters.begin(), itr_end = mCharacters.end();
+
+        while (itr != itr_end)
         {
-            delete mCharacters[i];
+            delete itr->second;
+            ++itr;
         }
         mCharacters.clear();
     }
 
     void Player::setCharacter(int slot)
     {
-        if (slot < mCharacters.size())
+        CharacterMap::iterator itr = mCharacters.find(slot);
+        if (itr != mCharacters.end())
         {
-            mSelected = mCharacters[slot];
-        }
-    }
-
-    void Player::createAvatar()
-    {
-        if (mSelected)
-        {
-            // create surface to render to
-            SDL_Surface *surface = new SDL_Surface;
-
-            Texture *hairTex = 0;
-            Texture *bodyTex = 0;
-            Texture *chestTex = 0;
-            Texture *legsTex = 0;
-            Texture *feetTex = 0;
-
-            // all the body parts that make up the avatar
-            BodyPart *hair = resourceManager->getBodyPart(mSelected->look.hair);
-            BodyPart *body = resourceManager->getBodyPart(mSelected->look.body);
-            BodyPart *chest = resourceManager->getBodyPart(mSelected->look.chest);
-            BodyPart *legs = resourceManager->getBodyPart(mSelected->look.chest);
-            BodyPart *feet = resourceManager->getBodyPart(mSelected->look.chest);
-
-            // load all the textures
-            if (hair)
-                hairTex = hair->getTexture();
-            if (body)
-                bodyTex = body->getTexture();
-            if (chest)
-                chestTex = chest->getTexture();
-            if (legs)
-                legsTex = legs->getTexture();
-            if (feet)
-                feetTex = feet->getTexture();
-
-            // write all the textures to the surface
-            if (hairTex)
-                SDL_BlitSurface(hairTex->getSDLSurface(), NULL, surface, NULL);
-            if (bodyTex)
-                SDL_BlitSurface(bodyTex->getSDLSurface(), NULL, surface, NULL);
-            if (chestTex)
-                SDL_BlitSurface(chestTex->getSDLSurface(), NULL, surface, NULL);
-            if (legsTex)
-                SDL_BlitSurface(legsTex->getSDLSurface(), NULL, surface, NULL);
-            if (feetTex)
-                SDL_BlitSurface(feetTex->getSDLSurface(), NULL, surface, NULL);
-
-            mSelected->mTexture = new Texture("Player");
-            mSelected->mTexture->setImage(surface);
+            mSelected = itr->second;
         }
     }
 }

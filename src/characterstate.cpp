@@ -88,6 +88,7 @@ namespace ST
         if (selected)
         {
             Packet *packet = new Packet(PAMSG_CHAR_CHOOSE);
+            // send the slot of character selected
             int slot = selected->value;
             packet->setInteger(slot);
 
@@ -121,10 +122,12 @@ namespace ST
         std::string name = AG_TextboxDupString(static_cast<AG_Textbox*>(AG_PTR(1)));
         if (!name.empty() && state)
         {
+            int body = state->mChosen[PART_BODY];
 			int hair = state->mChosen[PART_HAIR];
 
             Packet *packet = new Packet(PAMSG_CHAR_CREATE);
             packet->setString(name);
+            packet->setInteger(body);
             packet->setInteger(hair);
             networkManager->sendPacket(packet);
 
@@ -138,94 +141,19 @@ namespace ST
         }
     }
 
-/*    Choices::Choices(int numBodyParts)
-    {
-        for (int i = 0; i < numBodyParts; ++i)
-        {
-            PossibleChoices *pc = new PossibleChoices;
-            pc->lastchoice = 0;
-            pc->bodypart = i;
-            mPossible.insert(std::pair<int, PossibleChoices*>(i, pc));
-        }
-    }
-
-    Choices::~Choices()
-    {
-        PossibleItr itr = mPossible.begin(), itr_end = mPossible.end();
-        while (itr != itr_end)
-        {
-            for (unsigned int i = 0; i < itr->second->choices.size(); ++i)
-            {
-                delete itr->second->choices[i];
-            }
-            delete itr->second;
-            ++itr;
-        }
-
-        mPossible.clear();
-    }
-
-    Body* Choices::next(int bodypart)
-    {
-        PossibleItr itr = mPossible.find(bodypart);
-        if (itr != mPossible.end())
-        {
-            PossibleChoices *pc = itr->second;
-            ++(pc->lastchoice);
-            if (pc->lastchoice == pc->choices.size())
-            {
-                pc->lastchoice = 0;
-            }
-            return pc->choices[pc->lastchoice];
-        }
-
-        return NULL;
-    }
-
-    void Choices::addPart(Body *part)
-    {
-        PossibleItr itr = mPossible.find(part->part);
-        if (itr != mPossible.end())
-        {
-            itr->second->choices.push_back(part);
-        }
-    }
-
-    Body* Choices::getPart(int partId, int type)
-    {
-        PossibleItr itr = mPossible.find(type);
-        if (itr != mPossible.end())
-        {
-            PossibleChoices *pc = itr->second;
-            for (unsigned int i = 0; i < pc->choices.size(); ++i)
-            {
-                if (pc->choices[i]->id == partId)
-                {
-                    return pc->choices[i];
-                }
-            }
-        }
-
-        return NULL;
-    }
-
-    int Choices::getCount(int bodypart)
-    {
-        PossibleItr itr = mPossible.find(bodypart);
-        if (itr != mPossible.end())
-        {
-            return itr->second->choices.size();
-        }
-
-        return 0;
-    }
-*/
     CharacterState::CharacterState()
     {
 		mSelected = 0;
 		mAvatar = 0;
 
 		resourceManager->loadBodyParts("body.cfg");
+
+		BodyPart *body = resourceManager->getDefaultBody(PART_BODY);
+		BodyPart *hair = resourceManager->getDefaultBody(PART_HAIR);
+		if (body)
+            mChosen.push_back(body->getId());
+        if (hair)
+           	mChosen.push_back(hair->getId());
     }
 
     void CharacterState::enter()
@@ -385,11 +313,12 @@ namespace ST
         AG_Expand(charPos);
 
         // list all the hair styles to choose from
-        int hairCount = resourceManager->getNumberOfBody(PART_HAIR);
+        std::vector<BodyPart*> hairList = resourceManager->getBodyList(PART_HAIR);
+        int hairCount = hairList.size();
         for (int i = 0; i < hairCount; ++i)
         {
             // get the body
-            BodyPart *body = 0;
+            BodyPart *body = hairList[i];
 
             if (!body)
             {

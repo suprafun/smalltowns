@@ -41,6 +41,8 @@
 
 #include "resources/bodypart.h"
 
+#include "utilities/xml.h"
+
 namespace ST
 {
     ResourceManager::~ResourceManager()
@@ -61,18 +63,18 @@ namespace ST
 		if (file.load(filename))
 		{
             // set defaults
-		    mDefaultBody = file.readInt("default", "body"));
-		    mDefaultHair = file.readInt("default", "hair"));
+		    mDefaultBody = file.readInt("default", "body");
+		    mDefaultHair = file.readInt("default", "hair");
 
             // add all the body parts
             do
             {
                 int id = file.readInt("body", "id");
-                std::string file = file.readString("body", "file");
+                std::string filename = file.readString("body", "file");
                 std::string icon = file.readString("body", "icon");
                 int part = file.readInt("body", "part");
 
-                BodyPart *body = new BodyPart(id, part, file, icon);
+                BodyPart *body = new BodyPart(id, part, filename, icon);
 
                 mBodyParts.push_back(body);
             } while (file.next("body"));
@@ -108,21 +110,21 @@ namespace ST
         return NULL;
     }
 
-    int ResourceManager::getNumberOfBody(int type)
+    std::vector<BodyPart*> ResourceManager::getBodyList(int type)
     {
-        int count = 0;
+        std::vector<BodyPart*> vec;
 
         BodyPartItr itr = mBodyParts.begin(), itr_end = mBodyParts.end();
         while (itr != itr_end)
         {
             if ((*itr)->getType() == type)
             {
-                ++count;
+                vec.push_back(*itr);
             }
 
             ++itr;
         }
 
-        return count;
+        return vec;
     }
 }

@@ -62,23 +62,6 @@ namespace ST
         std::vector<AG_Pixmap*> bodyparts;
     };
 
-/*    class Choices
-    {
-    public:
-        Choices(int numBodyParts);
-        ~Choices();
-        Body* next(int bodypart);
-        Body* prev(int bodypart);
-
-        void addPart(Body* part);
-        Body* getPart(int partId, int type);
-        int getCount(int bodypart);
-
-    private:
-        std::map<int, PossibleChoices*> mPossible;
-        typedef std::map<int, PossibleChoices*>::iterator PossibleItr;
-    };
-*/
 	class CharacterState : public GameState
 	{
 	public:
@@ -115,7 +98,6 @@ namespace ST
 	public:
 		AG_Checkbox *mSelected;
 		std::vector<int> mChosen;
-//		Choices *mChoices;
 
     private:
 		int mHalfScreenWidth;

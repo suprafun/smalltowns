@@ -76,6 +76,8 @@ namespace ST
         virtual std::string getName();
         virtual int getId() const;
 
+        virtual void setLook(int body, int hair) { look.body = body; look.hair = hair; }
+
     public:
         Look look;
 

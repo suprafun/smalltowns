@@ -92,6 +92,13 @@ namespace ST
 		Node* createNode(std::string name, std::string texture, Point *point = NULL);
 
 		/**
+		 * Add Node
+		 * Adds an already created node to the render list
+		 * @param node The node to add
+		 */
+        void addNode(Node *node);
+
+		/**
 		 * Create Entity
 		 * Creates a new entity, and returns it
 		 * @param name The name of the Entity
@@ -185,7 +192,7 @@ namespace ST
         /**
          * Create a texture based on body parts
          */
-        Texture* createAvatar(int body, int hair);
+        Texture* createAvatar(int slot, int bodyId, int hairId);
 
 	protected:
 		SDL_Surface *mScreen;

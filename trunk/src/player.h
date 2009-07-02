@@ -45,7 +45,7 @@
 #define ST_PLAYER_HEADER
 
 #include <string>
-#include <vector>
+#include <map>
 
 namespace ST
 {
@@ -83,7 +83,7 @@ namespace ST
         /**
          * Add a character to list player owns
          */
-        void addCharacter(Character *c);
+        void addCharacter(Character *c, int slot);
 
         /**
          * Return number of characters the player has
@@ -94,6 +94,7 @@ namespace ST
          * Return the character in the specified slot
          */
         Character* getCharacter(unsigned int slot);
+        Character* getSelectedCharacter();
 
         /**
          * Removes all the currently added characters
@@ -105,16 +106,12 @@ namespace ST
          */
         void setCharacter(int slot);
 
-        /**
-         * Create avatar based on selected character's looks
-         */
-        void createAvatar();
-
     private:
         std::string mUsername;
-		std::vector<Character*> mCharacters;
+		std::map<int, Character*> mCharacters;
 		Character *mSelected;
 		int mId;
+		typedef std::map<int, Character*> CharacterMap;
     };
 
     extern Player *player;

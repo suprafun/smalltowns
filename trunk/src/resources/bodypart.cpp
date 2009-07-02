@@ -39,6 +39,9 @@
 
 #include "bodypart.h"
 
+#include "../graphics/graphics.h"
+#include "../graphics/texture.h"
+
 namespace ST
 {
     BodyPart::BodyPart(int id, int type, const std::string &filename, const std::string &iconfile):

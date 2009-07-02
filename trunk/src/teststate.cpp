@@ -109,8 +109,8 @@ namespace ST
 	{
         chatServer = new IRCServer;
 
-        // create player avatar
-        player->createAvatar();
+        Character *c = player->getSelectedCharacter();
+        Point pt = c->getPosition();
 
 		// create camera
 		Rectangle rect;

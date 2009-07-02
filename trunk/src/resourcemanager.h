@@ -57,7 +57,7 @@ namespace ST
         void loadBodyParts(const std::string &filename);
         BodyPart* getBodyPart(int id);
         BodyPart* getDefaultBody(int type);
-        int getNumberOfBody(int type);
+        std::vector<BodyPart*> getBodyList(int type);
 
     private:
         int mDefaultBody;

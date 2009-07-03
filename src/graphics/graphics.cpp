@@ -55,6 +55,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <sstream>
+#include <cassert>
 
 namespace ST
 {

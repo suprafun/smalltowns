@@ -94,7 +94,7 @@ namespace ST
          * Return the character in the specified slot
          */
         Character* getCharacter(unsigned int slot);
-        Character* getSelectedCharacter();
+        Character* getSelectedCharacter() { return mSelected; }
 
         /**
          * Removes all the currently added characters

@@ -41,7 +41,7 @@
 #include "loginstate.h"
 #include "input.h"
 #include "player.h"
-
+#include "character.h"
 
 #include "graphics/camera.h"
 #include "graphics/graphics.h"

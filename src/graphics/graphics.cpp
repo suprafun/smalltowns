@@ -389,21 +389,37 @@ namespace ST
 
     Texture* GraphicsEngine::createAvatar(int slot, int bodyId, int hairId)
     {
-        // create surface to render to
-        SDL_Surface *surface = new SDL_Surface;
+        // Set the byte order of RGBA
+		Uint32 rmask, gmask, bmask, amask;
+		#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		rmask = 0xff000000;
+		gmask = 0x00ff0000;
+		bmask = 0x0000ff00;
+		amask = 0x000000ff;
+		#else
+		rmask = 0x000000ff;
+		gmask = 0x0000ff00;
+		bmask = 0x00ff0000;
+		amask = 0xff000000;
+		#endif
 
-        Texture *hairTex = 0;
-        Texture *bodyTex = 0;
-        Texture *chestTex = 0;
-        Texture *legsTex = 0;
-        Texture *feetTex = 0;
+        // create surface to render to
+        SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+            resourceManager->getBodyWidth(), resourceManager->getBodyHeight(),
+			mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
+
+        Texture *hairTex = NULL;
+        Texture *bodyTex = NULL;
+        Texture *chestTex = NULL;
+        Texture *legsTex = NULL;
+        Texture *feetTex = NULL;
 
         // all the body parts that make up the avatar
         BodyPart *hair = resourceManager->getBodyPart(hairId);
         BodyPart *body = resourceManager->getBodyPart(bodyId);
-        BodyPart *chest = 0;
-        BodyPart *legs = 0;
-        BodyPart *feet = 0;
+        BodyPart *chest = NULL;
+        BodyPart *legs = NULL;
+        BodyPart *feet = NULL;
 
         // load all the textures
         if (hair)
@@ -418,10 +434,11 @@ namespace ST
             feetTex = feet->getTexture();
 
         // write all the textures to the surface
-        if (hairTex)
-            SDL_BlitSurface(hairTex->getSDLSurface(), NULL, surface, NULL);
+        // start with the body as the base
         if (bodyTex)
             SDL_BlitSurface(bodyTex->getSDLSurface(), NULL, surface, NULL);
+        if (hairTex)
+            SDL_BlitSurface(hairTex->getSDLSurface(), NULL, surface, NULL);
         if (chestTex)
             SDL_BlitSurface(chestTex->getSDLSurface(), NULL, surface, NULL);
         if (legsTex)
@@ -431,8 +448,19 @@ namespace ST
 
         std::stringstream str;
         str << "Character" << slot;
-        Texture *tex = new Texture(str.str());
-        tex->setImage(surface);
+
+        Texture *tex = new Texture(str.str(), resourceManager->getBodyWidth(), resourceManager->getBodyHeight());
+        if (mOpenGL)
+		{
+			tex->setPixels(surface);
+			SDL_FreeSurface(surface);
+		}
+		else
+		{
+			tex->setImage(surface);
+		}
+
+        mTextures.insert(std::pair<std::string, Texture*>(tex->getName(), tex));
         return tex;
     }
 }

@@ -53,13 +53,21 @@ namespace ST
     class ResourceManager
     {
     public:
+        ResourceManager();
         ~ResourceManager();
         void loadBodyParts(const std::string &filename);
+
+        int getBodyWidth() const;
+        int getBodyHeight() const;
+
         BodyPart* getBodyPart(int id);
         BodyPart* getDefaultBody(int type);
+
         std::vector<BodyPart*> getBodyList(int type);
 
     private:
+        int mBodyWidth;
+        int mBodyHeight;
         int mDefaultBody;
         int mDefaultHair;
         std::vector<BodyPart*> mBodyParts;

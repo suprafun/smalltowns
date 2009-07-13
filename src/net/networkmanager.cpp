@@ -174,6 +174,10 @@ namespace ST
 
         case APMSG_CHAR_LIST_RESPONSE:
             {
+                // must create state before creating avatars
+                // as the state loads the resources used
+                GameState *state = new CharacterState;
+
                 int count = packet->getInteger();
                 for (int i = 0; i < count; ++i)
                 {
@@ -182,20 +186,19 @@ namespace ST
                     std::string name = packet->getString();
                     int body = packet->getInteger();
                     int hair = packet->getInteger();
-                    Texture *avatar = graphicsEngine->createAvatar(slot, 0, hair);
+                    Texture *avatar = graphicsEngine->createAvatar(slot, body, hair);
                     Character *c = new Character(id, name, avatar);
                     c->setLook(body, hair);
                     c->setLevel(packet->getInteger());
                     c->setRights(packet->getInteger());
                     player->addCharacter(c, slot);
-                    graphicsEngine->addNode(c);
                 }
 
                 std::stringstream str;
                 str << "Found " << count << " character.";
                 logger->logDebug(str.str());
 
-                GameState *state = new CharacterState;
+                // can now change state
                 game->changeState(state);
 
             } break;
@@ -214,13 +217,13 @@ namespace ST
 					int body = packet->getInteger();
 					int hair = packet->getInteger();
 
-					Texture *avatar = graphicsEngine->createAvatar(0, 0, hair);
+					Texture *avatar = graphicsEngine->createAvatar(slot, body, hair);
 					Character *c = new Character(charId, name, avatar);
 					c->setLook(body, hair);
                     c->setLevel(packet->getInteger());
                     c->setRights(packet->getInteger());
                     player->addCharacter(c, slot);
-                    graphicsEngine->addNode(c);
+                    player->setCharacter(slot);
                 }
                 else
                 {
@@ -301,6 +304,21 @@ namespace ST
             {
                 std::string mapFile = packet->getString();
                 mapEngine->loadMap(mapFile);
+
+                Packet *packet = new Packet(PGMSG_MAP_LOADED);
+                sendPacket(packet);
+
+                graphicsEngine->addNode(player->getSelectedCharacter());
+            } break;
+
+        case GPMSG_WARPTO:
+            {
+                Point pt;
+                pt.x = packet->getInteger();
+                pt.y = packet->getInteger();
+
+                Character *c = player->getSelectedCharacter();
+                c->moveNode(&pt);
             } break;
 	    }
 	}

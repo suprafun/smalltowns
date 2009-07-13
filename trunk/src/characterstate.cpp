@@ -91,6 +91,7 @@ namespace ST
             // send the slot of character selected
             int slot = selected->value;
             packet->setInteger(slot);
+            player->setCharacter(slot);
 
             networkManager->sendPacket(packet);
 
@@ -216,41 +217,11 @@ namespace ST
             {
                 AG_Pixmap *pixmap;
 
-                // TODO: Add selectable body (for different genders)
 				// load the texture
-                Texture *tex = 0;
-                BodyPart *body = resourceManager->getDefaultBody(PART_BODY);
-                if (!body)
+                Texture *tex = c->getTexture();
+
+                if (tex)
                 {
-                    // error need a default body
-                    return;
-                }
-                tex = body->getTexture();
-
-                // put the texture into the pixmap
-                if (graphicsEngine->isOpenGL())
-                {
-                    pixmap = AG_PixmapFromTexture(0, 0, tex->getGLTexture(), 0);
-                }
-                else
-                {
-                    AG_Surface *s = AG_SurfaceFromSDL(tex->getSDLSurface());
-                    pixmap = AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, s);
-                }
-
-                // put the pixmap on the screen
-                AG_FixedPut(position, pixmap, 64 * i, 0);
-
-                pixmap = 0;
-                tex = 0;
-
-                // now add hair
-                BodyPart *hair = resourceManager->getBodyPart(c->look.hair);
-                if (hair)
-                {
-                    // Load texture
-                    tex = hair->getTexture();
-
                     // put the texture into the pixmap
                     if (graphicsEngine->isOpenGL())
                     {
@@ -264,7 +235,6 @@ namespace ST
 
                     // put the pixmap on the screen
                     AG_FixedPut(position, pixmap, 64 * i, 0);
-                    break;
                 }
 
                 // Allow user to select the character

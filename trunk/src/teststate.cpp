@@ -109,9 +109,6 @@ namespace ST
 	{
         chatServer = new IRCServer;
 
-        Character *c = player->getSelectedCharacter();
-        Point pt = c->getPosition();
-
 		// create camera
 		Rectangle rect;
 		rect.height = 768;

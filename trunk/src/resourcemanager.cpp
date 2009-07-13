@@ -45,6 +45,14 @@
 
 namespace ST
 {
+    ResourceManager::ResourceManager()
+    {
+        mDefaultBody = 0;
+        mDefaultHair = 0;
+        mBodyWidth = 0;
+        mBodyHeight = 0;
+    }
+
     ResourceManager::~ResourceManager()
     {
         BodyPartItr itr = mBodyParts.begin(), itr_end = mBodyParts.end();
@@ -62,6 +70,10 @@ namespace ST
         XMLFile file;
 		if (file.load(filename))
 		{
+		    // set size
+		    mBodyWidth = file.readInt("size", "width");
+		    mBodyHeight = file.readInt("size", "height");
+
             // set defaults
 		    mDefaultBody = file.readInt("default", "body");
 		    mDefaultHair = file.readInt("default", "hair");
@@ -79,6 +91,16 @@ namespace ST
                 mBodyParts.push_back(body);
             } while (file.next("body"));
 		}
+    }
+
+    int ResourceManager::getBodyWidth() const
+    {
+        return mBodyWidth;
+    }
+
+    int ResourceManager::getBodyHeight() const
+    {
+        return mBodyHeight;
     }
 
     BodyPart* ResourceManager::getBodyPart(int id)

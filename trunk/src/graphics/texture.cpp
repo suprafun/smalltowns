@@ -62,9 +62,15 @@ namespace ST
 	Texture::~Texture()
 	{
 		if (mSurface)
+		{
 			SDL_FreeSurface(mSurface);
+			mSurface = 0;
+		}
 		if (mGLTexture)
+		{
 			glDeleteTextures(1, &mGLTexture);
+			mGLTexture = 0;
+		}
 	}
 
 	void Texture::setPixels(SDL_Surface *surface)

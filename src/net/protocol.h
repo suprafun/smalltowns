@@ -52,8 +52,14 @@ enum
     GPMSG_LOAD_MAP              = 0x0810, // S name of map
     PGMSG_MAP_LOADED            = 0x0811, //
 
+    // player info
+    PGMSG_PLAYER_INFO           = 0x0820, // I id
+    GPMSG_PLAYER_INFO_RESPONSE  = 0x0821, // I id, S name, I body, I hair, I level, I rights
+
     // movement
     GPMSG_WARPTO                = 0x0850, // I x, I y
+    GPMSG_PLAYER_MOVE           = 0x0860, // I id, I x, I y, I dir
+    PGMSG_PLAYER_MOVE           = 0x0861, // I x, I y
 
 };
 

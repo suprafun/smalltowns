@@ -435,16 +435,38 @@ namespace ST
 
         // write all the textures to the surface
         // start with the body as the base
-        if (bodyTex)
-            SDL_BlitSurface(bodyTex->getSDLSurface(), NULL, surface, NULL);
-        if (hairTex)
-            SDL_BlitSurface(hairTex->getSDLSurface(), NULL, surface, NULL);
-        if (chestTex)
-            SDL_BlitSurface(chestTex->getSDLSurface(), NULL, surface, NULL);
-        if (legsTex)
-            SDL_BlitSurface(legsTex->getSDLSurface(), NULL, surface, NULL);
-        if (feetTex)
-            SDL_BlitSurface(feetTex->getSDLSurface(), NULL, surface, NULL);
+        if (mOpenGL)
+        {
+            //TODO: Implement putting textures together with opengl
+        }
+        else
+        {
+            if (bodyTex)
+            {
+                SDL_SetAlpha(bodyTex->getSDLSurface(), 0, 255);
+                SDL_BlitSurface(bodyTex->getSDLSurface(), NULL, surface, NULL);
+            }
+            if (hairTex)
+            {
+                SDL_SetAlpha(hairTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(hairTex->getSDLSurface(), NULL, surface, NULL);
+            }
+            if (chestTex)
+            {
+                SDL_SetAlpha(chestTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(chestTex->getSDLSurface(), NULL, surface, NULL);
+            }
+            if (legsTex)
+            {
+                SDL_SetAlpha(legsTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(legsTex->getSDLSurface(), NULL, surface, NULL);
+            }
+            if (feetTex)
+            {
+                SDL_SetAlpha(feetTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(feetTex->getSDLSurface(), NULL, surface, NULL);
+            }
+        }
 
         std::stringstream str;
         str << "Character" << slot;

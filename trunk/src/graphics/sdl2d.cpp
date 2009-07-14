@@ -82,13 +82,14 @@ namespace ST
 		srcRect.y = 0;
 		srcRect.w = texture->getWidth();
 		srcRect.h = texture->getHeight();
+		SDL_SetAlpha(texture->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
 		SDL_BlitSurface(texture->getSDLSurface(), &srcRect, mScreen, &dstRect);
 	}
 
 	void SDLGraphics::setupScene()
 	{
 	}
-	
+
 	void SDLGraphics::endScene()
 	{
 		SDL_Flip(mScreen);

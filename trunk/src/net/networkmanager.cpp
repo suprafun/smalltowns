@@ -320,6 +320,22 @@ namespace ST
                 Character *c = player->getSelectedCharacter();
                 c->moveNode(&pt);
             } break;
+
+        case GPMSG_PLAYER_MOVE:
+            {
+                // check if we know the player exists
+                // for now we know they dont, since theres no movement yet
+                //TODO: create new character and save the position info
+                Packet *p = new Packet(PGMSG_PLAYER_INFO);
+                p->setInteger(packet->getInteger());
+                sendPacket(p);
+            } break;
+
+        case GPMSG_PLAYER_INFO_RESPONSE:
+            {
+                //TODO: fill out the rest of the character details
+                // update character with info
+            } break;
 	    }
 	}
 

@@ -192,7 +192,7 @@ namespace ST
         /**
          * Create a texture based on body parts
          */
-        Texture* createAvatar(int slot, int bodyId, int hairId);
+        Texture* createAvatar(unsigned int id, int bodyId, int hairId);
 
 	protected:
 		SDL_Surface *mScreen;

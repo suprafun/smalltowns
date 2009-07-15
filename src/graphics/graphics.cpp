@@ -387,7 +387,7 @@ namespace ST
         return mHeight;
     }
 
-    Texture* GraphicsEngine::createAvatar(int slot, int bodyId, int hairId)
+    Texture* GraphicsEngine::createAvatar(unsigned int id, int bodyId, int hairId)
     {
         // Set the byte order of RGBA
 		Uint32 rmask, gmask, bmask, amask;
@@ -469,7 +469,7 @@ namespace ST
         }
 
         std::stringstream str;
-        str << "Character" << slot;
+        str << "Character" << id;
 
         Texture *tex = new Texture(str.str(), resourceManager->getBodyWidth(), resourceManager->getBodyHeight());
         if (mOpenGL)

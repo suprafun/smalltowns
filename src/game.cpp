@@ -39,6 +39,7 @@
 
 #include "game.h"
 
+#include "beingmanager.h"
 #include "connectstate.h"
 #include "input.h"
 #include "map.h"
@@ -62,11 +63,13 @@ namespace ST
 	InterfaceManager *interfaceManager = NULL;
 	NetworkManager *networkManager = NULL;
 	ResourceManager *resourceManager = NULL;
+	BeingManager *beingManager = NULL;
 	Player *player = NULL;
 
 	Game::~Game()
 	{
 	    delete player;
+	    delete beingManager;
 	    delete resourceManager;
 		delete networkManager;
 		delete interfaceManager;
@@ -101,6 +104,7 @@ namespace ST
 		interfaceManager = new InterfaceManager;
 		networkManager = new NetworkManager;
 		resourceManager = new ResourceManager;
+		beingManager = new BeingManager;
 		player = new Player;
 
 		if (hostname.empty() || port == 0)

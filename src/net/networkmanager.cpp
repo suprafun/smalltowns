@@ -50,6 +50,7 @@
 #include "../utilities/log.h"
 #include "../utilities/stringutils.h"
 
+#include "../beingmanager.h"
 #include "../character.h"
 #include "../characterstate.h"
 #include "../connectstate.h"
@@ -217,7 +218,7 @@ namespace ST
 					int body = packet->getInteger();
 					int hair = packet->getInteger();
 
-					Texture *avatar = graphicsEngine->createAvatar(slot, body, hair);
+					Texture *avatar = graphicsEngine->createAvatar(charId, body, hair);
 					Character *c = new Character(charId, name, avatar);
 					c->setLook(body, hair);
                     c->setLevel(packet->getInteger());
@@ -324,17 +325,50 @@ namespace ST
         case GPMSG_PLAYER_MOVE:
             {
                 // check if we know the player exists
-                // for now we know they dont, since theres no movement yet
-                //TODO: create new character and save the position info
-                Packet *p = new Packet(PGMSG_PLAYER_INFO);
-                p->setInteger(packet->getInteger());
-                sendPacket(p);
+                unsigned int id = packet->getInteger();
+                int x = packet->getInteger();
+                int y = packet->getInteger();
+                int dir = packet->getInteger();
+                Being *being = beingManager->findBeing(id);
+                if (being)
+                {
+                    // found being, update their position
+                    // use interpolation
+                }
+                else
+                {
+                    // get player info, save the data for later
+                    Packet *p = new Packet(PGMSG_PLAYER_INFO);
+                    p->setInteger(id);
+                    sendPacket(p);
+                    beingManager->saveBeingPosition(id, x, y);
+                }
             } break;
 
         case GPMSG_PLAYER_INFO_RESPONSE:
             {
-                //TODO: fill out the rest of the character details
-                // update character with info
+                // check if being already exists
+                unsigned int id = packet->getInteger();
+                std::string name = packet->getString();
+                int body = packet->getInteger();
+				int hair = packet->getInteger();
+				int lvl = packet->getInteger();
+				int rights = packet->getInteger();
+
+                Being *being = beingManager->findBeing(id);
+                if (being == NULL)
+                {
+                    // create new being based on info
+                    Texture *avatar = graphicsEngine->createAvatar(id, body, hair);
+                    Character *c = new Character(id, name, avatar);
+                    c->setLook(body, hair);
+                    c->setLevel(lvl);
+                    c->setRights(rights);
+
+                    beingManager->addBeing(c);
+                    Point pt = beingManager->getSavedPosition(id);
+                    c->moveNode(&pt);
+                }
             } break;
 	    }
 	}

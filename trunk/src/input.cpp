@@ -56,6 +56,18 @@ namespace ST
 
 			switch (event.type)
 			{
+            case SDL_MOUSEBUTTONUP:
+                {
+                    interfaceManager->handleMouseEvent(event.button.button,
+                                                       event.button.x, event.button.y,
+                                                       0);
+                } break;
+            case SDL_MOUSEBUTTONDOWN:
+                {
+                    interfaceManager->handleMouseEvent(event.button.button,
+                                                       event.button.x, event.button.y,
+                                                       1);
+                } break;
 			case SDL_KEYDOWN:
 				{
 					keysDown.push_back(event.key.keysym.sym);

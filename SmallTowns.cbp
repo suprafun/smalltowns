@@ -44,6 +44,8 @@
 		</Compiler>
 		<Unit filename="src/being.cpp" />
 		<Unit filename="src/being.h" />
+		<Unit filename="src/beingmanager.cpp" />
+		<Unit filename="src/beingmanager.h" />
 		<Unit filename="src/character.cpp" />
 		<Unit filename="src/character.h" />
 		<Unit filename="src/characterstate.cpp" />

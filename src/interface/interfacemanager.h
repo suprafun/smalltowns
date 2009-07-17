@@ -53,6 +53,12 @@
 
 namespace ST
 {
+class Event;
+}
+typedef void (*myfunc)(ST::Event* evt);
+
+namespace ST
+{
 	class XMLFile;
 	class InterfaceManager
 	{
@@ -123,9 +129,26 @@ namespace ST
 		 */
 		void sendToChat(const std::string &msg);
 
+		/**
+		 * Add mouse listener
+		 */
+        void addMouseListener(myfunc func);
+        void removeMouseListeners();
+
+        /**
+         * Handle mouse event
+         * @param button The button clicked
+         * @param x The X position of the mouse cursor
+         * @param y The Y position of the mouse cursor
+         * @param type 0 for mouseup, 1 for mousedown, and 2 for motion
+         */
+        void handleMouseEvent(int button, int x, int y, int type);
+
 	private:
 		std::list<AG_Window*> mWindows;
 		typedef std::list<AG_Window*>::iterator WindowItr;
+		std::list<myfunc> mListeners;
+		typedef std::list<myfunc>::iterator ListenerItr;
 		XMLFile *mGuiSheet;
 		AG_Window *mErrorWindow;
 		AG_Label *mErrorCaption;

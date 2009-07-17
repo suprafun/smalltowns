@@ -239,4 +239,19 @@ namespace ST
             }
         }
 	}
+
+	void InterfaceManager::addMouseListener(myfunc func)
+	{
+	    mListeners.push_back(func);
+	}
+
+	void InterfaceManager::removeMouseListeners()
+	{
+	    mListeners.clear();
+	}
+
+	void InterfaceManager::handleMouseEvent(int button, int x, int y, int type)
+	{
+
+	}
 }

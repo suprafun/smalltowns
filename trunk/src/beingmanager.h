@@ -63,6 +63,11 @@ namespace ST
         Being* findBeing(unsigned int id);
 
         /**
+         * Return a being based on position on map
+         */
+        Being* findBeing(int x, int y);
+
+        /**
          * Add a being
          */
         void addBeing(Being *being);

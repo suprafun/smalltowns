@@ -194,6 +194,17 @@ namespace ST
          */
         Texture* createAvatar(unsigned int id, int bodyId, int hairId);
 
+        /**
+         * Convert Screen to tile co-ordinates
+         */
+        int convertToXTile(int x);
+        int convertToYTile(int y);
+
+        /**
+         * Get the node at that position
+         */
+        Node* getNode(int x, int y);
+
 	protected:
 		SDL_Surface *mScreen;
 		int mWidth;
@@ -208,6 +219,7 @@ namespace ST
 
 		// list of nodes
 		std::list<Node*> mNodes;
+		typedef std::list<Node*>::iterator NodeItr;
 
 		// list of textures
 		std::map<std::string, Texture*> mTextures;

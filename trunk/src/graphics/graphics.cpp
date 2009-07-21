@@ -43,6 +43,7 @@
 #include "node.h"
 #include "texture.h"
 
+#include "../map.h"
 #include "../resourcemanager.h"
 
 #include "../interface/interfacemanager.h"
@@ -84,8 +85,7 @@ namespace ST
 	GraphicsEngine::~GraphicsEngine()
 	{
 		// clean up nodes
-		std::list<Node*>::iterator itr = mNodes.begin();
-		std::list<Node*>::const_iterator itr_end = mNodes.end();
+		NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
 		while (itr != itr_end)
 		{
 			delete (*itr);
@@ -140,43 +140,39 @@ namespace ST
 
 	void GraphicsEngine::outputNodes()
 	{
-		// create an iterator for looping
-		std::list<Node*>::iterator itr = mNodes.begin();
-		// create an iterator to test for end of list
-		std::list<Node*>::iterator itr_end = mNodes.end();
+		// create iterators for looping
+		NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
 
-		// camera position, and view size
-		Point pt = mCamera->getPosition();
-		const int w = mCamera->getViewWidth();
-		const int h = mCamera->getViewHeight();
+        Point pt = mCamera->getPosition();
 
 		// keep looping until reached the end of the list
-		for (; itr != itr_end; ++itr)
+		while (itr != itr_end)
 		{
+		    Node *node = (*itr);
 			// dont draw if not on screen
-			if ((*itr)->getPosition().x + (*itr)->getWidth() < pt.x ||
-				(*itr)->getPosition().x > pt.x + w ||
-				(*itr)->getPosition().y + (*itr)->getHeight() < pt.y ||
-				(*itr)->getPosition().y > pt.y + h)
+			if (checkInside(node->getPosition(), mCamera->getViewBounds()))
 			{
 				continue;
 			}
 
 			// dont draw if not visible
-			if (!(*itr)->getVisible())
+			if (!node->getVisible())
 			{
 				continue;
 			}
 
-			Rectangle rect;
+			Rectangle rect = node->getBounds();
+			rect.x -= pt.x;
+			rect.y -= pt.y;
 
-			// set position and size to local variables
-			rect.x = (*itr)->getPosition().x - pt.x;
-			rect.y = (*itr)->getPosition().y - pt.y;
-			rect.width = (*itr)->getWidth();
-			rect.height = (*itr)->getHeight();
+			drawTexturedRect(rect, node->getTexture());
 
-			drawTexturedRect(rect, (*itr)->getTexture());
+			if (node->showName())
+			{
+			    interfaceManager->drawName(node->getName(), node->getPosition());
+			}
+
+			++itr;
 		}
 	}
 
@@ -484,5 +480,46 @@ namespace ST
 
         mTextures.insert(std::pair<std::string, Texture*>(tex->getName(), tex));
         return tex;
+    }
+
+    int GraphicsEngine::convertToXTile(int x)
+    {
+        int tile = mCamera->getPosition().x;
+        tile += x;
+        tile /= mapEngine->getTileWidth();
+        return tile;
+    }
+
+    int GraphicsEngine::convertToYTile(int y)
+    {
+        int tile = mCamera->getPosition().y;
+        tile += y;
+        tile /= mapEngine->getTileHeight();
+        return tile;
+    }
+
+    Node* GraphicsEngine->getNode(int x, int y)
+    {
+        Point pt;
+        pt.x = x;
+        pt.y = y;
+        Rectangle rect;
+
+        NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
+        while (itr != itr_end)
+        {
+            rect.x = (*itr)->getPosition().x;
+            rect.y = (*itr)->getPosition().y;
+            rect.w = (*itr)->getWidth();
+            rect.h = (*itr)->getHeight();
+            if (checkInside(pt, rect))
+            {
+                return *itr;
+            }
+
+            ++itr;
+        }
+
+        return NULL;
     }
 }

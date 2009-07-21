@@ -41,6 +41,7 @@
 #include "loginstate.h"
 #include "input.h"
 #include "player.h"
+#include "beingmanager.h"
 #include "character.h"
 
 #include "graphics/camera.h"
@@ -101,6 +102,22 @@ namespace ST
                 }
 				// clear input textbox
 				AG_TextboxClearString(input);
+            }
+        }
+    }
+
+    void handle_mouse(Event *evt)
+    {
+        if (evt->button == SDL_BUTTON_LEFT)
+        {
+            Node *node = graphicsEngine->getNode(evt->x, evt->y);
+            if (node)
+            {
+                Being *being = beingManager->findBeing(node->getId());
+                if (being)
+                {
+                    being->toggleName();
+                }
             }
         }
     }

@@ -68,6 +68,21 @@ namespace ST
         return NULL;
     }
 
+    Being* BeingManager::findBeing(int x, int y)
+    {
+        BeingIterator itr = mBeingMap.begin(), itr_end = mBeingMap.end();
+        while (itr != itr_end)
+        {
+            Point pt = itr->second->getTilePosition();
+            if (pt.x == x && pt.y == y)
+            {
+                return itr->second;
+            }
+        }
+
+        return NULL;
+    }
+
     void BeingManager::addBeing(Being *being)
     {
         mBeingMap.insert(std::pair<unsigned int, Being*>(being->getId(), being));

@@ -113,12 +113,12 @@ namespace ST
             Node *node = graphicsEngine->getNode(evt->x, evt->y);
             if (node)
             {
-                Being *being = beingManager->findBeing(node->getId());
+/*                Being *being = beingManager->findBeing(node->getId());
                 if (being)
                 {
                     being->toggleName();
                 }
-            }
+*/            }
         }
     }
 

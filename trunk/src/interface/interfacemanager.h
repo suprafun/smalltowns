@@ -44,6 +44,8 @@
 #ifndef ST_INTERFACE_MANAGER_HEADER
 #define ST_INTERFACE_MANAGER_HEADER
 
+#include "../utilities/types.h"
+
 #include <list>
 #include <map>
 #include <string>

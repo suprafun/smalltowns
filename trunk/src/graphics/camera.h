@@ -81,6 +81,12 @@ namespace ST
 		 */
 		const int getViewHeight() const;
 
+		/**
+		 * Get View Bounds
+		 * @return Returns the viewport bounds as a rectangle
+		 */
+		Rectangle& getViewBounds() { return mViewport; }
+
 	private:
 		std::string mName;
 		Rectangle mViewport;

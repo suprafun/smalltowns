@@ -51,6 +51,7 @@
 #include "../resources/bodypart.h"
 
 #include "../utilities/log.h"
+#include "../utilities/math.h"
 #include "../utilities/types.h"
 
 #include <SDL.h>
@@ -169,7 +170,7 @@ namespace ST
 
 			if (node->showName())
 			{
-			    interfaceManager->drawName(node->getName(), node->getPosition());
+//			    interfaceManager->drawName(node->getName(), node->getPosition());
 			}
 
 			++itr;
@@ -434,6 +435,31 @@ namespace ST
         if (mOpenGL)
         {
             //TODO: Implement putting textures together with opengl
+			if (bodyTex)
+            {
+                SDL_SetAlpha(bodyTex->getSDLSurface(), 0, 255);
+                SDL_BlitSurface(bodyTex->getSDLSurface(), NULL, surface, NULL);
+            }
+            if (hairTex)
+            {
+                SDL_SetAlpha(hairTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(hairTex->getSDLSurface(), NULL, surface, NULL);
+            }
+            if (chestTex)
+            {
+                SDL_SetAlpha(chestTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(chestTex->getSDLSurface(), NULL, surface, NULL);
+            }
+            if (legsTex)
+            {
+                SDL_SetAlpha(legsTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(legsTex->getSDLSurface(), NULL, surface, NULL);
+            }
+            if (feetTex)
+            {
+                SDL_SetAlpha(feetTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(feetTex->getSDLSurface(), NULL, surface, NULL);
+            }
         }
         else
         {
@@ -498,7 +524,7 @@ namespace ST
         return tile;
     }
 
-    Node* GraphicsEngine->getNode(int x, int y)
+	Node* GraphicsEngine::getNode(int x, int y)
     {
         Point pt;
         pt.x = x;
@@ -510,8 +536,8 @@ namespace ST
         {
             rect.x = (*itr)->getPosition().x;
             rect.y = (*itr)->getPosition().y;
-            rect.w = (*itr)->getWidth();
-            rect.h = (*itr)->getHeight();
+            rect.width = (*itr)->getWidth();
+            rect.height = (*itr)->getHeight();
             if (checkInside(pt, rect))
             {
                 return *itr;

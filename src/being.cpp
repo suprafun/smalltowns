@@ -43,7 +43,7 @@
 namespace ST
 {
     Being::Being(int id, const std::string &name, Texture *avatar):
-        Node::Node(name, avatar), mId(id)
+        Node(name, avatar), mId(id)
     {
 
     }

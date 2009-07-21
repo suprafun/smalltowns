@@ -41,8 +41,10 @@
  * The math file provides mathematical functions
  */
 
-#ifndef ST_MATH_HEADER
-#define ST_MATH_HEADER
+#ifndef _ST_MATH_HEADER
+#define _ST_MATH_HEADER
+
+#include "types.h"
 
 namespace ST
 {
@@ -53,20 +55,7 @@ namespace ST
 	 * @param r The rectangle
 	 * @return Returns true if p is inside r
 	 */
-	bool checkInside(Point &p, Rectangle &r)
-	{
-		if (p.x < r.x || p.x > r.x + r.width)
-		{
-			return false;
-		}
-
-		if (p.y < r.y || p.y > r.y + r.height)
-		{
-			return false;
-		}
-
-		return true;
-	}
+	bool checkInside(Point &p, Rectangle &r);
 }
 
 #endif

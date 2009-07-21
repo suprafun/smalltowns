@@ -114,6 +114,13 @@ namespace ST
 		 */
 		bool loadMap(const std::string &filename);
 
+		/**
+		 * Return width of tiles
+		 * Return height of tiles
+		 */
+        unsigned int getTileWidth() { return mTileWidth; }
+        unsigned int getTileHeight() { return mTileHeight; }
+
     private:
 		/**
 		 * Add Layer
@@ -145,7 +152,7 @@ namespace ST
 
 	private:
 		std::vector<Layer*> mLayers;
-		std::vector<Tileset*> mTilesets; 
+		std::vector<Tileset*> mTilesets;
 		int mWidth;
 		int mHeight;
 		int mTileWidth;

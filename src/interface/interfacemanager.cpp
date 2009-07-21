@@ -180,6 +180,11 @@ namespace ST
 		AG_WindowDraw(mErrorWindow);
 	}
 
+	void InterfaceManager::drawName(const std::string &name, const Point &pt)
+	{
+	    // TODO: Show label on screen
+	}
+
 	AG_Widget* InterfaceManager::getChild(AG_Widget *parent, const std::string &name)
 	{
 	    AG_Widget *widget;
@@ -252,6 +257,17 @@ namespace ST
 
 	void InterfaceManager::handleMouseEvent(int button, int x, int y, int type)
 	{
+        ListenerItr itr = mListeners.begin(), itr_end = mListeners.end();
+        while (itr != itr_end)
+        {
+            Event evt;
+            evt.button = button;
+            evt.x = x;
+            evt.y = y;
+            evt.type = type;
+            (*(*itr))(&evt);
 
+            ++itr;
+        }
 	}
 }

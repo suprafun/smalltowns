@@ -53,7 +53,13 @@
 
 namespace ST
 {
-class Event;
+    struct Event
+    {
+        int button;
+        int x;
+        int y;
+        int type;
+    };
 }
 typedef void (*myfunc)(ST::Event* evt);
 
@@ -108,6 +114,11 @@ namespace ST
 		 * Draw windows
 		 */
 		void drawWindows();
+
+		/**
+		 * Draw name
+		 */
+        void drawName(const std::string &name, const Point &pt);
 
 		/**
 		 * Get a child

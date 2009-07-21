@@ -7,13 +7,13 @@
  *	Copyright (c) 2008, The Small Towns Dev Team
  *	All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification, 
+ *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
  *
- *	- Redistributions of source code must retain the above copyright notice, 
+ *	- Redistributions of source code must retain the above copyright notice,
  *		this list of conditions and the following disclaimer.
  *	- Redistributions in binary form must reproduce the above copyright notice,
- *		this list of conditions and the following disclaimer in the documentation 
+ *		this list of conditions and the following disclaimer in the documentation
  *		and/or other materials provided with the distribution.
  *	- Neither the name of the Small Towns Dev Team nor the names of its contributors
  *		may be used to endorse or promote products derived from this software without
@@ -75,6 +75,7 @@ namespace ST
 		 * @return Returns the position of the node
 		 */
 		Point& getPosition();
+		Point getTilePosition();
 
 		/**
 		 * Get Width
@@ -119,6 +120,18 @@ namespace ST
 		 */
 		virtual Texture* getTexture();
 
+		/**
+		 * Toggle Name
+		 * Toggles whether the name of the node is shown
+         */
+        void toggleName();
+
+        /**
+         * Show Name
+         * Returns whether to show the name
+         */
+        bool showName();
+
 	protected:
 		std::string mName;
 		Texture *mTexture;
@@ -127,6 +140,7 @@ namespace ST
 		int mWidth;
 		int mHeight;
 		bool mVisible;
+		bool mShowName;
 	};
 }
 

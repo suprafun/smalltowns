@@ -39,6 +39,7 @@
 
 #include "node.h"
 #include "texture.h"
+#include "graphics.h"
 
 #include "../utilities/log.h"
 
@@ -46,7 +47,8 @@ namespace ST
 {
 	Node::Node(std::string name, Texture *texture)
 		: mName(name),
-		mVisible(true)
+		mVisible(true),
+		mShowName(false)
 	{
 		if (texture)
 		{
@@ -103,6 +105,15 @@ namespace ST
 		return (mPosition);
 	}
 
+	Point Node::getTilePosition()
+	{
+	    Point pt;
+	    pt.x = graphicsEngine->convertToXTile(mPosition.x);
+	    pt.y = graphicsEngine->convertToYTile(mPosition.y);
+
+	    return pt;
+	}
+
 	Rectangle& Node::getBounds()
 	{
 		return mBounds;
@@ -120,5 +131,15 @@ namespace ST
 	Texture* Node::getTexture()
 	{
 		return mTexture;
+	}
+
+	void Node::toggleName()
+	{
+	    mShowName = !mShowName;
+	}
+
+	bool Node::showName()
+	{
+	    return mShowName;
 	}
 }

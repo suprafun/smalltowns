@@ -39,6 +39,7 @@
 
 #include "updatestate.h"
 #include "characterstate.h"
+#include "input.h"
 #include "game.h"
 
 #include "net/networkmanager.h"
@@ -72,6 +73,11 @@ namespace ST
             networkManager->sendPacket(packet);
 			mSuccess = false;
         }
+
+        if (inputManager->getKey(SDLK_ESCAPE))
+		{
+			return false;
+		}
 
         SDL_Delay(0);
 

@@ -370,6 +370,14 @@ namespace ST
                     c->moveNode(&pt);
                 }
             } break;
+
+            default:
+            {
+                std::stringstream str;
+                str << "Received data with invalid id. Id was " << packet->getId()
+                    << " and size was " << packet->getSize();
+                logger->logWarning(str.str());
+            } break;
 	    }
 	}
 

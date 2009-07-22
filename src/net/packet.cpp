@@ -72,9 +72,14 @@ namespace ST
     {
         if (size > mSize)
         {
+            int oldSize = mSize;
             mSize = size << 1;
+            char *tempData = new char[mSize];
+            memcpy(tempData, mData, oldSize);
             delete[] mData;
             mData = new char[mSize];
+            memcpy(mData, tempData, oldSize);
+            delete[] tempData;
         }
     }
 

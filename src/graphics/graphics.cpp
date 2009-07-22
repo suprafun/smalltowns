@@ -151,7 +151,7 @@ namespace ST
 		{
 		    Node *node = (*itr);
 			// dont draw if not on screen
-			if (checkInside(node->getPosition(), mCamera->getViewBounds()))
+			if (!checkInside(node->getPosition(), mCamera->getViewBounds()))
 			{
 				continue;
 			}

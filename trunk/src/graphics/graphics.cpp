@@ -151,11 +151,11 @@ namespace ST
 		{
 		    Node *node = (*itr);
 			// dont draw if not on screen
-			if (!checkInside(node->getPosition(), mCamera->getViewBounds()))
+/*			if (!checkInside(node->getPosition(), mCamera->getViewBounds()))
 			{
 				continue;
 			}
-
+*/
 			// dont draw if not visible
 			if (!node->getVisible())
 			{
@@ -168,10 +168,10 @@ namespace ST
 
 			drawTexturedRect(rect, node->getTexture());
 
-			if (node->showName())
-			{
+//			if (node->showName())
+//			{
 //			    interfaceManager->drawName(node->getName(), node->getPosition());
-			}
+//			}
 
 			++itr;
 		}

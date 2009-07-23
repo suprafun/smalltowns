@@ -223,14 +223,31 @@ namespace ST
                 if (tex)
                 {
                     // put the texture into the pixmap
+                    AG_Surface *surface;
                     if (graphicsEngine->isOpenGL())
                     {
-                        pixmap = AG_PixmapFromTexture(0, 0, tex->getGLTexture(), 0);
+                        glBindTexture(GL_TEXTURE_2D, tex->getGLTexture());
+                        surface = AG_SurfaceRGBA(tex->getWidth(), tex->getHeight(), 32, 0,
+#if AG_BYTEORDER == AG_BIG_ENDIAN
+                                                0xff000000,
+                                                0x00ff0000,
+                                                0x0000ff00,
+                                                0x000000ff
+#else
+                                                0x000000ff,
+                                                0x0000ff00,
+                                                0x00ff0000,
+                                                0xff000000
+#endif
+                                                );
+                        glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+                        glBindTexture(GL_TEXTURE_2D, 0);
+                        pixmap = AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, surface);
                     }
                     else
                     {
-                        AG_Surface *s = AG_SurfaceFromSDL(tex->getSDLSurface());
-                        pixmap = AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, s);
+                        surface = AG_SurfaceFromSDL(tex->getSDLSurface());
+                        pixmap = AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, surface);
                     }
 
                     // put the pixmap on the screen

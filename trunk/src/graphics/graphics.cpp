@@ -434,32 +434,62 @@ namespace ST
         // start with the body as the base
         if (mOpenGL)
         {
-            //TODO: Implement putting textures together with opengl
-			if (bodyTex)
+            int width = resourceManager->getBodyWidth();
+            int height = resourceManager->getBodyHeight();
+            unsigned int size = width * height * 4;
+            char *pixelData = new char[size];
+
+            if (bodyTex)
             {
-                SDL_SetAlpha(bodyTex->getSDLSurface(), 0, 255);
-                SDL_BlitSurface(bodyTex->getSDLSurface(), NULL, surface, NULL);
+                glBindTexture(GL_TEXTURE_2D, bodyTex->getGLTexture());
+                glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelData);
+                SDL_Surface *temp = SDL_CreateRGBSurfaceFrom(pixelData, width, height, 4,
+                                    mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
+                SDL_SetAlpha(temp, 0, 255);
+                SDL_BlitSurface(temp, NULL, surface, NULL);
             }
             if (hairTex)
             {
-                SDL_SetAlpha(hairTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
-                SDL_BlitSurface(hairTex->getSDLSurface(), NULL, surface, NULL);
+                glBindTexture(GL_TEXTURE_2D, hairTex->getGLTexture());
+                glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelData);
+                SDL_Surface *temp = SDL_CreateRGBSurfaceFrom(pixelData, width, height, 4,
+                                    mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
+                SDL_SetAlpha(temp, SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(temp, NULL, surface, NULL);
+                SDL_FreeSurface(temp);
             }
             if (chestTex)
             {
-                SDL_SetAlpha(chestTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
-                SDL_BlitSurface(chestTex->getSDLSurface(), NULL, surface, NULL);
+                glBindTexture(GL_TEXTURE_2D, chestTex->getGLTexture());
+                glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelData);
+                SDL_Surface *temp = SDL_CreateRGBSurfaceFrom(pixelData, width, height, 4,
+                                    mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
+                SDL_SetAlpha(temp, SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(temp, NULL, surface, NULL);
+                SDL_FreeSurface(temp);
             }
             if (legsTex)
             {
-                SDL_SetAlpha(legsTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
-                SDL_BlitSurface(legsTex->getSDLSurface(), NULL, surface, NULL);
+                glBindTexture(GL_TEXTURE_2D, legsTex->getGLTexture());
+                glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelData);
+                SDL_Surface *temp = SDL_CreateRGBSurfaceFrom(pixelData, width, height, 4,
+                                    mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
+                SDL_SetAlpha(temp, SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(temp, NULL, surface, NULL);
+                SDL_FreeSurface(temp);
             }
             if (feetTex)
             {
-                SDL_SetAlpha(feetTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
-                SDL_BlitSurface(feetTex->getSDLSurface(), NULL, surface, NULL);
+                glBindTexture(GL_TEXTURE_2D, feetTex->getGLTexture());
+                glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelData);
+                SDL_Surface *temp = SDL_CreateRGBSurfaceFrom(pixelData, width, height, 4,
+                                    mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
+                SDL_SetAlpha(temp, SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(temp, NULL, surface, NULL);
+                SDL_FreeSurface(temp);
             }
+
+            delete pixelData;
         }
         else
         {
@@ -493,7 +523,8 @@ namespace ST
         std::stringstream str;
         str << "Character" << id;
 
-        Texture *tex = new Texture(str.str(), resourceManager->getBodyWidth(), resourceManager->getBodyHeight());
+        Texture *tex = new Texture(str.str(), resourceManager->getBodyWidth(),
+                                   resourceManager->getBodyHeight());
         if (mOpenGL)
 		{
 			tex->setPixels(surface);

@@ -201,4 +201,45 @@ namespace ST
 	{
 
 	}
+
+	unsigned int OpenGLGraphics::renderToTexture(const std::vector<Texture*> &textures)
+	{
+	    // get texture width and height
+	    if (textures.empty())
+            return 0;
+
+        int width = textures[0]->getWidth();
+        int height = textures[0]->getHeight();
+        GLuint texture;
+
+	    // set viewport to size of texture
+	    glViewport(0, 0, width, height);
+
+	    // draw into viewport
+	    unsigned int size = textures.size();
+	    Rectangle r;
+	    r.x = 0;
+	    r.y = 0;
+	    r.width = width;
+	    r.height = height;
+	    for (unsigned int i = 0; i < size; ++i)
+	    {
+	        drawTexturedRect(r, textures[i]);
+	    }
+
+        // generate texture
+        glGenTextures(1, &texture);
+	    // bind to texture to copy to
+	    glBindTexture(GL_TEXTURE_2D, texture);
+
+	    // copy contents of viewport into texture
+	    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, 64, 128, 0);
+
+	    // reset viewport
+	    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glViewport(0, 0, mWidth, mHeight);
+
+        return texture;
+	}
 }

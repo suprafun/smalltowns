@@ -215,7 +215,7 @@ namespace ST
             Character *c = player->getCharacter(i);
             if (c)
             {
-                AG_Pixmap *pixmap;
+                AG_Pixmap *pixmap = NULL;
 
 				// load the texture
                 Texture *tex = c->getTexture();
@@ -223,26 +223,10 @@ namespace ST
                 if (tex)
                 {
                     // put the texture into the pixmap
-                    AG_Surface *surface;
+                    AG_Surface *surface = NULL;
                     if (graphicsEngine->isOpenGL())
                     {
-                        glBindTexture(GL_TEXTURE_2D, tex->getGLTexture());
-                        surface = AG_SurfaceRGBA(tex->getWidth(), tex->getHeight(), 32, 0,
-#if AG_BYTEORDER == AG_BIG_ENDIAN
-                                                0xff000000,
-                                                0x00ff0000,
-                                                0x0000ff00,
-                                                0x000000ff
-#else
-                                                0x000000ff,
-                                                0x0000ff00,
-                                                0x00ff0000,
-                                                0xff000000
-#endif
-                                                );
-                        glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
-                        glBindTexture(GL_TEXTURE_2D, 0);
-                        pixmap = AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, surface);
+                        pixmap = AG_PixmapFromTexture(0, AG_PIXMAP_RESCALE, tex->getGLTexture(), 0);
                     }
                     else
                     {
@@ -339,7 +323,6 @@ namespace ST
                                     );
                 glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
                 glBindTexture(GL_TEXTURE_2D, 0);
-
             }
             else
             {

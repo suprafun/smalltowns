@@ -114,6 +114,17 @@ namespace ST
 		mSurface = surface;
 	}
 
+	void Texture::setGLTexture(unsigned int texture)
+	{
+	    mGLTexture = texture;
+	}
+
+	void Texture::setSize(unsigned int w, unsigned int h)
+	{
+	    mWidth = w;
+	    mHeight = h;
+	}
+
 	std::string Texture::getName() const
 	{
 		return mName;

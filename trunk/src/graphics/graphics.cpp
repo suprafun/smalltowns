@@ -386,25 +386,6 @@ namespace ST
 
     Texture* GraphicsEngine::createAvatar(unsigned int id, int bodyId, int hairId)
     {
-        // Set the byte order of RGBA
-		Uint32 rmask, gmask, bmask, amask;
-		#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-		rmask = 0xff000000;
-		gmask = 0x00ff0000;
-		bmask = 0x0000ff00;
-		amask = 0x000000ff;
-		#else
-		rmask = 0x000000ff;
-		gmask = 0x0000ff00;
-		bmask = 0x00ff0000;
-		amask = 0xff000000;
-		#endif
-
-        // create surface to render to
-        SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-            resourceManager->getBodyWidth(), resourceManager->getBodyHeight(),
-			mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
-
         Texture *hairTex = NULL;
         Texture *bodyTex = NULL;
         Texture *chestTex = NULL;
@@ -430,69 +411,62 @@ namespace ST
         if (feet)
             feetTex = feet->getTexture();
 
+        std::stringstream str;
+        str << "Character" << id;
+
+        Texture *tex = new Texture(str.str(), resourceManager->getBodyWidth(),
+                                   resourceManager->getBodyHeight());
+
         // write all the textures to the surface
         // start with the body as the base
         if (mOpenGL)
-        {
-            int width = resourceManager->getBodyWidth();
-            int height = resourceManager->getBodyHeight();
-            unsigned int size = width * height * 4;
-            char *pixelData = new char[size];
+		{
+		    std::vector<Texture*> textures;
+			if (bodyTex)
+			{
+			    textures.push_back(bodyTex);
+			}
+			if (hairTex)
+			{
+			    textures.push_back(hairTex);
+			}
+			if (chestTex)
+			{
+			    textures.push_back(chestTex);
+			}
+			if (legsTex)
+			{
+			    textures.push_back(legsTex);
+			}
+			if (feetTex)
+			{
+			    textures.push_back(feetTex);
+			}
 
-            if (bodyTex)
-            {
-                glBindTexture(GL_TEXTURE_2D, bodyTex->getGLTexture());
-                glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelData);
-                SDL_Surface *temp = SDL_CreateRGBSurfaceFrom(pixelData, width, height, 4,
-                                    mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
-                SDL_SetAlpha(temp, 0, 255);
-                SDL_BlitSurface(temp, NULL, surface, NULL);
-            }
-            if (hairTex)
-            {
-                glBindTexture(GL_TEXTURE_2D, hairTex->getGLTexture());
-                glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelData);
-                SDL_Surface *temp = SDL_CreateRGBSurfaceFrom(pixelData, width, height, 4,
-                                    mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
-                SDL_SetAlpha(temp, SDL_SRCALPHA | SDL_RLEACCEL, 0);
-                SDL_BlitSurface(temp, NULL, surface, NULL);
-                SDL_FreeSurface(temp);
-            }
-            if (chestTex)
-            {
-                glBindTexture(GL_TEXTURE_2D, chestTex->getGLTexture());
-                glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelData);
-                SDL_Surface *temp = SDL_CreateRGBSurfaceFrom(pixelData, width, height, 4,
-                                    mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
-                SDL_SetAlpha(temp, SDL_SRCALPHA | SDL_RLEACCEL, 0);
-                SDL_BlitSurface(temp, NULL, surface, NULL);
-                SDL_FreeSurface(temp);
-            }
-            if (legsTex)
-            {
-                glBindTexture(GL_TEXTURE_2D, legsTex->getGLTexture());
-                glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelData);
-                SDL_Surface *temp = SDL_CreateRGBSurfaceFrom(pixelData, width, height, 4,
-                                    mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
-                SDL_SetAlpha(temp, SDL_SRCALPHA | SDL_RLEACCEL, 0);
-                SDL_BlitSurface(temp, NULL, surface, NULL);
-                SDL_FreeSurface(temp);
-            }
-            if (feetTex)
-            {
-                glBindTexture(GL_TEXTURE_2D, feetTex->getGLTexture());
-                glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelData);
-                SDL_Surface *temp = SDL_CreateRGBSurfaceFrom(pixelData, width, height, 4,
-                                    mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
-                SDL_SetAlpha(temp, SDL_SRCALPHA | SDL_RLEACCEL, 0);
-                SDL_BlitSurface(temp, NULL, surface, NULL);
-                SDL_FreeSurface(temp);
-            }
-
-            delete pixelData;
-        }
+			int gltex = renderToTexture(textures);
+			tex->setGLTexture(gltex);
+		}
         else
         {
+            // Set the byte order of RGBA
+            Uint32 rmask, gmask, bmask, amask;
+            #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+            rmask = 0xff000000;
+            gmask = 0x00ff0000;
+            bmask = 0x0000ff00;
+            amask = 0x000000ff;
+            #else
+            rmask = 0x000000ff;
+            gmask = 0x0000ff00;
+            bmask = 0x00ff0000;
+            amask = 0xff000000;
+            #endif
+
+            // create surface to render to
+            SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                resourceManager->getBodyWidth(), resourceManager->getBodyHeight(),
+                mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
+
             if (bodyTex)
             {
                 SDL_SetAlpha(bodyTex->getSDLSurface(), 0, 255);
@@ -518,22 +492,9 @@ namespace ST
                 SDL_SetAlpha(feetTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
                 SDL_BlitSurface(feetTex->getSDLSurface(), NULL, surface, NULL);
             }
+
+            tex->setImage(surface);
         }
-
-        std::stringstream str;
-        str << "Character" << id;
-
-        Texture *tex = new Texture(str.str(), resourceManager->getBodyWidth(),
-                                   resourceManager->getBodyHeight());
-        if (mOpenGL)
-		{
-			tex->setPixels(surface);
-			SDL_FreeSurface(surface);
-		}
-		else
-		{
-			tex->setImage(surface);
-		}
 
         mTextures.insert(std::pair<std::string, Texture*>(tex->getName(), tex));
         return tex;

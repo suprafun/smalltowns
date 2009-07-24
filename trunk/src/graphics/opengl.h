@@ -90,6 +90,11 @@ namespace ST
 		 * End Scene
 		 */
 		void endScene();
+
+		/**
+		 * Render to Texture
+		 */
+        unsigned int renderToTexture(const std::vector<Texture*> &textures);
 	};
 }
 

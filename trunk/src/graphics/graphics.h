@@ -47,6 +47,7 @@
 #include <list>
 #include <map>
 #include <string>
+#include <vector>
 
 struct SDL_Surface;
 
@@ -173,6 +174,11 @@ namespace ST
 		 * @return Returns the texture or NULL if texture not found
 		 */
 		Texture* getTexture(const std::string &name);
+
+		/**
+		 * Render to Texture
+		 */
+        virtual unsigned int renderToTexture(const std::vector<Texture*> &textures) = 0;
 
 		/**
 		 * Get Screen Width

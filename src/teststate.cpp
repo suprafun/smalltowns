@@ -165,7 +165,7 @@ namespace ST
 		std::string nick = player->getName();
 		std::string host = "london.uk.whatnet.org";
 		chatServer->setNick(nick);
-//        chatServer->connect(host);
+        chatServer->connect(host);
 	}
 
 	void TestState::exit()

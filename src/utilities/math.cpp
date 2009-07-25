@@ -31,7 +31,7 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-07-22
+ *	Date of file creation: 09-07-21
  *
  *	$Id$
  *
@@ -41,14 +41,14 @@
 
 namespace ST
 {
-    bool checkInside(Point &p, Rectangle &r)
-    {
-		if (p.x < r.x || p.x > r.x + r.width)
+	bool checkInside(Point &p, Rectangle &r)
+	{
+		if (p.x < r.x || p.x > (r.x + r.width))
 		{
 			return false;
 		}
 
-		if (p.y < r.y || p.y > r.y + r.height)
+		if (p.y < r.y || p.y > (r.y + r.height))
 		{
 			return false;
 		}

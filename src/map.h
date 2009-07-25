@@ -93,6 +93,7 @@ namespace ST
 
 	private:
 		std::list<Node*> mNodes;
+        typedef std::list<Node*>::iterator NodeItr;
 		unsigned int mWidth;
 		unsigned int mHeight;
 	};

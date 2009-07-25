@@ -63,7 +63,13 @@ namespace ST
 
 	Layer::~Layer()
 	{
-
+        NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
+		while (itr != itr_end)
+		{
+            if (*itr)// player character may already have been deleted
+    			delete (*itr);
+			++itr;
+		}
 	}
 
 	void Layer::setTile(int x, int y, Texture *tex, int width, int height)
@@ -71,7 +77,7 @@ namespace ST
 	    std::stringstream str;
 	    Point p;
 
-	    str << "tile" << x << y;
+	    str << "tile" << x << "-" << y;
 		p.x = (x - y) * (width >> 1);
 		p.y = (x + y) * (height >> 1);
 

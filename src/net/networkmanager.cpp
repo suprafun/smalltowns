@@ -366,6 +366,7 @@ namespace ST
                     c->setRights(rights);
 
                     beingManager->addBeing(c);
+                    graphicsEngine->addNode(c);
                     Point pt = beingManager->getSavedPosition(id);
                     c->moveNode(&pt);
                 }

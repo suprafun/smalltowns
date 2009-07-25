@@ -44,6 +44,8 @@
 
 #include <SDL.h>
 #include <SDL_opengl.h>
+#include <agar/core.h>
+#include <agar/gui.h>
 
 namespace ST
 {
@@ -85,11 +87,11 @@ namespace ST
 
 	void OpenGLGraphics::drawRect(Rectangle &rect, bool filled)
 	{
+        glPushAttrib(GL_POLYGON_BIT|GL_LIGHTING_BIT|GL_DEPTH_BUFFER_BIT);
+		glPushMatrix();
+
 		// reset identity matrix
 		glLoadIdentity();
-
-		glPushAttrib(GL_POLYGON_BIT|GL_LIGHTING_BIT|GL_DEPTH_BUFFER_BIT);
-		glPushMatrix();
 
 		// set position and size from rectangle
 		float x = (float)rect.x;
@@ -202,44 +204,29 @@ namespace ST
 
 	}
 
-	unsigned int OpenGLGraphics::renderToTexture(const std::vector<Texture*> &textures)
+	SDL_Surface* OpenGLGraphics::createSurface(unsigned int texture, int width, int height)
 	{
-	    // get texture width and height
-	    if (textures.empty())
-            return 0;
+		SDL_Surface *surface = NULL;
+		glBindTexture(GL_TEXTURE_2D, texture);
+		surface = AG_SurfaceRGBA(width, height, 32, 0,
+#if AG_BYTEORDER == AG_BIG_ENDIAN
+                                0xff000000,
+                                0x00ff0000,
+                                0x0000ff00,
+                                0x000000ff
+#else
+                                0x000000ff,
+                                0x0000ff00,
+                                0x00ff0000,
+                                0xff000000
+#endif
+                                );
+		if (surface)
+		{
+			glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+		}
+		glBindTexture(GL_TEXTURE_2D, 0);
 
-        int width = textures[0]->getWidth();
-        int height = textures[0]->getHeight();
-        GLuint texture;
-
-	    // set viewport to size of texture
-	    glViewport(0, 0, width, height);
-
-	    // draw into viewport
-	    unsigned int size = textures.size();
-	    Rectangle r;
-	    r.x = 0;
-	    r.y = 0;
-	    r.width = width;
-	    r.height = height;
-	    for (unsigned int i = 0; i < size; ++i)
-	    {
-	        drawTexturedRect(r, textures[i]);
-	    }
-
-        // generate texture
-        glGenTextures(1, &texture);
-	    // bind to texture to copy to
-	    glBindTexture(GL_TEXTURE_2D, texture);
-
-	    // copy contents of viewport into texture
-	    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, 64, 128, 0);
-
-	    // reset viewport
-	    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glViewport(0, 0, mWidth, mHeight);
-
-        return texture;
+		return surface;
 	}
 }

@@ -92,9 +92,9 @@ namespace ST
 		void endScene();
 
 		/**
-		 * Render to Texture
+		 * Create a SDL_Surface from a GL texture
 		 */
-        unsigned int renderToTexture(const std::vector<Texture*> &textures);
+		SDL_Surface* createSurface(unsigned int texture, int width, int height);
 	};
 }
 

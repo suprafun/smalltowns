@@ -95,9 +95,9 @@ namespace ST
 		SDL_Flip(mScreen);
 	}
 
-	unsigned int SDLGraphics::renderToTexture(const std::vector<Texture*> &textures)
-    {
-        // This is not support by SDL
-        return 0;
-    }
+	SDL_Surface* SDLGraphics::createSurface(unsigned int texture, int width, int height)
+	{
+		// This is not supported by SDL
+		return NULL;
+	}
 }

@@ -163,6 +163,12 @@ namespace ST
 						   unsigned int width, unsigned height);
 
 		/**
+		 * Create Surface
+		 * Creates a new SDL_Surface from a GL texture
+		 */
+		virtual SDL_Surface* createSurface(unsigned int texture, int width, int height) = 0;
+
+		/**
 		 * Get Pixel
 		 * @return Returns the pixel at the position of the SDL Surface
 		 */
@@ -174,11 +180,6 @@ namespace ST
 		 * @return Returns the texture or NULL if texture not found
 		 */
 		Texture* getTexture(const std::string &name);
-
-		/**
-		 * Render to Texture
-		 */
-        virtual unsigned int renderToTexture(const std::vector<Texture*> &textures) = 0;
 
 		/**
 		 * Get Screen Width

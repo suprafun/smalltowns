@@ -86,12 +86,7 @@ namespace ST
 	GraphicsEngine::~GraphicsEngine()
 	{
 		// clean up nodes
-		NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
-		while (itr != itr_end)
-		{
-			delete (*itr);
-			++itr;
-		}
+        // nodes should have been deleted by their owners
 		mNodes.clear();
 
 		if (mCamera)
@@ -386,6 +381,20 @@ namespace ST
 
     Texture* GraphicsEngine::createAvatar(unsigned int id, int bodyId, int hairId)
     {
+        // Set the byte order of RGBA
+        Uint32 rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+        rmask = 0xff000000;
+        gmask = 0x00ff0000;
+        bmask = 0x0000ff00;
+        amask = 0x000000ff;
+#else
+        rmask = 0x000000ff;
+        gmask = 0x0000ff00;
+        bmask = 0x00ff0000;
+        amask = 0xff000000;
+#endif
+
         Texture *hairTex = NULL;
         Texture *bodyTex = NULL;
         Texture *chestTex = NULL;
@@ -414,54 +423,55 @@ namespace ST
         std::stringstream str;
         str << "Character" << id;
 
-        Texture *tex = new Texture(str.str(), resourceManager->getBodyWidth(),
-                                   resourceManager->getBodyHeight());
+		Texture *tex = new Texture(str.str(), resourceManager->getBodyWidth(),
+			resourceManager->getBodyHeight());
 
         // write all the textures to the surface
         // start with the body as the base
         if (mOpenGL)
 		{
-		    std::vector<Texture*> textures;
-			if (bodyTex)
-			{
-			    textures.push_back(bodyTex);
-			}
-			if (hairTex)
-			{
-			    textures.push_back(hairTex);
-			}
-			if (chestTex)
-			{
-			    textures.push_back(chestTex);
-			}
-			if (legsTex)
-			{
-			    textures.push_back(legsTex);
-			}
-			if (feetTex)
-			{
-			    textures.push_back(feetTex);
-			}
+		    // create surface to render to
+            SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                64, 128,
+                mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
 
-			int gltex = renderToTexture(textures);
-			tex->setGLTexture(gltex);
+            if (bodyTex)
+            {
+                SDL_Surface *s = createSurface(bodyTex->getGLTexture(), 64, 128);
+                SDL_SetAlpha(s, 0, 255);
+                SDL_BlitSurface(s, NULL, surface, NULL);
+            }
+            if (hairTex)
+            {
+                SDL_Surface *s = createSurface(hairTex->getGLTexture(), 64, 128);
+                SDL_SetAlpha(s, SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(s, NULL, surface, NULL);
+            }
+            if (chestTex)
+            {
+                SDL_Surface *s = createSurface(chestTex->getGLTexture(), 64, 128);
+                SDL_SetAlpha(s, SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(s, NULL, surface, NULL);
+            }
+            if (legsTex)
+            {
+                SDL_Surface *s = createSurface(legsTex->getGLTexture(), 64, 128);
+                SDL_SetAlpha(s, SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(s, NULL, surface, NULL);
+            }
+            if (feetTex)
+            {
+                SDL_Surface *s = createSurface(feetTex->getGLTexture(), 64, 128);
+                SDL_SetAlpha(s, SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(s, NULL, surface, NULL);
+            }
+
+            tex->setSize(64, 128);
+            tex->setPixels(surface);
+			SDL_FreeSurface(surface);
 		}
         else
         {
-            // Set the byte order of RGBA
-            Uint32 rmask, gmask, bmask, amask;
-            #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-            rmask = 0xff000000;
-            gmask = 0x00ff0000;
-            bmask = 0x0000ff00;
-            amask = 0x000000ff;
-            #else
-            rmask = 0x000000ff;
-            gmask = 0x0000ff00;
-            bmask = 0x00ff0000;
-            amask = 0xff000000;
-            #endif
-
             // create surface to render to
             SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
                 resourceManager->getBodyWidth(), resourceManager->getBodyHeight(),

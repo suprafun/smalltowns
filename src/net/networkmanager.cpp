@@ -342,6 +342,7 @@ namespace ST
                     p->setInteger(id);
                     sendPacket(p);
                     beingManager->saveBeingPosition(id, x, y);
+                    logger->logDebug("New player entered");
                 }
             } break;
 
@@ -369,6 +370,7 @@ namespace ST
                     graphicsEngine->addNode(c);
                     Point pt = beingManager->getSavedPosition(id);
                     c->moveNode(&pt);
+                    logger->logDebug("New player info received");
                 }
             } break;
 

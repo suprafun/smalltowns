@@ -83,7 +83,7 @@ namespace ST
 
 						// add message to chat window
 						chat.insert(0, player->getName() + ": ");
-						AG_ConsoleAppendLine(output, chat.c_str());
+                        interfaceManager->sendToChat(chat);
 					}
 					else if (chat.substr(1, 3) == "me ")
 					{
@@ -95,9 +95,7 @@ namespace ST
 						// add message to chat window
 						chat = chat.substr(4);
 						chat.insert(0, "* " + player->getName() + " ");
-						AG_ConsoleAppendLine(output, chat.c_str());
-
-
+						interfaceManager->sendToChat(chat);
 					}
                 }
 				// clear input textbox

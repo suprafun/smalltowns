@@ -163,10 +163,10 @@ namespace ST
 
 			drawTexturedRect(rect, node->getTexture());
 
-//			if (node->showName())
-//			{
-//			    interfaceManager->drawName(node->getName(), node->getPosition());
-//			}
+			if (node->showName())
+			{
+			    interfaceManager->drawName(node->getName(), node->getPosition());
+			}
 
 			++itr;
 		}
@@ -529,11 +529,11 @@ namespace ST
 	Node* GraphicsEngine::getNode(int x, int y)
     {
         Point pt;
-        pt.x = x;
-        pt.y = y;
+        pt.x = x + mCamera->getPosition().x;
+        pt.y = y + mCamera->getPosition().y;
         Rectangle rect;
 
-        NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
+        NodeReverseItr itr = mNodes.rbegin(), itr_end = mNodes.rend();
         while (itr != itr_end)
         {
             rect.x = (*itr)->getPosition().x;

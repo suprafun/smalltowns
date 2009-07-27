@@ -106,17 +106,17 @@ namespace ST
 
     void handle_mouse(Event *evt)
     {
-        if (evt->button == SDL_BUTTON_LEFT)
+        if (evt->button == SDL_BUTTON_LEFT && evt->type == 0)
         {
             Node *node = graphicsEngine->getNode(evt->x, evt->y);
             if (node)
             {
-/*                Being *being = beingManager->findBeing(node->getId());
+                Being *being = beingManager->findBeing(node->getName());
                 if (being)
                 {
                     being->toggleName();
                 }
-*/            }
+            }
         }
     }
 
@@ -129,7 +129,7 @@ namespace ST
 		rect.height = 768;
 		rect.width = 1024;
 		rect.x = -512;
-		rect.y = 0;
+		rect.y = 0 + player->getSelectedCharacter()->getPosition().y;
 		mCam = new Camera("viewport", &rect);
 		graphicsEngine->setCamera(mCam);
 	}
@@ -164,6 +164,9 @@ namespace ST
 		std::string host = "london.uk.whatnet.org";
 		chatServer->setNick(nick);
         chatServer->connect(host);
+
+        // add listener
+        interfaceManager->addMouseListener(&handle_mouse);
 	}
 
 	void TestState::exit()
@@ -171,6 +174,7 @@ namespace ST
 		delete mCam;
 		delete chatServer;
         interfaceManager->removeAllWindows();
+        interfaceManager->removeMouseListeners();
 	}
 
 	bool TestState::update()

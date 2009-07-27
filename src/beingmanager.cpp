@@ -68,6 +68,20 @@ namespace ST
         return NULL;
     }
 
+    Being* BeingManager::findBeing(const std::string &name)
+    {
+        BeingIterator itr = mBeingMap.begin(), itr_end = mBeingMap.end();
+        while (itr != itr_end)
+        {
+            if (itr->second->getName() == name)
+            {
+                return itr->second;
+            }
+        }
+
+        return NULL;
+    }
+
     Being* BeingManager::findBeing(int x, int y)
     {
         BeingIterator itr = mBeingMap.begin(), itr_end = mBeingMap.end();

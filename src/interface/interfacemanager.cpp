@@ -182,7 +182,20 @@ namespace ST
 
 	void InterfaceManager::drawName(const std::string &name, const Point &pt)
 	{
-	    // TODO: Show label on screen
+	    NameItr itr = mNames.find(name);
+	    if (itr == mNames.end())
+	    {
+	        AG_Window *win = AG_WindowNew(AG_WINDOW_NOMOVE|AG_WINDOW_PLAIN|AG_WINDOW_NOBUTTONS);
+	        AG_WidgetSetPosition(win, pt.x, pt.y);
+	        AG_WindowShow(win);
+	        AG_Label *label = AG_LabelNew(win, 0, name.c_str());
+	        mNames.insert(std::pair<std::string, AG_Window*>(name, win));
+	        AG_WindowDraw(win);
+	    }
+	    else
+	    {
+	        AG_WindowDraw(itr->second);
+	    }
 	}
 
 	AG_Widget* InterfaceManager::getChild(AG_Widget *parent, const std::string &name)

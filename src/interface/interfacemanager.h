@@ -162,6 +162,8 @@ namespace ST
 		typedef std::list<AG_Window*>::iterator WindowItr;
 		std::list<myfunc> mListeners;
 		typedef std::list<myfunc>::iterator ListenerItr;
+		std::map<std::string, AG_Window*> mNames;
+		typedef std::map<std::string, AG_Window*>::iterator NameItr;
 		XMLFile *mGuiSheet;
 		AG_Window *mErrorWindow;
 		AG_Label *mErrorCaption;

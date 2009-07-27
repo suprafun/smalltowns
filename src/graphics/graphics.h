@@ -227,6 +227,7 @@ namespace ST
 		// list of nodes
 		std::list<Node*> mNodes;
 		typedef std::list<Node*>::iterator NodeItr;
+		typedef std::list<Node*>::reverse_iterator NodeReverseItr;
 
 		// list of textures
 		std::map<std::string, Texture*> mTextures;

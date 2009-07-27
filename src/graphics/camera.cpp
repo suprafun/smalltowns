@@ -67,5 +67,11 @@ namespace ST
 		p.y = mViewport.y;
 		return p;
 	}
+
+    void Camera::setPosition(const Point &pt)
+    {
+        mViewport.x = pt.x;
+        mViewport.y = pt.y;
+    }
 }
 

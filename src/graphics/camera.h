@@ -69,6 +69,13 @@ namespace ST
 		 */
 		Point getPosition();
 
+        /**
+         * Set Position
+         * Move the camera
+         * @param pos Position to move the camera
+         */
+        void setPosition(const Point &pt);
+
 		/**
 		 * Get View Width
 		 * @return Returns the width of the viewport

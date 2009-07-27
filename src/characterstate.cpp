@@ -75,6 +75,29 @@ namespace ST
         state->updateAvatar(body);
     }
 
+    void change_sex(AG_Event *event)
+    {
+        // get selected sex
+        AG_Radio *sex = static_cast<AG_Radio*>(AG_SELF());
+
+        // get state
+        CharacterState *state = static_cast<CharacterState*>(AG_PTR(1));
+
+        // get the body
+        BodyPart *body;
+        if (sex->value == 0)
+        {
+            body = resourceManager->getDefaultBody(PART_BODY);
+        }
+        else
+        {
+            body = resourceManager->getFemaleBody();
+        }
+
+        state->mChosen[body->getType()] = body->getId();
+        state->updateAvatar(body);
+    }
+
     void radio_selected(AG_Event *event)
     {
         AG_Button *button = static_cast<AG_Button*>(AG_PTR(1));
@@ -318,6 +341,9 @@ namespace ST
             AG_ButtonSurface(hair, surface);
         }
 
+        AG_Radio *sex = AG_RadioNewFn(mCreateWindow, 0, NULL, change_sex, "%p", this);
+        AG_RadioAddItem(sex, "male");
+        AG_RadioAddItem(sex, "female");
 
 		AG_Textbox *charNick = AG_TextboxNew(mCreateWindow, 0, "Nickname: ");
 		AG_TextboxSizeHint(charNick, "XXXXXXXXXXXXXXXX");

@@ -115,6 +115,11 @@ namespace ST
 		mCamera = cam;
 	}
 
+    Camera* GraphicsEngine::getCamera() const
+    {
+        return mCamera;
+    }
+
 	void GraphicsEngine::renderFrame()
 	{
 		AG_LockVFS(agView);

@@ -129,7 +129,7 @@ namespace ST
 		rect.height = 768;
 		rect.width = 1024;
 		rect.x = -512;
-		rect.y = 0 + player->getSelectedCharacter()->getPosition().y;
+		rect.y = 0;
 		mCam = new Camera("viewport", &rect);
 		graphicsEngine->setCamera(mCam);
 	}

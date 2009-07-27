@@ -115,6 +115,12 @@ namespace ST
 		 */
 		void setCamera(Camera *cam);
 
+        /**
+         * Get Camera
+         * Returns the default camera
+         */
+        Camera* getCamera() const;
+
 		/**
 		 * Render Frame
 		 * Renders a single frame to the screen

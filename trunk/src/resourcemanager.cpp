@@ -76,6 +76,7 @@ namespace ST
 
             // set defaults
 		    mDefaultBody = file.readInt("default", "body");
+            mDefaultFemale = file.readInt("default", "female");
 		    mDefaultHair = file.readInt("default", "hair");
 
             // add all the body parts
@@ -130,6 +131,11 @@ namespace ST
         }
 
         return NULL;
+    }
+
+    BodyPart* ResourceManager::getFemaleBody()
+    {
+        return getBodyPart(mDefaultFemale);
     }
 
     std::vector<BodyPart*> ResourceManager::getBodyList(int type)

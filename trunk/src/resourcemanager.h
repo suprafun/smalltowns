@@ -62,6 +62,7 @@ namespace ST
 
         BodyPart* getBodyPart(int id);
         BodyPart* getDefaultBody(int type);
+        BodyPart* getFemaleBody();
 
         std::vector<BodyPart*> getBodyList(int type);
 
@@ -69,6 +70,7 @@ namespace ST
         int mBodyWidth;
         int mBodyHeight;
         int mDefaultBody;
+        int mDefaultFemale;
         int mDefaultHair;
         std::vector<BodyPart*> mBodyParts;
         typedef std::vector<BodyPart*>::iterator BodyPartItr;

@@ -42,6 +42,7 @@
 #include "packet.h"
 #include "protocol.h"
 
+#include "../graphics/camera.h"
 #include "../graphics/graphics.h"
 #include "../graphics/texture.h"
 
@@ -320,6 +321,10 @@ namespace ST
 
                 Character *c = player->getSelectedCharacter();
                 c->moveNode(&pt);
+
+                Point camPt = graphicsEngine->getCamera()->getPosition();
+                camPt.y -= (pt.y / 2);
+                graphicsEngine->getCamera()->setPosition(camPt);
             } break;
 
         case GPMSG_PLAYER_MOVE:

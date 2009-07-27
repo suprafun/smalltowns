@@ -48,7 +48,7 @@ namespace ST
 			return false;
 		}
 
-		if (p.y < r.y || p.y > (r.y + r.height))
+		if (p.y < (r.y - (int)r.height) || p.y > r.y)
 		{
 			return false;
 		}

@@ -142,4 +142,9 @@ namespace ST
 	{
 	    return mShowName;
 	}
+
+	std::string Node::getName() const
+	{
+	    return mName;
+	}
 }

@@ -63,6 +63,11 @@ namespace ST
         Being* findBeing(unsigned int id);
 
         /**
+         * Return a being based on its name
+         */
+        Being* findBeing(const std::string &name);
+
+        /**
          * Return a being based on position on map
          */
         Being* findBeing(int x, int y);

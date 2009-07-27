@@ -132,6 +132,12 @@ namespace ST
          */
         bool showName();
 
+        /**
+         * Get Name
+         * Returns the name of the node
+         */
+        std::string getName() const;
+
 	protected:
 		std::string mName;
 		Texture *mTexture;

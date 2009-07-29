@@ -77,6 +77,8 @@ namespace ST
             {
                 return itr->second;
             }
+
+            ++itr;
         }
 
         return NULL;
@@ -92,6 +94,8 @@ namespace ST
             {
                 return itr->second;
             }
+
+            ++itr;
         }
 
         return NULL;

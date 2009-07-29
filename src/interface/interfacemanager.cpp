@@ -64,7 +64,7 @@ namespace ST
         }
 
 		mGuiSheet = 0;
-		int halfScreenWidth = graphicsEngine->getScreenWidth() * 0.5;
+		int halfScreenWidth = (int)(graphicsEngine->getScreenWidth() * 0.5);
 		mErrorWindow = AG_WindowNewNamed(0, "Error");
 		AG_WindowSetCaption(mErrorWindow, "Error");
 		AG_WindowSetGeometry(mErrorWindow, halfScreenWidth - 150, 50, 300, 75);
@@ -155,6 +155,13 @@ namespace ST
 			AG_ViewDetach(*itr);
 		}
 		mWindows.clear();
+        NameItr name_itr = mNames.begin(), name_itr_end = mNames.end();
+        while (name_itr != name_itr_end)
+        {
+            AG_ViewDetach(name_itr->second);
+            ++name_itr;
+        }
+        mNames.clear();
 	}
 
 	void InterfaceManager::showWindow(const std::string &name, bool value)

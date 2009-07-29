@@ -40,6 +40,7 @@
 #include "ircserver.h"
 #include "ircmessage.h"
 
+#include "../character.h"
 #include "../game.h"
 #include "../loginstate.h"
 #include "../player.h"
@@ -200,7 +201,7 @@ namespace ST
 			case IRC::Command::ERR_NICKINUSE:
 			{
 			    std::stringstream str;
-			    str << player->getName() << "[" << mAttempt << "]";
+			    str << player->getSelectedCharacter()->getName() << "[" << mAttempt << "]";
 				mNick = str.str();
 				mRegistering = false;
 				mAttempt++;

@@ -377,6 +377,10 @@ namespace ST
                     c->moveNode(&pt);
                     logger->logDebug("New player info received");
                 }
+                else
+                {
+                    logger->logDebug("Being not found.");
+                }
             } break;
 
             default:

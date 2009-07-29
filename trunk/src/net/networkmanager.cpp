@@ -347,7 +347,10 @@ namespace ST
                     p->setInteger(id);
                     sendPacket(p);
                     beingManager->saveBeingPosition(id, x, y);
-                    logger->logDebug("New player entered");
+
+                    std::stringstream str;
+                    str << "New player with id " << id << " entered";
+                    logger->logDebug(str.str());
                 }
             } break;
 
@@ -362,7 +365,7 @@ namespace ST
 				int rights = packet->getInteger();
 
                 Being *being = beingManager->findBeing(id);
-                if (being == NULL)
+                if (being == NULL && id != player->getId())
                 {
                     // create new being based on info
                     Texture *avatar = graphicsEngine->createAvatar(id, body, hair);
@@ -375,11 +378,16 @@ namespace ST
                     graphicsEngine->addNode(c);
                     Point pt = beingManager->getSavedPosition(id);
                     c->moveNode(&pt);
-                    logger->logDebug("New player info received");
+
+                    std::stringstream str;
+                    str << "New player info from client id " << id << " received";
+                    logger->logDebug(str.str());
                 }
                 else
                 {
-                    logger->logDebug("Being not found.");
+                    std::stringstream str;
+                    str << "Being not found with client id " << id;
+                    logger->logDebug(str.str());
                 }
             } break;
 

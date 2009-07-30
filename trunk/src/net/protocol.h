@@ -48,6 +48,9 @@ enum
     PGMSG_CONNECT               = 0x0800, // I id, I tag
     GPMSG_CONNECT_RESPONSE      = 0x0801, // C error
 
+    // Disconnecting
+    PGMSG_DISCONNECT            = 0x0802, //
+
     // map info
     GPMSG_LOAD_MAP              = 0x0810, // S name of map
     PGMSG_MAP_LOADED            = 0x0811, //
@@ -60,6 +63,7 @@ enum
     GPMSG_WARPTO                = 0x0850, // I x, I y
     GPMSG_PLAYER_MOVE           = 0x0860, // I id, I x, I y, I dir
     PGMSG_PLAYER_MOVE           = 0x0861, // I x, I y
+    GPMSG_PLAYER_LEFT           = 0x0870, // I id
 
 };
 

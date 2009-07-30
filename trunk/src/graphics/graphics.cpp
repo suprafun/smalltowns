@@ -110,6 +110,11 @@ namespace ST
 	    mNodes.push_back(node);
 	}
 
+	void GraphicsEngine::removeNode(Node *node)
+	{
+	    mNodes.remove(node);
+	}
+
 	void GraphicsEngine::setCamera(Camera *cam)
 	{
 		mCamera = cam;

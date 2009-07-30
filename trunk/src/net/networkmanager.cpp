@@ -365,7 +365,7 @@ namespace ST
 				int rights = packet->getInteger();
 
                 Being *being = beingManager->findBeing(id);
-                if (being == NULL && id != player->getId())
+                if (being == NULL)
                 {
                     // create new being based on info
                     Texture *avatar = graphicsEngine->createAvatar(id, body, hair);
@@ -380,13 +380,13 @@ namespace ST
                     c->moveNode(&pt);
 
                     std::stringstream str;
-                    str << "New player info from client id " << id << " received";
+                    str << "New player info from id " << id << " received";
                     logger->logDebug(str.str());
                 }
                 else
                 {
                     std::stringstream str;
-                    str << "Being not found with client id " << id;
+                    str << "Being not found with id " << id;
                     logger->logDebug(str.str());
                 }
             } break;

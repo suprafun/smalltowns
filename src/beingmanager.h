@@ -87,6 +87,11 @@ namespace ST
          */
         Point getSavedPosition(unsigned int id);
 
+        /**
+         * Remove existing being
+         */
+        void removeBeing(unsigned int id);
+
     private:
         std::map<unsigned int, Point> mPositionMap;
         std::map<unsigned int, Being*> mBeingMap;

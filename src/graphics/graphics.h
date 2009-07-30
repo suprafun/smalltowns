@@ -99,6 +99,12 @@ namespace ST
 		 */
         void addNode(Node *node);
 
+        /**
+         * Remove Node
+         * Removes a node from displaying
+         */
+        void removeNode(Node *node);
+
 		/**
 		 * Create Entity
 		 * Creates a new entity, and returns it

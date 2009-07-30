@@ -391,6 +391,12 @@ namespace ST
                 }
             } break;
 
+            case GPMSG_PLAYER_LEFT:
+            {
+                unsigned int id = packet->getInteger();
+                beingManager->removeBeing(id);
+            }
+
             default:
             {
                 std::stringstream str;
@@ -408,7 +414,13 @@ namespace ST
 
 	void NetworkManager::disconnect()
 	{
-	    mHost->disconnect();
+	    if (isConnected())
+	    {
+	        Packet *p = new Packet(PGMSG_DISCONNECT);
+            sendPacket(p);
+            mHost->disconnect();
+	    }
+
 	    // try to disconnect right away
 	    mHost->process();
 	}

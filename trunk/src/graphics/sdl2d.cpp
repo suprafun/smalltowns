@@ -75,8 +75,8 @@ namespace ST
 		SDL_Rect dstRect;
 		dstRect.x = rect.x;
 		dstRect.y = rect.y - rect.height; // draw from bottom
-		dstRect.w = rect.width;
-		dstRect.h = rect.height;
+		dstRect.w = 0; // not used
+		dstRect.h = 0; // not used
 		SDL_Rect srcRect;
 		srcRect.x = 0;
 		srcRect.y = 0;
@@ -88,6 +88,7 @@ namespace ST
 
 	void SDLGraphics::setupScene()
 	{
+	    SDL_FillRect(mScreen, NULL, 0);
 	}
 
 	void SDLGraphics::endScene()

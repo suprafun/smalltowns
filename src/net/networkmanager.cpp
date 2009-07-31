@@ -308,7 +308,7 @@ namespace ST
                 c->moveNode(&pt);
 
                 Point camPt = graphicsEngine->getCamera()->getPosition();
-                camPt.y -= (camPt.y / 2) + pt.y;
+                camPt.y = 0;
                 graphicsEngine->getCamera()->setPosition(camPt);
             } break;
 

@@ -189,11 +189,12 @@ namespace ST
 
 	void InterfaceManager::drawName(const std::string &name, const Point &pt)
 	{
+        int halfScreenWidth = int(graphicsEngine->getScreenWidth() * 0.5);
 	    NameItr itr = mNames.find(name);
 	    if (itr == mNames.end())
 	    {
 	        AG_Window *win = AG_WindowNew(AG_WINDOW_NOMOVE|AG_WINDOW_PLAIN|AG_WINDOW_NOBUTTONS);
-	        AG_WindowSetGeometry(win, pt.x - 33, pt.y + 10, 75, 20);
+	        AG_WindowSetGeometry(win, halfScreenWidth + pt.x, pt.y - 10, 75, 20);
 	        AG_WindowShow(win);
 	        AG_Label *label = AG_LabelNew(win, 0, name.c_str());
 	        mNames.insert(std::pair<std::string, AG_Window*>(name, win));

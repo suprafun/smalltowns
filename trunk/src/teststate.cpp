@@ -43,6 +43,7 @@
 #include "player.h"
 #include "beingmanager.h"
 #include "character.h"
+#include "game.h"
 
 #include "graphics/camera.h"
 #include "graphics/graphics.h"
@@ -51,6 +52,8 @@
 #include "interface/interfacemanager.h"
 
 #include "net/networkmanager.h"
+#include "net/packet.h"
+#include "net/protocol.h"
 
 #include "irc/ircserver.h"
 #include "irc/ircmessage.h"
@@ -182,6 +185,9 @@ namespace ST
 		// Check for input, if escape pressed, exit
 		if (inputManager->getKey(SDLK_ESCAPE))
 		{
+            Packet *p = new Packet(PGMSG_DISCONNECT);
+            networkManager->sendPacket(p);
+            game->disconnect();
 		    chatServer->quit();
 			return false;
 		}

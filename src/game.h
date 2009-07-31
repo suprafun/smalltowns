@@ -45,6 +45,8 @@
 #ifndef ST_GAME_HEADER
 #define ST_GAME_HEADER
 
+#include <string>
+
 namespace ST
 {
 	class GameState;
@@ -69,6 +71,16 @@ namespace ST
 		 * Change State
 		 */
         void changeState(GameState *state);
+
+        /**
+         * Disconnect from a server
+         */
+        void disconnect();
+
+        /**
+         * Connect to a server
+         */
+        bool connect(const std::string &server, int port);
 
     private:
         void cleanUp();

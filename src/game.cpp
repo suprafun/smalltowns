@@ -53,6 +53,8 @@
 #include "utilities/log.h"
 #include "utilities/xml.h"
 
+#include <time.h>
+
 namespace ST
 {
 	// globals
@@ -144,10 +146,39 @@ namespace ST
 
 	void Game::cleanUp()
 	{
-	    if (mOldState)
+	    if (mOldState && mOldState->noKeep())
         {
             delete mOldState;
             mOldState = NULL;
         }
 	}
+
+    void Game::disconnect()
+    {
+        networkManager->disconnect();
+        while (networkManager->isConnected() && mState->update())
+        {
+            graphicsEngine->renderFrame();
+			inputManager->getEvents();
+			networkManager->process();
+        }
+    }
+
+    bool Game::connect(const std::string &server, int port)
+    {
+        networkManager->connect(server, port);
+        time_t timeout = time(NULL) + 10;
+		time_t curTime = time(NULL);
+        while (!networkManager->isConnected() && mState->update())
+        {
+            if (curTime > timeout)
+                return false;
+            graphicsEngine->renderFrame();
+			inputManager->getEvents();
+			networkManager->process();
+            curTime = time(NULL);
+        }
+
+        return true;
+    }
 }

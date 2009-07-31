@@ -64,7 +64,6 @@
 #include "../updatestate.h"
 
 //#include <curl/curl.h>
-#include <time.h>
 #include <sstream>
 
 namespace ST
@@ -258,23 +257,9 @@ namespace ST
                 int port = packet->getInteger();
                 int tag = packet->getInteger();
 
-                disconnect();
+                game->disconnect();
 
-                while (mHost->isConnected())
-                    mHost->process();
-
-                connect(host, port);
-
-				time_t timeout = time(NULL) + 10;
-				time_t curTime = time(NULL);
-
-                while (!mHost->isConnected() && curTime <= timeout)
-				{
-					mHost->process();
-					curTime = time(NULL);
-				}
-
-				if (mHost->isConnected())
+				if (game->connect(host, port))
                 {
                     Packet *p = new Packet(PGMSG_CONNECT);
                     p->setInteger(player->getId());
@@ -323,7 +308,7 @@ namespace ST
                 c->moveNode(&pt);
 
                 Point camPt = graphicsEngine->getCamera()->getPosition();
-                camPt.y -= (pt.y / 2);
+                camPt.y -= (camPt.y / 2) + pt.y;
                 graphicsEngine->getCamera()->setPosition(camPt);
             } break;
 
@@ -416,8 +401,6 @@ namespace ST
 	{
 	    if (isConnected())
 	    {
-	        Packet *p = new Packet(PGMSG_DISCONNECT);
-            sendPacket(p);
             mHost->disconnect();
 	    }
 

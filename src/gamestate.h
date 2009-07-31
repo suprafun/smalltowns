@@ -51,11 +51,18 @@ namespace ST
 	class GameState
 	{
 	public:
+        GameState() : mKeep(false) {}
 		virtual ~GameState() {}
 
 		virtual void enter() = 0;
 		virtual void exit() = 0;
 		virtual bool update() = 0;
+
+        void keep() { mKeep = true; }
+        virtual bool noKeep() { return mKeep; }
+
+    protected:
+        bool mKeep;
 	};
 }
 

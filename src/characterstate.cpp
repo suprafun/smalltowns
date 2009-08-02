@@ -103,6 +103,9 @@ namespace ST
         AG_Button *button = static_cast<AG_Button*>(AG_PTR(1));
         if (button)
             AG_WidgetEnable(button);
+        AG_Button *del_button = static_cast<AG_Button*>(AG_PTR(2));
+        if (del_button)
+            AG_WidgetEnable(del_button);
     }
 
     void select_character(AG_Event *event)
@@ -115,6 +118,29 @@ namespace ST
             int slot = selected->value;
             packet->setInteger(slot);
             player->setCharacter(slot);
+
+            networkManager->sendPacket(packet);
+
+			interfaceManager->setErrorMessage("");
+			interfaceManager->showErrorWindow(false);
+        }
+        else
+        {
+			interfaceManager->setErrorMessage("Invalid character chosen");
+            interfaceManager->showErrorWindow(true);
+        }
+    }
+
+    void del_character(AG_Event *event)
+    {
+        AG_Radio *selected = static_cast<AG_Radio*>(AG_PTR(1));
+        if (selected)
+        {
+            // send the slot of character selected
+            int slot = selected->value;
+
+            Packet *packet = new Packet(PAMSG_CHAR_DELETE);
+            packet->setInteger(slot);
 
             networkManager->sendPacket(packet);
 
@@ -277,9 +303,12 @@ namespace ST
                                                   switch_char_window, "%p%p",
                                                   mSelectWindow, mCreateWindow);
 		AG_ButtonJustify(create_button, AG_TEXT_CENTER);
+        AG_Button *delete_button = AG_ButtonNewFn(box, 0, "Delete", del_character, "%p", selection);
+        AG_ButtonJustify(delete_button, AG_TEXT_CENTER);
 		AG_WidgetDisable(button);
+        AG_WidgetDisable(delete_button);
 
-		AG_SetEvent(selection, "radio-changed", radio_selected, "%p", button);
+		AG_SetEvent(selection, "radio-changed", radio_selected, "%p%p", button, delete_button);
 
 		AG_WindowShow(mSelectWindow);
 		interfaceManager->addWindow(mSelectWindow);

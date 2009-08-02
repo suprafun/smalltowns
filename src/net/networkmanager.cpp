@@ -173,6 +173,20 @@ namespace ST
                 }
             } break;
 
+        case APMSG_CHANGE_PASS_RESPONSE:
+            {
+                if (packet->getByte() == ERR_NONE)
+                {
+                    logger->logDebug("Changed Password");
+                }
+                else
+                {
+					interfaceManager->setErrorMessage("Invalid password");
+                    logger->logWarning("Invalid password used to change password");
+                    interfaceManager->showErrorWindow(true);
+                }
+            } break;
+
         case APMSG_CHAR_LIST_RESPONSE:
             {
                 // must create state before creating avatars
@@ -251,6 +265,23 @@ namespace ST
                 }
             } break;
 
+        case APMSG_CHAR_DELETE_RESPONSE:
+            {
+                if (packet->getByte() == ERR_NONE)
+                {
+                    GameState *state = new CharacterState;
+                    game->changeState(state);
+                }
+                else
+                {
+                    logger->logWarning("Invalid character deleted");
+					interfaceManager->setErrorMessage("Invalid character deleted");
+                    interfaceManager->showErrorWindow(true);
+                    GameState *state = new CharacterState;
+                    game->changeState(state);
+                }
+            } break;
+
         case APMSG_GAME_SERVER:
             {
                 std::string host = packet->getString();
@@ -265,6 +296,15 @@ namespace ST
                     p->setInteger(player->getId());
                     p->setInteger(tag);
                     sendPacket(p);
+                }
+                else
+                {
+                    interfaceManager->setErrorMessage("Unable to connect to Game Server");
+					interfaceManager->showErrorWindow(true);
+                    logger->logWarning("Invalid token");
+                    disconnect();
+                    GameState *state = new ConnectState;
+                    game->changeState(state);
                 }
             } break;
 
@@ -307,9 +347,7 @@ namespace ST
                 Character *c = player->getSelectedCharacter();
                 c->moveNode(&pt);
 
-                Point camPt = graphicsEngine->getCamera()->getPosition();
-                camPt.y = 0;
-                graphicsEngine->getCamera()->setPosition(camPt);
+                graphicsEngine->setCameraToShow(pt);
             } break;
 
         case GPMSG_PLAYER_MOVE:

@@ -156,6 +156,7 @@ namespace ST
     void Game::disconnect()
     {
         networkManager->disconnect();
+        networkManager->process();
         while (networkManager->isConnected() && mState->update())
         {
             graphicsEngine->renderFrame();
@@ -167,6 +168,7 @@ namespace ST
     bool Game::connect(const std::string &server, int port)
     {
         networkManager->connect(server, port);
+        networkManager->process();
         time_t timeout = time(NULL) + 10;
 		time_t curTime = time(NULL);
         while (!networkManager->isConnected() && mState->update())

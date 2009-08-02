@@ -32,6 +32,10 @@ enum
     PAMSG_LOGIN                 = 0x0008, // S username, S password
     APMSG_LOGIN_RESPONSE        = 0x0009, // C error
 
+    // Change Password
+    PAMSG_CHANGE_PASS           = 0x000a, // S password
+    APMSG_CHANGE_PASS_RESPONSE  = 0x000b, // 
+
     // Character screen
     PAMSG_CHAR_LIST             = 0x0010, //
     APMSG_CHAR_LIST_RESPONSE    = 0x0011, // I num, { I id, I slot, S char name, I body, I hair, I level, I rights }
@@ -39,6 +43,8 @@ enum
     APMSG_CHAR_CREATE_RESPONSE  = 0x0013, // C error [ I id, I slot, S char name, I body, I hair, I level, I rights ]
     PAMSG_CHAR_CHOOSE           = 0x0016, // I slot
     APMSG_CHAR_CHOOSE_RESPONSE  = 0x0017, // C error [ I id ]
+    PAMSG_CHAR_DELETE           = 0x0020, // I slot
+    APMSG_CHAR_DELETE_RESPONSE  = 0x0021, // C error
 
     // Game server info
     APMSG_GAME_SERVER           = 0x0100, // S ip/hostname, I port, I tag

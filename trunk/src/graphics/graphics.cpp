@@ -560,4 +560,11 @@ namespace ST
 
         return NULL;
     }
+
+    void GraphicsEngine::setCameraToShow(Point &pt)
+    {
+        Point camPt = mCamera->getPosition();
+        camPt.y += pt.y - (mHeight >> 1);
+        mCamera->setPosition(camPt);
+    }
 }

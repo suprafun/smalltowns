@@ -166,7 +166,7 @@ namespace ST
 		std::string nick = player->getSelectedCharacter()->getName();
 		std::string host = "london.uk.whatnet.org";
 		chatServer->setNick(nick);
-        chatServer->connect(host);
+//        chatServer->connect(host);
 
         // add listener
         interfaceManager->addMouseListener(&handle_mouse);

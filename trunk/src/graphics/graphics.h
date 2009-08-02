@@ -224,6 +224,11 @@ namespace ST
          */
         Node* getNode(int x, int y);
 
+        /**
+         * Set Camera to Show a Point on screen
+         */
+        void setCameraToShow(Point &pt);
+
 	protected:
 		SDL_Surface *mScreen;
 		int mWidth;

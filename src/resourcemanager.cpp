@@ -97,15 +97,35 @@ namespace ST
             do
             {
                 int id = file.readInt("body", "id");
-                std::string filename = mDataPath + file.readString("body", "file");
+                std::string file = mDataPath + file.readString("body", "file");
                 std::string icon = mDataPath + file.readString("body", "icon");
                 int part = file.readInt("body", "part");
+                int animation = file.readInt("body", "animation");
 
-                BodyPart *body = new BodyPart(id, part, filename, icon);
+                BodyPart *body = new BodyPart(id, part, file, icon);
 
                 mBodyParts.push_back(body);
             } while (file.next("body"));
 		}
+    }
+
+    void ResourceManager::loadAnimations(const std::string &filename)
+    {
+        XMLFile file;
+		if (file.load(filename))
+		{
+		    // add all the animations
+            do
+            {
+                int id = file.readInt("animation", "id");
+                std::string name = file.readString("animation", "name");
+                std::string file = file.readString("animation", "file");
+                int frames = file.readInt("animation", "frames");
+                int width = file.readInt("animation", "width");
+                int height = file.readInt("animation", "height");
+
+                graphicsEngine->loadTextureSet(name, width, height);
+            } while (file.next("animation"));
     }
 
     int ResourceManager::getBodyWidth() const

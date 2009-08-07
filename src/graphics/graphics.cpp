@@ -371,6 +371,21 @@ namespace ST
 		return NULL;
 	}
 
+	Texture* GraphicsEngine::getAnimatedTexture(const std::string &name, int frame)
+	{
+	    std::stringstream str;
+	    str << name << frame;
+        std::map<std::string, Texture*>::iterator itr;
+		itr = mTextures.find(str.str());
+
+		if (itr != mTextures.end())
+		{
+			return itr->second;
+		}
+
+		return NULL;
+	}
+
     int GraphicsEngine::getScreenWidth() const
     {
         return mWidth;

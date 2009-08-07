@@ -40,6 +40,7 @@
 #include "node.h"
 #include "texture.h"
 #include "graphics.h"
+#include "animation.h"
 
 #include "../utilities/log.h"
 
@@ -146,5 +147,57 @@ namespace ST
 	std::string Node::getName() const
 	{
 	    return mName;
+	}
+
+    /**
+     * Animated Node
+     */
+	AnimatedNode::AnimatedNode(const std::string &name, Texture *texture) : Node(name, texture)
+	{
+        mSetAnimation = NULL;
+	}
+
+	AnimatedNode::~AnimatedNode()
+	{
+	    mSetAnimation = NULL;
+        AnimationIterator itr = mAnimations.begin(), itr_end = mAnimations.end();
+        while (itr != itr_end)
+        {
+            delete itr->second;
+            ++itr;
+        }
+        mAnimations.clear();
+	}
+
+	void AnimatedNode::addAnimation(const std::string &name, int numFrames)
+	{
+	    Animation *anim = new Animation;
+
+	    for (int i = 0; i < numFrames; ++i)
+	    {
+	        // frame textures are numbered from 1 onwards, so add 1
+	        Texture *tex = graphicsEngine->getAnimatedTexture(name, i + 1);
+	        anim->addTexture(tex);
+	    }
+
+        mAnimations.insert(std::pair<std::string, Animation*>(name, anim));
+	}
+
+	Texture* AnimatedNode::getCurrentFrame()
+	{
+	    return mSetAnimation->getTexture();
+	}
+
+	void AnimatedNode::setAnimation(const std::string &name)
+	{
+	    AnimationIterator itr = mAnimations.find(name);
+	    if (itr != mAnimations.end())
+	    {
+	        mSetAnimation = itr->second;
+	    }
+	    else
+	    {
+	        logger->logError("Invalid animation set: " + name);
+	    }
 	}
 }

@@ -67,7 +67,7 @@ namespace ST
 
     class Texture;
 
-    class Being : public Node
+    class Being : public AnimatedNode
     {
     public:
         Being(int id, const std::string &name, Texture *avatar);

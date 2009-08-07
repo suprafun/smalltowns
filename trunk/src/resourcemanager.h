@@ -56,6 +56,7 @@ namespace ST
         ResourceManager(const std::string &path);
         ~ResourceManager();
         void loadBodyParts(const std::string &filename);
+        void loadAnimations(const std::string &filename);
 
         int getBodyWidth() const;
         int getBodyHeight() const;

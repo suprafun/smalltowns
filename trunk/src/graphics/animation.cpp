@@ -43,7 +43,7 @@ namespace ST
 {
 	Animation::Animation()
 	{
-
+        mCurrFrame = 0;
 	}
 
 	Animation::~Animation()
@@ -54,5 +54,19 @@ namespace ST
 	void Animation::addTexture(Texture *texture)
 	{
 		mTextures.push_back(texture);
+	}
+
+	Texture* Animation::getTexture() const
+	{
+	    if (mTextures.empty())
+            return NULL;
+	    return mTextures[mCurrFrame];
+	}
+
+	void Animation::nextFrame()
+	{
+	    ++mCurrFrame;
+	    if (mTextures.size() < mCurrFrame)
+            mCurrFrame = 0;
 	}
 }

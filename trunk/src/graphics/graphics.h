@@ -192,6 +192,7 @@ namespace ST
 		 * @return Returns the texture or NULL if texture not found
 		 */
 		Texture* getTexture(const std::string &name);
+		Texture* getAnimatedTexture(const std::string &name, int frame);
 
 		/**
 		 * Get Screen Width

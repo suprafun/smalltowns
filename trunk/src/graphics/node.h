@@ -44,7 +44,7 @@
 #ifndef ST_NODE_HEADER
 #define ST_NODE_HEADER
 
-#include <SDL_opengl.h>
+#include <map>
 #include <string>
 
 #include "../utilities/types.h"
@@ -52,6 +52,7 @@
 namespace ST
 {
 	class Texture;
+	class Animation;
 
 	class Node
 	{
@@ -147,6 +148,36 @@ namespace ST
 		int mHeight;
 		bool mVisible;
 		bool mShowName;
+	};
+
+	class AnimatedNode : public Node
+	{
+    public:
+	    AnimatedNode(const std::string &name, Texture *texture);
+	    virtual ~AnimatedNode();
+
+	    /**
+	     * Add an animation
+	     * @param name The name of the animation
+	     * @param numFrames The number of frames the animation has
+	     */
+        void addAnimation(const std::string &name, int numFrames);
+
+        /**
+         * Get current frame
+         * Returns the texture of the current frame
+         */
+        Texture* getCurrentFrame();
+
+        /**
+         * Set animation
+         */
+        void setAnimation(const std::string &name);
+
+    protected:
+        Animation *mSetAnimation;
+        std::map<std::string, Animation*> mAnimations;
+        typedef std::map<std::string, Animation*>::iterator AnimationIterator;
 	};
 }
 

@@ -344,20 +344,12 @@ namespace ST
 		Uint32 *pixel = (Uint32*)((Uint8*)s->pixels + y * s->pitch + x * bpp);
 
 		// if 24 bit (3 bytes - RGB), swap bytes
-		switch(bpp)
+		if (bpp == 3)
 		{
-		case 3:
 			if(SDL_BYTEORDER == SDL_BIG_ENDIAN)
 				*pixel = pixel[0] << 16 | pixel[1] << 8 | pixel[2];
 			else
 				*pixel = pixel[0] | pixel[1] << 8 | pixel[2] << 16;
-			break;
-
-		case 4:
-			break;
-
-		default:
-			break;
 		}
 
 		// Unlock the surface again

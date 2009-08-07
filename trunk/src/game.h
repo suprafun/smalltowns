@@ -47,6 +47,8 @@
 
 #include <string>
 
+#include <string>
+
 namespace ST
 {
 	class GameState;
@@ -54,6 +56,8 @@ namespace ST
 	class Game
 	{
 	public:
+        Game(const std::string &path);
+
 		/**
 		 * Destructor
 		 * Cleans up Game

@@ -68,6 +68,12 @@ namespace ST
 	BeingManager *beingManager = NULL;
 	Player *player = NULL;
 
+    Game::Game(const std::string &path)
+    {
+        resourceManager = new ResourceManager(path);
+        logger = new Log;
+    }
+
 	Game::~Game()
 	{
 	    delete player;
@@ -83,8 +89,6 @@ namespace ST
 
 	void Game::run()
 	{
-		logger = new Log;
-
 		// load in configuration file
 		XMLFile file;
 		std::string hostname;
@@ -105,7 +109,6 @@ namespace ST
 		mapEngine = new Map;
 		interfaceManager = new InterfaceManager;
 		networkManager = new NetworkManager;
-		resourceManager = new ResourceManager;
 		beingManager = new BeingManager;
 		player = new Player;
 

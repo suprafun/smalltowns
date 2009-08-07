@@ -15,7 +15,7 @@
 #ifndef ST_PROTOCOL_H
 #define ST_PROTOCOL_H
 
-const int CLIENT_VERSION = 0x0005;
+const int CLIENT_VERSION = 0x0006;
 
 enum
 {
@@ -34,7 +34,7 @@ enum
 
     // Change Password
     PAMSG_CHANGE_PASS           = 0x000a, // S password
-    APMSG_CHANGE_PASS_RESPONSE  = 0x000b, // 
+    APMSG_CHANGE_PASS_RESPONSE  = 0x000b, //
 
     // Character screen
     PAMSG_CHAR_LIST             = 0x0010, //

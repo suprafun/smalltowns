@@ -53,18 +53,30 @@ namespace ST
     class ResourceManager
     {
     public:
-        ResourceManager();
+        ResourceManager(const std::string &path);
         ~ResourceManager();
         void loadBodyParts(const std::string &filename);
 
         int getBodyWidth() const;
         int getBodyHeight() const;
 
+        /**
+         * Get Body parts
+         */
         BodyPart* getBodyPart(int id);
         BodyPart* getDefaultBody(int type);
         BodyPart* getFemaleBody();
-
         std::vector<BodyPart*> getBodyList(int type);
+
+        /**
+         * Get path to data directory
+         */
+        std::string getDataPath();
+
+        /**
+         * Check a file or path exists
+         */
+        bool doesExist(const std::string &filename);
 
     private:
         int mBodyWidth;
@@ -74,6 +86,8 @@ namespace ST
         int mDefaultHair;
         std::vector<BodyPart*> mBodyParts;
         typedef std::vector<BodyPart*>::iterator BodyPartItr;
+
+        std::string mDataPath;
     };
 
     extern ResourceManager *resourceManager;

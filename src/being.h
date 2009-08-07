@@ -78,6 +78,12 @@ namespace ST
 
         virtual void setLook(int body, int hair) { look.body = body; look.hair = hair; }
 
+        /**
+         * Logic called each frame
+         * @param ms Number of milliseconds since last frame
+         */
+        virtual void logic(int ms);
+
     public:
         Look look;
 

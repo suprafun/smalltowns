@@ -132,6 +132,9 @@ namespace ST
 
 	void OpenGLGraphics::drawTexturedRect(Rectangle &rect, Texture *texture)
 	{
+	    if (!texture)
+            return;
+
 		// reset identity matrix
 		glLoadIdentity();
 

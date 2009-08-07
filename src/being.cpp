@@ -62,4 +62,9 @@ namespace ST
     {
         return mId;
     }
+
+    void Being::logic(int ms)
+    {
+        // TODO: update animation
+    }
 }

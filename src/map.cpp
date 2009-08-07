@@ -39,6 +39,7 @@
 
 #include "map.h"
 #include "tile.h"
+#include "resourcemanager.h"
 
 #include "graphics/graphics.h"
 #include "graphics/node.h"
@@ -128,9 +129,10 @@ namespace ST
 
 	bool Map::loadMap(const std::string &filename)
 	{
-		logger->logDebug("Loading map " + filename);
+	    std::string file = resourceManager->getDataPath() + filename;
+        logger->logDebug("Loading map " + file);
 
-        TiXmlDocument doc(filename.c_str());
+        TiXmlDocument doc(file.c_str());
         bool loaded = doc.LoadFile();
         if (!loaded)
         {
@@ -147,46 +149,46 @@ namespace ST
             return false;
         }
 
-		int numTilesets = 0;
+        int numTilesets = 0;
 
-		while(1)
-		{
-			e = map.Child("tileset", numTilesets).ToElement();
+        while(1)
+        {
+            e = map.Child("tileset", numTilesets).ToElement();
 
-			if (!loadTileset(e))
-			{
-				break;
-			}
-			++numTilesets;
-		}
+            if (!loadTileset(e))
+            {
+                break;
+            }
+            ++numTilesets;
+        }
 
-		if (numTilesets == 0)
-		{
-			logger->logError("No tilesets found.");
-			return false;
-		}
+        if (numTilesets == 0)
+        {
+            logger->logError("No tilesets found.");
+            return false;
+        }
 
-		int numLayers = 0;
-		while(1)
-		{
-			e = map.Child("layer", numLayers).ToElement();
+        int numLayers = 0;
+        while(1)
+        {
+            e = map.Child("layer", numLayers).ToElement();
 
-			if (!loadLayer(e))
-			{
-				break;
-			}
-			++numLayers;
-		}
-		if (numLayers == 0)
-		{
-			logger->logError("No layers found!");
-			return false;
-		}
+            if (!loadLayer(e))
+            {
+                break;
+            }
+            ++numLayers;
+        }
+        if (numLayers == 0)
+        {
+            logger->logError("No layers found!");
+            return false;
+        }
 
         logger->logDebug("Finished loading map");
 
-		return true;
-	}
+        return true;
+    }
 
 	bool Map::loadMapInfo(TiXmlElement* e)
 	{
@@ -263,12 +265,17 @@ namespace ST
             return false;
         }
 
+        if (resourceManager->doesExist(imagefile))
+        {
+            imagefile.insert(0, resourceManager->getDataPath());
+        }
+
         if (!graphicsEngine->loadTextureSet(imagefile, width, height))
         {
             logger->logError("Unable to load texture for map");
             return false;
         }
-		
+
 		Tileset *tileset = new Tileset;
 		tileset->id = id;
 		tileset->width = width;

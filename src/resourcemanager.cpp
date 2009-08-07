@@ -43,14 +43,25 @@
 
 #include "utilities/xml.h"
 
+#include <physfs.h>
+
 namespace ST
 {
-    ResourceManager::ResourceManager()
+    ResourceManager::ResourceManager(const std::string &path)
     {
         mDefaultBody = 0;
         mDefaultHair = 0;
         mBodyWidth = 0;
         mBodyHeight = 0;
+        // physfs code
+        PHYSFS_init(path.c_str());
+
+#ifndef __APPLE__
+        mDataPath = "data/";
+        PHYSFS_addToSearchPath("data", 0);
+#else
+        //TODO: Add OSX support
+#endif
     }
 
     ResourceManager::~ResourceManager()
@@ -62,6 +73,9 @@ namespace ST
             ++itr;
         }
         mBodyParts.clear();
+
+        // remember to deinit physfs
+        PHYSFS_deinit();
     }
 
 
@@ -83,8 +97,8 @@ namespace ST
             do
             {
                 int id = file.readInt("body", "id");
-                std::string filename = file.readString("body", "file");
-                std::string icon = file.readString("body", "icon");
+                std::string filename = mDataPath + file.readString("body", "file");
+                std::string icon = mDataPath + file.readString("body", "icon");
                 int part = file.readInt("body", "part");
 
                 BodyPart *body = new BodyPart(id, part, filename, icon);
@@ -154,5 +168,15 @@ namespace ST
         }
 
         return vec;
+    }
+
+    std::string ResourceManager::getDataPath()
+    {
+        return mDataPath;
+    }
+
+    bool ResourceManager::doesExist(const std::string &filename)
+    {
+        return PHYSFS_exists(filename.c_str());
     }
 }

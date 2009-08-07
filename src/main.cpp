@@ -45,7 +45,7 @@ ST::Game *game = 0;
 
 int main(int argc, char *argv[])
 {
-	game = new ST::Game();
+	game = new ST::Game(argv[0]);
 	game->run();
 	delete game;
 	return 0;

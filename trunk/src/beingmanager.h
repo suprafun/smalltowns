@@ -92,6 +92,11 @@ namespace ST
          */
         void removeBeing(unsigned int id);
 
+        /**
+         * Perform logic on all beings
+         */
+        void logic(int ms);
+
     private:
         std::map<unsigned int, Point> mPositionMap;
         std::map<unsigned int, Being*> mBeingMap;

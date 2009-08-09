@@ -39,6 +39,8 @@
 
 #include "resourcemanager.h"
 
+#include "graphics/graphics.h"
+
 #include "resources/bodypart.h"
 
 #include "utilities/xml.h"
@@ -97,12 +99,12 @@ namespace ST
             do
             {
                 int id = file.readInt("body", "id");
-                std::string file = mDataPath + file.readString("body", "file");
+                std::string img = mDataPath + file.readString("body", "file");
                 std::string icon = mDataPath + file.readString("body", "icon");
                 int part = file.readInt("body", "part");
                 int animation = file.readInt("body", "animation");
 
-                BodyPart *body = new BodyPart(id, part, file, icon);
+                BodyPart *body = new BodyPart(id, part, img, icon);
 
                 mBodyParts.push_back(body);
             } while (file.next("body"));
@@ -119,13 +121,14 @@ namespace ST
             {
                 int id = file.readInt("animation", "id");
                 std::string name = file.readString("animation", "name");
-                std::string file = file.readString("animation", "file");
+                std::string img = mDataPath + file.readString("animation", "file");
                 int frames = file.readInt("animation", "frames");
                 int width = file.readInt("animation", "width");
                 int height = file.readInt("animation", "height");
 
-                graphicsEngine->loadTextureSet(name, width, height);
+                graphicsEngine->loadTextureSet(name, img, width, height);
             } while (file.next("animation"));
+        }
     }
 
     int ResourceManager::getBodyWidth() const
@@ -197,6 +200,6 @@ namespace ST
 
     bool ResourceManager::doesExist(const std::string &filename)
     {
-        return PHYSFS_exists(filename.c_str());
+        return (PHYSFS_exists(filename.c_str()) != 0);
     }
 }

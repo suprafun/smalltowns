@@ -139,6 +139,12 @@ namespace ST
          */
         std::string getName() const;
 
+        /**
+         * Logic
+         * Called every frame
+         */
+        virtual void logic(int ms);
+
 	protected:
 		std::string mName;
 		Texture *mTexture;
@@ -167,17 +173,24 @@ namespace ST
          * Get current frame
          * Returns the texture of the current frame
          */
-        Texture* getCurrentFrame();
+        Texture* getTexture();
 
         /**
          * Set animation
          */
         void setAnimation(const std::string &name);
 
+        /**
+         * Logic function
+         * Called every frame
+         */
+        virtual void logic(int ms);
+
     protected:
         Animation *mSetAnimation;
         std::map<std::string, Animation*> mAnimations;
         typedef std::map<std::string, Animation*>::iterator AnimationIterator;
+        int mTimeSinceLastUpdate;
 	};
 }
 

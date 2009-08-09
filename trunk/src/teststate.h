@@ -80,6 +80,8 @@ namespace ST
 	private:
 		IRCServer *chatServer;
 		Camera *mCam;
+        int ms;
+        int lastframe;
 	};
 }
 

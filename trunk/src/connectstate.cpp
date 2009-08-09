@@ -116,8 +116,8 @@ namespace ST
 	{
 		int screenWidth = graphicsEngine->getScreenWidth();
 		int screenHeight = graphicsEngine->getScreenHeight();
-		float halfScreenWidth = screenWidth / 2.0f;
-		float halfScreenHeight = screenHeight / 2.0f;
+		int halfScreenWidth = screenWidth / 2;
+		int halfScreenHeight = screenHeight / 2;
 
 		// create window for entering username and password
 		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN|AG_WINDOW_KEEPBELOW);

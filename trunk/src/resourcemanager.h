@@ -49,6 +49,7 @@
 
 namespace ST
 {
+    class Animation;
     class BodyPart;
     class ResourceManager
     {

@@ -160,6 +160,7 @@ namespace ST
 		 */
 		Texture* loadTexture(const std::string &name);
 		bool loadTextureSet(const std::string &name, int w, int h);
+        bool loadTextureSet(const std::string &name, const std::string &file, int w, int h);
 		SDL_Surface* loadSDLTexture(const std::string &name);
 
 		/**

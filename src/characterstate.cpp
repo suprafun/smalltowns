@@ -197,6 +197,7 @@ namespace ST
 		mAvatar = 0;
 
 		resourceManager->loadBodyParts("body.cfg");
+        resourceManager->loadAnimations("animation.cfg");
 
 		BodyPart *body = resourceManager->getDefaultBody(PART_BODY);
 		BodyPart *hair = resourceManager->getDefaultBody(PART_HAIR);

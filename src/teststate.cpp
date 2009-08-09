@@ -125,6 +125,7 @@ namespace ST
 
 	TestState::TestState()
 	{
+        ms = 0;
         chatServer = new IRCServer;
 
 		// create camera
@@ -166,7 +167,10 @@ namespace ST
 		std::string nick = player->getSelectedCharacter()->getName();
 		std::string host = "london.uk.whatnet.org";
 		chatServer->setNick(nick);
-//        chatServer->connect(host);
+
+#ifndef WITHOUT_CHAT
+        chatServer->connect(host);
+#endif
 
         // add listener
         interfaceManager->addMouseListener(&handle_mouse);
@@ -191,6 +195,24 @@ namespace ST
 		    chatServer->quit();
 			return false;
 		}
+
+        if (inputManager->getKey(SDLK_DOWN))
+        {
+            player->getSelectedCharacter()->setAnimation("maleSEwalk");
+        }
+
+        if (inputManager->getKey(SDLK_UP))
+        {
+            player->getSelectedCharacter()->setAnimation("");
+        }
+
+        // number of milliseconds since last frame
+        ms = SDL_GetTicks() - lastframe;
+        lastframe = SDL_GetTicks();
+
+        // pass the number of milliseconds to logic
+        beingManager->logic(ms);
+        player->getSelectedCharacter()->logic(ms);
 
 		chatServer->process();
 

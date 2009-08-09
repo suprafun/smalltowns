@@ -142,4 +142,14 @@ namespace ST
             mBeingMap.erase(itr);
         }
     }
+
+    void BeingManager::logic(int ms)
+    {
+        BeingIterator itr = mBeingMap.begin(), itr_end = mBeingMap.end();
+        while (itr != itr_end)
+        {
+            itr->second->logic(ms);
+            ++itr;
+        }
+    }
 }

@@ -149,12 +149,17 @@ namespace ST
 	    return mName;
 	}
 
+    void Node::logic(int ms)
+    {
+    }
+
     /**
      * Animated Node
      */
 	AnimatedNode::AnimatedNode(const std::string &name, Texture *texture) : Node(name, texture)
 	{
         mSetAnimation = NULL;
+        mTimeSinceLastUpdate = 0;
 	}
 
 	AnimatedNode::~AnimatedNode()
@@ -183,13 +188,20 @@ namespace ST
         mAnimations.insert(std::pair<std::string, Animation*>(name, anim));
 	}
 
-	Texture* AnimatedNode::getCurrentFrame()
+	Texture* AnimatedNode::getTexture()
 	{
-	    return mSetAnimation->getTexture();
+        if (mSetAnimation)
+    	    return mSetAnimation->getTexture();
+        else
+            return mTexture;
 	}
 
 	void AnimatedNode::setAnimation(const std::string &name)
 	{
+        // if name is empty, unset the animation
+        if (name.empty())
+            mSetAnimation = NULL;
+
 	    AnimationIterator itr = mAnimations.find(name);
 	    if (itr != mAnimations.end())
 	    {
@@ -200,4 +212,17 @@ namespace ST
 	        logger->logError("Invalid animation set: " + name);
 	    }
 	}
+
+    void AnimatedNode::logic(int ms)
+    {
+        mTimeSinceLastUpdate += ms;
+        if (mTimeSinceLastUpdate >= 250)
+        {
+            if (mSetAnimation)
+            {
+                mSetAnimation->nextFrame();
+            }
+            mTimeSinceLastUpdate = 0;
+        }
+    }
 }

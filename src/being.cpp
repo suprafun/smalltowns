@@ -65,6 +65,8 @@ namespace ST
 
     void Being::logic(int ms)
     {
-        // TODO: update animation
+        AnimatedNode::logic(ms);
+
+        //TODO: Being processing
     }
 }

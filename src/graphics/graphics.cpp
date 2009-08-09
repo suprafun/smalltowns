@@ -211,10 +211,15 @@ namespace ST
 		return tex;
 	}
 
-	bool GraphicsEngine::loadTextureSet(const std::string &name, int w, int h)
+    bool GraphicsEngine::loadTextureSet(const std::string &name, int w, int h)
+    {
+        return loadTextureSet(name, name, w, h);
+    }
+
+    bool GraphicsEngine::loadTextureSet(const std::string &name, const std::string &file, int w, int h)
 	{
 		// Load in the texture set
-		SDL_Surface *s = IMG_Load(name.c_str());
+		SDL_Surface *s = IMG_Load(file.c_str());
 
 		if (s)
 		{
@@ -223,15 +228,15 @@ namespace ST
 				// keep creating textures
 				int imgX = s->w / w;
 				int imgY = s->h / h;
-				int id = 1;
+                int id = 1;
 				for (int i = 0; i < imgY; ++i)
 				{
 					for (int j = 0; j < imgX; ++j)
 					{
-						std::stringstream str;
-						str << name << id;
+                        std::stringstream str;
+                        str << name << id;
 						createTexture(s, str.str(), j*w, i*h, w, h);
-						++id;
+                        ++id;
 					}
 				}
 				SDL_FreeSurface(s);

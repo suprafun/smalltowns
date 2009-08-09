@@ -66,7 +66,7 @@ namespace ST
 	void Animation::nextFrame()
 	{
 	    ++mCurrFrame;
-	    if (mTextures.size() < mCurrFrame)
+	    if (mCurrFrame >= mTextures.size())
             mCurrFrame = 0;
 	}
 }

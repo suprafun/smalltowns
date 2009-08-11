@@ -39,6 +39,7 @@
 
 #include "resourcemanager.h"
 
+#include "graphics/animation.h"
 #include "graphics/graphics.h"
 
 #include "resources/bodypart.h"
@@ -46,6 +47,7 @@
 #include "utilities/xml.h"
 
 #include <physfs.h>
+#include <sstream>
 
 namespace ST
 {
@@ -68,13 +70,25 @@ namespace ST
 
     ResourceManager::~ResourceManager()
     {
-        BodyPartItr itr = mBodyParts.begin(), itr_end = mBodyParts.end();
-        while (itr != itr_end)
         {
-            delete (*itr);
-            ++itr;
+            BodyPartItr itr = mBodyParts.begin(), itr_end = mBodyParts.end();
+            while (itr != itr_end)
+            {
+                delete (*itr);
+                ++itr;
+            }
+            mBodyParts.clear();
         }
-        mBodyParts.clear();
+
+        {
+            AnimationItr itr = mAnimations.begin(), itr_end = mAnimations.end();
+            while (itr != itr_end)
+            {
+                delete itr->second;
+                ++itr;
+            }
+            mAnimations.clear();
+        }
 
         // remember to deinit physfs
         PHYSFS_deinit();
@@ -102,7 +116,6 @@ namespace ST
                 std::string img = mDataPath + file.readString("body", "file");
                 std::string icon = mDataPath + file.readString("body", "icon");
                 int part = file.readInt("body", "part");
-                int animation = file.readInt("body", "animation");
 
                 BodyPart *body = new BodyPart(id, part, img, icon);
 
@@ -119,14 +132,23 @@ namespace ST
 		    // add all the animations
             do
             {
-                int id = file.readInt("animation", "id");
                 std::string name = file.readString("animation", "name");
                 std::string img = mDataPath + file.readString("animation", "file");
                 int frames = file.readInt("animation", "frames");
                 int width = file.readInt("animation", "width");
                 int height = file.readInt("animation", "height");
 
-                graphicsEngine->loadTextureSet(name, img, width, height);
+                if (graphicsEngine->loadTextureSet(name, img, width, height))
+                {
+                    Animation *anim = new Animation;
+                    for (int i = 1; i <= frames; ++i)
+                    {
+                        std::stringstream str;
+                        str << name << i;
+                        anim->addTexture(graphicsEngine->getTexture(str.str()));
+                    }
+                    mAnimations.insert(std::pair<std::string, Animation*>(name, anim));
+                }
             } while (file.next("animation"));
         }
     }
@@ -191,6 +213,17 @@ namespace ST
         }
 
         return vec;
+    }
+
+    Animation* ResourceManager::getAnimation(const std::string &name)
+    {
+        AnimationItr itr = mAnimations.find(name);
+        if (itr != mAnimations.end())
+        {
+            return itr->second;
+        }
+
+        return NULL;
     }
 
     std::string ResourceManager::getDataPath()

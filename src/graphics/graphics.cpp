@@ -403,20 +403,6 @@ namespace ST
 
     Texture* GraphicsEngine::createAvatar(unsigned int id, int bodyId, int hairId)
     {
-        // Set the byte order of RGBA
-        Uint32 rmask, gmask, bmask, amask;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-        rmask = 0xff000000;
-        gmask = 0x00ff0000;
-        bmask = 0x0000ff00;
-        amask = 0x000000ff;
-#else
-        rmask = 0x000000ff;
-        gmask = 0x0000ff00;
-        bmask = 0x00ff0000;
-        amask = 0xff000000;
-#endif
-
         Texture *hairTex = NULL;
         Texture *bodyTex = NULL;
         Texture *chestTex = NULL;
@@ -442,8 +428,34 @@ namespace ST
         if (feet)
             feetTex = feet->getTexture();
 
+        return createAvatarFrame(id, 0, bodyTex, hairTex);
+    }
+
+    Texture* GraphicsEngine::createAvatarFrame(unsigned int id, unsigned int frame, Texture *bodyTex, Texture *hairTex)
+    {
+        // Set the byte order of RGBA
+        Uint32 rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+        rmask = 0xff000000;
+        gmask = 0x00ff0000;
+        bmask = 0x0000ff00;
+        amask = 0x000000ff;
+#else
+        rmask = 0x000000ff;
+        gmask = 0x0000ff00;
+        bmask = 0x00ff0000;
+        amask = 0xff000000;
+#endif
+
         std::stringstream str;
-        str << "Character" << id;
+        str << "Being" << id << "_" << frame;
+
+        TextureItr itr = mTextures.find(str.str());
+        if (itr != mTextures.end())
+        {
+            delete itr->second;
+            mTextures.erase(itr);
+        }
 
 		Texture *tex = new Texture(str.str(), resourceManager->getBodyWidth(),
 			resourceManager->getBodyHeight());
@@ -469,7 +481,7 @@ namespace ST
                 SDL_SetAlpha(s, SDL_SRCALPHA | SDL_RLEACCEL, 0);
                 SDL_BlitSurface(s, NULL, surface, NULL);
             }
-            if (chestTex)
+/*            if (chestTex)
             {
                 SDL_Surface *s = createSurface(chestTex->getGLTexture(), 64, 128);
                 SDL_SetAlpha(s, SDL_SRCALPHA | SDL_RLEACCEL, 0);
@@ -487,6 +499,7 @@ namespace ST
                 SDL_SetAlpha(s, SDL_SRCALPHA | SDL_RLEACCEL, 0);
                 SDL_BlitSurface(s, NULL, surface, NULL);
             }
+*/
 
             tex->setSize(64, 128);
             tex->setPixels(surface);
@@ -509,7 +522,7 @@ namespace ST
                 SDL_SetAlpha(hairTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
                 SDL_BlitSurface(hairTex->getSDLSurface(), NULL, surface, NULL);
             }
-            if (chestTex)
+/*            if (chestTex)
             {
                 SDL_SetAlpha(chestTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
                 SDL_BlitSurface(chestTex->getSDLSurface(), NULL, surface, NULL);
@@ -524,7 +537,7 @@ namespace ST
                 SDL_SetAlpha(feetTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
                 SDL_BlitSurface(feetTex->getSDLSurface(), NULL, surface, NULL);
             }
-
+*/
             tex->setImage(surface);
         }
 

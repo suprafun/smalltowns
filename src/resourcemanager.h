@@ -44,6 +44,7 @@
 #ifndef ST_RESOURCEMANAGER_HEADER
 #define ST_RESOURCEMANAGER_HEADER
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -71,6 +72,11 @@ namespace ST
         std::vector<BodyPart*> getBodyList(int type);
 
         /**
+         * Get Animations
+         */
+        Animation* getAnimation(const std::string &name);
+
+        /**
          * Get path to data directory
          */
         std::string getDataPath();
@@ -88,6 +94,8 @@ namespace ST
         int mDefaultHair;
         std::vector<BodyPart*> mBodyParts;
         typedef std::vector<BodyPart*>::iterator BodyPartItr;
+        std::map<std::string, Animation*> mAnimations;
+        typedef std::map<std::string, Animation*>::iterator AnimationItr;
 
         std::string mDataPath;
     };

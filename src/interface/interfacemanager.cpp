@@ -254,8 +254,8 @@ namespace ST
         AG_Console *chat = static_cast<AG_Console*>(AG_WidgetFind(agView, "/ChatWindow/ChannelsFolder/GlobalChat/Chat"));
         if (chat)
         {
-            int pos = 0;
-            int npos = msg.size();
+            unsigned int pos = 0;
+            unsigned int npos = msg.size();
             if (npos > lineSize)
                 npos = lineSize;
             for (int line = 0; line < lines; ++line)

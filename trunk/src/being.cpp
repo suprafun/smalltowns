@@ -38,19 +38,24 @@
  ********************************************/
 
 #include "being.h"
+#include "resourcemanager.h"
+
+#include "graphics/animation.h"
+#include "graphics/graphics.h"
 #include "graphics/texture.h"
+
+#include "resources/bodypart.h"
 
 namespace ST
 {
     Being::Being(int id, const std::string &name, Texture *avatar):
         AnimatedNode(name, avatar), mId(id)
     {
-
     }
 
     Being::~Being()
     {
-
+        delete mSetAnimation;
     }
 
     std::string Being::getName()
@@ -68,5 +73,43 @@ namespace ST
         AnimatedNode::logic(ms);
 
         //TODO: Being processing
+    }
+
+    void Being::setAnimation(const std::string &name)
+    {
+        // if name is empty, unset the animation
+        if (name.empty())
+        {
+            mSetAnimation = NULL;
+            mUpdateTime = 0;
+            return;
+        }
+
+        // delete any old animation that was set
+        delete mSetAnimation;
+
+        // get existing animation
+	    Animation *anim = resourceManager->getAnimation(name);
+	    if (!anim)
+            return;
+
+        // get the parts to add
+        BodyPart *part = resourceManager->getBodyPart(look.hair);
+        if (!part)
+            return;
+        Texture *hair = part->getTexture();
+
+        // create new animation to store the new frames
+        mSetAnimation = new Animation;
+
+        // create new frames and store them in the animation
+        for (unsigned int i = 0; i < anim->getFrames(); ++i)
+        {
+            Texture *tex = graphicsEngine->createAvatarFrame(mId, i, anim->getTexture(), hair);
+            mSetAnimation->addTexture(tex);
+            anim->nextFrame();
+        }
+
+        mUpdateTime = 1000 / mSetAnimation->getFrames();
     }
 }

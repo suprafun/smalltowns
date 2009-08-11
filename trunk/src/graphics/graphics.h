@@ -214,6 +214,7 @@ namespace ST
          * Create a texture based on body parts
          */
         Texture* createAvatar(unsigned int id, int bodyId, int hairId);
+        Texture* createAvatarFrame(unsigned int id, unsigned int frame, Texture *bodyTex, Texture *hairTex);
 
         /**
          * Convert Screen to tile co-ordinates
@@ -250,6 +251,7 @@ namespace ST
 
 		// list of textures
 		std::map<std::string, Texture*> mTextures;
+		typedef std::map<std::string, Texture*>::iterator TextureItr;
 	};
 
 	extern GraphicsEngine *graphicsEngine;

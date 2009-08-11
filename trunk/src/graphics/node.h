@@ -162,13 +162,6 @@ namespace ST
 	    AnimatedNode(const std::string &name, Texture *texture);
 	    virtual ~AnimatedNode();
 
-	    /**
-	     * Add an animation
-	     * @param name The name of the animation
-	     * @param numFrames The number of frames the animation has
-	     */
-        void addAnimation(const std::string &name, int numFrames);
-
         /**
          * Get current frame
          * Returns the texture of the current frame
@@ -178,7 +171,7 @@ namespace ST
         /**
          * Set animation
          */
-        void setAnimation(const std::string &name);
+        virtual void setAnimation(const std::string &name);
 
         /**
          * Logic function
@@ -188,8 +181,7 @@ namespace ST
 
     protected:
         Animation *mSetAnimation;
-        std::map<std::string, Animation*> mAnimations;
-        typedef std::map<std::string, Animation*>::iterator AnimationIterator;
+        int mUpdateTime;
         int mTimeSinceLastUpdate;
 	};
 }

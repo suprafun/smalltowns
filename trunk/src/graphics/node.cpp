@@ -42,7 +42,11 @@
 #include "graphics.h"
 #include "animation.h"
 
+#include "../resourcemanager.h"
+
 #include "../utilities/log.h"
+
+#include <cassert>
 
 namespace ST
 {
@@ -159,33 +163,13 @@ namespace ST
 	AnimatedNode::AnimatedNode(const std::string &name, Texture *texture) : Node(name, texture)
 	{
         mSetAnimation = NULL;
+        mUpdateTime = 0;
         mTimeSinceLastUpdate = 0;
 	}
 
 	AnimatedNode::~AnimatedNode()
 	{
 	    mSetAnimation = NULL;
-        AnimationIterator itr = mAnimations.begin(), itr_end = mAnimations.end();
-        while (itr != itr_end)
-        {
-            delete itr->second;
-            ++itr;
-        }
-        mAnimations.clear();
-	}
-
-	void AnimatedNode::addAnimation(const std::string &name, int numFrames)
-	{
-	    Animation *anim = new Animation;
-
-	    for (int i = 0; i < numFrames; ++i)
-	    {
-	        // frame textures are numbered from 1 onwards, so add 1
-	        Texture *tex = graphicsEngine->getAnimatedTexture(name, i + 1);
-	        anim->addTexture(tex);
-	    }
-
-        mAnimations.insert(std::pair<std::string, Animation*>(name, anim));
 	}
 
 	Texture* AnimatedNode::getTexture()
@@ -202,26 +186,25 @@ namespace ST
         if (name.empty())
             mSetAnimation = NULL;
 
-	    AnimationIterator itr = mAnimations.find(name);
-	    if (itr != mAnimations.end())
+	    mSetAnimation = resourceManager->getAnimation(name);
+
+	    if (mSetAnimation)
 	    {
-	        mSetAnimation = itr->second;
+	        mUpdateTime = 1000 / mSetAnimation->getFrames();
 	    }
 	    else
 	    {
-	        logger->logError("Invalid animation set: " + name);
+	        mUpdateTime = 0;
 	    }
 	}
 
     void AnimatedNode::logic(int ms)
     {
         mTimeSinceLastUpdate += ms;
-        if (mTimeSinceLastUpdate >= 250)
+        if (mUpdateTime && mTimeSinceLastUpdate >= mUpdateTime)
         {
-            if (mSetAnimation)
-            {
-                mSetAnimation->nextFrame();
-            }
+            assert(mSetAnimation);
+            mSetAnimation->nextFrame();
             mTimeSinceLastUpdate = 0;
         }
     }

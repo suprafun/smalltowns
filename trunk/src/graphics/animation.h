@@ -59,6 +59,8 @@ namespace ST
 		void addTexture(Texture *texture);
 		Texture* getTexture() const;
 
+		unsigned int getFrames();
+
 		void nextFrame();
 
 	private:

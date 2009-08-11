@@ -77,6 +77,7 @@ namespace ST
         virtual int getId() const;
 
         virtual void setLook(int body, int hair) { look.body = body; look.hair = hair; }
+        virtual void setAnimation(const std::string &name);
 
         /**
          * Logic called each frame

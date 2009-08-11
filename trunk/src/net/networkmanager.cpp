@@ -206,7 +206,6 @@ namespace ST
                     c->setLook(body, hair);
                     c->setLevel(packet->getInteger());
                     c->setRights(packet->getInteger());
-                    c->addAnimation("maleSEwalk", 4); //TODO: Should not require hardcoding
                     player->addCharacter(c, slot);
                 }
 
@@ -238,7 +237,6 @@ namespace ST
 					c->setLook(body, hair);
                     c->setLevel(packet->getInteger());
                     c->setRights(packet->getInteger());
-                    c->addAnimation("maleSEwalk", 4); //TODO: Should not require hardcoding
                     player->addCharacter(c, slot);
                     player->setCharacter(slot);
                 }
@@ -398,7 +396,6 @@ namespace ST
                     c->setLook(body, hair);
                     c->setLevel(lvl);
                     c->setRights(rights);
-                    c->addAnimation("maleSEwalk", 4); //TODO: Should not require hardcoding
 
                     beingManager->addBeing(c);
                     graphicsEngine->addNode(c);

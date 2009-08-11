@@ -63,6 +63,11 @@ namespace ST
 	    return mTextures[mCurrFrame];
 	}
 
+	unsigned int Animation::getFrames()
+	{
+	    return mTextures.size();
+	}
+
 	void Animation::nextFrame()
 	{
 	    ++mCurrFrame;

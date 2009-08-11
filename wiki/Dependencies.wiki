@@ -14,3 +14,4 @@ Below is the list of dependencies required to build the client. These should eas
   * [http://libagar.org agar]
   * [http://www.freetype.org FreeType 2]
   * [http://www.zlib.net zlib]
+  * [http://www.icculus.org/physfs physfs] - trunk only

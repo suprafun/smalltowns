@@ -7,7 +7,7 @@ When launching Town's Life version 0.0.4 or higher, the client will automaticall
 
 You may register a new username and password for free by clicking Register.
 
-Once registered or logged in, you will be asked to selected a character. You may create up to 3 different characters. Once you create a new one, in the future you can select it by dragging the avatar head to the empty space and clicking choose.
+Once registered or logged in, you will be asked to selected a character. You may create up to 3 different characters.
 
 = Troubleshooting =
 

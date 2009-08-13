@@ -97,8 +97,10 @@ namespace ST
 
 		if (file.load("townslife.cfg"))
         {
+            file.setElement("server");
             hostname = file.readString("server", "host");
             port = file.readInt("server", "port");
+            file.setElement("graphics");
 			opengl = file.readInt("graphics", "opengl");
         }
 

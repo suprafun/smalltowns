@@ -42,13 +42,20 @@
 
 namespace ST
 {
-	XMLFile::XMLFile() : mDoc(NULL), mHandle(NULL), mNextChild(0)
+	XMLFile::XMLFile() : mDoc(NULL), mHandle(NULL)
 	{
 
 	}
 
 	XMLFile::~XMLFile()
 	{
+	    ElementItr itr = mElements.begin(), itr_end = mElements.end();
+	    while (itr != itr_end)
+	    {
+	        delete itr->second;
+            ++itr;
+	    }
+	    mElements.clear();
 		delete mHandle;
 		mHandle = NULL;
 		delete mDoc;
@@ -71,59 +78,70 @@ namespace ST
 
 	bool XMLFile::next(const std::string &element)
 	{
-        ++mNextChild;
-        return mHandle->Child(element.c_str(), mNextChild).ToElement() ? true : false;
+        ElementItr itr = mElements.find(element);
+        if (itr != mElements.end())
+        {
+            itr->second = itr->second->NextSiblingElement();
+	        return itr->second != 0;
+        }
+        return false;
+    }
+
+	void XMLFile::setElement(const std::string &element)
+	{
+	    TiXmlElement *e = mHandle->FirstChild(element.c_str()).Element();
+        mElements.insert(std::pair<std::string, TiXmlElement*>(element, e));
 	}
 
-	std::string XMLFile::readString(const std::string &element, const std::string &attribute)
+	void XMLFile::setSubElement(const std::string &element, const std::string &subelement)
 	{
-        std::string str;
-        TiXmlElement *e;
+	    TiXmlElement *e = mHandle->FirstChild(element.c_str()).FirstChild().Element();
+        mElements.insert(std::pair<std::string, TiXmlElement*>(subelement, e));
+	}
 
-        e = mHandle->Child(element.c_str(), mNextChild).ToElement();
-        if (e)
+    std::string XMLFile::readString(const std::string &element, const std::string &attribute)
+    {
+        std::string str;
+
+        ElementItr itr = mElements.find(element);
+        if (itr != mElements.end())
         {
-            str = e->Attribute(attribute.c_str());
+            str = itr->second->Attribute(attribute.c_str());
         }
 
         return str;
-	}
+    }
 
-	int XMLFile::readInt(const std::string &element, const std::string &attribute)
-	{
-	    int value = 0;
-	    TiXmlElement *e;
+    int XMLFile::readInt(const std::string &element, const std::string &attribute)
+    {
+        int value = 0;
 
-	    e = mHandle->Child(element.c_str(), mNextChild).ToElement();
-        if (e)
+        ElementItr itr = mElements.find(element);
+        if (itr != mElements.end())
         {
-            e->QueryIntAttribute(attribute.c_str(), &value);
+            itr->second->QueryIntAttribute(attribute.c_str(), &value);
         }
-	    return value;
-	}
+        return value;
+    }
 
-	void XMLFile::changeString(const std::string &element, const std::string &attribute,
-		const std::string &value)
-	{
-		TiXmlElement *e;
-
-	    e = mHandle->Child(element.c_str(), mNextChild).ToElement();
-        if (e)
+    void XMLFile::changeString(const std::string &element, const std::string &attribute,
+        const std::string &value)
+    {
+        ElementItr itr = mElements.find(element);
+        if (itr != mElements.end())
         {
-			e->SetAttribute(attribute.c_str(), value.c_str());
+            itr->second->SetAttribute(attribute.c_str(), value.c_str());
         }
-		mDoc->SaveFile();
-	}
+        mDoc->SaveFile();
+    }
 
-	void XMLFile::changeInt(const std::string &element, const std::string &attribute, int value)
-	{
-		TiXmlElement *e;
-
-	    e = mHandle->Child(element.c_str(), mNextChild).ToElement();
-        if (e)
+    void XMLFile::changeInt(const std::string &element, const std::string &attribute, int value)
+    {
+        ElementItr itr = mElements.find(element);
+        if (itr != mElements.end())
         {
-			e->SetAttribute(attribute.c_str(), value);
+            itr->second->SetAttribute(attribute.c_str(), value);
         }
-		mDoc->SaveFile();
-	}
+        mDoc->SaveFile();
+    }
 }

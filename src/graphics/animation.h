@@ -63,9 +63,21 @@ namespace ST
 
 		void nextFrame();
 
-	private:
+	protected:
 		std::vector<Texture*> mTextures;
 		unsigned int mCurrFrame;
+	};
+
+	class BeingAnimation : public Animation
+	{
+    public:
+        BeingAnimation(int id, int part);
+
+	    int getPart();
+
+    private:
+        int mId;
+        int mPart;
 	};
 }
 

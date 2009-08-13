@@ -89,25 +89,25 @@ namespace ST
         delete mSetAnimation;
 
         // get existing animation
-	    Animation *anim = resourceManager->getAnimation(name);
-	    if (!anim)
+	    Animation *body = resourceManager->getAnimation(look.body, name);
+	    if (!body)
             return;
 
-        // get the parts to add
-        BodyPart *part = resourceManager->getBodyPart(look.hair);
-        if (!part)
+        // get existing animation
+	    Animation *hair = resourceManager->getAnimation(look.hair, name);
+	    if (!hair)
             return;
-        Texture *hair = part->getTexture();
 
         // create new animation to store the new frames
         mSetAnimation = new Animation;
 
         // create new frames and store them in the animation
-        for (unsigned int i = 0; i < anim->getFrames(); ++i)
+        for (unsigned int i = 0; i < body->getFrames(); ++i)
         {
-            Texture *tex = graphicsEngine->createAvatarFrame(mId, i, anim->getTexture(), hair);
+            Texture *tex = graphicsEngine->createAvatarFrame(mId, i, body->getTexture(), hair->getTexture());
             mSetAnimation->addTexture(tex);
-            anim->nextFrame();
+            body->nextFrame();
+            hair->nextFrame();
         }
 
         mUpdateTime = 1000 / mSetAnimation->getFrames();

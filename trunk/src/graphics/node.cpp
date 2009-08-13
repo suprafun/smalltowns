@@ -186,7 +186,7 @@ namespace ST
         if (name.empty())
             mSetAnimation = NULL;
 
-	    mSetAnimation = resourceManager->getAnimation(name);
+	    mSetAnimation = resourceManager->getAnimation(0, name);
 
 	    if (mSetAnimation)
 	    {

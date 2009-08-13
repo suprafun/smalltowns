@@ -245,8 +245,9 @@ namespace ST
 	void InterfaceManager::sendToChat(const std::string &msg)
 	{
 		int lines = 0;
-		const int lineSize = 50;
+		const unsigned int lineSize = 50;
 
+        // find how many lines are needed
 		lines = msg.size() / lineSize;
 		if ((msg.size() % lineSize) > 0)
 			++lines;
@@ -256,8 +257,12 @@ namespace ST
         {
             unsigned int pos = 0;
             unsigned int npos = msg.size();
+
+            // check if the size of the message is greater than the max number of lines allowed
             if (npos > lineSize)
                 npos = lineSize;
+
+            // cycle through each line and output to console each line
             for (int line = 0; line < lines; ++line)
             {
                 AG_ConsoleMsg(chat, "%s", msg.substr(pos, npos).c_str());

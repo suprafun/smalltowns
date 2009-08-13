@@ -74,4 +74,15 @@ namespace ST
 	    if (mCurrFrame >= mTextures.size())
             mCurrFrame = 0;
 	}
+
+	BeingAnimation::BeingAnimation(int id, int part)
+	{
+	    mId = id;
+	    mPart = part;
+	}
+
+	int BeingAnimation::getPart()
+	{
+	    return mPart;
+	}
 }

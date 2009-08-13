@@ -84,7 +84,13 @@ namespace ST
             AnimationItr itr = mAnimations.begin(), itr_end = mAnimations.end();
             while (itr != itr_end)
             {
-                delete itr->second;
+                std::list<BeingAnimation*>::iterator bitr = itr->second.begin(),
+                                                 bitr_end = itr->second.end();
+                while (bitr != bitr_end)
+                {
+                    delete *bitr;
+                    ++bitr;
+                }
                 ++itr;
             }
             mAnimations.clear();
@@ -101,15 +107,18 @@ namespace ST
 		if (file.load(filename))
 		{
 		    // set size
+		    file.setElement("size");
 		    mBodyWidth = file.readInt("size", "width");
 		    mBodyHeight = file.readInt("size", "height");
 
             // set defaults
+            file.setElement("default");
 		    mDefaultBody = file.readInt("default", "body");
             mDefaultFemale = file.readInt("default", "female");
 		    mDefaultHair = file.readInt("default", "hair");
 
             // add all the body parts
+            file.setElement("body");
             do
             {
                 int id = file.readInt("body", "id");
@@ -130,25 +139,42 @@ namespace ST
 		if (file.load(filename))
 		{
 		    // add all the animations
+		    file.setElement("animation");
+		    file.setSubElement("animation", "body");
             do
             {
+                int id = file.readInt("animation", "id");
                 std::string name = file.readString("animation", "name");
-                std::string img = mDataPath + file.readString("animation", "file");
                 int frames = file.readInt("animation", "frames");
                 int width = file.readInt("animation", "width");
                 int height = file.readInt("animation", "height");
 
-                if (graphicsEngine->loadTextureSet(name, img, width, height))
+                // get list of animations for each body part
+                std::list<BeingAnimation*> animList;
+                do
                 {
-                    Animation *anim = new Animation;
-                    for (int i = 1; i <= frames; ++i)
+                    std::string img = mDataPath + file.readString("body", "file");
+                    int part = file.readInt("body", "part");
+
+                    std::stringstream texName;
+                    texName << part << name;
+
+                    // load in all the frames of animation
+                    if (graphicsEngine->loadTextureSet(texName.str(), img, width, height))
                     {
-                        std::stringstream str;
-                        str << name << i;
-                        anim->addTexture(graphicsEngine->getTexture(str.str()));
+                        BeingAnimation *anim = new BeingAnimation(id, part);
+                        for (unsigned int i = 1; i <= frames; ++i)
+                        {
+                            std::stringstream str;
+                            str << texName.str() << i;
+                            anim->addTexture(graphicsEngine->getTexture(str.str()));
+                        }
+                        animList.push_back(anim);
                     }
-                    mAnimations.insert(std::pair<std::string, Animation*>(name, anim));
-                }
+                } while (file.next("body"));
+
+                mAnimations.insert(std::pair<std::string, std::list<BeingAnimation*> >(name, animList));
+
             } while (file.next("animation"));
         }
     }
@@ -215,12 +241,21 @@ namespace ST
         return vec;
     }
 
-    Animation* ResourceManager::getAnimation(const std::string &name)
+    Animation* ResourceManager::getAnimation(int part, const std::string &name)
     {
         AnimationItr itr = mAnimations.find(name);
         if (itr != mAnimations.end())
         {
-            return itr->second;
+            std::list<BeingAnimation*>::iterator bitr = itr->second.begin(),
+                                                 bitr_end = itr->second.end();
+            while (bitr != bitr_end)
+            {
+                if ((*bitr)->getPart() == part)
+                {
+                    return *bitr;
+                }
+                ++bitr;
+            }
         }
 
         return NULL;

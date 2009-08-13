@@ -176,8 +176,7 @@ namespace ST
 	void LoginState::exit()
 	{
 		interfaceManager->removeAllWindows();
-		if (file)
-            delete file;
+		delete file;
 	}
 
 	bool LoginState::update()
@@ -198,6 +197,7 @@ namespace ST
 	void LoginState::createLoginWidgets()
 	{
 		// read from config file whether username was saved from last time
+		file->setElement("login");
 		int state = file->readInt("login", "save");
 		std::string savedUser;
 		if (state == 1)

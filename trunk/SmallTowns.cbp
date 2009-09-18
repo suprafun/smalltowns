@@ -21,7 +21,6 @@
 					<Add option="`curl-config --cflags`" />
 					<Add option="-DWITHOUT_CHAT=1" />
 					<Add directory="libs/cppirclib" />
-					<Add directory="/usr/local/include/CEGUI" />
 					<Add directory="/usr/local/include/agar" />
 				</Compiler>
 				<Linker>
@@ -38,10 +37,52 @@
 					<Add library="pthread" />
 				</Linker>
 			</Target>
+			<Target title="Linux">
+				<Option platforms="Unix;" />
+				<Option output="bin/townslife" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-march=core2" />
+					<Add option="-g" />
+					<Add option="`sdl-config --cflags`" />
+					<Add option="`freetype-config --cflags`" />
+					<Add option="`curl-config --cflags`" />
+					<Add option="`agar-config --cflags`" />
+					<Add directory="libs/tinyxml" />
+					<Add directory="libs/cppirclib" />
+				</Compiler>
+				<Linker>
+					<Add option="`sdl-config --libs`" />
+					<Add option="`curl-config --libs`" />
+					<Add option="`agar-config --libs`" />
+					<Add library="SDL_image" />
+					<Add library="GL" />
+					<Add library="GLU" />
+					<Add library="enet" />
+					<Add library="physfs" />
+					<Add library="libcppirclib" />
+					<Add directory="libs/cppirclib" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="libs/tinyxml/tinystr.cpp">
+			<Option target="Linux" />
+		</Unit>
+		<Unit filename="libs/tinyxml/tinyxml.cpp">
+			<Option target="Linux" />
+		</Unit>
+		<Unit filename="libs/tinyxml/tinyxmlerror.cpp">
+			<Option target="Linux" />
+		</Unit>
+		<Unit filename="libs/tinyxml/tinyxmlparser.cpp">
+			<Option target="Linux" />
+		</Unit>
 		<Unit filename="src/being.cpp" />
 		<Unit filename="src/being.h" />
 		<Unit filename="src/beingmanager.cpp" />

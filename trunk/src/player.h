@@ -37,10 +37,6 @@
  *
  ********************************************/
 
-/**
- * The Player class is for storing player specific variables
- */
-
 #ifndef ST_PLAYER_HEADER
 #define ST_PLAYER_HEADER
 
@@ -51,6 +47,9 @@ namespace ST
 {
     class Character;
 
+    /**
+     * The Player class is for storing player specific variables
+     */
     class Player
     {
     public:
@@ -81,19 +80,24 @@ namespace ST
         void setId(int id);
 
         /**
-         * Add a character to list player owns
+         * Adds a character for a slot
+         * @param c The character to add
+         * @param slot The slot the character is in
          */
         void addCharacter(Character *c, int slot);
 
         /**
-         * Return number of characters the player has
+         * Returns number of characters the player has
          */
         int getNumChars() const;
 
         /**
-         * Return the character in the specified slot
+         * Returns the character in the specified slot
          */
         Character* getCharacter(unsigned int slot);
+        /**
+         * Returns the selected character
+         */
         Character* getSelectedCharacter() { return mSelected; }
 
         /**
@@ -103,6 +107,7 @@ namespace ST
 
         /**
          * Set which character player will use to play
+         * @param slot The slot of the character selected
          */
         void setCharacter(int slot);
 

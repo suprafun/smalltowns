@@ -15,6 +15,7 @@
 #include "gzip.h"
 #include "log.h"
 
+#include <stdlib.h>
 #include <zlib.h>
 
 namespace ST

@@ -37,10 +37,6 @@
  *
  ********************************************/
 
-/**
- * The Map class contains the map data
- */
-
 #ifndef ST_MAP_HEADER
 #define ST_MAP_HEADER
 
@@ -55,6 +51,9 @@ namespace ST
 	class Node;
 	class Texture;
 
+    /**
+     * The Tileset class holds data for each set of tiles
+     */
 	class Tileset
 	{
 	public:
@@ -63,6 +62,10 @@ namespace ST
 		int height;
 		std::string tilename;
 	};
+
+	/**
+	 * The Layer class holds map layer data
+	 */
 
 	class Layer
 	{
@@ -98,6 +101,10 @@ namespace ST
 		unsigned int mHeight;
 	};
 
+	/**
+     * The Map class contains the map data
+     */
+
 	class Map
 	{
 	public:
@@ -108,7 +115,7 @@ namespace ST
 		~Map();
 
 		/**
-		 * Load
+		 * Load Map.
 		 * Reads the map from a file
 		 * @param filename The name of the file to read the map from
 		 * @return Returns true if successfully read in map
@@ -116,36 +123,39 @@ namespace ST
 		bool loadMap(const std::string &filename);
 
 		/**
-		 * Return width of tiles
-		 * Return height of tiles
+		 * Returns width of tiles
 		 */
         unsigned int getTileWidth() { return mTileWidth; }
+
+        /**
+         * Returns height of tiles
+         */
         unsigned int getTileHeight() { return mTileHeight; }
 
     private:
 		/**
-		 * Add Layer
+		 * Add Layer.
 		 * Adds a layer to the map
 		 */
         void addLayer(unsigned int width, unsigned int height, unsigned char *data,
 			unsigned int len);
 
         /**
-         * Load Map Info from xml file
+         * Load Map Info from xml file.
          * Gets the attributes from the XML element and stores them
          * @return Returns whether it succeeded
          */
         bool loadMapInfo(TiXmlElement *e);
 
         /**
-         * Load Tileset from xml file
+         * Load Tileset from xml file.
          * Load in images for tileset
          * @return Returns whether it succeeded
          */
         bool loadTileset(TiXmlElement *e);
 
         /**
-         * Load Layer from xml file
+         * Load Layer from xml file.
          * Load in data for layer
          * @return Returns whether it succeeded
          */

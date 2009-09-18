@@ -41,6 +41,8 @@
 
 #include "enet/enet.h"
 
+#include <cstring>
+
 #ifdef WIN32
 typedef unsigned int uint32_t;
 #endif

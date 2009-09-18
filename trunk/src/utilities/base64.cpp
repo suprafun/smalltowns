@@ -39,6 +39,8 @@
 
 #include "base64.h"
 
+#include <cstring>
+
 namespace ST
 {
     int decode_value(char value)

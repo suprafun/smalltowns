@@ -38,8 +38,12 @@
  ********************************************/
 
 /**
- * The Game class controls the graphics, input, sound and networking
- * It loops until the user exits
+ * \mainpage Towns Life
+ *
+ * \section intro_sec Introduction
+ * This is the documentation for Towns Life
+ * It is constantly being worked on.
+ * You can help by submitting patches to http://code.google.com/p/smalltowns
  */
 
 #ifndef ST_GAME_HEADER
@@ -53,6 +57,10 @@ namespace ST
 {
 	class GameState;
 
+    /**
+     * The Game class controls the graphics, input, sound and networking
+     * It loops until the user exits
+     */
 	class Game
 	{
 	public:
@@ -60,12 +68,14 @@ namespace ST
 
 		/**
 		 * Destructor
+		 *
 		 * Cleans up Game
 		 */
 		~Game();
 
 		/**
 		 * Run
+		 *
 		 * Creates everything needed to run the game
 		 * Loops until user exists the game
 		 */
@@ -73,16 +83,27 @@ namespace ST
 
 		/**
 		 * Change State
+		 *
+		 * Changes which state the client is in
+		 * @param state The gamestate to change to
 		 */
         void changeState(GameState *state);
 
         /**
-         * Disconnect from a server
+         * Disconnects from a server
+         *
+         * This actually just sends a disconnect packet
+         * since its using connection-less UDP packets
          */
         void disconnect();
 
         /**
          * Connect to a server
+         *
+         * This actually just sends a message,
+         * as its using connection-less UDP packets
+         * @param server The hostname of the server
+         * @param port The port of the server
          */
         bool connect(const std::string &server, int port);
 

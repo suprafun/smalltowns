@@ -52,6 +52,7 @@
 #include <iostream>
 #endif
 
+#include <cstring>
 #include <sstream>
 
 using namespace IRC;

@@ -37,10 +37,6 @@
  *
  ********************************************/
 
-/**
- * The Resource Manager is the class used for storing resources
- */
-
 #ifndef ST_RESOURCEMANAGER_HEADER
 #define ST_RESOURCEMANAGER_HEADER
 
@@ -54,32 +50,59 @@ namespace ST
     class Animation;
     class BeingAnimation;
     class BodyPart;
+
+    /**
+     * The Resource Manager is the class used for storing resources
+     */
     class ResourceManager
     {
     public:
         ResourceManager(const std::string &path);
         ~ResourceManager();
+        /**
+         * Loads the body parts from file
+         */
         void loadBodyParts(const std::string &filename);
+        /**
+         * Loads the animations from file
+         */
         void loadAnimations(const std::string &filename);
 
+        /**
+         * Returns width of body parts
+         */
         int getBodyWidth() const;
+        /**
+         * Returns height of body parts
+         */
         int getBodyHeight() const;
 
         /**
-         * Get Body parts
+         * Returns Body part based on id
+         * @param id The id of the body part
          */
         BodyPart* getBodyPart(int id);
+        /**
+         * Returns the default body part based on type
+         * @param type The type of body part
+         */
         BodyPart* getDefaultBody(int type);
         BodyPart* getFemaleBody();
+        /**
+         * Returns a list of all body parts of a certain type
+         * @param type The type of body part
+         */
         std::vector<BodyPart*> getBodyList(int type);
 
         /**
-         * Get Animations
+         * Returns Animation based on body part id and animation name
+         * @param bodypart Id of body part
+         * @param name Name of animation
          */
         Animation* getAnimation(int bodypart, const std::string &name);
 
         /**
-         * Get path to data directory
+         * Returns the path to data directory
          */
         std::string getDataPath();
 

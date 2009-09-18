@@ -37,20 +37,22 @@
  *
  ********************************************/
 
-/**
- * The Being Manager class stores all the beings the player knows about
- */
-
 #ifndef ST_BEINGMANAGER_HEADER
 #define ST_BEINGMANAGER_HEADER
 
 #include "utilities/types.h"
 
 #include <map>
+#include <string>
 
 namespace ST
 {
     class Being;
+
+    /**
+     * The Being Manager class stores all the beings the player knows about
+     */
+
     class BeingManager
     {
     public:

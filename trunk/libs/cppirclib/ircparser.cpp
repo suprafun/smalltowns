@@ -50,7 +50,9 @@ Command* IRCParser::parse(char *data, unsigned int length)
 {
     std::string prefix;
     std::string first;
+#ifdef DEBUG
     char *p = data;
+#endif
 
     // ensure the data is ended properly
     data[length] = '\0';

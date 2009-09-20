@@ -101,7 +101,9 @@ bool Socket::doConnection(uint32_t host, uint16_t port)
 
     if (connect(mDescriptor, (struct sockaddr*)&mAddress, sizeof(mAddress)) < 0)
     {
-        perror("Unable to connect");
+#ifdef DEBUG
+        std:cout << "Unable to connect" << std::endl;
+#endif
         return false;
     }
 
@@ -131,28 +133,29 @@ void Command::setCommand(unsigned int command)
 void Command::setParams(const std::string &params)
 {
     // new position
-    unsigned int position = 0;
+    size_t position = 0;
     // previous position
     int prev = 0;
 	mParams.clear();
 
-	position = params.find_first_not_of(' ', prev);
+    // find position of first character
+	position = params.find_first_not_of(' ');
 	prev = position;
 
     // keep looping until out of params
     while(1)
     {
+        // find position of next word
         position = params.find(' ', prev);
-        if (position != std::string::npos)
+
+        if (position == std::string::npos)
         {
-            mParams.push_back(params.substr(prev, position - prev));
-            prev = position + 1;
+            mParams.push_back(params.substr(prev));
+            return;
         }
-        else
-        {
-			mParams.push_back(params.substr(prev));
-            break;
-        }
+
+        mParams.push_back(params.substr(prev, position - prev));
+        prev = position + 1;
     }
 }
 
@@ -239,7 +242,7 @@ int IRCConnection::checkForData(char *data, unsigned int length) const
         while (1)
         {
             // get one byte at a time
-            len = recv(socket, &data[pos], 1, NULL);
+            len = recv(socket, &data[pos], 1, 0);
 
             // all commands in irc end with endline
             if (data[pos] == '\n')
@@ -262,7 +265,7 @@ void IRCConnection::sendData(const char *data, unsigned int length)
 {
     int len;
 
-	while ((len = send(mSocket->getSocket(), data, length, NULL)) < 0)
+	while ((len = send(mSocket->getSocket(), data, length, 0)) < 0)
 		continue;
 }
 

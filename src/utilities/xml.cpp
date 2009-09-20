@@ -49,12 +49,6 @@ namespace ST
 
 	XMLFile::~XMLFile()
 	{
-	    ElementItr itr = mElements.begin(), itr_end = mElements.end();
-	    while (itr != itr_end)
-	    {
-	        delete itr->second;
-            ++itr;
-	    }
 	    mElements.clear();
 		delete mHandle;
 		mHandle = NULL;

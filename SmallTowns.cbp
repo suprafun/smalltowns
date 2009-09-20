@@ -45,7 +45,6 @@
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
 				<Compiler>
-					<Add option="-march=core2" />
 					<Add option="-g" />
 					<Add option="`sdl-config --cflags`" />
 					<Add option="`freetype-config --cflags`" />
@@ -64,6 +63,7 @@
 					<Add library="enet" />
 					<Add library="physfs" />
 					<Add library="libcppirclib" />
+					<Add library="pthread" />
 					<Add directory="libs/cppirclib" />
 				</Linker>
 			</Target>

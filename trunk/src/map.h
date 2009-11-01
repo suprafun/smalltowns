@@ -76,7 +76,7 @@ namespace ST
         /**
          * Set a tile
          */
-        void setTile(int x, int y, Texture *tex, int width, int height);
+        void setTile(int x, int y, int layer, Texture *tex, int width, int height);
 
 		/**
 		 * Add Tile

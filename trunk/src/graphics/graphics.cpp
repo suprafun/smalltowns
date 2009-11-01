@@ -81,13 +81,19 @@ namespace ST
 		mHeight = 768;
 
 		mCamera = NULL;
+
+		for (int i = 0; i < TOTAL_LAYERS; ++i)
+		{
+		    std::list<Node*> nodes;
+		    mLayers.push_back(nodes);
+		}
 	}
 
 	GraphicsEngine::~GraphicsEngine()
 	{
 		// clean up nodes
         // nodes should have been deleted by their owners
-		mNodes.clear();
+		mLayers.clear();
 
 		if (mCamera)
 			delete mCamera;
@@ -96,23 +102,33 @@ namespace ST
 		SDL_Quit();
 	}
 
-	Node* GraphicsEngine::createNode(std::string name, std::string texture, Point *point)
+	Node* GraphicsEngine::createNode(std::string name, std::string texture, int layer, Point *point)
 	{
 		Node *node = new Node(name, graphicsEngine->getTexture(texture));
 		node->moveNode(point);
-		mNodes.push_back(node);
+		addNode(node, layer);
 		return node;
 	}
 
-	void GraphicsEngine::addNode(Node *node)
+	void GraphicsEngine::addNode(Node *node, int layer)
 	{
 	    assert(node);
-	    mNodes.push_back(node);
+	    if (layer >= mLayers.size())
+		{
+		    logger->logError("Tried to add node to invalid layer");
+		    return;
+		}
+		std::list<Node*> nodes = mLayers[layer];
+		nodes.push_back(node);
 	}
 
 	void GraphicsEngine::removeNode(Node *node)
 	{
-	    mNodes.remove(node);
+	    for (int i = 0; i < TOTAL_LAYERS; ++i)
+	    {
+	        std::list<Node*> nodes = mLayers[i];
+            nodes.remove(node);
+	    }
 	}
 
 	void GraphicsEngine::setCamera(Camera *cam)
@@ -146,40 +162,45 @@ namespace ST
 
 	void GraphicsEngine::outputNodes()
 	{
-		// create iterators for looping
-		NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
+	    for (int i = 0; i < TOTAL_LAYERS; ++i)
+	    {
+            std::list<Node*> nodes = mLayers[i];
 
-        Point pt = mCamera->getPosition();
+            // create iterators for looping
+            NodeItr itr = nodes.begin(), itr_end = nodes.end();
 
-		// keep looping until reached the end of the list
-		while (itr != itr_end)
-		{
-		    Node *node = (*itr);
-			// dont draw if not on screen
-/*			if (!checkInside(node->getPosition(), mCamera->getViewBounds()))
-			{
-				continue;
-			}
-*/
-			// dont draw if not visible
-			if (!node->getVisible())
-			{
-				continue;
-			}
+            Point pt = mCamera->getPosition();
 
-			Rectangle rect = node->getBounds();
-			rect.x -= pt.x;
-			rect.y -= pt.y;
+            // keep looping until reached the end of the list
+            while (itr != itr_end)
+            {
+                Node *node = (*itr);
+                // dont draw if not on screen
+    /*			if (!checkInside(node->getPosition(), mCamera->getViewBounds()))
+                {
+                    continue;
+                }
+    */
+                // dont draw if not visible
+                if (!node->getVisible())
+                {
+                    continue;
+                }
 
-			drawTexturedRect(rect, node->getTexture());
+                Rectangle rect = node->getBounds();
+                rect.x -= pt.x;
+                rect.y -= pt.y;
 
-			if (node->showName())
-			{
-			    interfaceManager->drawName(node->getName(), node->getPosition());
-			}
+                drawTexturedRect(rect, node->getTexture());
 
-			++itr;
-		}
+                if (node->showName())
+                {
+                    interfaceManager->drawName(node->getName(), node->getPosition());
+                }
+
+                ++itr;
+            }
+	    }
 	}
 
 	Texture* GraphicsEngine::loadTexture(const std::string &name)
@@ -545,21 +566,6 @@ namespace ST
         return tex;
     }
 
-    int GraphicsEngine::convertToXTile(int x)
-    {
-        int tile = mCamera->getPosition().x;
-        tile += x;
-        tile /= mapEngine->getTileWidth();
-        return tile;
-    }
-
-    int GraphicsEngine::convertToYTile(int y)
-    {
-        int tile = mCamera->getPosition().y;
-        tile += y;
-        tile /= mapEngine->getTileHeight();
-        return tile;
-    }
 
 	Node* GraphicsEngine::getNode(int x, int y)
     {
@@ -568,7 +574,39 @@ namespace ST
         pt.y = y + mCamera->getPosition().y;
         Rectangle rect;
 
-        NodeReverseItr itr = mNodes.rbegin(), itr_end = mNodes.rend();
+        for (int i = TOTAL_LAYERS - 1; i >= 0; --i)
+        {
+            std::list<Node*> nodes = mLayers[i];
+            NodeItr itr = nodes.begin(), itr_end = nodes.end();
+            while (itr != itr_end)
+            {
+                rect.x = (*itr)->getPosition().x;
+                rect.y = (*itr)->getPosition().y;
+                rect.width = (*itr)->getWidth();
+                rect.height = (*itr)->getHeight();
+                if (checkInside(pt, rect))
+                {
+                    return *itr;
+                }
+
+                ++itr;
+            }
+        }
+
+        return NULL;
+    }
+
+    Node* GraphicsEngine::getTile(int x, int y)
+    {
+        Point pt;
+        pt.x = x + mCamera->getPosition().x;
+        pt.y = y + mCamera->getPosition().y;
+        Rectangle rect;
+
+        // we want the bottom layer
+        std::list<Node*> nodes = mLayers[0];
+
+        NodeItr itr = nodes.begin(), itr_end = nodes.end();
         while (itr != itr_end)
         {
             rect.x = (*itr)->getPosition().x;

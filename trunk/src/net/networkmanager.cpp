@@ -296,12 +296,15 @@ namespace ST
                     p->setInteger(player->getId());
                     p->setInteger(tag);
                     sendPacket(p);
+                    std::stringstream str;
+                    str << "Sending tag " << tag;
+                    logger->logDebug(str.str());
                 }
                 else
                 {
                     interfaceManager->setErrorMessage("Unable to connect to Game Server");
 					interfaceManager->showErrorWindow(true);
-                    logger->logWarning("Invalid token");
+                    logger->logWarning("Timed out connecting to game server.");
                     disconnect();
                     GameState *state = new ConnectState;
                     game->changeState(state);
@@ -315,6 +318,10 @@ namespace ST
                 {
                     GameState *state = new TestState;
                     game->changeState(state);
+                }
+                else if (packet->getByte() == ERR_TRYAGAIN)
+                {
+                    // resend packet
                 }
                 else
                 {
@@ -335,7 +342,7 @@ namespace ST
                 Packet *packet = new Packet(PGMSG_MAP_LOADED);
                 sendPacket(packet);
 
-                graphicsEngine->addNode(player->getSelectedCharacter());
+                graphicsEngine->addNode(player->getSelectedCharacter(), LAYER_PEOPLE);
             } break;
 
         case GPMSG_WARPTO:
@@ -354,14 +361,17 @@ namespace ST
             {
                 // check if we know the player exists
                 unsigned int id = packet->getInteger();
-                int x = packet->getInteger();
-                int y = packet->getInteger();
+                Point pos;
+                pos.x = packet->getInteger();
+                pos.y = packet->getInteger();
                 int dir = packet->getInteger();
                 Being *being = beingManager->findBeing(id);
                 if (being)
                 {
                     // found being, update their position
                     // use interpolation
+                    being->setAnimation("");
+                    being->moveNode(&pos);
                 }
                 else
                 {
@@ -369,7 +379,7 @@ namespace ST
                     Packet *p = new Packet(PGMSG_PLAYER_INFO);
                     p->setInteger(id);
                     sendPacket(p);
-                    beingManager->saveBeingPosition(id, x, y);
+                    beingManager->saveBeingPosition(id, pos.x, pos.y);
 
                     std::stringstream str;
                     str << "New player with id " << id << " entered";
@@ -398,7 +408,7 @@ namespace ST
                     c->setRights(rights);
 
                     beingManager->addBeing(c);
-                    graphicsEngine->addNode(c);
+                    graphicsEngine->addNode(c, LAYER_PEOPLE);
                     Point pt = beingManager->getSavedPosition(id);
                     c->moveNode(&pt);
 

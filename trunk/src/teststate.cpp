@@ -198,12 +198,12 @@ namespace ST
 
         if (inputManager->getKey(SDLK_DOWN))
         {
+            Point pos = player->getSelectedCharacter()->getTilePosition();
             player->getSelectedCharacter()->setAnimation("maleSEwalk");
-        }
-
-        if (inputManager->getKey(SDLK_UP))
-        {
-            player->getSelectedCharacter()->setAnimation("");
+            Packet *p = new Packet(PGMSG_PLAYER_MOVE);
+            p->setInteger(pos.x + 8);
+            p->setInteger(pos.y + 16);
+            networkManager->sendPacket(p);
         }
 
         // number of milliseconds since last frame

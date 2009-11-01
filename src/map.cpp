@@ -73,7 +73,7 @@ namespace ST
 		}
 	}
 
-	void Layer::setTile(int x, int y, Texture *tex, int width, int height)
+	void Layer::setTile(int x, int y, int layer, Texture *tex, int width, int height)
 	{
 	    std::stringstream str;
 	    Point p;
@@ -83,7 +83,7 @@ namespace ST
 		p.y = (x + y) * (height >> 1);
 
 	    // add node and set its position
-        Node *node = graphicsEngine->createNode(str.str(), tex->getName(), &p);
+        Node *node = graphicsEngine->createNode(str.str(), tex->getName(), layer, &p);
         addNode(node);
 	}
 
@@ -375,7 +375,7 @@ namespace ST
 					{
 						std::stringstream str;
 						str << mTilesets[j]->tilename << (tile_id - mTilesets[j]->id) + 1;
-						l->setTile(x, y, graphicsEngine->getTexture(str.str()), mTileWidth, mTileHeight);
+						l->setTile(x, y, LAYER_GROUND, graphicsEngine->getTexture(str.str()), mTileWidth, mTileHeight);
 						break;
 					}
 				}

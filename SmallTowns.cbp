@@ -50,6 +50,7 @@
 					<Add option="`freetype-config --cflags`" />
 					<Add option="`curl-config --cflags`" />
 					<Add option="`agar-config --cflags`" />
+					<Add option="-DWITHOUT_CHAT=1" />
 					<Add directory="libs/tinyxml" />
 					<Add directory="libs/cppirclib" />
 				</Compiler>

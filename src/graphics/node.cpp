@@ -113,8 +113,16 @@ namespace ST
 	Point Node::getTilePosition()
 	{
 	    Point pt;
-	    pt.x = graphicsEngine->convertToXTile(mPosition.x);
-	    pt.y = graphicsEngine->convertToYTile(mPosition.y);
+	    pt.x = 0;
+	    pt.y = 0;
+
+	    Node *node;
+	    node = graphicsEngine->getTile(mPosition.x, mPosition.y);
+
+	    if (node)
+        {
+            pt = node->getPosition();
+        }
 
 	    return pt;
 	}

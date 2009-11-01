@@ -63,6 +63,14 @@ namespace ST
 	struct Point;
 	struct Rectangle;
 
+	enum
+	{
+	    LAYER_GROUND = 0,
+	    LAYER_CROPS = 1,
+	    LAYER_PEOPLE = 2,
+	    TOTAL_LAYERS = 3
+	};
+
 	class GraphicsEngine
 	{
 	public:
@@ -87,17 +95,19 @@ namespace ST
 		 * Create Node
 		 * Creates a new node, and returns it
 		 * @param name The name of the Node
+		 * @param texture The name of the texture to use
+		 * @param layer The layer the node resides on
 		 * @param point The position of the Node
 		 * @return Returns a pointer to the Node created
 		 */
-		Node* createNode(std::string name, std::string texture, Point *point = NULL);
+		Node* createNode(std::string name, std::string texture, int layer, Point *point = NULL);
 
 		/**
 		 * Add Node
 		 * Adds an already created node to the render list
 		 * @param node The node to add
 		 */
-        void addNode(Node *node);
+        void addNode(Node *node, int layer);
 
         /**
          * Remove Node
@@ -109,10 +119,12 @@ namespace ST
 		 * Create Entity
 		 * Creates a new entity, and returns it
 		 * @param name The name of the Entity
+		 * @param texture The name of the texture to use
+		 * @param layer The layer the node resides on
 		 * @param point The position of the Entity
 		 * @return Returns a pointer to the Entity created
 		 */
-		Entity* createEntity(std::string name, std::string texture, Point *point = NULL);
+		Entity* createEntity(std::string name, std::string texture, int layer, Point *point = NULL);
 
 		/**
 		 * Set Camera
@@ -217,15 +229,14 @@ namespace ST
         Texture* createAvatarFrame(unsigned int id, unsigned int frame, Texture *bodyTex, Texture *hairTex);
 
         /**
-         * Convert Screen to tile co-ordinates
-         */
-        int convertToXTile(int x);
-        int convertToYTile(int y);
-
-        /**
          * Get the node at that position
          */
         Node* getNode(int x, int y);
+
+        /**
+         * Get the tile at that position
+         */
+        Node* getTile(int x, int y);
 
         /**
          * Set Camera to Show a Point on screen
@@ -245,9 +256,8 @@ namespace ST
 		Camera *mCamera;
 
 		// list of nodes
-		std::list<Node*> mNodes;
+		std::vector< std::list<Node*> > mLayers;
 		typedef std::list<Node*>::iterator NodeItr;
-		typedef std::list<Node*>::reverse_iterator NodeReverseItr;
 
 		// list of textures
 		std::map<std::string, Texture*> mTextures;

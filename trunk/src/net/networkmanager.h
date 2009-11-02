@@ -107,6 +107,7 @@ namespace ST
 		Host *mHost;
 		std::string mDefaultHost;
 		int mDefaultPort;
+		int mTag; /** << Used for reconnecting to game server */
 	};
 
 	extern NetworkManager *networkManager;

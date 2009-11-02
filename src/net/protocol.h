@@ -86,6 +86,7 @@ enum
 	ERR_INVALID_CHAR    = 7,
 
 	ERR_INVALID_TAG     = 8,
+	ERR_TRYAGAIN        = 9,
 };
 
 #endif

@@ -73,6 +73,7 @@ namespace ST
 		enet_initialize();
 		atexit(enet_deinitialize);
         mHost = new Host();
+        mTag = -1;
 	}
 
 	NetworkManager::~NetworkManager()
@@ -286,7 +287,7 @@ namespace ST
             {
                 std::string host = packet->getString();
                 int port = packet->getInteger();
-                int tag = packet->getInteger();
+                mTag = packet->getInteger();
 
                 game->disconnect();
 
@@ -294,10 +295,10 @@ namespace ST
                 {
                     Packet *p = new Packet(PGMSG_CONNECT);
                     p->setInteger(player->getId());
-                    p->setInteger(tag);
+                    p->setInteger(mTag);
                     sendPacket(p);
                     std::stringstream str;
-                    str << "Sending tag " << tag;
+                    str << "Sending tag " << mTag;
                     logger->logDebug(str.str());
                 }
                 else
@@ -314,14 +315,23 @@ namespace ST
 
         case GPMSG_CONNECT_RESPONSE:
             {
-                if (packet->getByte() == ERR_NONE)
+                int error = packet->getByte();
+                if (error == ERR_NONE)
                 {
                     GameState *state = new TestState;
                     game->changeState(state);
                 }
-                else if (packet->getByte() == ERR_TRYAGAIN)
+                else if (error == ERR_TRYAGAIN)
                 {
+                    usleep(100);
                     // resend packet
+                    Packet *p = new Packet(PGMSG_CONNECT);
+                    p->setInteger(player->getId());
+                    p->setInteger(mTag);
+                    sendPacket(p);
+                    std::stringstream str;
+                    str << "Sending tag " << mTag;
+                    logger->logDebug(str.str());
                 }
                 else
                 {

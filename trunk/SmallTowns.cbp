@@ -108,6 +108,8 @@
 		<Unit filename="src/irc/ircmessage.h" />
 		<Unit filename="src/irc/ircserver.cpp" />
 		<Unit filename="src/irc/ircserver.h" />
+		<Unit filename="src/loadstate.cpp" />
+		<Unit filename="src/loadstate.h" />
 		<Unit filename="src/loginstate.cpp" />
 		<Unit filename="src/loginstate.h" />
 		<Unit filename="src/main.cpp" />

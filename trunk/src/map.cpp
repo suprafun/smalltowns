@@ -79,8 +79,8 @@ namespace ST
 	    Point p;
 
 	    str << "tile" << x << "-" << y;
-		p.x = (x - y) * (width >> 1);
-		p.y = (x + y) * (height >> 1);
+		p.x = 0.5 * (x - y) * width;
+		p.y = 0.5 * (x + y) * height;
 
 	    // add node and set its position
         Node *node = graphicsEngine->createNode(str.str(), tex->getName(), layer, &p);

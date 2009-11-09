@@ -82,6 +82,7 @@ namespace ST
 		Camera *mCam;
         int ms;
         int lastframe;
+        bool mLoaded;
 	};
 }
 

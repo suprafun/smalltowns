@@ -31,91 +31,54 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-01-22
+ *	Date of file creation: 2009-11-08
  *
  *	$Id$
  *
  ********************************************/
 
 /**
- * The Network manager class manages the networking
+ * The Load State is used for waiting until connection to game server is complete
  */
 
-#ifndef ST_NETWORK_MANAGER_HEADER
-#define ST_NETWORK_MANAGER_HEADER
+#ifndef ST_LOADSTATE_HEADER
+#define ST_LOADSTATE_HEADER
 
-#include <string>
+#include "gamestate.h"
+
 
 namespace ST
 {
-	class Host;
-	class Packet;
-	class NetworkManager
+	class LoadState : public GameState
 	{
 	public:
-		NetworkManager();
-		~NetworkManager();
+		LoadState();
 
 		/**
-		 * Connect to a server
+		 * Enter
+		 * Called when entering the state
 		 */
-		void connect();
-		void connect(const std::string &hostname, int port);
+		void enter();
 
 		/**
-		 * Process is called every frame to get packets and process them
+		 * Exit
+		 * Called when leaving the state
 		 */
-		void process();
+		void exit();
 
 		/**
-		 * Checks if connected to server yet
+		 * Update
+		 * Called every frame
+		 * Return false to exit the game
 		 */
-        bool isConnected();
-
-        /**
-         * Disconnect from the server (or stop trying to connect)
-         */
-        void disconnect();
-
-        /**
-         * Send a packet to the server
-         */
-        void sendPacket(Packet *packet);
-
-        /**
-         * Send client version to the server
-         */
-        void sendVersion();
-
-        /**
-         * Get Server Tag
-         */
-        int getTag() const;
-
-        /**
-         * Download file for updates
-         */
-        bool downloadUpdateFile(const std::string &file);
-
-        /**
-         * Set default settings
-         */
-        void setDefault(const std::string &hostname, int port);
+		bool update();
 
     private:
-		/**
-		 * Process the packets
-		 */
-		void processPacket(Packet*);
-
-	private:
-		Host *mHost;
-		std::string mDefaultHost;
-		int mDefaultPort;
-		int mTag; /** << Used for reconnecting to game server */
+        int mTimeouts;
+        int mLastTime;
+        bool mConnecting;
 	};
-
-	extern NetworkManager *networkManager;
 }
 
 #endif
+

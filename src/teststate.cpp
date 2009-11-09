@@ -208,7 +208,7 @@ namespace ST
 
         if (inputManager->getKey(SDLK_DOWN))
         {
-            Point pos = player->getSelectedCharacter()->getTilePosition();
+            Point pos = player->getSelectedCharacter()->getPosition();
             player->getSelectedCharacter()->setAnimation("maleSEwalk");
             Packet *p = new Packet(PGMSG_PLAYER_MOVE);
             p->setInteger(pos.x + 8);

@@ -123,6 +123,13 @@ namespace ST
 		bool loadMap(const std::string &filename);
 
 		/**
+		 * Map Loaded.
+		 * Has the map been loaded?
+		 * @return Returns whether the map has been loaded successfully.
+		 */
+        bool mapLoaded() { return mLoaded; }
+
+		/**
 		 * Returns width of tiles
 		 */
         unsigned int getTileWidth() { return mTileWidth; }
@@ -168,6 +175,7 @@ namespace ST
 		int mHeight;
 		int mTileWidth;
 		int mTileHeight;
+		bool mLoaded;
 	};
 
 	extern Map *mapEngine;

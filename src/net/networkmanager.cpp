@@ -57,6 +57,7 @@
 #include "../connectstate.h"
 #include "../gamestate.h"
 #include "../game.h"
+#include "../loadstate.h"
 #include "../loginstate.h"
 #include "../map.h"
 #include "../player.h"
@@ -293,20 +294,15 @@ namespace ST
 
 				if (game->connect(host, port))
                 {
-                    Packet *p = new Packet(PGMSG_CONNECT);
-                    p->setInteger(player->getId());
-                    p->setInteger(mTag);
-                    sendPacket(p);
-                    std::stringstream str;
-                    str << "Sending tag " << mTag;
-                    logger->logDebug(str.str());
+                    GameState *state = new LoadState;
+                    game->changeState(state);
                 }
                 else
                 {
                     interfaceManager->setErrorMessage("Unable to connect to Game Server");
 					interfaceManager->showErrorWindow(true);
                     logger->logWarning("Timed out connecting to game server.");
-                    disconnect();
+                    game->disconnect();
                     GameState *state = new ConnectState;
                     game->changeState(state);
                 }
@@ -321,19 +317,7 @@ namespace ST
                     GameState *state = new TestState;
                     game->changeState(state);
                 }
-                else if (error == ERR_TRYAGAIN)
-                {
-                    usleep(100);
-                    // resend packet
-                    Packet *p = new Packet(PGMSG_CONNECT);
-                    p->setInteger(player->getId());
-                    p->setInteger(mTag);
-                    sendPacket(p);
-                    std::stringstream str;
-                    str << "Sending tag " << mTag;
-                    logger->logDebug(str.str());
-                }
-                else
+                else if (error == ERR_INVALID_TAG)
                 {
                     interfaceManager->setErrorMessage("Unable to connect to Game Server");
 					interfaceManager->showErrorWindow(true);
@@ -348,9 +332,6 @@ namespace ST
             {
                 std::string mapFile = packet->getString();
                 mapEngine->loadMap(mapFile);
-
-                Packet *packet = new Packet(PGMSG_MAP_LOADED);
-                sendPacket(packet);
 
                 graphicsEngine->addNode(player->getSelectedCharacter(), LAYER_PEOPLE);
             } break;
@@ -525,5 +506,10 @@ namespace ST
 	{
 	    mDefaultHost = hostname;
 	    mDefaultPort = port;
+	}
+
+	int NetworkManager::getTag() const
+	{
+	    return mTag;
 	}
 }

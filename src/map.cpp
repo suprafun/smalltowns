@@ -120,6 +120,7 @@ namespace ST
         mHeight = 0;
         mTileWidth = 0;
         mTileHeight = 0;
+        mLoaded = false;
 	}
 
 	Map::~Map()
@@ -186,6 +187,8 @@ namespace ST
         }
 
         logger->logDebug("Finished loading map");
+
+        mLoaded = true;
 
         return true;
     }

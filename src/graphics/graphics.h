@@ -71,6 +71,18 @@ namespace ST
 	    TOTAL_LAYERS = 3
 	};
 
+	class NodeList
+	{
+    public:
+        const std::list<Node*>& getNodes() { return mNodes; }
+        void clear() { mNodes.clear(); }
+        void add(Node *node) { mNodes.push_back(node); }
+        void remove(Node *node) { mNodes.remove(node); }
+
+    private:
+        std::list<Node*> mNodes;
+	};
+
 	class GraphicsEngine
 	{
 	public:
@@ -256,8 +268,8 @@ namespace ST
 		Camera *mCamera;
 
 		// list of nodes
-		std::vector< std::list<Node*> > mLayers;
-		typedef std::list<Node*>::iterator NodeItr;
+		std::vector<NodeList*> mLayers;
+		typedef std::list<Node*>::const_iterator NodeItr;
 
 		// list of textures
 		std::map<std::string, Texture*> mTextures;

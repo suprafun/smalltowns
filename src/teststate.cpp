@@ -44,6 +44,7 @@
 #include "beingmanager.h"
 #include "character.h"
 #include "game.h"
+#include "map.h"
 
 #include "graphics/camera.h"
 #include "graphics/graphics.h"
@@ -126,6 +127,7 @@ namespace ST
 	TestState::TestState()
 	{
         ms = 0;
+        mLoaded = false;
         chatServer = new IRCServer;
 
 		// create camera
@@ -186,6 +188,14 @@ namespace ST
 
 	bool TestState::update()
 	{
+	    // check if the map has been loaded then tell the game server we're ready
+	    if (!mLoaded && mapEngine->mapLoaded())
+	    {
+            Packet *packet = new Packet(PGMSG_MAP_LOADED);
+            networkManager->sendPacket(packet);
+            mLoaded = true;
+	    }
+
 		// Check for input, if escape pressed, exit
 		if (inputManager->getKey(SDLK_ESCAPE))
 		{

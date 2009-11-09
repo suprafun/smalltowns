@@ -84,7 +84,7 @@ namespace ST
 
 		for (int i = 0; i < TOTAL_LAYERS; ++i)
 		{
-		    std::list<Node*> nodes;
+		    NodeList *nodes = new NodeList;
 		    mLayers.push_back(nodes);
 		}
 	}
@@ -93,7 +93,11 @@ namespace ST
 	{
 		// clean up nodes
         // nodes should have been deleted by their owners
-		mLayers.clear();
+        for (unsigned int i = 0; i < mLayers.size(); ++i)
+        {
+            mLayers[i]->clear();
+            delete mLayers[i];
+        }
 
 		if (mCamera)
 			delete mCamera;
@@ -118,16 +122,14 @@ namespace ST
 		    logger->logError("Tried to add node to invalid layer");
 		    return;
 		}
-		std::list<Node*> nodes = mLayers[layer];
-		nodes.push_back(node);
+		mLayers[layer]->add(node);
 	}
 
 	void GraphicsEngine::removeNode(Node *node)
 	{
 	    for (int i = 0; i < TOTAL_LAYERS; ++i)
 	    {
-	        std::list<Node*> nodes = mLayers[i];
-            nodes.remove(node);
+	        mLayers[i]->remove(node);
 	    }
 	}
 
@@ -164,10 +166,8 @@ namespace ST
 	{
 	    for (int i = 0; i < TOTAL_LAYERS; ++i)
 	    {
-            std::list<Node*> nodes = mLayers[i];
-
             // create iterators for looping
-            NodeItr itr = nodes.begin(), itr_end = nodes.end();
+            NodeItr itr = mLayers[i]->getNodes().begin(), itr_end = mLayers[i]->getNodes().end();
 
             Point pt = mCamera->getPosition();
 
@@ -576,8 +576,7 @@ namespace ST
 
         for (int i = TOTAL_LAYERS - 1; i >= 0; --i)
         {
-            std::list<Node*> nodes = mLayers[i];
-            NodeItr itr = nodes.begin(), itr_end = nodes.end();
+            NodeItr itr = mLayers[i]->getNodes().begin(), itr_end = mLayers[i]->getNodes().end();
             while (itr != itr_end)
             {
                 rect.x = (*itr)->getPosition().x;
@@ -603,10 +602,7 @@ namespace ST
         pt.y = y + mCamera->getPosition().y;
         Rectangle rect;
 
-        // we want the bottom layer
-        std::list<Node*> nodes = mLayers[0];
-
-        NodeItr itr = nodes.begin(), itr_end = nodes.end();
+        NodeItr itr = mLayers[0]->getNodes().begin(), itr_end = mLayers[0]->getNodes().end();
         while (itr != itr_end)
         {
             rect.x = (*itr)->getPosition().x;

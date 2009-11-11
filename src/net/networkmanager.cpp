@@ -360,9 +360,14 @@ namespace ST
                 if (being)
                 {
                     // found being, update their position
-                    // use interpolation
-                    being->setAnimation("");
+                    // TODO: use interpolation
+                    being->setAnimation("maleSEwalk");
                     being->moveNode(&pos);
+                }
+                else if (player->getSelectedCharacter()->getId() == id)
+                {
+                    player->getSelectedCharacter()->moveNode(&pos);
+                    graphicsEngine->setCameraToShow(pos);
                 }
                 else
                 {

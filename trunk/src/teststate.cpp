@@ -127,6 +127,7 @@ namespace ST
 	TestState::TestState()
 	{
         ms = 0;
+        lastframe = SDL_GetTicks();
         mLoaded = false;
         chatServer = new IRCServer;
 
@@ -206,13 +207,43 @@ namespace ST
 			return false;
 		}
 
+		if (inputManager->getKey(SDLK_UP))
+        {
+            Point pos = player->getSelectedCharacter()->getPosition();
+            player->getSelectedCharacter()->setAnimation("maleSEwalk");
+            Packet *p = new Packet(PGMSG_PLAYER_MOVE);
+            p->setInteger(pos.x);
+            p->setInteger(pos.y - 12);
+            networkManager->sendPacket(p);
+        }
+
         if (inputManager->getKey(SDLK_DOWN))
         {
             Point pos = player->getSelectedCharacter()->getPosition();
             player->getSelectedCharacter()->setAnimation("maleSEwalk");
             Packet *p = new Packet(PGMSG_PLAYER_MOVE);
-            p->setInteger(pos.x + 8);
-            p->setInteger(pos.y + 16);
+            p->setInteger(pos.x);
+            p->setInteger(pos.y + 12);
+            networkManager->sendPacket(p);
+        }
+
+        if (inputManager->getKey(SDLK_RIGHT))
+        {
+            Point pos = player->getSelectedCharacter()->getPosition();
+            player->getSelectedCharacter()->setAnimation("maleSEwalk");
+            Packet *p = new Packet(PGMSG_PLAYER_MOVE);
+            p->setInteger(pos.x + 16);
+            p->setInteger(pos.y);
+            networkManager->sendPacket(p);
+        }
+
+        if (inputManager->getKey(SDLK_LEFT))
+        {
+            Point pos = player->getSelectedCharacter()->getPosition();
+            player->getSelectedCharacter()->setAnimation("maleSEwalk");
+            Packet *p = new Packet(PGMSG_PLAYER_MOVE);
+            p->setInteger(pos.x - 16);
+            p->setInteger(pos.y);
             networkManager->sendPacket(p);
         }
 

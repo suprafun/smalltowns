@@ -622,8 +622,9 @@ namespace ST
 
     void GraphicsEngine::setCameraToShow(Point &pt)
     {
-        Point camPt = mCamera->getPosition();
-        camPt.y += pt.y - (mHeight >> 1);
+        Point camPt;
+        camPt.x = pt.x - (mWidth >> 1);
+        camPt.y = pt.y - (mHeight >> 1);
         mCamera->setPosition(camPt);
     }
 }

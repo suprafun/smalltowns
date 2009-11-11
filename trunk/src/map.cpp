@@ -367,7 +367,7 @@ namespace ST
 
 			if (tile_id > 0)
 			{
-				// search out the tilset the tile_id belongs to
+				// search out the tileset the tile_id belongs to
 				for (size_t j = mTilesets.size()-1; j >= 0; --j)
 				{
 					// since we are searching backwards,

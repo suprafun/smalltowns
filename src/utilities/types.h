@@ -51,6 +51,11 @@ namespace ST
 		int x, y;
 	};
 
+	struct Pointf
+	{
+	    float x, y;
+	};
+
 	struct Rectangle
 	{
 		int x, y;

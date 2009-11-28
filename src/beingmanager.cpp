@@ -108,28 +108,42 @@ namespace ST
         mBeingMap.insert(std::pair<unsigned int, Being*>(being->getId(), being));
     }
 
-    void BeingManager::saveBeingPosition(unsigned int id, int x, int y)
+    void BeingManager::saveBeingInfo(unsigned int id, const Point &finish, int dir)
     {
-        Point pt;
-        pt.x = x;
-        pt.y = y;
-        mPositionMap.insert(std::pair<unsigned int, Point>(id, pt));
+        BeingInfo info;
+        info.finish = finish;
+        info.dir = dir;
+        mInfoMap.insert(std::pair<unsigned int, BeingInfo>(id, info));
     }
 
-    Point BeingManager::getSavedPosition(unsigned int id)
+    Point BeingManager::getSavedDestination(unsigned int id)
     {
         Point pt;
         pt.x = 0;
         pt.y = 0;
 
-        PositionIterator itr = mPositionMap.find(id);
+        InfoIterator itr = mInfoMap.find(id);
 
-        if (itr != mPositionMap.end())
+        if (itr != mInfoMap.end())
         {
-            pt = itr->second;
+            pt = itr->second.finish;
         }
 
         return pt;
+    }
+
+    int BeingManager::getSavedDirection(unsigned int id)
+    {
+        int dir = -1;
+
+        InfoIterator itr = mInfoMap.find(id);
+
+        if (itr != mInfoMap.end())
+        {
+            dir = itr->second.dir;
+        }
+
+        return dir;
     }
 
     void BeingManager::removeBeing(unsigned int id)

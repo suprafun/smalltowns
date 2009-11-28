@@ -59,6 +59,8 @@
 #include "irc/ircserver.h"
 #include "irc/ircmessage.h"
 
+#include "utilities/log.h"
+
 #include <sstream>
 #include <SDL.h>
 
@@ -67,44 +69,53 @@ namespace ST
     void submit_chat(AG_Event *event)
     {
         IRCServer *chatServer = static_cast<IRCServer*>(AG_PTR(1));
-        if (chatServer->isConnected())
-		{
-		    AG_Textbox *input = static_cast<AG_Textbox*>(AG_PTR(2));
-		    AG_Console *output = static_cast<AG_Console*>(AG_PTR(3));
 
-            if (input && output)
+        AG_Textbox *input = static_cast<AG_Textbox*>(AG_PTR(2));
+        AG_Console *output = static_cast<AG_Console*>(AG_PTR(3));
+
+        if (input && output)
+        {
+            std::string chat = AG_TextboxDupString(input);
+            if (!chat.empty())
             {
-                std::string chat = AG_TextboxDupString(input);
-                if (!chat.empty())
+                if (chat.substr(0, 1) != "/")
                 {
-					if (chat.substr(0, 1) != "/")
-					{
-						// send message to IRC
-						IRCMessage *msg = new IRCMessage;
-						msg->setType(IRCMessage::CHAT);
-						msg->addString(chat);
-						chatServer->sendMessage(msg);
+                    if (!chatServer->isConnected())
+                        return;
+                    // send message to IRC
+                    IRCMessage *msg = new IRCMessage;
+                    msg->setType(IRCMessage::CHAT);
+                    msg->addString(chat);
+                    chatServer->sendMessage(msg);
 
-						// add message to chat window
-						chat.insert(0, player->getSelectedCharacter()->getName() + ": ");
-                        interfaceManager->sendToChat(chat);
-					}
-					else if (chat.substr(1, 3) == "me ")
-					{
-						IRCMessage *msg = new IRCMessage;
-						msg->setType(IRCMessage::EMOTE);
-						msg->addString(chat.substr(4));
-						chatServer->sendMessage(msg);
-
-						// add message to chat window
-						chat = chat.substr(4);
-						chat.insert(0, "* " + player->getSelectedCharacter()->getName() + " ");
-						interfaceManager->sendToChat(chat);
-					}
+                    // add message to chat window
+                    chat.insert(0, player->getSelectedCharacter()->getName() + ": ");
+                    interfaceManager->sendToChat(chat);
                 }
-				// clear input textbox
-				AG_TextboxClearString(input);
+                else if (chat.substr(1, 3) == "me ")
+                {
+                    if (!chatServer->isConnected())
+                        return;
+                    IRCMessage *msg = new IRCMessage;
+                    msg->setType(IRCMessage::EMOTE);
+                    msg->addString(chat.substr(4));
+                    chatServer->sendMessage(msg);
+
+                    // add message to chat window
+                    chat = chat.substr(4);
+                    chat.insert(0, "* " + player->getSelectedCharacter()->getName() + " ");
+                    interfaceManager->sendToChat(chat);
+                }
+                else if (chat.substr(1, 3) == "cam")
+                {
+                    Point camPos = graphicsEngine->getCamera()->getPosition();
+                    std::stringstream info;
+                    info << "Cam Info: " << camPos.x << "," << camPos.y;
+                    interfaceManager->sendToChat(info.str());
+                }
             }
+            // clear input textbox
+            AG_TextboxClearString(input);
         }
     }
 
@@ -112,14 +123,37 @@ namespace ST
     {
         if (evt->button == SDL_BUTTON_LEFT && evt->type == 0)
         {
-            Node *node = graphicsEngine->getNode(evt->x, evt->y);
+            Point camPos = graphicsEngine->getCamera()->getPosition();
+            Point pos;
+            pos.x = evt->x + camPos.x;
+            pos.y = evt->y + camPos.y + mapEngine->getTileHeight();
+
+            logger->logDebug("Clicked mouse");
+
+            // check user clicked on map
+            Node *node = graphicsEngine->getNode(pos.x, pos.y);
             if (node)
             {
                 Being *being = beingManager->findBeing(node->getName());
                 if (being)
                 {
+                    // toggle being name
                     being->toggleName();
+                    return;
                 }
+
+                // save destination for later
+                player->getSelectedCharacter()->saveDestination(pos);
+
+                // send move message
+                std::stringstream str;
+                str << "sending move " << pos.x << "," << pos.y
+                    << " from mouse click at " << evt->x << "," << evt->y;
+                logger->logDebug(str.str());
+                Packet *p = new Packet(PGMSG_PLAYER_MOVE);
+                p->setInteger(pos.x);
+                p->setInteger(pos.y);
+                networkManager->sendPacket(p);
             }
         }
     }
@@ -207,46 +241,6 @@ namespace ST
 			return false;
 		}
 
-		if (inputManager->getKey(SDLK_UP))
-        {
-            Point pos = player->getSelectedCharacter()->getPosition();
-            player->getSelectedCharacter()->setAnimation("maleSEwalk");
-            Packet *p = new Packet(PGMSG_PLAYER_MOVE);
-            p->setInteger(pos.x);
-            p->setInteger(pos.y - 12);
-            networkManager->sendPacket(p);
-        }
-
-        if (inputManager->getKey(SDLK_DOWN))
-        {
-            Point pos = player->getSelectedCharacter()->getPosition();
-            player->getSelectedCharacter()->setAnimation("maleSEwalk");
-            Packet *p = new Packet(PGMSG_PLAYER_MOVE);
-            p->setInteger(pos.x);
-            p->setInteger(pos.y + 12);
-            networkManager->sendPacket(p);
-        }
-
-        if (inputManager->getKey(SDLK_RIGHT))
-        {
-            Point pos = player->getSelectedCharacter()->getPosition();
-            player->getSelectedCharacter()->setAnimation("maleSEwalk");
-            Packet *p = new Packet(PGMSG_PLAYER_MOVE);
-            p->setInteger(pos.x + 16);
-            p->setInteger(pos.y);
-            networkManager->sendPacket(p);
-        }
-
-        if (inputManager->getKey(SDLK_LEFT))
-        {
-            Point pos = player->getSelectedCharacter()->getPosition();
-            player->getSelectedCharacter()->setAnimation("maleSEwalk");
-            Packet *p = new Packet(PGMSG_PLAYER_MOVE);
-            p->setInteger(pos.x - 16);
-            p->setInteger(pos.y);
-            networkManager->sendPacket(p);
-        }
-
         // number of milliseconds since last frame
         ms = SDL_GetTicks() - lastframe;
         lastframe = SDL_GetTicks();
@@ -254,6 +248,7 @@ namespace ST
         // pass the number of milliseconds to logic
         beingManager->logic(ms);
         player->getSelectedCharacter()->logic(ms);
+        player->logic(ms);
 
 		chatServer->process();
 

@@ -204,6 +204,7 @@ namespace ST
 	    }
 	    else
 	    {
+	        AG_WindowSetGeometry(itr->second, pt.x - camPt.x, pt.y - 10 - camPt.y, -1, -1);
 	        AG_WindowDraw(itr->second);
 	    }
 	}

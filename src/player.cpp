@@ -40,11 +40,14 @@
 #include "player.h"
 #include "character.h"
 
+#include "net/networkmanager.h"
+
 namespace ST
 {
     Player::Player()
     {
         mSelected = NULL;
+        mLastUpdate = 0;
     }
 
     Player::~Player()
@@ -116,6 +119,20 @@ namespace ST
         if (itr != mCharacters.end())
         {
             mSelected = itr->second;
+        }
+    }
+
+    void Player::logic(int ms)
+    {
+        if (!mSelected)
+            return;
+        mLastUpdate += ms;
+
+        if (mLastUpdate > 200)
+        {
+            if (mSelected->getState() == STATE_MOVING)
+                networkManager->sendPositionUpdate(mSelected->getPosition());
+            mLastUpdate = 0;
         }
     }
 }

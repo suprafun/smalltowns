@@ -205,7 +205,8 @@ namespace ST
                     int hair = packet->getInteger();
                     Texture *avatar = graphicsEngine->createAvatar(slot, body, hair);
                     Character *c = new Character(id, name, avatar);
-                    c->setLook(body, hair);
+                    c->look.body = body;
+                    c->look.hair = hair;
                     c->setLevel(packet->getInteger());
                     c->setRights(packet->getInteger());
                     player->addCharacter(c, slot);
@@ -236,7 +237,8 @@ namespace ST
 
 					Texture *avatar = graphicsEngine->createAvatar(charId, body, hair);
 					Character *c = new Character(charId, name, avatar);
-					c->setLook(body, hair);
+					c->look.body = body;
+					c->look.hair = hair;
                     c->setLevel(packet->getInteger());
                     c->setRights(packet->getInteger());
                     player->addCharacter(c, slot);
@@ -345,29 +347,47 @@ namespace ST
                 Character *c = player->getSelectedCharacter();
                 c->moveNode(&pt);
 
-                graphicsEngine->setCameraToShow(pt);
+                //graphicsEngine->setCameraToShow(pt);
             } break;
 
         case GPMSG_PLAYER_MOVE:
             {
+                Being *being = player->getSelectedCharacter();
+                if (packet->getByte() == ERR_INVALID_POS)
+                {
+                    // TODO: Do something
+                    being->setAnimation("");
+                    being->setState(STATE_IDLE);
+                    logger->logDebug("Invalid move");
+                }
+                else
+                {
+                    logger->logDebug("Got player move");
+                    being->setAnimation("maleSEwalk");
+                    being->setState(STATE_MOVING);
+                    being->calculateNextDestination();
+                }
+            } break;
+
+        case GPMSG_PLAYER_MOVE_UPDATE:
+            {
                 // check if we know the player exists
                 unsigned int id = packet->getInteger();
-                Point pos;
-                pos.x = packet->getInteger();
-                pos.y = packet->getInteger();
+                Point finish;
+                finish.x = packet->getInteger();
+                finish.y = packet->getInteger();
                 int dir = packet->getInteger();
                 Being *being = beingManager->findBeing(id);
                 if (being)
                 {
                     // found being, update their position
-                    // TODO: use interpolation
+                    //Point start = being->getPosition();
                     being->setAnimation("maleSEwalk");
-                    being->moveNode(&pos);
+                    being->calculateNextDestination(finish);
                 }
                 else if (player->getSelectedCharacter()->getId() == id)
                 {
-                    player->getSelectedCharacter()->moveNode(&pos);
-                    graphicsEngine->setCameraToShow(pos);
+                    //graphicsEngine->setCameraToShow(finish);
                 }
                 else
                 {
@@ -375,7 +395,7 @@ namespace ST
                     Packet *p = new Packet(PGMSG_PLAYER_INFO);
                     p->setInteger(id);
                     sendPacket(p);
-                    beingManager->saveBeingPosition(id, pos.x, pos.y);
+                    beingManager->saveBeingInfo(id, finish, dir);
 
                     std::stringstream str;
                     str << "New player with id " << id << " entered";
@@ -399,14 +419,20 @@ namespace ST
                     // create new being based on info
                     Texture *avatar = graphicsEngine->createAvatar(id, body, hair);
                     Character *c = new Character(id, name, avatar);
-                    c->setLook(body, hair);
+                    c->look.body = body;
+                    c->look.hair = hair;
                     c->setLevel(lvl);
                     c->setRights(rights);
 
                     beingManager->addBeing(c);
                     graphicsEngine->addNode(c, LAYER_PEOPLE);
-                    Point pt = beingManager->getSavedPosition(id);
+
+                    // set position from saved info
+                    Point pt = beingManager->getSavedDestination(id);
                     c->moveNode(&pt);
+
+                    // TODO: set direction from saved info
+                    int dir = beingManager->getSavedDirection(id);
 
                     std::stringstream str;
                     str << "New player info from id " << id << " received";
@@ -415,7 +441,7 @@ namespace ST
                 else
                 {
                     std::stringstream str;
-                    str << "Being not found with id " << id;
+                    str << "Being already exists with id " << id;
                     logger->logDebug(str.str());
                 }
             } break;
@@ -511,6 +537,14 @@ namespace ST
 	{
 	    mDefaultHost = hostname;
 	    mDefaultPort = port;
+	}
+
+	void NetworkManager::sendPositionUpdate(const Point &pos)
+	{
+	    Packet *p = new Packet(PGMSG_PLAYER_MOVE_UPDATE);
+	    p->setInteger(pos.x);
+	    p->setInteger(pos.y);
+	    sendPacket(p);
 	}
 
 	int NetworkManager::getTag() const

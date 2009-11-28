@@ -50,6 +50,15 @@ namespace ST
     class Being;
 
     /**
+     * Being info struct stores info saved for beings before they are known
+     */
+    struct BeingInfo
+    {
+        Point finish;
+        int dir;
+    };
+
+    /**
      * The Being Manager class stores all the beings the player knows about
      */
 
@@ -82,12 +91,17 @@ namespace ST
         /**
          * Save being position
          */
-        void saveBeingPosition(unsigned int id, int x, int y);
+        void saveBeingInfo(unsigned int id, const Point &finish, int dir);
 
         /**
-         * Get saved position
+         * Get saved destination
          */
-        Point getSavedPosition(unsigned int id);
+        Point getSavedDestination(unsigned int id);
+
+        /**
+         * Get saved direction
+         */
+        int getSavedDirection(unsigned int id);
 
         /**
          * Remove existing being
@@ -100,10 +114,10 @@ namespace ST
         void logic(int ms);
 
     private:
-        std::map<unsigned int, Point> mPositionMap;
+        std::map<unsigned int, BeingInfo> mInfoMap;
         std::map<unsigned int, Being*> mBeingMap;
         typedef std::map<unsigned int, Being*>::iterator BeingIterator;
-        typedef std::map<unsigned int, Point>::iterator PositionIterator;
+        typedef std::map<unsigned int, BeingInfo>::iterator InfoIterator;
     };
 
     extern BeingManager *beingManager;

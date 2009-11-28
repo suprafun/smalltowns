@@ -50,6 +50,19 @@ namespace ST
 {
 	class Node;
 	class Texture;
+	struct Point;
+
+	enum
+	{
+	    DIRECTION_NORTH = 0,
+	    DIRECTION_NORTHEAST,
+	    DIRECTION_EAST,
+	    DIRECTION_SOUTHEAST,
+	    DIRECTION_SOUTH,
+	    DIRECTION_SOUTHWEST,
+	    DIRECTION_WEST,
+	    DIRECTION_NORTHWEST
+	};
 
     /**
      * The Tileset class holds data for each set of tiles
@@ -138,6 +151,36 @@ namespace ST
          * Returns height of tiles
          */
         unsigned int getTileHeight() { return mTileHeight; }
+
+        /**
+         * Returns width of map
+         */
+        unsigned int getWidth() { return mWidth; }
+
+        /**
+         * Returns a layer
+         */
+        Layer* getLayer(int layer);
+
+        /**
+         * Walks a tile
+         */
+        Point walkTile(const Point &pos, int dir);
+
+        /**
+         * Walks a map position
+         */
+        Point walkMap(const Point &pos, int dir);
+
+        /**
+         * Return tile in direction
+         */
+        Node* getTile(const Point &pos, int dir);
+
+        /**
+         * Returns map position
+         */
+        Point getMapPosition(const Point &pos);
 
     private:
 		/**

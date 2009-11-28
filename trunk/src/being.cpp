@@ -39,6 +39,7 @@
 
 #include "being.h"
 #include "resourcemanager.h"
+#include "map.h"
 
 #include "graphics/animation.h"
 #include "graphics/graphics.h"
@@ -46,8 +47,45 @@
 
 #include "resources/bodypart.h"
 
+#include "utilities/log.h"
+
+#include <sstream>
+#include <cmath>
+
 namespace ST
 {
+
+    int getDirection(const Point &start, const Point &end)
+    {
+        int x = start.x - end.x;
+        int y = start.y - end.y;
+
+        if (x > 0)
+        {
+            if (y > 0)
+                return DIRECTION_NORTHWEST;
+            else if (y < 0)
+                return DIRECTION_SOUTHWEST;
+
+            return DIRECTION_WEST;
+        }
+        else if (x < 0)
+        {
+            if (y > 0)
+                return DIRECTION_NORTHEAST;
+            else if (y < 0)
+                return DIRECTION_SOUTHEAST;
+
+            return DIRECTION_EAST;
+        }
+
+        if (y > 0)
+            return DIRECTION_NORTH;
+
+        return DIRECTION_SOUTH;
+
+    }
+
     Being::Being(int id, const std::string &name, Texture *avatar):
         AnimatedNode(name, avatar), mId(id)
     {
@@ -73,10 +111,39 @@ namespace ST
         AnimatedNode::logic(ms);
 
         //TODO: Being processing
+        switch (mState)
+        {
+        case STATE_IDLE:
+            break;
+        case STATE_MOVING:
+            if (mPosition.x == mDestination.x &&
+                mPosition.y == mDestination.y)
+            {
+                setAnimation("");
+                setState(STATE_IDLE);
+                return;
+            }
+
+            move(ms);
+            break;
+        }
+    }
+
+    void Being::setState(int state)
+    {
+        mState = state;
+    }
+
+    int Being::getState()
+    {
+        return mState;
     }
 
     void Being::setAnimation(const std::string &name)
     {
+        // delete any old animation that was set
+        delete mSetAnimation;
+
         // if name is empty, unset the animation
         if (name.empty())
         {
@@ -84,9 +151,6 @@ namespace ST
             mUpdateTime = 0;
             return;
         }
-
-        // delete any old animation that was set
-        delete mSetAnimation;
 
         // get existing animation
 	    Animation *body = resourceManager->getAnimation(look.body, name);
@@ -111,5 +175,146 @@ namespace ST
         }
 
         mUpdateTime = 1000 / mSetAnimation->getFrames();
+    }
+
+    bool Being::calculateNextDestination(const Point &finish)
+    {
+        bool found = false;
+        Point start;
+        Point end = mapEngine->getMapPosition(finish);
+        Point pt = mapEngine->getMapPosition(mPosition);
+        Point mapPos;
+        Point screenPos;
+        int dir = DIRECTION_NORTH;
+        std::stringstream str;
+
+        mLastPosition.x = mPosition.x;
+        mLastPosition.y = mPosition.y;
+
+        std::vector<int> scores;
+
+        start.x = mapPos.x = screenPos.x = 0;
+        start.y = mapPos.y = screenPos.y = 0;
+
+        // move map position to where being is
+        while (start.x != pt.x || start.y != pt.y)
+        {
+            dir = getDirection(start, pt);
+            mapPos = mapEngine->walkTile(mapPos, dir);
+            start = mapEngine->walkMap(start, dir);
+        }
+
+        str << "Being tile position " << mapPos.x << "," << mapPos.y << std::endl;
+        str << "Being map position " << start.x << "," << start.y << std::endl;
+        str << "Destination map position " << end.x << "," << end.y << std::endl;
+
+        // keep moving a tile towards destination until reached
+        while(!found)
+        {
+            dir = getDirection(start, end);
+            mapPos = mapEngine->walkTile(mapPos, dir);
+            start = mapEngine->walkMap(start, dir);
+
+            if (start.x == end.x && start.y == end.y)
+            {
+                found = true;
+            }
+
+            screenPos.x = 0.5 * (mapPos.x - mapPos.y) * mapEngine->getTileWidth();
+            screenPos.y = 0.5 * (mapPos.x + mapPos.y) * mapEngine->getTileHeight();
+
+            str << "Direction was " << dir << std::endl;
+            str << "Next waypoint is " << screenPos.x << "," << screenPos.y << std::endl;
+
+            mWaypoints.push_back(screenPos);
+        }
+
+        str << "Destination tile position " << mapPos.x << "," << mapPos.y << std::endl;
+        str << "Reached destination map position " << start.x << "," << start.y;
+
+        logger->logDebug(str.str());
+
+        return found;
+    }
+
+    bool Being::calculateNextDestination()
+    {
+        return calculateNextDestination(mDestination);
+    }
+
+    void Being::move(int ms)
+    {
+        Pointf nextPos;
+        Point nextDest;
+        Point movePos;
+        float speed = 12.0f;
+        float distx = 0.0f;
+        float disty = 0.0f;
+        float distance = 0.0f;
+        float time = 0.0f;
+        float length = 0.0f;
+
+        // check theres waypoints
+        if (mWaypoints.size() == 0)
+        {
+            return;
+        }
+
+        // check if reached way point
+        if (mPosition.x == mWaypoints[0].x && mPosition.y == mWaypoints[0].y)
+        {
+            mWaypoints.pop_front();
+            if (mWaypoints.size() == 0)
+            {
+                setAnimation("");
+                setState(STATE_IDLE);
+                return;
+            }
+        }
+
+        // set the next destination
+        nextDest = mWaypoints[0];
+
+        std::stringstream str;
+        str << "Player moving from " << mPosition.x << "," << mPosition.y;
+        str << " to " << nextDest.x << "," << nextDest.y;
+
+        // calculate next position by taking the last position and
+        // destination and finding position after travelling since last frame
+        distx = nextDest.x - mLastPosition.x;
+        disty = nextDest.y - mLastPosition.y;
+
+        distance = distx * distx + disty * disty;
+        if (distance < 1 && distance > -1)
+        {
+            mPosition.x = mWaypoints[0].x;
+            mPosition.y = mWaypoints[0].y;
+            return;
+        }
+        distance = sqrtf(distance);
+
+        time = ms / 1000.0f;
+        speed *= time;
+
+        if (speed > distance)
+            speed = distance;
+
+        nextPos.x = mLastPosition.x + (distx / distance) * speed;
+        nextPos.y = mLastPosition.y + (disty / distance) * speed;
+
+        str << " via " << nextPos.x << "," << nextPos.y;
+        logger->logDebug(str.str());
+
+        movePos.x = nextPos.x;
+        movePos.y = nextPos.y;
+
+        moveNode(&movePos);
+
+        mLastPosition = nextPos;
+    }
+
+    void Being::saveDestination(const Point &pos)
+    {
+        mDestination = pos;
     }
 }

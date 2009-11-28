@@ -569,27 +569,14 @@ namespace ST
 
 	Node* GraphicsEngine::getNode(int x, int y)
     {
-        Point pt;
-        pt.x = x + mCamera->getPosition().x;
-        pt.y = y + mCamera->getPosition().y;
-        Rectangle rect;
-
         for (int i = TOTAL_LAYERS - 1; i >= 0; --i)
         {
-            NodeItr itr = mLayers[i]->getNodes().begin(), itr_end = mLayers[i]->getNodes().end();
-            while (itr != itr_end)
-            {
-                rect.x = (*itr)->getPosition().x;
-                rect.y = (*itr)->getPosition().y;
-                rect.width = (*itr)->getWidth();
-                rect.height = (*itr)->getHeight();
-                if (checkInside(pt, rect))
-                {
-                    return *itr;
-                }
-
-                ++itr;
-            }
+            Layer *layer = mapEngine->getLayer(i);
+            if (!layer)
+                continue;
+            Node *node = layer->getNodeAt(x, y);
+            if (node)
+                return node;
         }
 
         return NULL;
@@ -602,22 +589,8 @@ namespace ST
         pt.y = y + mCamera->getPosition().y;
         Rectangle rect;
 
-        NodeItr itr = mLayers[0]->getNodes().begin(), itr_end = mLayers[0]->getNodes().end();
-        while (itr != itr_end)
-        {
-            rect.x = (*itr)->getPosition().x;
-            rect.y = (*itr)->getPosition().y;
-            rect.width = (*itr)->getWidth();
-            rect.height = (*itr)->getHeight();
-            if (checkInside(pt, rect))
-            {
-                return *itr;
-            }
-
-            ++itr;
-        }
-
-        return NULL;
+        Node *node = mapEngine->getLayer(0)->getNodeAt(pt.x, pt.y);
+        return node;
     }
 
     void GraphicsEngine::setCameraToShow(Point &pt)

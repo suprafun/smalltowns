@@ -61,14 +61,19 @@ enum
     GPMSG_LOAD_MAP              = 0x0810, // S name of map
     PGMSG_MAP_LOADED            = 0x0811, //
 
+    GPMSG_PING                  = 0x081a, // I time
+    PGMSG_PONG                  = 0x081b, //
+
     // player info
     PGMSG_PLAYER_INFO           = 0x0820, // S char name
     GPMSG_PLAYER_INFO_RESPONSE  = 0x0821, // I id, S char name, I body, I hair, I level, I rights
 
     // movement
     GPMSG_WARPTO                = 0x0850, // I x, I y
-    GPMSG_PLAYER_MOVE           = 0x0860, // I id, I x, I y, I dir
+    GPMSG_PLAYER_MOVE           = 0x0860, // C error
     PGMSG_PLAYER_MOVE           = 0x0861, // I x, I y
+    GPMSG_PLAYER_MOVE_UPDATE    = 0x0862, // I id, I x, I y, I dir
+    PGMSG_PLAYER_MOVE_UPDATE    = 0x0863, // I x, I y
     GPMSG_PLAYER_LEFT           = 0x0870, // I id
 
 };
@@ -87,6 +92,8 @@ enum
 
 	ERR_INVALID_TAG     = 8,
 	ERR_TRYAGAIN        = 9,
+
+	ERR_INVALID_POS     = 10,
 };
 
 #endif

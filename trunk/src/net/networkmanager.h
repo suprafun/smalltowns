@@ -48,6 +48,7 @@
 
 namespace ST
 {
+    struct Point;
 	class Host;
 	class Packet;
 	class NetworkManager
@@ -101,6 +102,12 @@ namespace ST
          * Set default settings
          */
         void setDefault(const std::string &hostname, int port);
+
+        /**
+         * Send the players position update to the server
+         * Should be sent several times per second
+         */
+        void sendPositionUpdate(const Point &pos);
 
     private:
 		/**

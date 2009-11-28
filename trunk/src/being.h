@@ -48,6 +48,7 @@
 #include "utilities/types.h"
 
 #include <string>
+#include <deque>
 
 namespace ST
 {
@@ -65,6 +66,12 @@ namespace ST
         Colour skinColour;
     };
 
+    enum
+    {
+        STATE_IDLE = 0,
+        STATE_MOVING
+    };
+
     class Texture;
 
     class Being : public AnimatedNode
@@ -76,7 +83,13 @@ namespace ST
         virtual std::string getName();
         virtual int getId() const;
 
-        virtual void setLook(int body, int hair) { look.body = body; look.hair = hair; }
+        /** Set the animation state of the being */
+        virtual void setState(int state);
+
+        /** Returns the animation state of the being */
+        virtual int getState();
+
+        /** Set the animation */
         virtual void setAnimation(const std::string &name);
 
         /**
@@ -85,11 +98,36 @@ namespace ST
          */
         virtual void logic(int ms);
 
+        /**
+         * Calculates path finding to get to final destination
+         * @param finish The destination
+         * @return Returns whether it can find a path
+         */
+        virtual bool calculateNextDestination(const Point &finish);
+
+        /**
+         * Calculates path finding to get to preset final destination
+         * @return Returns whether it can find a path
+         */
+        virtual bool calculateNextDestination();
+
+        /**
+         * Stores a destination for path finding
+         */
+        virtual void saveDestination(const Point &pos);
+
     public:
         Look look;
 
     protected:
+        void move(int ms);
+
+    protected:
         int mId;
+        int mState;
+        Pointf mLastPosition; // set by client
+        std::deque<Point> mWaypoints; // set by client
+        Point mDestination; // set by server
     };
 }
 

@@ -193,6 +193,126 @@ namespace ST
         return true;
     }
 
+    Layer* Map::getLayer(int layer)
+    {
+        if (layer >= mLayers.size())
+            return NULL;
+        return mLayers[layer];
+    }
+
+    Point Map::walkTile(const Point &pos, int dir)
+    {
+        Point newPos = pos;
+
+        switch (dir)
+        {
+            case DIRECTION_NORTH:
+                --newPos.x;
+                --newPos.y;
+                break;
+            case DIRECTION_NORTHEAST:
+                --newPos.y;
+                break;
+            case DIRECTION_EAST:
+                ++newPos.x;
+                --newPos.y;
+                break;
+            case DIRECTION_SOUTHEAST:
+                ++newPos.x;
+                break;
+            case DIRECTION_SOUTH:
+                ++newPos.x;
+                ++newPos.y;
+                break;
+            case DIRECTION_SOUTHWEST:
+                ++newPos.y;
+                break;
+            case DIRECTION_WEST:
+                --newPos.x;
+                ++newPos.y;
+                break;
+            case DIRECTION_NORTHWEST:
+                --newPos.x;
+                break;
+        }
+
+        return newPos;
+    }
+
+    Point Map::walkMap(const Point &pos, int dir)
+    {
+        Point newPos = pos;
+        switch (dir)
+        {
+            case DIRECTION_NORTH:
+                --newPos.y;
+                break;
+            case DIRECTION_NORTHEAST:
+                ++newPos.x;
+                --newPos.y;
+                break;
+            case DIRECTION_EAST:
+                ++newPos.x;
+                break;
+            case DIRECTION_SOUTHEAST:
+                ++newPos.x;
+                ++newPos.y;
+                break;
+            case DIRECTION_SOUTH:
+                ++newPos.y;
+                break;
+            case DIRECTION_SOUTHWEST:
+                --newPos.x;
+                ++newPos.y;
+                break;
+            case DIRECTION_WEST:
+                --newPos.x;
+                break;
+            case DIRECTION_NORTHWEST:
+                --newPos.x;
+                --newPos.y;
+                break;
+        }
+
+        return newPos;
+    }
+
+    Node* Map::getTile(const Point &pos, int dir)
+    {
+        Point newPos = walkTile(pos, dir);
+
+        int tilex = 0.5 * (newPos.x - newPos.y) * mTileWidth;
+        int tiley = 0.5 * (newPos.x + newPos.y) * mTileHeight;
+
+        return mLayers[0]->getNodeAt(tilex,tiley);
+    }
+
+    Point Map::getMapPosition(const Point &pos)
+    {
+        Point cpt, fpt;
+
+        // get rough estimate of tile
+        cpt.x = pos.x / mTileWidth;
+        cpt.y = pos.y / mTileHeight;
+
+        fpt.x = pos.x % mTileWidth;
+        fpt.y = pos.y % mTileHeight;
+
+        // adjust if negative
+        if (fpt.x < 0)
+        {
+            fpt.x += mTileWidth;
+            --cpt.x;
+        }
+        if (fpt.y < 0)
+        {
+            fpt.y += mTileHeight;
+            --cpt.y;
+        }
+
+        return cpt;
+    }
+
 	bool Map::loadMapInfo(TiXmlElement* e)
 	{
 	    if (!e)

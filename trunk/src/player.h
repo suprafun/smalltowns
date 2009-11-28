@@ -111,11 +111,17 @@ namespace ST
          */
         void setCharacter(int slot);
 
+        /**
+         * Called each frame
+         */
+        void logic(int ms);
+
     private:
         std::string mUsername;
 		std::map<int, Character*> mCharacters;
 		Character *mSelected;
 		int mId;
+		int mLastUpdate;
 		typedef std::map<int, Character*> CharacterMap;
     };
 

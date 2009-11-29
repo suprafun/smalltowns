@@ -213,6 +213,9 @@ namespace ST
 			return itr->second;
 		}
 
+		if (name.find_last_of('.') == std::string::npos)
+			return NULL;
+
 		SDL_Surface* s = NULL;
 
 		// Load in the texture
@@ -587,7 +590,6 @@ namespace ST
         Point pt;
         pt.x = x + mCamera->getPosition().x;
         pt.y = y + mCamera->getPosition().y;
-        Rectangle rect;
 
         Node *node = mapEngine->getLayer(0)->getNodeAt(pt.x, pt.y);
         return node;

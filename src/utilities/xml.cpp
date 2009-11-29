@@ -50,10 +50,7 @@ namespace ST
 	XMLFile::~XMLFile()
 	{
 	    mElements.clear();
-		delete mHandle;
-		mHandle = NULL;
-		delete mDoc;
-		mDoc = NULL;
+		close();
 	}
 
 	bool XMLFile::load(const std::string &file)
@@ -70,6 +67,14 @@ namespace ST
         return true;
 	}
 
+	void XMLFile::close()
+	{
+		delete mHandle;
+		mHandle = NULL;
+		delete mDoc;
+		mDoc = NULL;
+	}
+
 	bool XMLFile::next(const std::string &element)
 	{
         ElementItr itr = mElements.find(element);
@@ -83,6 +88,7 @@ namespace ST
 
 	void XMLFile::setElement(const std::string &element)
 	{
+		assert(mHandle);
 	    TiXmlElement *e = mHandle->FirstChild(element.c_str()).Element();
         mElements.insert(std::pair<std::string, TiXmlElement*>(element, e));
 	}

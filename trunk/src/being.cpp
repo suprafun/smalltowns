@@ -223,14 +223,15 @@ namespace ST
             screenPos.x = 0.5 * (mapPos.x - mapPos.y) * mapEngine->getTileWidth();
             screenPos.y = 0.5 * (mapPos.x + mapPos.y) * mapEngine->getTileHeight();
 
-            str << "Direction was " << dir << std::endl;
-            str << "Next waypoint is " << screenPos.x << "," << screenPos.y << std::endl;
+            //str << "Direction was " << dir << std::endl;
+            //str << "Next waypoint is " << screenPos.x << "," << screenPos.y << std::endl;
 
             mWaypoints.push_back(screenPos);
         }
 
-        str << "Destination tile position " << mapPos.x << "," << mapPos.y << std::endl;
-        str << "Reached destination map position " << start.x << "," << start.y;
+		mWaypoints.push_back(finish);
+
+        str << "Destination tile position " << mapPos.x << "," << mapPos.y;
 
         logger->logDebug(str.str());
 

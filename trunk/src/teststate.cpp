@@ -156,6 +156,11 @@ namespace ST
                 networkManager->sendPacket(p);
             }
         }
+
+		if (evt->button == 0)
+		{
+			//TODO: Add moving the tile cursor
+		}
     }
 
 	TestState::TestState()

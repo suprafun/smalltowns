@@ -104,6 +104,8 @@ namespace ST
 			opengl = file.readInt("graphics", "opengl");
         }
 
+		file.close();
+
 		// check whether opengl should be used
 		opengl ? graphicsEngine = new OpenGLGraphics : graphicsEngine = new SDLGraphics;
 		graphicsEngine->init();

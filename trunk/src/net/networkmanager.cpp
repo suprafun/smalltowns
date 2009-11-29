@@ -347,7 +347,7 @@ namespace ST
                 Character *c = player->getSelectedCharacter();
                 c->moveNode(&pt);
 
-                //graphicsEngine->setCameraToShow(pt);
+                graphicsEngine->setCameraToShow(pt);
             } break;
 
         case GPMSG_PLAYER_MOVE:
@@ -382,7 +382,7 @@ namespace ST
                 {
                     // found being, update their position
                     //Point start = being->getPosition();
-                    being->setAnimation("maleSEwalk");
+					being->setAnimation("maleSEwalk");
                     being->calculateNextDestination(finish);
                 }
                 else if (player->getSelectedCharacter()->getId() == id)

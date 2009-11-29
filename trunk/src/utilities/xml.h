@@ -57,6 +57,7 @@ namespace ST
 		~XMLFile();
 
         bool load(const std::string &file);
+		void close();
         bool next(const std::string &element);
         void setElement(const std::string &element);
         void setSubElement(const std::string &element, const std::string &subelement);

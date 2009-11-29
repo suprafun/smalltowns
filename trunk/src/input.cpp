@@ -68,6 +68,10 @@ namespace ST
                                                        event.button.x, event.button.y,
                                                        1);
                 } break;
+			case SDL_MOUSEMOTION:
+				{
+					interfaceManager->handleMouseEvent(0, event.motion.x, event.motion.y, 0);
+				} break;
 			case SDL_KEYDOWN:
 				{
 					keysDown.push_back(event.key.keysym.sym);

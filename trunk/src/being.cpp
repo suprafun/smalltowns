@@ -264,6 +264,9 @@ namespace ST
         // check if reached way point
         if (mPosition.x == mWaypoints[0].x && mPosition.y == mWaypoints[0].y)
         {
+            std::stringstream str;
+            str << "Player reached " << mPosition.x << "," << mPosition.y;
+            logger->logDebug(str.str());
             mWaypoints.pop_front();
             if (mWaypoints.size() == 0)
             {
@@ -275,10 +278,6 @@ namespace ST
 
         // set the next destination
         nextDest = mWaypoints[0];
-
-        std::stringstream str;
-        str << "Player moving from " << mPosition.x << "," << mPosition.y;
-        str << " to " << nextDest.x << "," << nextDest.y;
 
         // calculate next position by taking the last position and
         // destination and finding position after travelling since last frame
@@ -303,8 +302,6 @@ namespace ST
         nextPos.x = mLastPosition.x + (distx / distance) * speed;
         nextPos.y = mLastPosition.y + (disty / distance) * speed;
 
-        str << " via " << nextPos.x << "," << nextPos.y;
-        logger->logDebug(str.str());
 
         movePos.x = nextPos.x;
         movePos.y = nextPos.y;

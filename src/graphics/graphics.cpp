@@ -188,7 +188,7 @@ namespace ST
                 }
 
                 Rectangle rect = node->getBounds();
-                rect.x -= pt.x;
+                rect.x -= pt.x + (rect.width >> 1);
                 rect.y -= pt.y;
 
                 drawTexturedRect(rect, node->getTexture());

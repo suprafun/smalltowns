@@ -109,6 +109,18 @@ namespace ST
 		void setVisible(bool visible);
 
 		/**
+		 * Get Blocking
+		 * @return Returns if the node blocks
+		 */
+        bool getBlocking() const { return mBlocking; }
+
+        /**
+         * Set Blocking
+         * @param blocks Sets whether to block
+         */
+        void setBlocking(bool blocks) { mBlocking = blocks; }
+
+		/**
 		 * Move Node
 		 * Moves the node to a new position
 		 * @param position The new position for the node to be
@@ -154,6 +166,7 @@ namespace ST
 		int mHeight;
 		bool mVisible;
 		bool mShowName;
+		bool mBlocking;
 	};
 
 	class AnimatedNode : public Node

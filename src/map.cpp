@@ -73,7 +73,7 @@ namespace ST
 		}
 	}
 
-	void Layer::setTile(int x, int y, int layer, Texture *tex, int width, int height)
+	void Layer::setTile(int x, int y, Texture *tex, int width, int height, int blocking)
 	{
 	    std::stringstream str;
 	    Point p;
@@ -83,7 +83,9 @@ namespace ST
 		p.y = 0.5 * (x + y) * height;
 
 	    // add node and set its position
-        Node *node = graphicsEngine->createNode(str.str(), tex->getName(), layer, &p);
+        Node *node = graphicsEngine->createNode(str.str(), tex->getName(), &p);
+        if (blocking)
+            node->setBlocking(true);
         addNode(node);
 	}
 
@@ -94,24 +96,9 @@ namespace ST
 
 	Node* Layer::getNodeAt(unsigned int x, unsigned int y)
 	{
-		// iterators for searching through the list of tiles
-		std::list<Node*>::iterator itr = mNodes.begin();
-		std::list<Node*>::const_iterator itr_end = mNodes.end();
-		// The position to look at tile in
-		Point p;
-		p.x = x;
-		p.y = y;
-
-		while (itr != itr_end)
-		{
-			// Check whether the co-ordinates are inside the tile
-			if (checkInside(p, (*itr)->getBounds()))
-			{
-				return (*itr);
-			}
-			++itr;
-		}
-		return NULL;
+	    if ((y * mWidth + x) > mNodes.size() || x < 0 || y < 0)
+            return NULL;
+        return mNodes[x+y*mWidth];
 	}
 
 	Map::Map()
@@ -287,6 +274,21 @@ namespace ST
         return mLayers[0]->getNodeAt(tilex,tiley);
     }
 
+    Node* Map::getTile(const Point &pos)
+    {
+        Point pt = getMapPosition(pos);
+        Point tilePos = getTilePosition(pt);
+
+        return mLayers[0]->getNodeAt(tilePos.x, tilePos.y);
+    }
+
+    Node* Map::getTile(int x, int y, unsigned int layer)
+    {
+        if (layer >= mLayers.size())
+            return NULL;
+        return mLayers[layer]->getNodeAt(x, y);
+    }
+
     Point Map::getMapPosition(const Point &pos)
     {
         Point cpt, fpt;
@@ -311,6 +313,39 @@ namespace ST
         }
 
         return cpt;
+    }
+
+    Point Map::getTilePosition(const Point &pos)
+    {
+        Point origPos; origPos.x = 0; origPos.y = 0;
+        Point tilePos; tilePos.x = 0; tilePos.y = 0;
+
+        int dir = DIRECTION_EAST;
+
+        if (origPos.x > pos.x)
+            dir = DIRECTION_WEST;
+
+        while (origPos.x != pos.x)
+        {
+            tilePos = walkTile(tilePos, dir);
+            origPos = walkMap(origPos, dir);
+        }
+
+        while (origPos.y != pos.y)
+        {
+            tilePos = walkTile(tilePos, DIRECTION_SOUTH);
+            ++origPos.y;
+        }
+
+        return tilePos;
+    }
+
+    bool Map::blocked(const Point &pos)
+    {
+        Node *node = mLayers[0]->getNodeAt(pos.x, pos.y);
+        if (!node)
+            return true;
+        return node->getBlocking();
     }
 
 	bool Map::loadMapInfo(TiXmlElement* e)
@@ -498,7 +533,7 @@ namespace ST
 					{
 						std::stringstream str;
 						str << mTilesets[j]->tilename << (tile_id - mTilesets[j]->id) + 1;
-						l->setTile(x, y, LAYER_GROUND, graphicsEngine->getTexture(str.str()), mTileWidth, mTileHeight);
+						l->setTile(x, y, graphicsEngine->getTexture(str.str()), mTileWidth, mTileHeight, mLayers.size());
 						break;
 					}
 				}

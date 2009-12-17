@@ -335,7 +335,7 @@ namespace ST
                 std::string mapFile = packet->getString();
                 mapEngine->loadMap(mapFile);
 
-                graphicsEngine->addNode(player->getSelectedCharacter(), LAYER_PEOPLE);
+                graphicsEngine->addNode(player->getSelectedCharacter());
             } break;
 
         case GPMSG_WARPTO:
@@ -425,7 +425,7 @@ namespace ST
                     c->setRights(rights);
 
                     beingManager->addBeing(c);
-                    graphicsEngine->addNode(c, LAYER_PEOPLE);
+                    graphicsEngine->addNode(c);
 
                     // set position from saved info
                     Point pt = beingManager->getSavedDestination(id);

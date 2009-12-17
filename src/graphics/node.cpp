@@ -42,6 +42,7 @@
 #include "graphics.h"
 #include "animation.h"
 
+#include "../map.h"
 #include "../resourcemanager.h"
 
 #include "../utilities/log.h"
@@ -53,7 +54,8 @@ namespace ST
 	Node::Node(std::string name, Texture *texture)
 		: mName(name),
 		mVisible(true),
-		mShowName(false)
+		mShowName(false),
+		mBlocking(false)
 	{
 		if (texture)
 		{
@@ -112,17 +114,8 @@ namespace ST
 
 	Point Node::getTilePosition()
 	{
-	    Point pt;
-	    pt.x = 0;
-	    pt.y = 0;
-
-	    Node *node;
-	    node = graphicsEngine->getTile(mPosition.x, mPosition.y);
-
-	    if (node)
-        {
-            pt = node->getPosition();
-        }
+	    Point mapPt = mapEngine->getMapPosition(mPosition);
+	    Point pt = mapEngine->getTilePosition(mapPt);
 
 	    return pt;
 	}
@@ -138,7 +131,6 @@ namespace ST
 		// update the bounds
 		mPosition.x = mBounds.x = position->x;
 		mPosition.y = mBounds.y = position->y;
-
 	}
 
 	Texture* Node::getTexture()

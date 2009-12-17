@@ -79,7 +79,6 @@ namespace ST
 	/**
 	 * The Layer class holds map layer data
 	 */
-
 	class Layer
 	{
 	public:
@@ -89,7 +88,7 @@ namespace ST
         /**
          * Set a tile
          */
-        void setTile(int x, int y, int layer, Texture *tex, int width, int height);
+        void setTile(int x, int y, Texture *tex, int width, int height, int blocking);
 
 		/**
 		 * Add Tile
@@ -108,8 +107,8 @@ namespace ST
 		Node* getNodeAt(unsigned int x, unsigned int y);
 
 	private:
-		std::list<Node*> mNodes;
-        typedef std::list<Node*>::iterator NodeItr;
+		std::vector<Node*> mNodes;
+        typedef std::vector<Node*>::iterator NodeItr;
 		unsigned int mWidth;
 		unsigned int mHeight;
 	};
@@ -153,9 +152,19 @@ namespace ST
         unsigned int getTileHeight() { return mTileHeight; }
 
         /**
-         * Returns width of map
+         * Returns width of map in tiles
          */
         unsigned int getWidth() { return mWidth; }
+
+        /**
+         * Returns height of map in tiles
+         */
+        unsigned int getHeight() { return mHeight; }
+
+        /**
+         * Returns the number of layers
+         */
+        unsigned int getLayers() { return mLayers.size(); }
 
         /**
          * Returns a layer
@@ -174,13 +183,47 @@ namespace ST
 
         /**
          * Return tile in direction
+         * @param pos The tile position
+         * @param dir The direction from that position
+         * @return Returns the node at that position + direction
          */
         Node* getTile(const Point &pos, int dir);
 
         /**
+         * Return map tile
+         * @param pos The world pixel position of the tile
+         * @return Returns the node at that position
+         */
+        Node* getTile(const Point &pos);
+
+        /**
+         * Return map tile
+         * @param x The tile x position
+         * @param y The tile y position
+         * @param layer The layer of the tile
+         * @return Returns the node at that position
+         */
+        Node* getTile(int x, int y, unsigned int layer);
+
+        /**
          * Returns map position
+         * @param pos The world pixel position of the tile
+         * @return The map position of the tile
          */
         Point getMapPosition(const Point &pos);
+
+        /**
+         * Return tile position
+         * @param pos The map position of the tile
+         * @return The tile position of the tile
+         */
+        Point getTilePosition(const Point &pos);
+
+        /**
+         * Return if a tile is blocking
+         * @param pos The tile position of the tile
+         */
+        bool blocked(const Point &pos);
 
     private:
 		/**

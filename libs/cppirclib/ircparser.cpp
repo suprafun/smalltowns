@@ -163,8 +163,11 @@ Command* IRCParser::parseCommand(std::string &prefix,
             }
             c->setUserInfo(prefix);
 
+            // set the channel
+            c->setChanInfo(params);
+
             // set the params
-            c->setParams(params.substr(1));
+            c->setParams(params);
         } break;
 
 		case Command::IRC_PART:
@@ -181,8 +184,11 @@ Command* IRCParser::parseCommand(std::string &prefix,
 			}
 			c->setUserInfo(prefix);
 
+			// set the channel
+            c->setChanInfo(params);
+
 			// set the params
-			c->setMessage(params.substr(1));
+			c->setMessage(params);
 		} break;
 
 		case Command::IRC_QUIT:

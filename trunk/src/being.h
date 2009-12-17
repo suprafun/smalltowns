@@ -122,6 +122,8 @@ namespace ST
     protected:
         void move(int ms);
 
+        Point getNextTile(const Point &pt, int *dir);
+
     protected:
         int mId;
         int mState;

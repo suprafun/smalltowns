@@ -180,58 +180,47 @@ namespace ST
     bool Being::calculateNextDestination(const Point &finish)
     {
         bool found = false;
-        Point start;
         Point end = mapEngine->getMapPosition(finish);
-        Point pt = mapEngine->getMapPosition(mPosition);
-        Point mapPos;
-        Point screenPos;
+        Point mapPos = mapEngine->getMapPosition(mPosition);
+        Point tilePos = mapEngine->getTilePosition(mapPos);
+        Point screenPos = {0, 0};
         int dir = DIRECTION_NORTH;
         std::stringstream str;
 
+        // set start point
         mLastPosition.x = mPosition.x;
         mLastPosition.y = mPosition.y;
 
+        // empty any previous path
+        mWaypoints.clear();
+
         std::vector<int> scores;
 
-        start.x = mapPos.x = screenPos.x = 0;
-        start.y = mapPos.y = screenPos.y = 0;
-
-        // move map position to where being is
-        while (start.x != pt.x || start.y != pt.y)
-        {
-            dir = getDirection(start, pt);
-            mapPos = mapEngine->walkTile(mapPos, dir);
-            start = mapEngine->walkMap(start, dir);
-        }
-
-        str << "Being tile position " << mapPos.x << "," << mapPos.y << std::endl;
-        str << "Being map position " << start.x << "," << start.y << std::endl;
+        str << "Being map position " << mapPos.x << "," << mapPos.y << std::endl;
+        str << "Being tile position " << tilePos.x << "," << tilePos.y << std::endl;
         str << "Destination map position " << end.x << "," << end.y << std::endl;
 
         // keep moving a tile towards destination until reached
         while(!found)
         {
-            dir = getDirection(start, end);
-            mapPos = mapEngine->walkTile(mapPos, dir);
-            start = mapEngine->walkMap(start, dir);
+            dir = getDirection(mapPos, end);
+            tilePos = getNextTile(tilePos, &dir);
+            mapPos = mapEngine->walkMap(mapPos, dir);
 
-            if (start.x == end.x && start.y == end.y)
+            if (mapPos.x == end.x && mapPos.y == end.y)
             {
                 found = true;
             }
 
-            screenPos.x = 0.5 * (mapPos.x - mapPos.y) * mapEngine->getTileWidth();
-            screenPos.y = 0.5 * (mapPos.x + mapPos.y) * mapEngine->getTileHeight();
-
-            //str << "Direction was " << dir << std::endl;
-            //str << "Next waypoint is " << screenPos.x << "," << screenPos.y << std::endl;
+            screenPos.x = 0.5 * (tilePos.x - tilePos.y) * mapEngine->getTileWidth();
+            screenPos.y = 0.5 * (tilePos.x + tilePos.y) * mapEngine->getTileHeight();
 
             mWaypoints.push_back(screenPos);
         }
 
 		mWaypoints.push_back(finish);
 
-        str << "Destination tile position " << mapPos.x << "," << mapPos.y;
+        str << "Destination tile position " << tilePos.x << "," << tilePos.y;
 
         logger->logDebug(str.str());
 
@@ -309,6 +298,27 @@ namespace ST
         moveNode(&movePos);
 
         mLastPosition = nextPos;
+    }
+
+    Point Being::getNextTile(const Point &pt, int *dir)
+    {
+        Point pos = mapEngine->walkTile(pt, *dir);
+        int attempts = 2;
+        int diff = 1;
+
+        while (attempts > 0 && mapEngine->blocked(pos))
+        {
+            *dir += diff;
+            pos = mapEngine->walkTile(pt, *dir);
+            --attempts;
+            diff = -diff;
+            if (*dir < DIRECTION_NORTH)
+                *dir = DIRECTION_NORTHWEST;
+            if (*dir > DIRECTION_NORTHWEST)
+                *dir = DIRECTION_NORTH;
+        }
+
+        return pos;
     }
 
     void Being::saveDestination(const Point &pos)

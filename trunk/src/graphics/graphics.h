@@ -63,26 +63,6 @@ namespace ST
 	struct Point;
 	struct Rectangle;
 
-	enum
-	{
-	    LAYER_GROUND = 0,
-	    LAYER_CROPS = 1,
-	    LAYER_PEOPLE = 2,
-	    TOTAL_LAYERS = 3
-	};
-
-	class NodeList
-	{
-    public:
-        const std::list<Node*>& getNodes() { return mNodes; }
-        void clear() { mNodes.clear(); }
-        void add(Node *node) { mNodes.push_back(node); }
-        void remove(Node *node) { mNodes.remove(node); }
-
-    private:
-        std::list<Node*> mNodes;
-	};
-
 	class GraphicsEngine
 	{
 	public:
@@ -108,18 +88,17 @@ namespace ST
 		 * Creates a new node, and returns it
 		 * @param name The name of the Node
 		 * @param texture The name of the texture to use
-		 * @param layer The layer the node resides on
 		 * @param point The position of the Node
 		 * @return Returns a pointer to the Node created
 		 */
-		Node* createNode(std::string name, std::string texture, int layer, Point *point = NULL);
+		Node* createNode(std::string name, std::string texture, Point *point = NULL);
 
 		/**
 		 * Add Node
 		 * Adds an already created node to the render list
 		 * @param node The node to add
 		 */
-        void addNode(Node *node, int layer);
+        void addNode(Node *node);
 
         /**
          * Remove Node
@@ -132,11 +111,10 @@ namespace ST
 		 * Creates a new entity, and returns it
 		 * @param name The name of the Entity
 		 * @param texture The name of the texture to use
-		 * @param layer The layer the node resides on
 		 * @param point The position of the Entity
 		 * @return Returns a pointer to the Entity created
 		 */
-		Entity* createEntity(std::string name, std::string texture, int layer, Point *point = NULL);
+		Entity* createEntity(std::string name, std::string texture, Point *point = NULL);
 
 		/**
 		 * Set Camera
@@ -163,6 +141,13 @@ namespace ST
 		 * It loops through all the nodes and draws them if visible
 		 */
 		void outputNodes();
+
+		/**
+		 * Draw Map
+		 * This draws the map to the screen
+		 * It loops through all the tiles and draws them if visible
+		 */
+        void drawMap();
 
 		/**
 		 * Draw Untextured Rectangle
@@ -268,7 +253,7 @@ namespace ST
 		Camera *mCamera;
 
 		// list of nodes
-		std::vector<NodeList*> mLayers;
+		std::list<Node*> mNodes;
 		typedef std::list<Node*>::const_iterator NodeItr;
 
 		// list of textures

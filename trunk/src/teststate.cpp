@@ -106,12 +106,19 @@ namespace ST
                     chat.insert(0, "* " + player->getSelectedCharacter()->getName() + " ");
                     interfaceManager->sendToChat(chat);
                 }
-                else if (chat.substr(1, 3) == "cam")
+                else if (chat.substr(1) == "cam")
                 {
                     Point camPos = graphicsEngine->getCamera()->getPosition();
                     std::stringstream info;
                     info << "Cam Info: " << camPos.x << "," << camPos.y;
                     interfaceManager->sendToChat(info.str());
+                }
+                else if (chat.substr(1) == "pos")
+                {
+                    Point tilePos = player->getSelectedCharacter()->getTilePosition();
+                    std::stringstream posStr;
+                    posStr << "Player Pos: " << tilePos.x << "," << tilePos.y;
+                    interfaceManager->sendToChat(posStr.str());
                 }
             }
             // clear input textbox
@@ -121,15 +128,13 @@ namespace ST
 
     void handle_mouse(Event *evt)
     {
+        Point camPos = graphicsEngine->getCamera()->getPosition();
+        Point pos;
+        pos.x = evt->x + camPos.x;
+        pos.y = evt->y + camPos.y + mapEngine->getTileHeight();
+
         if (evt->button == SDL_BUTTON_LEFT && evt->type == 0)
         {
-            Point camPos = graphicsEngine->getCamera()->getPosition();
-            Point pos;
-            pos.x = evt->x + camPos.x;
-            pos.y = evt->y + camPos.y + mapEngine->getTileHeight();
-
-            logger->logDebug("Clicked mouse");
-
             // check user clicked on map
             Node *node = graphicsEngine->getNode(pos.x, pos.y);
             if (node)
@@ -160,6 +165,7 @@ namespace ST
 		if (evt->button == 0)
 		{
 			//TODO: Add moving the tile cursor
+//			Node *node = graphicsEngine->getTile(pos.x, pos.y);
 		}
     }
 

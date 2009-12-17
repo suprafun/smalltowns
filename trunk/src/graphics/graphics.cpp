@@ -81,24 +81,10 @@ namespace ST
 		mHeight = 768;
 
 		mCamera = NULL;
-
-		for (int i = 0; i < TOTAL_LAYERS; ++i)
-		{
-		    NodeList *nodes = new NodeList;
-		    mLayers.push_back(nodes);
-		}
 	}
 
 	GraphicsEngine::~GraphicsEngine()
 	{
-		// clean up nodes
-        // nodes should have been deleted by their owners
-        for (unsigned int i = 0; i < mLayers.size(); ++i)
-        {
-            mLayers[i]->clear();
-            delete mLayers[i];
-        }
-
 		if (mCamera)
 			delete mCamera;
 
@@ -106,31 +92,23 @@ namespace ST
 		SDL_Quit();
 	}
 
-	Node* GraphicsEngine::createNode(std::string name, std::string texture, int layer, Point *point)
+	Node* GraphicsEngine::createNode(std::string name, std::string texture, Point *point)
 	{
 		Node *node = new Node(name, graphicsEngine->getTexture(texture));
 		node->moveNode(point);
-		addNode(node, layer);
+		addNode(node);
 		return node;
 	}
 
-	void GraphicsEngine::addNode(Node *node, int layer)
+	void GraphicsEngine::addNode(Node *node)
 	{
 	    assert(node);
-	    if (layer >= mLayers.size())
-		{
-		    logger->logError("Tried to add node to invalid layer");
-		    return;
-		}
-		mLayers[layer]->add(node);
+		mNodes.push_back(node);
 	}
 
 	void GraphicsEngine::removeNode(Node *node)
 	{
-	    for (int i = 0; i < TOTAL_LAYERS; ++i)
-	    {
-	        mLayers[i]->remove(node);
-	    }
+	    mNodes.remove(node);
 	}
 
 	void GraphicsEngine::setCamera(Camera *cam)
@@ -150,6 +128,10 @@ namespace ST
 
         setupScene();
 
+        // draw maps if loaded
+        if (mapEngine->mapLoaded())
+            drawMap();
+
 		// Display the nodes on screen (if theres a camera to view them)
 		if (mCamera)
 			outputNodes();
@@ -164,43 +146,65 @@ namespace ST
 
 	void GraphicsEngine::outputNodes()
 	{
-	    for (int i = 0; i < TOTAL_LAYERS; ++i)
-	    {
-            // create iterators for looping
-            NodeItr itr = mLayers[i]->getNodes().begin(), itr_end = mLayers[i]->getNodes().end();
+	    // create iterators for looping
+        NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
 
-            Point pt = mCamera->getPosition();
+        Point pt = mCamera->getPosition();
 
-            // keep looping until reached the end of the list
-            while (itr != itr_end)
+        // keep looping until reached the end of the list
+        while (itr != itr_end)
+        {
+            Node *node = (*itr);
+            // dont draw if not on screen
+/*			if (!checkInside(node->getPosition(), mCamera->getViewBounds()))
             {
-                Node *node = (*itr);
-                // dont draw if not on screen
-    /*			if (!checkInside(node->getPosition(), mCamera->getViewBounds()))
-                {
-                    continue;
-                }
-    */
-                // dont draw if not visible
-                if (!node->getVisible())
-                {
-                    continue;
-                }
-
-                Rectangle rect = node->getBounds();
-                rect.x -= pt.x + (rect.width >> 1);
-                rect.y -= pt.y;
-
-                drawTexturedRect(rect, node->getTexture());
-
-                if (node->showName())
-                {
-                    interfaceManager->drawName(node->getName(), node->getPosition());
-                }
-
-                ++itr;
+                continue;
             }
+*/
+            // dont draw if not visible
+            if (!node->getVisible())
+                continue;
+
+            Rectangle rect = node->getBounds();
+            rect.x -= pt.x + (rect.width >> 1);
+            rect.y -= pt.y;
+
+            drawTexturedRect(rect, node->getTexture());
+
+            if (node->showName())
+            {
+                interfaceManager->drawName(node->getName(), node->getPosition());
+            }
+
+            ++itr;
 	    }
+	}
+
+	void GraphicsEngine::drawMap()
+	{
+	    int w = mapEngine->getWidth();
+	    int h = mapEngine->getHeight();
+	    int l = mapEngine->getLayers();
+	    Point pt = mCamera->getPosition();
+
+        for (int layer = 0; layer < l; ++layer)
+        {
+            for (int x = 0; x < w; ++x)
+            {
+                for (int y = 0; y < h; ++y)
+                {
+                    Node *node = mapEngine->getTile(x, y, layer);
+                    if (!node || !node->getVisible())
+                        continue;
+
+                    Rectangle rect = node->getBounds();
+                    rect.x -= pt.x + (rect.width >> 1);
+                    rect.y -= pt.y;
+
+                    drawTexturedRect(rect, node->getTexture());
+                }
+            }
+        }
 	}
 
 	Texture* GraphicsEngine::loadTexture(const std::string &name)
@@ -572,14 +576,17 @@ namespace ST
 
 	Node* GraphicsEngine::getNode(int x, int y)
     {
-        for (int i = TOTAL_LAYERS - 1; i >= 0; --i)
+        Point pt; pt.x = x; pt.y = y;
+        NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
+
+        while (itr != itr_end)
         {
-            Layer *layer = mapEngine->getLayer(i);
-            if (!layer)
-                continue;
-            Node *node = layer->getNodeAt(x, y);
-            if (node)
+            Node *node = (*itr);
+            if (checkInside(pt, node->getBounds()))
+            {
                 return node;
+            }
+            ++itr;
         }
 
         return NULL;
@@ -590,9 +597,8 @@ namespace ST
         Point pt;
         pt.x = x + mCamera->getPosition().x;
         pt.y = y + mCamera->getPosition().y;
-
-        Node *node = mapEngine->getLayer(0)->getNodeAt(pt.x, pt.y);
-        return node;
+;
+        return mapEngine->getTile(pt);
     }
 
     void GraphicsEngine::setCameraToShow(Point &pt)

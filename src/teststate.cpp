@@ -128,6 +128,9 @@ namespace ST
 
     void handle_mouse(Event *evt)
     {
+        if (!mapEngine->mapLoaded())
+            return;
+
         Point camPos = graphicsEngine->getCamera()->getPosition();
         Point pos;
         pos.x = evt->x + camPos.x;

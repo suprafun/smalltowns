@@ -276,8 +276,9 @@ namespace ST
 
     Node* Map::getTile(const Point &pos)
     {
-        Point pt = getMapPosition(pos);
-        Point tilePos = getTilePosition(pt);
+        Point pt;
+        Point mapPos = getMapPosition(pos, &pt);
+        Point tilePos = getTilePosition(mapPos, pt);
 
         return mLayers[0]->getNodeAt(tilePos.x, tilePos.y);
     }
@@ -289,7 +290,7 @@ namespace ST
         return mLayers[layer]->getNodeAt(x, y);
     }
 
-    Point Map::getMapPosition(const Point &pos)
+    Point Map::getMapPosition(const Point &pos, Point *remainder)
     {
         Point cpt, fpt;
 
@@ -312,10 +313,13 @@ namespace ST
             --cpt.y;
         }
 
+        if (remainder != NULL)
+            *remainder = fpt;
+
         return cpt;
     }
 
-    Point Map::getTilePosition(const Point &pos)
+    Point Map::getTilePosition(const Point &pos, const Point &pt)
     {
         Point origPos; origPos.x = 0; origPos.y = 0;
         Point tilePos; tilePos.x = 0; tilePos.y = 0;
@@ -335,6 +339,29 @@ namespace ST
         {
             tilePos = walkTile(tilePos, DIRECTION_SOUTH);
             ++origPos.y;
+        }
+
+        if (pt.y < (mTileHeight >> 1))
+        {
+            if ((pt.y * 2) < (pt.x - (mTileWidth >> 1)))
+            {
+                tilePos = walkTile(tilePos, DIRECTION_NORTHEAST);
+            }
+            else if ((pt.y * 2) < (-pt.x - (mTileWidth >> 1)))
+            {
+                tilePos = walkTile(tilePos, DIRECTION_NORTHWEST);
+            }
+        }
+        else
+        {
+            if (((pt.y - (mTileHeight >> 1)) * 2) < (pt.x - (mTileWidth >> 1)))
+            {
+                tilePos = walkTile(tilePos, DIRECTION_SOUTHEAST);
+            }
+            else if (((pt.y - (mTileHeight >> 1))* 2) < (-pt.x - (mTileWidth >> 1)))
+            {
+                tilePos = walkTile(tilePos, DIRECTION_SOUTHWEST);
+            }
         }
 
         return tilePos;

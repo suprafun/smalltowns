@@ -358,7 +358,7 @@ namespace ST
                     // TODO: Do something
                     being->setAnimation("");
                     being->setState(STATE_IDLE);
-                    logger->logDebug("Invalid move");
+                    logger->logDebug("Server says Invalid move");
                 }
                 else
                 {

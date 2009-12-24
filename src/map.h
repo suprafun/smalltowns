@@ -208,16 +208,18 @@ namespace ST
         /**
          * Returns map position
          * @param pos The world pixel position of the tile
+         * @param remainder The remainder will be stored here
          * @return The map position of the tile
          */
-        Point getMapPosition(const Point &pos);
+        Point getMapPosition(const Point &pos, Point *remainder);
 
         /**
          * Return tile position
          * @param pos The map position of the tile
+         * @param pt The remainder left over used to find exact tile
          * @return The tile position of the tile
          */
-        Point getTilePosition(const Point &pos);
+        Point getTilePosition(const Point &pos, const Point &pt);
 
         /**
          * Return if a tile is blocking

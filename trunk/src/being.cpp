@@ -180,9 +180,10 @@ namespace ST
     bool Being::calculateNextDestination(const Point &finish)
     {
         bool found = false;
-        Point end = mapEngine->getMapPosition(finish);
-        Point mapPos = mapEngine->getMapPosition(mPosition);
-        Point tilePos = mapEngine->getTilePosition(mapPos);
+        Point pt;
+        Point end = mapEngine->getMapPosition(finish, NULL);
+        Point mapPos = mapEngine->getMapPosition(mPosition, &pt);
+        Point tilePos = mapEngine->getTilePosition(mapPos, pt);
         Point screenPos = {0, 0};
         int dir = DIRECTION_NORTH;
         std::stringstream str;
@@ -203,8 +204,11 @@ namespace ST
         // keep moving a tile towards destination until reached
         while(!found)
         {
+            // find a direction to move closer to the end point
             dir = getDirection(mapPos, end);
+            // find the tile in that direction, and change direction if tile is blocking
             tilePos = getNextTile(tilePos, &dir);
+            // update map position
             mapPos = mapEngine->walkMap(mapPos, dir);
 
             if (mapPos.x == end.x && mapPos.y == end.y)
@@ -212,6 +216,7 @@ namespace ST
                 found = true;
             }
 
+            // translate to screen position and store that
             screenPos.x = 0.5 * (tilePos.x - tilePos.y) * mapEngine->getTileWidth();
             screenPos.y = 0.5 * (tilePos.x + tilePos.y) * mapEngine->getTileHeight();
 
@@ -273,6 +278,7 @@ namespace ST
         distx = nextDest.x - mLastPosition.x;
         disty = nextDest.y - mLastPosition.y;
 
+        // avoid divide by 0
         distance = distx * distx + disty * disty;
         if (distance < 1 && distance > -1)
         {
@@ -306,6 +312,8 @@ namespace ST
         int attempts = 2;
         int diff = 1;
 
+        // keep trying a different direction till valid tile found
+        // or until maximum number of attempts failed
         while (attempts > 0 && mapEngine->blocked(pos))
         {
             *dir += diff;

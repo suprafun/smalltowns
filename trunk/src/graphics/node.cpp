@@ -114,10 +114,11 @@ namespace ST
 
 	Point Node::getTilePosition()
 	{
-	    Point mapPt = mapEngine->getMapPosition(mPosition);
-	    Point pt = mapEngine->getTilePosition(mapPt);
+	    Point pt;
+	    Point mapPt = mapEngine->getMapPosition(mPosition, &pt);
+	    Point tilePt = mapEngine->getTilePosition(mapPt, pt);
 
-	    return pt;
+	    return tilePt;
 	}
 
 	Rectangle& Node::getBounds()

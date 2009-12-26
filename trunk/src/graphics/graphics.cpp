@@ -88,6 +88,8 @@ namespace ST
 		if (mCamera)
 			delete mCamera;
 
+		SDL_FreeSurface(mScreen);
+
 		// Do SDL cleanup
 		SDL_Quit();
 	}

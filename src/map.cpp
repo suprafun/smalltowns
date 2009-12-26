@@ -96,7 +96,7 @@ namespace ST
 
 	Node* Layer::getNodeAt(unsigned int x, unsigned int y)
 	{
-	    if ((y * mWidth + x) > mNodes.size() || x < 0 || y < 0)
+	    if ((y * mWidth + x) > (mNodes.size() - 1) || x < 0 || y < 0)
             return NULL;
         return mNodes[x+y*mWidth];
 	}

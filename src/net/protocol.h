@@ -61,8 +61,9 @@ enum
     GPMSG_LOAD_MAP              = 0x0810, // S name of map
     PGMSG_MAP_LOADED            = 0x0811, //
 
-    GPMSG_PING                  = 0x081a, // I time
+    GPMSG_PING                  = 0x081a, //
     PGMSG_PONG                  = 0x081b, //
+    GPMSG_PINGTIME              = 0x081e, // I latency
 
     // player info
     PGMSG_PLAYER_INFO           = 0x0820, // S char name

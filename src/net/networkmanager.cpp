@@ -75,6 +75,7 @@ namespace ST
 		atexit(enet_deinitialize);
         mHost = new Host();
         mTag = -1;
+        mPing = 0;
 	}
 
 	NetworkManager::~NetworkManager()
@@ -387,7 +388,7 @@ namespace ST
                 }
                 else if (player->getSelectedCharacter()->getId() == id)
                 {
-                    //graphicsEngine->setCameraToShow(finish);
+                    graphicsEngine->setCameraToShow(finish);
                 }
                 else
                 {
@@ -450,7 +451,21 @@ namespace ST
             {
                 unsigned int id = packet->getInteger();
                 beingManager->removeBeing(id);
-            }
+            } break;
+
+            case GPMSG_PING:
+            {
+                Packet *p = new Packet(PGMSG_PONG);
+                sendPacket(p);
+            } break;
+
+            case GPMSG_PINGTIME:
+            {
+                mPing = packet->getInteger();
+                std::stringstream str;
+                str << "Received ping time of " << mPing << " at " << time(NULL);
+                logger->logDebug(str.str());
+            } break;
 
             default:
             {
@@ -550,5 +565,10 @@ namespace ST
 	int NetworkManager::getTag() const
 	{
 	    return mTag;
+	}
+
+	int NetworkManager::getPing() const
+	{
+	    return mPing;
 	}
 }

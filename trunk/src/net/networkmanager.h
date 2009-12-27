@@ -109,6 +109,12 @@ namespace ST
          */
         void sendPositionUpdate(const Point &pos);
 
+        /**
+         * Return the ping time
+         * This is a measure of latency
+         */
+        int getPing() const;
+
     private:
 		/**
 		 * Process the packets
@@ -120,6 +126,7 @@ namespace ST
 		std::string mDefaultHost;
 		int mDefaultPort;
 		int mTag; /** << Used for reconnecting to game server */
+		int mPing;
 	};
 
 	extern NetworkManager *networkManager;

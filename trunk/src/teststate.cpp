@@ -60,6 +60,7 @@
 #include "irc/ircmessage.h"
 
 #include "utilities/log.h"
+#include "utilities/stringutils.h"
 
 #include <sstream>
 #include <SDL.h>
@@ -119,6 +120,10 @@ namespace ST
                     std::stringstream posStr;
                     posStr << "Player Pos: " << tilePos.x << "," << tilePos.y;
                     interfaceManager->sendToChat(posStr.str());
+                }
+                else if (chat.substr(1) == "ping")
+                {
+                    interfaceManager->sendToChat(utils::toString(networkManager->getPing()));
                 }
             }
             // clear input textbox

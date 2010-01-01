@@ -45,6 +45,7 @@
 #include "character.h"
 #include "game.h"
 #include "map.h"
+#include "resourcemanager.h"
 
 #include "graphics/camera.h"
 #include "graphics/graphics.h"
@@ -217,7 +218,7 @@ namespace ST
         chatServer = new IRCServer;
 
         // load glowing tile
-        graphicsEngine->loadTexture("glowtile2.png");
+        graphicsEngine->loadTexture(resourceManager->getDataPath() + "glowtile2.png");
         glowTile = NULL;
 
 		// create camera

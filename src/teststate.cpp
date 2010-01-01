@@ -61,12 +61,16 @@
 
 #include "utilities/log.h"
 #include "utilities/stringutils.h"
+#include "utilities/types.h"
 
 #include <sstream>
 #include <SDL.h>
 
 namespace ST
 {
+    Node *glowTile;
+    Point cursorPos;
+
     void submit_chat(AG_Event *event)
     {
         IRCServer *chatServer = static_cast<IRCServer*>(AG_PTR(1));
@@ -138,7 +142,7 @@ namespace ST
 
         Point camPos = graphicsEngine->getCamera()->getPosition();
         Point pos;
-        pos.x = evt->x + camPos.x;
+        pos.x = evt->x + camPos.x + mapEngine->getTileWidth() / 2;
         pos.y = evt->y + camPos.y + mapEngine->getTileHeight();
 
         if (evt->button == SDL_BUTTON_LEFT && evt->type == 0)
@@ -172,8 +176,36 @@ namespace ST
 
 		if (evt->button == 0)
 		{
-			//TODO: Add moving the tile cursor
-//			Node *node = graphicsEngine->getTile(pos.x, pos.y);
+		    if (!glowTile)
+                return;
+		    int mapWidth = mapEngine->getWidth() * mapEngine->getTileWidth();
+		    int mapHeight = mapEngine->getHeight() * mapEngine->getTileHeight();
+
+		    if (pos.x > mapWidth || -pos.x > mapWidth)
+		        return;
+		    if (pos.y > mapHeight || pos.y < 0)
+		        return;
+
+		    Point pt;
+		    Point mapPos = mapEngine->getMapPosition(pos, &pt);
+		    Point tilePos = mapEngine->getTilePosition(mapPos, pt);
+
+		    if (tilePos.x == cursorPos.x && tilePos.y == cursorPos.y)
+                return;
+
+            cursorPos = tilePos;
+
+		    Point screenPos;
+		    screenPos.x = 0.5 * (tilePos.x - tilePos.y) * mapEngine->getTileWidth();
+            screenPos.y = 0.5 * (tilePos.x + tilePos.y) * mapEngine->getTileHeight();
+			glowTile->moveNode(&screenPos);
+
+			std::stringstream str;
+			str << "Cursor at position " << pos.x << "," << pos.y << std::endl;
+			str << "Cursor at map pos " << mapPos.x << "," << mapPos.y << std::endl;
+			str << "Cursor at tile pos " << tilePos.x << "," << tilePos.y << std::endl;
+			str << "Moved cursor to " << screenPos.x << "," << screenPos.y;
+			logger->logDebug(str.str());
 		}
     }
 
@@ -183,6 +215,10 @@ namespace ST
         lastframe = SDL_GetTicks();
         mLoaded = false;
         chatServer = new IRCServer;
+
+        // load glowing tile
+        graphicsEngine->loadTexture("glowtile2.png");
+        glowTile = NULL;
 
 		// create camera
 		Rectangle rect;
@@ -238,6 +274,7 @@ namespace ST
 		delete chatServer;
         interfaceManager->removeAllWindows();
         interfaceManager->removeMouseListeners();
+        graphicsEngine->removeNode(glowTile);
 	}
 
 	bool TestState::update()
@@ -248,6 +285,7 @@ namespace ST
             Packet *packet = new Packet(PGMSG_MAP_LOADED);
             networkManager->sendPacket(packet);
             mLoaded = true;
+            glowTile = graphicsEngine->createNode("Cursor", "glowtile2.png", NULL);
 	    }
 
 		// Check for input, if escape pressed, exit

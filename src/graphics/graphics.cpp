@@ -97,7 +97,8 @@ namespace ST
 	Node* GraphicsEngine::createNode(std::string name, std::string texture, Point *point)
 	{
 		Node *node = new Node(name, graphicsEngine->getTexture(texture));
-		node->moveNode(point);
+		if (point)
+            node->moveNode(point);
 		addNode(node);
 		return node;
 	}

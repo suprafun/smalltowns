@@ -321,44 +321,50 @@ namespace ST
 
     Point Map::getTilePosition(const Point &pos, const Point &pt)
     {
-        Point origPos; origPos.x = 0; origPos.y = 0;
+        Point origPos = pos;
         Point tilePos; tilePos.x = 0; tilePos.y = 0;
 
         int dir = DIRECTION_EAST;
 
-        if (origPos.x > pos.x)
+        if (pos.x < 0)
+        {
             dir = DIRECTION_WEST;
+            origPos.x = -origPos.x;
+        }
 
-        while (origPos.x != pos.x)
+        while (origPos.x > 0)
         {
             tilePos = walkTile(tilePos, dir);
-            origPos = walkMap(origPos, dir);
+            --origPos.x;
         }
 
-        while (origPos.y != pos.y)
+        while (origPos.y > 0)
         {
             tilePos = walkTile(tilePos, DIRECTION_SOUTH);
-            ++origPos.y;
+            --origPos.y;
         }
+
+        int x = pt.x - (mTileWidth >> 1);
 
         if (pt.y < (mTileHeight >> 1))
         {
-            if ((pt.y * 2) < (pt.x - (mTileWidth >> 1)))
+            if (x > (pt.y * 2))
             {
                 tilePos = walkTile(tilePos, DIRECTION_NORTHEAST);
             }
-            else if ((pt.y * 2) < (-pt.x - (mTileWidth >> 1)))
+            else if (-x > (pt.y * 2))
             {
                 tilePos = walkTile(tilePos, DIRECTION_NORTHWEST);
             }
         }
         else
         {
-            if (((pt.y - (mTileHeight >> 1)) * 2) < (pt.x - (mTileWidth >> 1)))
+            int y = mTileHeight - pt.y;
+            if (x > y)
             {
                 tilePos = walkTile(tilePos, DIRECTION_SOUTHEAST);
             }
-            else if (((pt.y - (mTileHeight >> 1))* 2) < (-pt.x - (mTileWidth >> 1)))
+            else if (-x > y)
             {
                 tilePos = walkTile(tilePos, DIRECTION_SOUTHWEST);
             }

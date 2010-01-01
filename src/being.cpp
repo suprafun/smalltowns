@@ -179,12 +179,14 @@ namespace ST
 
     bool Being::calculateNextDestination(const Point &finish)
     {
-        bool found = false;
+        int hops = 0;
         Point pt;
-        Point end = mapEngine->getMapPosition(finish, NULL);
-        Point mapPos = mapEngine->getMapPosition(mPosition, &pt);
-        Point tilePos = mapEngine->getTilePosition(mapPos, pt);
+        Point mapPos = mapEngine->getMapPosition(finish, &pt);
+        Point endPos = mapEngine->getTilePosition(mapPos, pt);
+        Point beingPos = mapEngine->getMapPosition(mPosition, &pt);
+        Point tilePos = mapEngine->getTilePosition(beingPos, pt);
         Point screenPos = {0, 0};
+        Point wayPos = tilePos;
         int dir = DIRECTION_NORTH;
         std::stringstream str;
 
@@ -197,39 +199,39 @@ namespace ST
 
         std::vector<int> scores;
 
-        str << "Being map position " << mapPos.x << "," << mapPos.y << std::endl;
+        str << "Being map position " << beingPos.x << "," << beingPos.y << std::endl;
         str << "Being tile position " << tilePos.x << "," << tilePos.y << std::endl;
-        str << "Destination map position " << end.x << "," << end.y << std::endl;
+        str << "Destination map position " << mapPos.x << "," << mapPos.y << std::endl;
+        str << "Destination tile position " << endPos.x << "," << endPos.y << std::endl;
 
         // keep moving a tile towards destination until reached
-        while(!found)
+        while(hops < 20)
         {
-            // find a direction to move closer to the end point
-            dir = getDirection(mapPos, end);
-            // find the tile in that direction, and change direction if tile is blocking
-            tilePos = getNextTile(tilePos, &dir);
-            // update map position
-            mapPos = mapEngine->walkMap(mapPos, dir);
-
-            if (mapPos.x == end.x && mapPos.y == end.y)
+            if (wayPos.x == endPos.x && wayPos.y == endPos.y)
             {
-                found = true;
+                break;
             }
 
+            // find a direction to move closer to the end point
+            dir = getDirection(wayPos, endPos);
+            // find the tile inbetween
+            wayPos = getNextTile(wayPos, dir);
+
+            str << "Waypoint position " << wayPos.x << "," << wayPos.y << " added." << std::endl;
+
             // translate to screen position and store that
-            screenPos.x = 0.5 * (tilePos.x - tilePos.y) * mapEngine->getTileWidth();
-            screenPos.y = 0.5 * (tilePos.x + tilePos.y) * mapEngine->getTileHeight();
+            screenPos.x = 0.5 * (wayPos.x - wayPos.y) * mapEngine->getTileWidth();
+            screenPos.y = 0.5 * (wayPos.x + wayPos.y) * mapEngine->getTileHeight();
 
             mWaypoints.push_back(screenPos);
+            ++hops;
         }
 
 		mWaypoints.push_back(finish);
 
-        str << "Destination tile position " << tilePos.x << "," << tilePos.y;
-
         logger->logDebug(str.str());
 
-        return found;
+        return (hops < 20);
     }
 
     bool Being::calculateNextDestination()
@@ -306,9 +308,9 @@ namespace ST
         mLastPosition = nextPos;
     }
 
-    Point Being::getNextTile(const Point &pt, int *dir)
+    Point Being::getNextTile(const Point &pt, int dir)
     {
-        Point pos = mapEngine->walkTile(pt, *dir);
+        Point pos = mapEngine->walkMap(pt, dir);
         int attempts = 2;
         int diff = 1;
 
@@ -316,14 +318,16 @@ namespace ST
         // or until maximum number of attempts failed
         while (attempts > 0 && mapEngine->blocked(pos))
         {
-            *dir += diff;
-            pos = mapEngine->walkTile(pt, *dir);
+            dir += diff;
+            pos = mapEngine->walkMap(pt, dir);
             --attempts;
             diff = -diff;
-            if (*dir < DIRECTION_NORTH)
-                *dir = DIRECTION_NORTHWEST;
-            if (*dir > DIRECTION_NORTHWEST)
-                *dir = DIRECTION_NORTH;
+
+            // check for greater or less than minimum and maximum direction
+            if (dir < DIRECTION_NORTH)
+                dir = DIRECTION_NORTHWEST;
+            if (dir > DIRECTION_NORTHWEST)
+                dir = DIRECTION_NORTH;
         }
 
         return pos;

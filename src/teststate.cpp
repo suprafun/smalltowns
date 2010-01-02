@@ -218,7 +218,7 @@ namespace ST
         chatServer = new IRCServer;
 
         // load glowing tile
-        graphicsEngine->loadTexture(resourceManager->getDataPath() + "glowtile2.png");
+        graphicsEngine->loadTexture(resourceManager->getDataPath() + "glowtile.png");
         glowTile = NULL;
 
 		// create camera
@@ -286,7 +286,7 @@ namespace ST
             Packet *packet = new Packet(PGMSG_MAP_LOADED);
             networkManager->sendPacket(packet);
             mLoaded = true;
-            glowTile = graphicsEngine->createNode("Cursor", "glowtile2.png", NULL);
+			glowTile = graphicsEngine->createNode("Cursor", resourceManager->getDataPath() + "glowtile.png", NULL);
 	    }
 
 		// Check for input, if escape pressed, exit

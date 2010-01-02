@@ -67,6 +67,10 @@
 //#include <curl/curl.h>
 #include <sstream>
 
+#ifdef WIN32
+#include <time.h>
+#endif
+
 namespace ST
 {
 	NetworkManager::NetworkManager()

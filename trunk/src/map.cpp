@@ -360,11 +360,11 @@ namespace ST
         else
         {
             int y = mTileHeight - pt.y;
-            if (x > y)
+            if (x > (y * 2))
             {
                 tilePos = walkTile(tilePos, DIRECTION_SOUTHEAST);
             }
-            else if (-x > y)
+            else if (-x > (y * 2))
             {
                 tilePos = walkTile(tilePos, DIRECTION_SOUTHWEST);
             }

@@ -7,13 +7,13 @@
  *	Copyright (c) 2008, The Small Towns Dev Team
  *	All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification, 
+ *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
  *
- *	- Redistributions of source code must retain the above copyright notice, 
+ *	- Redistributions of source code must retain the above copyright notice,
  *		this list of conditions and the following disclaimer.
  *	- Redistributions in binary form must reproduce the above copyright notice,
- *		this list of conditions and the following disclaimer in the documentation 
+ *		this list of conditions and the following disclaimer in the documentation
  *		and/or other materials provided with the distribution.
  *	- Neither the name of the Small Towns Dev Team nor the names of its contributors
  *		may be used to endorse or promote products derived from this software without
@@ -76,6 +76,14 @@ namespace ST
          */
         void setPosition(const Point &pt);
 
+        /**
+         * Set Destination
+         * Move camera smoothly
+         * @param pt The position to move to
+         * @param delay The number of milliseconds before starting to move
+         */
+        void setDestination(const Point &pt, int delay);
+
 		/**
 		 * Get View Width
 		 * @return Returns the width of the viewport
@@ -94,9 +102,19 @@ namespace ST
 		 */
 		Rectangle& getViewBounds() { return mViewport; }
 
+		/**
+		 * Logic
+		 * called each frame to move cam to destination
+		 * @param ms Number of milliseconds passed since last called
+		 */
+        void logic(int ms);
+
 	private:
 		std::string mName;
 		Rectangle mViewport;
+		Point mDest;
+		Pointf mPos;
+		int mDelay;
 	};
 }
 

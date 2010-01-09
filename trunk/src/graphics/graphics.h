@@ -143,13 +143,6 @@ namespace ST
 		void outputNodes();
 
 		/**
-		 * Draw Map
-		 * This draws the map to the screen
-		 * It loops through all the tiles and draws them if visible
-		 */
-        void drawMap();
-
-		/**
 		 * Draw Untextured Rectangle
 		 */
 		virtual void drawRect(Rectangle &rect, bool filled) = 0;
@@ -238,7 +231,12 @@ namespace ST
         /**
          * Set Camera to Show a Point on screen
          */
-        void setCameraToShow(Point &pt);
+        void setCameraToShow(const Point &pt, int delay);
+
+        /**
+         * Warp camera to a point on screen
+         */
+        void warpCamera(const Point &pt);
 
 	protected:
 		SDL_Surface *mScreen;

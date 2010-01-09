@@ -352,7 +352,7 @@ namespace ST
                 Character *c = player->getSelectedCharacter();
                 c->moveNode(&pt);
 
-                graphicsEngine->setCameraToShow(pt);
+                graphicsEngine->warpCamera(pt);
             } break;
 
         case GPMSG_PLAYER_MOVE:
@@ -364,6 +364,13 @@ namespace ST
                     being->setAnimation("");
                     being->setState(STATE_IDLE);
                     logger->logDebug("Server says Invalid move");
+                    Point pt = being->getPosition();
+                    Point rem;
+                    Point tile = mapEngine->getTilePosition(mapEngine->getMapPosition(pt, &rem), rem);
+                    std::stringstream str;
+                    str << "Being pos: " << pt.x << "," << pt.y << std::endl;
+                    str << "Being tile:" << tile.x << "," << tile.y;
+                    logger->logDebug(str.str());
                 }
                 else
                 {
@@ -392,7 +399,7 @@ namespace ST
                 }
                 else if (player->getSelectedCharacter()->getId() == id)
                 {
-                    graphicsEngine->setCameraToShow(finish);
+                    graphicsEngine->setCameraToShow(finish, 2000);
                 }
                 else
                 {

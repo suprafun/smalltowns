@@ -131,10 +131,6 @@ namespace ST
 
         setupScene();
 
-        // draw maps if loaded
-        if (mapEngine->mapLoaded())
-            drawMap();
-
 		// Display the nodes on screen (if theres a camera to view them)
 		if (mCamera)
 			outputNodes();
@@ -181,33 +177,6 @@ namespace ST
 
             ++itr;
 	    }
-	}
-
-	void GraphicsEngine::drawMap()
-	{
-	    int w = mapEngine->getWidth();
-	    int h = mapEngine->getHeight();
-	    int l = mapEngine->getLayers();
-	    Point pt = mCamera->getPosition();
-
-        for (int layer = 0; layer < l; ++layer)
-        {
-            for (int x = 0; x < w; ++x)
-            {
-                for (int y = 0; y < h; ++y)
-                {
-                    Node *node = mapEngine->getTile(x, y, layer);
-                    if (!node || !node->getVisible())
-                        continue;
-
-                    Rectangle rect = node->getBounds();
-                    rect.x -= pt.x + (rect.width >> 1);
-                    rect.y -= pt.y;
-
-                    drawTexturedRect(rect, node->getTexture());
-                }
-            }
-        }
 	}
 
 	Texture* GraphicsEngine::loadTexture(const std::string &name)
@@ -604,7 +573,15 @@ namespace ST
         return mapEngine->getTile(pt);
     }
 
-    void GraphicsEngine::setCameraToShow(Point &pt)
+    void GraphicsEngine::setCameraToShow(const Point &pt, int delay)
+    {
+        Point camPt;
+        camPt.x = pt.x - (mWidth >> 1);
+        camPt.y = pt.y - (mHeight >> 1);
+        mCamera->setDestination(camPt, delay);
+    }
+
+    void GraphicsEngine::warpCamera(const Point &pt)
     {
         Point camPt;
         camPt.x = pt.x - (mWidth >> 1);

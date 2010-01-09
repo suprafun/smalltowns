@@ -160,6 +160,13 @@ namespace ST
                     return;
                 }
 
+                Point rem;
+                Point mapPt = mapEngine->getMapPosition(pos, &rem);
+                Point pt = mapEngine->getTilePosition(mapPt, rem);
+
+                if (mapEngine->blocked(pt))
+                    return;
+
                 // save destination for later
                 player->getSelectedCharacter()->saveDestination(pos);
 
@@ -200,13 +207,6 @@ namespace ST
 		    screenPos.x = 0.5 * (tilePos.x - tilePos.y) * mapEngine->getTileWidth();
             screenPos.y = 0.5 * (tilePos.x + tilePos.y) * mapEngine->getTileHeight();
 			glowTile->moveNode(&screenPos);
-
-			std::stringstream str;
-			str << "Cursor at position " << pos.x << "," << pos.y << std::endl;
-			str << "Cursor at map pos " << mapPos.x << "," << mapPos.y << std::endl;
-			str << "Cursor at tile pos " << tilePos.x << "," << tilePos.y << std::endl;
-			str << "Moved cursor to " << screenPos.x << "," << screenPos.y;
-			logger->logDebug(str.str());
 		}
     }
 
@@ -307,6 +307,7 @@ namespace ST
         beingManager->logic(ms);
         player->getSelectedCharacter()->logic(ms);
         player->logic(ms);
+        graphicsEngine->getCamera()->logic(ms);
 
 		chatServer->process();
 

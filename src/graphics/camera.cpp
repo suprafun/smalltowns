@@ -39,6 +39,8 @@
 
 #include "camera.h"
 
+#include <math.h>
+
 namespace ST
 {
 	Camera::Camera(std::string name, ST::Rectangle *rect)
@@ -48,6 +50,8 @@ namespace ST
 		mViewport.width = rect->width;
 		mViewport.x = rect->x;
 		mViewport.y = rect->y;
+        mDest.x = mViewport.x;
+        mDest.y = mViewport.y;
 	}
 
 	const int Camera::getViewWidth() const
@@ -72,6 +76,57 @@ namespace ST
     {
         mViewport.x = pt.x;
         mViewport.y = pt.y;
+        mDest.x = mViewport.x;
+        mDest.y = mViewport.y;
+    }
+
+    void Camera::setDestination(const Point &pt, int delay)
+    {
+        mPos.x = mViewport.x;
+        mPos.y = mViewport.y;
+        mDest = pt;
+        mDelay = delay;
+    }
+
+    void Camera::logic(int ms)
+    {
+        if (mDest.x == mViewport.x && mDest.y == mViewport.y)
+            return;
+
+        mDelay -= ms;
+
+        if (mDelay > 0)
+            return;
+
+        float speed = 20.0f;
+        float time = 0.0f;
+
+        // calculate next position by taking the last position and
+        // destination and finding position after travelling since last frame
+        float distx = mDest.x - mPos.x;
+        float disty = mDest.y - mPos.y;
+
+        // avoid divide by 0
+        float distance = distx * distx + disty * disty;
+        if (distance < 1.0f && distance > -1.0f)
+        {
+            mViewport.x = mDest.x;
+            mViewport.y = mDest.y;
+            return;
+        }
+        distance = sqrtf(distance);
+
+        time = ms / 1000.0f;
+        speed *= time;
+
+        if (speed > distance)
+            speed = distance;
+
+        mPos.x = mPos.x + (distx / distance) * speed;
+        mPos.y = mPos.y + (disty / distance) * speed;
+
+        mViewport.x = static_cast<int>(mPos.x);
+        mViewport.y = static_cast<int>(mPos.y);
     }
 }
 

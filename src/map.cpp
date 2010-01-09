@@ -96,9 +96,19 @@ namespace ST
 
 	Node* Layer::getNodeAt(unsigned int x, unsigned int y)
 	{
-	    if ((y * mWidth + x) > (mNodes.size() - 1) || x < 0 || y < 0)
-            return NULL;
-        return mNodes[x+y*mWidth];
+	    NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
+	    while (itr != itr_end)
+	    {
+	        Node *node = *itr;
+	        Point pt = node->getTilePosition();
+	        if (pt.x == x && pt.y == y)
+	        {
+	            return node;
+	        }
+	        ++itr;
+	    }
+
+	    return NULL;
 	}
 
 	Map::Map()
@@ -375,9 +385,12 @@ namespace ST
 
     bool Map::blocked(const Point &pos)
     {
-        Node *node = mLayers[0]->getNodeAt(pos.x, pos.y);
-        if (!node)
+        assert(mLayers.size() > 1);
+        if (pos.x < 0 || pos.x > mWidth || pos.y < 0 || pos.y > mHeight)
             return true;
+        Node *node = mLayers[1]->getNodeAt(pos.x, pos.y);
+        if (!node)
+            return false;
         return node->getBlocking();
     }
 

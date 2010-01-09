@@ -116,14 +116,6 @@ namespace ST
         case STATE_IDLE:
             break;
         case STATE_MOVING:
-            if (mPosition.x == mDestination.x &&
-                mPosition.y == mDestination.y)
-            {
-                setAnimation("");
-                setState(STATE_IDLE);
-                return;
-            }
-
             move(ms);
             break;
         }
@@ -298,7 +290,6 @@ namespace ST
 
         nextPos.x = mLastPosition.x + (distx / distance) * speed;
         nextPos.y = mLastPosition.y + (disty / distance) * speed;
-
 
         movePos.x = nextPos.x;
         movePos.y = nextPos.y;

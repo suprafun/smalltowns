@@ -278,8 +278,9 @@ namespace ST
             {
                 if (packet->getByte() == ERR_NONE)
                 {
-                    GameState *state = new CharacterState;
-                    game->changeState(state);
+                    player->removeCharacters();
+                    Packet *packet = new Packet(PAMSG_CHAR_LIST);
+                    sendPacket(packet);
                 }
                 else
                 {

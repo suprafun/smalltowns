@@ -72,10 +72,16 @@ namespace ST
 		mErrorCaption = AG_LabelNewString(mErrorWindow, 0, "");
 		AG_LabelSizeHint(mErrorCaption, 1, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		AG_LabelJustify(mErrorCaption, AG_TEXT_CENTER);
+
+        mouse = new Mouse;
+		mouse->cursor = NULL;
+		mouse->cursorPos.x = 0;
+		mouse->cursorPos.y = 0;
 	}
 
 	InterfaceManager::~InterfaceManager()
 	{
+	    delete mouse;
 		AG_ViewDetach(mErrorWindow);
 		removeAllWindows();
 		AG_Destroy();

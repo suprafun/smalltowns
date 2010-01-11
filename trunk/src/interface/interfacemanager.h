@@ -55,6 +55,7 @@
 
 namespace ST
 {
+    class Node;
     struct Event
     {
         int button;
@@ -62,7 +63,14 @@ namespace ST
         int y;
         int type;
     };
+
+    struct Mouse
+    {
+        Node *cursor;
+        Point cursorPos;
+    };
 }
+
 typedef void (*myfunc)(ST::Event* evt);
 
 namespace ST
@@ -157,6 +165,13 @@ namespace ST
          */
         void handleMouseEvent(int button, int x, int y, int type);
 
+        /**
+         * Get Mouse
+         * Returns mouse
+         * @return Returns pointer to mouse
+         */
+        Mouse* getMouse() { return mouse; }
+
 	private:
 		std::list<AG_Window*> mWindows;
 		typedef std::list<AG_Window*>::iterator WindowItr;
@@ -167,6 +182,7 @@ namespace ST
 		XMLFile *mGuiSheet;
 		AG_Window *mErrorWindow;
 		AG_Label *mErrorCaption;
+        Mouse *mouse;
 	};
 
 	extern InterfaceManager *interfaceManager;

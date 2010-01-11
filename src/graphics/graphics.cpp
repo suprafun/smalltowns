@@ -81,6 +81,8 @@ namespace ST
 		mHeight = 768;
 
 		mCamera = NULL;
+		mFrames = 0;
+		mAverage = 5;
 	}
 
 	GraphicsEngine::~GraphicsEngine()
@@ -126,6 +128,9 @@ namespace ST
 
 	void GraphicsEngine::renderFrame()
 	{
+	    ++mFrames;
+	    sortNodes();
+
 		AG_LockVFS(agView);
 	    AG_BeginRendering();
 
@@ -141,6 +146,28 @@ namespace ST
 
         AG_EndRendering();
 		AG_UnlockVFS(agView);
+	}
+
+	void GraphicsEngine::sortNodes()
+	{
+	    std::vector<Texture*> texs;
+	    NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
+
+	    // add all the nodes to display list
+	    while (itr != itr_end)
+	    {
+	        Node *node = *itr;
+	        DisplayNode *displayNode = new DisplayNode;
+	        displayNode->texture = node->getTexture();
+	        displayNode->y = node->getPosition().y;
+	        mDisplayNodes.push_back(displayNode);
+	        texs.push_back(node->getTexture());
+	        ++itr;
+	    }
+
+	    // sort by texture
+
+        // sort by y
 	}
 
 	void GraphicsEngine::outputNodes()
@@ -587,5 +614,26 @@ namespace ST
         camPt.x = pt.x - (mWidth >> 1);
         camPt.y = pt.y - (mHeight >> 1);
         mCamera->setPosition(camPt);
+    }
+
+    void GraphicsEngine::saveFrames()
+    {
+        mFPS.push_back(mFrames);
+        mFrames = 0;
+
+        if (mFPS.size() > mAverage)
+        {
+            int av = 0;
+            for (int i = 0; i < mAverage; ++i)
+            {
+                av += mFPS[i];
+            }
+            av = av / mAverage;
+            mFPS.clear();
+
+            std::stringstream str;
+            str << "FPS: " << av;
+            logger->logDebug(str.str());
+        }
     }
 }

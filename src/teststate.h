@@ -80,6 +80,7 @@ namespace ST
 	private:
 		IRCServer *chatServer;
 		Camera *mCam;
+		int mTime;
         int ms;
         int lastframe;
         bool mLoaded;

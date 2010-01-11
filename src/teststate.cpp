@@ -69,9 +69,6 @@
 
 namespace ST
 {
-    Node *glowTile;
-    Point cursorPos;
-
     void submit_chat(AG_Event *event)
     {
         IRCServer *chatServer = static_cast<IRCServer*>(AG_PTR(1));
@@ -184,8 +181,9 @@ namespace ST
 
 		if (evt->button == 0)
 		{
-		    if (!glowTile)
+		    if (!interfaceManager->getMouse()->cursor)
                 return;
+
 		    int mapWidth = mapEngine->getWidth() * mapEngine->getTileWidth();
 		    int mapHeight = mapEngine->getHeight() * mapEngine->getTileHeight();
 
@@ -198,28 +196,31 @@ namespace ST
 		    Point mapPos = mapEngine->getMapPosition(pos, &pt);
 		    Point tilePos = mapEngine->getTilePosition(mapPos, pt);
 
-		    if (tilePos.x == cursorPos.x && tilePos.y == cursorPos.y)
+		    if (tilePos.x < 0 || tilePos.y < 0)
                 return;
 
-            cursorPos = tilePos;
+		    if (tilePos.x == interfaceManager->getMouse()->cursorPos.x && tilePos.y == interfaceManager->getMouse()->cursorPos.y)
+                return;
+
+            interfaceManager->getMouse()->cursorPos = tilePos;
 
 		    Point screenPos;
 		    screenPos.x = 0.5 * (tilePos.x - tilePos.y) * mapEngine->getTileWidth();
             screenPos.y = 0.5 * (tilePos.x + tilePos.y) * mapEngine->getTileHeight();
-			glowTile->moveNode(&screenPos);
+			interfaceManager->getMouse()->cursor->moveNode(&screenPos);
 		}
     }
 
 	TestState::TestState()
 	{
         ms = 0;
+        mTime = 0;
         lastframe = SDL_GetTicks();
         mLoaded = false;
         chatServer = new IRCServer;
 
         // load glowing tile
         graphicsEngine->loadTexture(resourceManager->getDataPath() + "glowtile.png");
-        glowTile = NULL;
 
 		// create camera
 		Rectangle rect;
@@ -275,7 +276,7 @@ namespace ST
 		delete chatServer;
         interfaceManager->removeAllWindows();
         interfaceManager->removeMouseListeners();
-        graphicsEngine->removeNode(glowTile);
+        graphicsEngine->removeNode(interfaceManager->getMouse()->cursor);
 	}
 
 	bool TestState::update()
@@ -286,7 +287,7 @@ namespace ST
             Packet *packet = new Packet(PGMSG_MAP_LOADED);
             networkManager->sendPacket(packet);
             mLoaded = true;
-			glowTile = graphicsEngine->createNode("Cursor", resourceManager->getDataPath() + "glowtile.png", NULL);
+			interfaceManager->getMouse()->cursor = graphicsEngine->createNode("Cursor", resourceManager->getDataPath() + "glowtile.png", NULL);
 	    }
 
 		// Check for input, if escape pressed, exit
@@ -302,6 +303,13 @@ namespace ST
         // number of milliseconds since last frame
         ms = SDL_GetTicks() - lastframe;
         lastframe = SDL_GetTicks();
+        mTime += ms;
+
+        if (mTime > 1000)
+        {
+            graphicsEngine->saveFrames();
+            mTime = 0;
+        }
 
         // pass the number of milliseconds to logic
         beingManager->logic(ms);

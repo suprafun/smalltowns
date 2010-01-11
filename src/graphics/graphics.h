@@ -63,6 +63,12 @@ namespace ST
 	struct Point;
 	struct Rectangle;
 
+	struct DisplayNode
+	{
+        Texture *texture;
+        int y;
+	};
+
 	class GraphicsEngine
 	{
 	public:
@@ -134,6 +140,12 @@ namespace ST
 		 * Renders a single frame to the screen
 		 */
 		void renderFrame();
+
+		/**
+		 * Sort Nodes
+		 * Puts nodes into texture order, then y order
+		 */
+        void sortNodes();
 
 		/**
 		 * Display Nodes
@@ -238,6 +250,11 @@ namespace ST
          */
         void warpCamera(const Point &pt);
 
+        /**
+         * Save FPS
+         */
+        void saveFrames();
+
 	protected:
 		SDL_Surface *mScreen;
 		int mWidth;
@@ -249,10 +266,16 @@ namespace ST
 
 	private:
 		Camera *mCamera;
+		unsigned int mFrames;
+		unsigned int mAverage;
+		std::vector<unsigned int> mFPS;
 
 		// list of nodes
 		std::list<Node*> mNodes;
 		typedef std::list<Node*>::const_iterator NodeItr;
+
+		std::list<DisplayNode*> mDisplayNodes;
+		typedef std::list<DisplayNode*>::iterator DisplayNodeItr;
 
 		// list of textures
 		std::map<std::string, Texture*> mTextures;

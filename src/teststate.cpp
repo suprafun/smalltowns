@@ -140,7 +140,7 @@ namespace ST
 
         Point camPos = graphicsEngine->getCamera()->getPosition();
         Point pos;
-        pos.x = evt->x + camPos.x + mapEngine->getTileWidth() / 2;
+        pos.x = evt->x + camPos.x;// + (mapEngine->getTileWidth() >> 1);
         pos.y = evt->y + camPos.y + mapEngine->getTileHeight();
 
         if (evt->button == SDL_BUTTON_LEFT && evt->type == 0)
@@ -164,18 +164,19 @@ namespace ST
                 if (mapEngine->blocked(pt))
                     return;
 
-                // save destination for later
-                player->getSelectedCharacter()->saveDestination(pos);
-
                 // send move message
                 std::stringstream str;
                 str << "sending move " << pos.x << "," << pos.y
                     << " from mouse click at " << evt->x << "," << evt->y;
                 logger->logDebug(str.str());
+
                 Packet *p = new Packet(PGMSG_PLAYER_MOVE);
                 p->setInteger(pos.x);
                 p->setInteger(pos.y);
                 networkManager->sendPacket(p);
+
+                // save destination for later
+                player->getSelectedCharacter()->saveDestination(pos);
             }
         }
 
@@ -183,6 +184,8 @@ namespace ST
 		{
 		    if (!interfaceManager->getMouse()->cursor)
                 return;
+
+            pos.x += mapEngine->getTileWidth() >> 1;
 
 		    int mapWidth = mapEngine->getWidth() * mapEngine->getTileWidth();
 		    int mapHeight = mapEngine->getHeight() * mapEngine->getTileHeight();

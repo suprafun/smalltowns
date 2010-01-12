@@ -129,7 +129,7 @@ namespace ST
 	void GraphicsEngine::renderFrame()
 	{
 	    ++mFrames;
-	    sortNodes();
+	    //sortNodes();
 
 		AG_LockVFS(agView);
 	    AG_BeginRendering();
@@ -150,24 +150,7 @@ namespace ST
 
 	void GraphicsEngine::sortNodes()
 	{
-	    std::vector<Texture*> texs;
-	    NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
 
-	    // add all the nodes to display list
-	    while (itr != itr_end)
-	    {
-	        Node *node = *itr;
-	        DisplayNode *displayNode = new DisplayNode;
-	        displayNode->texture = node->getTexture();
-	        displayNode->y = node->getPosition().y;
-	        mDisplayNodes.push_back(displayNode);
-	        texs.push_back(node->getTexture());
-	        ++itr;
-	    }
-
-	    // sort by texture
-
-        // sort by y
 	}
 
 	void GraphicsEngine::outputNodes()
@@ -192,7 +175,8 @@ namespace ST
                 continue;
 
             Rectangle rect = node->getBounds();
-            rect.x -= pt.x + (rect.width >> 1);
+            rect.x -= pt.x;
+            rect.x -= node->getWidth() >> 1;
             rect.y -= pt.y;
 
             drawTexturedRect(rect, node->getTexture());

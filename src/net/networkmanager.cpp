@@ -396,6 +396,7 @@ namespace ST
                     // found being, update their position
                     //Point start = being->getPosition();
 					being->setAnimation("maleSEwalk");
+					being->setState(STATE_MOVING);
                     being->calculateNextDestination(finish);
                 }
                 else if (player->getSelectedCharacter()->getId() == id)

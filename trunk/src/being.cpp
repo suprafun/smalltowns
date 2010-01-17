@@ -191,9 +191,7 @@ namespace ST
 
         std::vector<int> scores;
 
-        str << "Being map position " << beingPos.x << "," << beingPos.y << std::endl;
         str << "Being tile position " << tilePos.x << "," << tilePos.y << std::endl;
-        str << "Destination map position " << mapPos.x << "," << mapPos.y << std::endl;
         str << "Destination tile position " << endPos.x << "," << endPos.y << std::endl;
 
         // keep moving a tile towards destination until reached
@@ -252,9 +250,6 @@ namespace ST
         // check if reached way point
         if (mPosition.x == mWaypoints[0].x && mPosition.y == mWaypoints[0].y)
         {
-            std::stringstream str;
-            str << "Player reached " << mPosition.x << "," << mPosition.y;
-            logger->logDebug(str.str());
             mWaypoints.pop_front();
             if (mWaypoints.size() == 0)
             {

@@ -70,6 +70,8 @@ namespace ST
 				"failed to initialise SDL");
 		}
 
+		atexit(SDL_Quit);
+
 		// needed for input
 		SDL_EnableUNICODE(true);
 		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
@@ -90,10 +92,9 @@ namespace ST
 		if (mCamera)
 			delete mCamera;
 
-		SDL_FreeSurface(mScreen);
+		mNodes.clear();
 
-		// Do SDL cleanup
-		SDL_Quit();
+//		SDL_FreeSurface(mScreen);
 	}
 
 	Node* GraphicsEngine::createNode(std::string name, std::string texture, Point *point)

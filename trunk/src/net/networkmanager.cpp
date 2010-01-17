@@ -218,7 +218,7 @@ namespace ST
                 }
 
                 std::stringstream str;
-                str << "Found " << count << " character.";
+                str << "Found " << count << " characters.";
                 logger->logDebug(str.str());
 
                 // can now change state
@@ -322,6 +322,7 @@ namespace ST
                 int error = packet->getByte();
                 if (error == ERR_NONE)
                 {
+					logger->logDebug("Connected to game server.");
                     GameState *state = new TestState;
                     game->changeState(state);
                 }
@@ -394,7 +395,7 @@ namespace ST
                 if (being)
                 {
                     // found being, update their position
-                    //Point start = being->getPosition();
+					logger->logDebug("Being moving");
 					being->setAnimation("maleSEwalk");
 					being->setState(STATE_MOVING);
                     being->calculateNextDestination(finish);

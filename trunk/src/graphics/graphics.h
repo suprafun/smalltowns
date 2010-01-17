@@ -272,7 +272,7 @@ namespace ST
 
 		// list of nodes
 		std::list<Node*> mNodes;
-		typedef std::list<Node*>::const_iterator NodeItr;
+		typedef std::list<Node*>::iterator NodeItr;
 
 		std::list<DisplayNode*> mDisplayNodes;
 		typedef std::list<DisplayNode*>::iterator DisplayNodeItr;

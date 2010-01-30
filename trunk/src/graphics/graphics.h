@@ -273,6 +273,7 @@ namespace ST
 		// list of nodes
 		std::list<Node*> mNodes;
 		typedef std::list<Node*>::iterator NodeItr;
+		typedef std::list<Node*>::reverse_iterator NodeRevItr;
 
 		std::list<DisplayNode*> mDisplayNodes;
 		typedef std::list<DisplayNode*>::iterator DisplayNodeItr;

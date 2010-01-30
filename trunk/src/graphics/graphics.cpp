@@ -561,7 +561,7 @@ namespace ST
 	Node* GraphicsEngine::getNode(int x, int y)
     {
         Point pt; pt.x = x; pt.y = y;
-        NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
+        NodeRevItr itr = mNodes.rbegin(), itr_end = mNodes.rend();
 
         while (itr != itr_end)
         {

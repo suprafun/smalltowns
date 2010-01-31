@@ -255,6 +255,11 @@ namespace ST
          */
         void saveFrames();
 
+        /**
+         * Get FPS average
+         */
+        unsigned int getFPS();
+
 	protected:
 		SDL_Surface *mScreen;
 		int mWidth;
@@ -267,7 +272,8 @@ namespace ST
 	private:
 		Camera *mCamera;
 		unsigned int mFrames;
-		unsigned int mAverage;
+		unsigned int mAverageTime; // how often to update fps average
+		unsigned int mAverageFPS;
 		std::vector<unsigned int> mFPS;
 
 		// list of nodes

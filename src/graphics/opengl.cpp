@@ -40,12 +40,14 @@
 #include "opengl.h"
 #include "texture.h"
 
+#include "../utilities/log.h"
 #include "../utilities/types.h"
 
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <agar/core.h>
 #include <agar/gui.h>
+#include <sstream>
 
 namespace ST
 {
@@ -71,6 +73,10 @@ namespace ST
 		int bpp = video->vfmt->BitsPerPixel;
 
 		mScreen = SDL_SetVideoMode(mWidth, mHeight, bpp, SDL_OPENGL);
+
+		std::stringstream str;
+        str << "Using OpenGL renderer at " << mWidth << "x" << mHeight << "x" << bpp;
+        logger->logDebug(str.str());
 
 		glViewport(0, 0, mWidth, mHeight);
 		glMatrixMode(GL_PROJECTION);

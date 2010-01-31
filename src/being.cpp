@@ -93,7 +93,6 @@ namespace ST
 
     Being::~Being()
     {
-        delete mSetAnimation;
     }
 
     std::string Being::getName()
@@ -135,11 +134,11 @@ namespace ST
     {
         // delete any old animation that was set
         delete mSetAnimation;
+        mSetAnimation = NULL;
 
         // if name is empty, unset the animation
         if (name.empty())
         {
-            mSetAnimation = NULL;
             mUpdateTime = 0;
             return;
         }
@@ -158,7 +157,7 @@ namespace ST
         mSetAnimation = new Animation;
 
         // create new frames and store them in the animation
-        for (unsigned int i = 0; i < body->getFrames(); ++i)
+        for (unsigned int i = 0; i < body->getFrames() && i < hair->getFrames(); ++i)
         {
             Texture *tex = graphicsEngine->createAvatarFrame(mId, i, body->getTexture(), hair->getTexture());
             mSetAnimation->addTexture(tex);
@@ -166,6 +165,7 @@ namespace ST
             hair->nextFrame();
         }
 
+        // set the update rate based on number of frames per second
         mUpdateTime = 1000 / mSetAnimation->getFrames();
     }
 

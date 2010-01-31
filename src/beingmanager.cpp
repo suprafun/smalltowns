@@ -40,8 +40,6 @@
 #include "beingmanager.h"
 #include "being.h"
 
-#include "graphics/graphics.h"
-
 namespace ST
 {
     BeingManager::BeingManager()
@@ -151,7 +149,6 @@ namespace ST
         BeingIterator itr = mBeingMap.find(id);
         if (itr != mBeingMap.end())
         {
-            graphicsEngine->removeNode(itr->second);
             delete itr->second;
             mBeingMap.erase(itr);
         }

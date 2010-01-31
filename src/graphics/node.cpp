@@ -170,7 +170,7 @@ namespace ST
 
 	AnimatedNode::~AnimatedNode()
 	{
-	    mSetAnimation = NULL;
+	    delete mSetAnimation;
 	}
 
 	Texture* AnimatedNode::getTexture()
@@ -183,20 +183,16 @@ namespace ST
 
 	void AnimatedNode::setAnimation(const std::string &name)
 	{
-        // if name is empty, unset the animation
-        if (name.empty())
-            mSetAnimation = NULL;
+	    delete mSetAnimation;
+	    mSetAnimation = NULL;
 
-	    mSetAnimation = resourceManager->getAnimation(0, name);
+        mSetAnimation = resourceManager->getAnimation(0, name);
 
+        // set update rate based on number of frames
 	    if (mSetAnimation)
-	    {
 	        mUpdateTime = 1000 / mSetAnimation->getFrames();
-	    }
 	    else
-	    {
 	        mUpdateTime = 0;
-	    }
 	}
 
     void AnimatedNode::logic(int ms)

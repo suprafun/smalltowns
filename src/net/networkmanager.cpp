@@ -464,7 +464,12 @@ namespace ST
             case GPMSG_PLAYER_LEFT:
             {
                 unsigned int id = packet->getInteger();
-                beingManager->removeBeing(id);
+                Being *being = beingManager->findBeing(id);
+                if (being)
+                {
+                    graphicsEngine->removeNode(being);
+                    beingManager->removeBeing(id);
+                }
             } break;
 
             case GPMSG_PING:

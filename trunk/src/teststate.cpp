@@ -127,6 +127,12 @@ namespace ST
                 {
                     interfaceManager->sendToChat(utils::toString(networkManager->getPing()));
                 }
+                else if (chat.substr(1) == "fps")
+                {
+                    std::stringstream fpsStr;
+                    fpsStr << "Average FPS: " << graphicsEngine->getFPS();
+                    interfaceManager->sendToChat(fpsStr.str());
+                }
             }
             // clear input textbox
             AG_TextboxClearString(input);

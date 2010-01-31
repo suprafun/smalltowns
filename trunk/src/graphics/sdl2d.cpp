@@ -40,9 +40,11 @@
 #include "sdl2d.h"
 #include "texture.h"
 
+#include "../utilities/log.h"
 #include "../utilities/types.h"
 
 #include <SDL.h>
+#include <sstream>
 
 namespace ST
 {
@@ -63,6 +65,10 @@ namespace ST
 
 		mScreen = SDL_SetVideoMode(mWidth, mHeight, bpp, SDL_HWSURFACE|SDL_DOUBLEBUF);
 
+        std::stringstream str;
+        str << "Using SDL renderer at " << mWidth << "x" << mHeight << "x" << bpp;
+        logger->logDebug(str.str());
+
 		return mScreen ? true : false;
 	}
 
@@ -72,7 +78,7 @@ namespace ST
 
 	void SDLGraphics::drawTexturedRect(Rectangle &rect, Texture *texture)
 	{
-	    if (!texture)
+	    if (!texture || texture->getSDLSurface() == NULL)
             return;
 		SDL_Rect dstRect;
 		dstRect.x = rect.x;

@@ -84,7 +84,8 @@ namespace ST
 
 		mCamera = NULL;
 		mFrames = 0;
-		mAverage = 5;
+		mAverageTime = 5;
+		mAverageFPS = 0;
 	}
 
 	GraphicsEngine::~GraphicsEngine()
@@ -606,19 +607,21 @@ namespace ST
         mFPS.push_back(mFrames);
         mFrames = 0;
 
-        if (mFPS.size() > mAverage)
+        if (mFPS.size() > mAverageTime)
         {
             int av = 0;
-            for (int i = 0; i < mAverage; ++i)
+            for (int i = 0; i < mAverageTime; ++i)
             {
                 av += mFPS[i];
             }
-            av = av / mAverage;
+            av = av / mAverageTime;
             mFPS.clear();
-
-            std::stringstream str;
-            str << "FPS: " << av;
-            logger->logDebug(str.str());
+            mAverageFPS = av;
         }
+    }
+
+    unsigned int GraphicsEngine::getFPS()
+    {
+        return mAverageFPS;
     }
 }

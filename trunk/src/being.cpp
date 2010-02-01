@@ -159,7 +159,7 @@ namespace ST
         // create new frames and store them in the animation
         for (unsigned int i = 0; i < body->getFrames() && i < hair->getFrames(); ++i)
         {
-            Texture *tex = graphicsEngine->createAvatarFrame(mId, i, body->getTexture(), hair->getTexture());
+            Texture *tex = graphicsEngine->createAvatarFrame(mId, i+1, body->getTexture(), hair->getTexture());
             mSetAnimation->addTexture(tex);
             body->nextFrame();
             hair->nextFrame();

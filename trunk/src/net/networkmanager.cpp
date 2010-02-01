@@ -470,6 +470,7 @@ namespace ST
                     graphicsEngine->removeNode(being);
                     beingManager->removeBeing(id);
                 }
+				logger->logDebug("Player Left");
             } break;
 
             case GPMSG_PING:
@@ -481,9 +482,6 @@ namespace ST
             case GPMSG_PINGTIME:
             {
                 mPing = packet->getInteger();
-                std::stringstream str;
-                str << "Received ping time of " << mPing << " at " << time(NULL);
-                logger->logDebug(str.str());
             } break;
 
             default:

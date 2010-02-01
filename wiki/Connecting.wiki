@@ -12,3 +12,5 @@ Once registered or logged in, you will be asked to selected a character. You may
 = Troubleshooting =
 
 If it tells you it timed out connecting to the server, it will most likely ask you what server and port to connect to. The defaults are set in the townslife.cfg file which can be opened with a plain text editor.
+
+Version 0.0.6 or later is required with the current production server.

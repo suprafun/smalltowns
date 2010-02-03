@@ -88,6 +88,20 @@ namespace ST
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthFunc(GL_LEQUAL);
 
+		mTile = glGenLists(1);
+		glNewList(mTile, GL_COMPILE);
+		glBegin(GL_TRIANGLE_STRIP);
+            glTexCoord2i(1, 1);
+            glVertex3f(1.0f, 1.0f, 0.0f);
+            glTexCoord2i(0, 1);
+            glVertex3f(0.0f, 1.0f, 0.0f);
+            glTexCoord2i(1, 0);
+            glVertex3f(1.0f, 0.0f, 0.0f);
+            glTexCoord2i(0, 0);
+            glVertex3f(0.0f, 0.0f, 0.0f);
+        glEnd();
+        glEndList();
+
 		return mScreen ? true : false;
 	}
 
@@ -149,27 +163,13 @@ namespace ST
 
 		// set position and size to local variables
 		float x = (float)rect.x;
-		float y = (float)rect.y;
+		float y = (float)rect.y - rect.height;
 		float width = (float)rect.width;
 		float height = (float)rect.height;
 
-		float data[12];
-		data[0] = 0.0f; data[1] = -height; data[2] = 0.0f;
-		data[3] = width; data[4] = -height; data[5] = 0.0f;
-		data[6] = width; data[7] = 0.0f; data[8] = 0.0f;
-		data[9] = 0.0f; data[10] = 0.0f; data[11] = 0.0f;
-
-		int coords[8];
-		coords[0] = 0; coords[1] = 0;
-		coords[2] = 1; coords[3] = 0;
-		coords[4] = 1; coords[5] = 1;
-		coords[6] = 0; coords[7] = 1;
-
-		unsigned int indices[4];
-		indices[0] = 0; indices[1] = 1; indices[2] = 2; indices[3] = 3;
-
 		// move to the correct position
 		glTranslatef(x, y, 0.0f);
+		glScalef(width, height, 1.0f);
 
 		// enable transparancy
 		glEnable(GL_BLEND);
@@ -181,18 +181,9 @@ namespace ST
 		GLuint tex = texture->getGLTexture();
 		glBindTexture(GL_TEXTURE_2D, tex);
 		glEnable(GL_TEXTURE_2D);
-		glPolygonMode(GL_FRONT, GL_FILL);
 		glColor3f(1.0f, 1.0f, 1.0f);
 
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, data);
-		glTexCoordPointer(2, GL_INT, 0, coords);
-
-		glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, indices);
-
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        glCallList(mTile);
 
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);

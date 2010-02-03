@@ -46,6 +46,8 @@
 
 #include "graphics.h"
 
+#include <SDL_opengl.h>
+
 namespace ST
 {
 	class Texture;
@@ -53,6 +55,7 @@ namespace ST
 
 	class OpenGLGraphics : public GraphicsEngine
 	{
+	    GLuint mTile;
 	public:
 		/**
 		 * Constructor

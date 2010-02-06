@@ -96,7 +96,7 @@ namespace ST
         /**
          * Download file for updates
          */
-        bool downloadUpdateFile(const std::string &file);
+        bool downloadFile(const std::string &hostname, const std::string &file);
 
         /**
          * Set default settings

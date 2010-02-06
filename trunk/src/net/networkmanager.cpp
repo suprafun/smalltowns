@@ -64,7 +64,7 @@
 #include "../teststate.h"
 #include "../updatestate.h"
 
-//#include <curl/curl.h>
+#include <curl/curl.h>
 #include <sstream>
 
 #ifdef WIN32
@@ -518,22 +518,27 @@ namespace ST
 
 	void NetworkManager::sendVersion()
 	{
-		logger->logDebug("Sending client version");
+	    std::stringstream str;
+	    str << "Client version: " << CLIENT_VERSION;
+		logger->logDebug(str.str());
 	    Packet *packet = new Packet(PAMSG_CONNECT);
         packet->setInteger(CLIENT_VERSION);
         sendPacket(packet);
 	}
 
-	bool NetworkManager::downloadUpdateFile(const std::string &file)
+	bool NetworkManager::downloadFile(const std::string &hostname, const std::string &file)
 	{
-/*	    CURLcode success;
+	    if (hostname.empty() || file.empty())
+            return false;
+
+	    CURLcode success;
 
 	    // open file for writing to
 	    FILE *outFile;
 	    outFile = fopen(file.c_str(), "w");
 
 	    // url to download from
-	    std::string url = "http://www.casualgamer.co.uk/";
+	    std::string url = "http://" + hostname + "/";
 	    url.append(file);
 
 	    // initialise curl
@@ -550,7 +555,7 @@ namespace ST
 			if ((success = curl_easy_perform(handle)) != 0)
 			{
 				// error! - log it and clean up
-				logger->logError("Unable to get update file");
+				logger->logError("Unable to get file: " + file);
 				fclose(outFile);
 				curl_easy_cleanup(handle);
 				return false;
@@ -561,7 +566,7 @@ namespace ST
 		}
 
         fclose(outFile);
-*/
+
         return true;
 	}
 

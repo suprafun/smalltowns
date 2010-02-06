@@ -42,36 +42,105 @@
 #include "input.h"
 #include "game.h"
 
+#include "graphics/graphics.h"
+#include "interface/interfacemanager.h"
+
 #include "net/networkmanager.h"
 #include "net/packet.h"
 #include "net/protocol.h"
+
+#include "utilities/log.h"
+#include "utilities/xml.h"
 
 #include <SDL.h>
 
 namespace ST
 {
+    void clicked(AG_Event *event)
+    {
+        UpdateState *state = static_cast<UpdateState*>(AG_PTR(1));
+        state->mAccepted = true;
+    }
+
+    std::string readFile(const std::string &filename)
+    {
+        std::string fileString;
+        char buffer[256];
+        int size = 0;
+        FILE *file = fopen(filename.c_str(), "r");
+        do
+        {
+            memset(buffer, 0, 256);
+            size = fread(buffer, 255, 1, file);
+            fileString.append(buffer);
+        } while (size != 0 || size >= 255);
+
+        return fileString;
+    }
+
     UpdateState::UpdateState()
     {
-        mSuccess = networkManager->downloadUpdateFile("update.txt");
+        XMLFile file;
+
+        if (file.load("townslife.cfg"))
+        {
+            file.setElement("newshost");
+            hostname = file.readString("newshost", "host");
+            filename = file.readString("newshost", "file");
+        }
+		file.close();
+
+        mAccepted = false;
+        mSuccess = false;
     }
 
     void UpdateState::enter()
     {
+        AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN|AG_WINDOW_KEEPBELOW);
+		AG_WindowShow(win);
+		AG_WindowMaximize(win);
+		interfaceManager->addWindow(win);
 
+		int halfScreenWidth = graphicsEngine->getScreenWidth() / 2;
+		int halfScreenHeight = graphicsEngine->getScreenHeight() / 2;
+
+		AG_Window *newsWin = AG_WindowNew(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE);
+		AG_WindowSetCaption(newsWin, "News");
+		AG_WindowSetGeometry(newsWin, halfScreenWidth - 190, halfScreenHeight - 125, 380, 250);
+		AG_WindowShow(newsWin);
+		interfaceManager->addWindow(newsWin);
+
+		text = AG_LabelNew(newsWin, AG_LABEL_EXPAND, "Downloading Updates");
+		//AG_Expand(text);
+
+		button = AG_ButtonNewFn(newsWin, 0, "OK", clicked, "%p", this);
+		AG_ButtonDisable(button);
     }
 
     void UpdateState::exit()
     {
-
+        interfaceManager->removeAllWindows();
     }
 
     bool UpdateState::update()
     {
-        if (mSuccess)
+        if (!mSuccess)
         {
+            logger->logDebug("Downloading news update.");
+            mSuccess = networkManager->downloadFile(hostname, filename);
+            logger->logDebug("Finished downloading news update.");
+            AG_ButtonEnable(button);
+            std::string news = readFile(filename);
+            if (!news.empty())
+                AG_LabelText(text, news.c_str());
+        }
+
+        if (mAccepted)
+        {
+            logger->logDebug("Retrieving character list");
             Packet *packet = new Packet(PAMSG_CHAR_LIST);
             networkManager->sendPacket(packet);
-			mSuccess = false;
+			mAccepted = false;
         }
 
         if (inputManager->getKey(SDLK_ESCAPE))

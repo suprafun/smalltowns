@@ -46,6 +46,8 @@
 
 #include "gamestate.h"
 
+#include <agar/core.h>
+#include <agar/gui.h>
 #include <string>
 
 namespace ST
@@ -73,9 +75,12 @@ namespace ST
 		 */
 		bool update();
 
-    private:
         bool mSuccess;
-
+        bool mAccepted;
+        AG_Button *button;
+        AG_Label *text;
+        std::string hostname;
+        std::string filename;
 	};
 }
 

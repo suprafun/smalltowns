@@ -71,7 +71,9 @@ namespace ST
     Game::Game(const std::string &path)
     {
         resourceManager = new ResourceManager(path);
-        logger = new Log;
+        logger = new Log(resourceManager->getWritablePath() + "log.txt");
+		logger->logDebug("Data Path: " + resourceManager->getDataPath());
+		logger->logDebug("Writable Path: " + resourceManager->getWritablePath());
     }
 
 	Game::~Game()
@@ -95,7 +97,11 @@ namespace ST
 		int port = 0;
 		int opengl = 0;
 
+#ifndef __APPLE__
 		if (file.load("townslife.cfg"))
+#else
+		if (file.load(resourceManager->getDataPath() + "townslife.cfg"))
+#endif
         {
             file.setElement("server");
             hostname = file.readString("server", "host");

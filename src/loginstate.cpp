@@ -44,6 +44,7 @@
 #include "input.h"
 #include "game.h"
 #include "player.h"
+#include "resourcemanager.h"
 
 #include "net/networkmanager.h"
 #include "net/packet.h"
@@ -158,7 +159,11 @@ namespace ST
 		mHalfScreenHeight = screenHeight / 2;
 
 		file = new XMLFile();
+#ifndef __APPLE__
 		file->load("townslife.cfg");
+#else
+		file->load(resourceManager->getDataPath()+"townslife.cfg");
+#endif
 
 		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN|AG_WINDOW_DENYFOCUS);
 		AG_WindowShow(win);

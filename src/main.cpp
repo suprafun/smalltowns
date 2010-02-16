@@ -41,6 +41,8 @@
 
 #include "game.h"
 
+#include <SDL.h>
+
 ST::Game *game = 0;
 
 int main(int argc, char *argv[])

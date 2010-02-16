@@ -41,6 +41,7 @@
 #include "characterstate.h"
 #include "input.h"
 #include "game.h"
+#include "resourcemanager.h"
 
 #include "graphics/graphics.h"
 #include "interface/interfacemanager.h"
@@ -68,6 +69,8 @@ namespace ST
         char buffer[256];
         int size = 0;
         FILE *file = fopen(filename.c_str(), "r");
+		if (!file)
+			return "";
         do
         {
             memset(buffer, 0, 256);
@@ -82,7 +85,11 @@ namespace ST
     {
         XMLFile file;
 
+#ifndef __APPLE__
         if (file.load("townslife.cfg"))
+#else
+		if (file.load(resourceManager->getDataPath() + "townslife.cfg"))
+#endif
         {
             file.setElement("newshost");
             hostname = file.readString("newshost", "host");
@@ -106,7 +113,7 @@ namespace ST
 
 		AG_Window *newsWin = AG_WindowNew(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE);
 		AG_WindowSetCaption(newsWin, "News");
-		AG_WindowSetGeometry(newsWin, halfScreenWidth - 190, halfScreenHeight - 125, 380, 250);
+		AG_WindowSetGeometry(newsWin, halfScreenWidth - 200, halfScreenHeight - 125, 400, 250);
 		AG_WindowShow(newsWin);
 		interfaceManager->addWindow(newsWin);
 
@@ -130,7 +137,7 @@ namespace ST
             mSuccess = networkManager->downloadFile(hostname, filename);
             logger->logDebug("Finished downloading news update.");
             AG_ButtonEnable(button);
-            std::string news = readFile(filename);
+            std::string news = readFile(resourceManager->getWritablePath() + filename);
             if (!news.empty())
                 AG_LabelText(text, news.c_str());
         }

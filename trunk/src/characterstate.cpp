@@ -196,8 +196,13 @@ namespace ST
 		mSelected = 0;
 		mAvatar = 0;
 
+#ifndef __APPLE__
 		resourceManager->loadBodyParts("body.cfg");
         resourceManager->loadAnimations("animation.cfg");
+#else
+		resourceManager->loadBodyParts(resourceManager->getDataPath() + "body.cfg");
+        resourceManager->loadAnimations(resourceManager->getDataPath() + "animation.cfg");
+#endif
 
 		BodyPart *body = resourceManager->getDefaultBody(PART_BODY);
 		BodyPart *hair = resourceManager->getDefaultBody(PART_HAIR);

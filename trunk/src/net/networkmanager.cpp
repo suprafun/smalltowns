@@ -41,6 +41,7 @@
 #include "host.h"
 #include "packet.h"
 #include "protocol.h"
+#include "resourcemanager.h"
 
 #include "../graphics/camera.h"
 #include "../graphics/graphics.h"
@@ -535,7 +536,13 @@ namespace ST
 
 	    // open file for writing to
 	    FILE *outFile;
-	    outFile = fopen(file.c_str(), "w");
+		std::string fullpath = resourceManager->getWritablePath() + file;
+	    outFile = fopen(fullpath.c_str(), "w");
+		if (!outFile)
+		{
+			logger->logDebug("Failed to open file for downloading.");
+			return false;
+		}
 
 	    // url to download from
 	    std::string url = "http://" + hostname + "/";

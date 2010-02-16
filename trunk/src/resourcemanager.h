@@ -105,6 +105,11 @@ namespace ST
          * Returns the path to data directory
          */
         std::string getDataPath();
+		
+		/**
+		 * Returns the path to writing data
+		 */
+		std::string getWritablePath();
 
         /**
          * Check a file or path exists
@@ -123,6 +128,7 @@ namespace ST
         typedef std::map<std::string, std::list<BeingAnimation*> >::iterator AnimationItr;
 
         std::string mDataPath;
+		std::string mWriteDataPath;
     };
 
     extern ResourceManager *resourceManager;

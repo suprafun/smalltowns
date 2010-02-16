@@ -44,10 +44,14 @@
 
 #include "resources/bodypart.h"
 
+#include "utilities/log.h"
 #include "utilities/xml.h"
 
 #include <physfs.h>
 #include <sstream>
+#ifdef __APPLE__
+#include <CoreFoundation/CFBundle.h>
+#endif
 
 namespace ST
 {
@@ -62,9 +66,26 @@ namespace ST
 
 #ifndef __APPLE__
         mDataPath = "data/";
+		mWriteDataPath = "";
         PHYSFS_addToSearchPath("data", 0);
 #else
-        //TODO: Add OSX support
+        CFBundleRef mainBundle = CFBundleGetMainBundle();
+		CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+		char resPath[PATH_MAX];
+		CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)resPath, PATH_MAX);
+		CFRelease(resourcesURL);
+		mDataPath = resPath;
+		mDataPath.append("/");
+		mWriteDataPath = PHYSFS_getUserDir();
+		mWriteDataPath.append("Library/Application Support/townslife/");
+		PHYSFS_addToSearchPath(resPath, 0);
+		if (!doesExist(mWriteDataPath))
+		{
+			PHYSFS_setWriteDir(PHYSFS_getUserDir());
+			PHYSFS_mkdir("Library/Application Support/townslife/");
+			PHYSFS_setWriteDir(mWriteDataPath.c_str());
+		}
+		PHYSFS_addToSearchPath(mWriteDataPath.c_str(), 0);
 #endif
     }
 
@@ -265,6 +286,11 @@ namespace ST
     {
         return mDataPath;
     }
+	
+	std::string ResourceManager::getWritablePath()
+	{
+		return mWriteDataPath;
+	}
 
     bool ResourceManager::doesExist(const std::string &filename)
     {

@@ -44,13 +44,14 @@
 #include <string>
 #include <vector>
 
+#include "utilities/types.h"
+
 class TiXmlElement;
 
 namespace ST
 {
 	class Node;
 	class Texture;
-	struct Point;
 
 	enum
 	{
@@ -259,6 +260,8 @@ namespace ST
 	private:
 		std::vector<Layer*> mLayers;
 		std::vector<Tileset*> mTilesets;
+		Point mTileWalk[8];
+		Point mMapWalk[8];
 		int mWidth;
 		int mHeight;
 		int mTileWidth;

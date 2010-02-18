@@ -118,6 +118,40 @@ namespace ST
         mTileWidth = 0;
         mTileHeight = 0;
         mLoaded = false;
+		
+		mTileWalk[0].x = -1;
+		mTileWalk[0].y = -1;
+		mTileWalk[1].x = 0;
+		mTileWalk[1].y = -1;
+		mTileWalk[2].x = 1;
+		mTileWalk[2].y = -1;
+		mTileWalk[3].x = 1;
+		mTileWalk[3].y = 0;
+		mTileWalk[4].x = 1;
+		mTileWalk[4].y = 1;
+		mTileWalk[5].x = 0;
+		mTileWalk[5].y = 1;
+		mTileWalk[6].x = -1;
+		mTileWalk[6].y = 1;
+		mTileWalk[7].x = -1;
+		mTileWalk[7].y = 0;
+		
+		mMapWalk[0].x = 0;
+		mMapWalk[0].y = -1;
+		mMapWalk[1].x = 1;
+		mMapWalk[1].y = -1;
+		mMapWalk[2].x = 1;
+		mMapWalk[2].y = 0;
+		mMapWalk[3].x = 1;
+		mMapWalk[3].y = 1;
+		mMapWalk[4].x = 0;
+		mMapWalk[4].y = 1;
+		mMapWalk[5].x = -1;
+		mMapWalk[5].y = 1;
+		mMapWalk[6].x = -1;
+		mMapWalk[6].y = 0;
+		mMapWalk[7].x = -1;
+		mMapWalk[8].y = -1;
 	}
 
 	Map::~Map()
@@ -201,76 +235,19 @@ namespace ST
     {
         Point newPos = pos;
 
-        switch (dir)
-        {
-            case DIRECTION_NORTH:
-                --newPos.x;
-                --newPos.y;
-                break;
-            case DIRECTION_NORTHEAST:
-                --newPos.y;
-                break;
-            case DIRECTION_EAST:
-                ++newPos.x;
-                --newPos.y;
-                break;
-            case DIRECTION_SOUTHEAST:
-                ++newPos.x;
-                break;
-            case DIRECTION_SOUTH:
-                ++newPos.x;
-                ++newPos.y;
-                break;
-            case DIRECTION_SOUTHWEST:
-                ++newPos.y;
-                break;
-            case DIRECTION_WEST:
-                --newPos.x;
-                ++newPos.y;
-                break;
-            case DIRECTION_NORTHWEST:
-                --newPos.x;
-                break;
-        }
-
+        newPos.x += mTileWalk[dir].x;
+		newPos.y += mTileWalk[dir].y;
+		
         return newPos;
     }
 
     Point Map::walkMap(const Point &pos, int dir)
     {
         Point newPos = pos;
-        switch (dir)
-        {
-            case DIRECTION_NORTH:
-                --newPos.y;
-                break;
-            case DIRECTION_NORTHEAST:
-                ++newPos.x;
-                --newPos.y;
-                break;
-            case DIRECTION_EAST:
-                ++newPos.x;
-                break;
-            case DIRECTION_SOUTHEAST:
-                ++newPos.x;
-                ++newPos.y;
-                break;
-            case DIRECTION_SOUTH:
-                ++newPos.y;
-                break;
-            case DIRECTION_SOUTHWEST:
-                --newPos.x;
-                ++newPos.y;
-                break;
-            case DIRECTION_WEST:
-                --newPos.x;
-                break;
-            case DIRECTION_NORTHWEST:
-                --newPos.x;
-                --newPos.y;
-                break;
-        }
-
+        
+		newPos.x += mMapWalk[dir].x;
+		newPos.y += mMapWalk[dir].y;
+		
         return newPos;
     }
 

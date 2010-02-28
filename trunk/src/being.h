@@ -115,6 +115,11 @@ namespace ST
          * Stores a destination for path finding
          */
         virtual void saveDestination(const Point &pos);
+        
+        /**
+         * Change the animation
+         */
+        virtual void changeAnimation();
 
     public:
         Look look;

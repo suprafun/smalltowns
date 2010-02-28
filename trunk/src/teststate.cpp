@@ -146,10 +146,10 @@ namespace ST
 
         Point camPos = graphicsEngine->getCamera()->getPosition();
         Point pos;
-        pos.x = evt->x + camPos.x;// + (mapEngine->getTileWidth() >> 1);
+        pos.x = evt->x + camPos.x;
         pos.y = evt->y + camPos.y + mapEngine->getTileHeight();
 
-        if (evt->button == SDL_BUTTON_LEFT && evt->type == 0)
+        if (evt->button == SDL_BUTTON_LEFT && evt->type == 1)
         {
             // check user clicked on map
             Node *node = graphicsEngine->getNode(pos.x, pos.y);
@@ -162,20 +162,13 @@ namespace ST
                     being->toggleName();
                     return;
                 }
-
-                Point rem;
-                Point mapPt = mapEngine->getMapPosition(pos, &rem);
-                Point pt = mapEngine->getTilePosition(mapPt, rem);
+                
+                Point pt = mapEngine->convertPixelToTile(pos.x, pos.y);
 
                 if (mapEngine->blocked(pt))
                     return;
 
                 // send move message
-                std::stringstream str;
-                str << "sending move " << pos.x << "," << pos.y
-                    << " from mouse click at " << evt->x << "," << evt->y;
-                logger->logDebug(str.str());
-
                 Packet *p = new Packet(PGMSG_PLAYER_MOVE);
                 p->setInteger(pos.x);
                 p->setInteger(pos.y);
@@ -200,10 +193,8 @@ namespace ST
 		        return;
 		    if (pos.y > mapHeight || pos.y < 0)
 		        return;
-
-		    Point pt;
-		    Point mapPos = mapEngine->getMapPosition(pos, &pt);
-		    Point tilePos = mapEngine->getTilePosition(mapPos, pt);
+            
+            Point tilePos = mapEngine->convertPixelToTile(pos.x, pos.y);
 
 		    if (tilePos.x < 0 || tilePos.y < 0)
                 return;

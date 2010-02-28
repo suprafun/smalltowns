@@ -173,12 +173,7 @@ namespace ST
         Layer* getLayer(int layer);
 
         /**
-         * Walks a tile
-         */
-        Point walkTile(const Point &pos, int dir);
-
-        /**
-         * Walks a map position
+         * Walks a tile on the map
          */
         Point walkMap(const Point &pos, int dir);
 
@@ -205,22 +200,14 @@ namespace ST
          * @return Returns the node at that position
          */
         Node* getTile(int x, int y, unsigned int layer);
-
-        /**
-         * Returns map position
-         * @param pos The world pixel position of the tile
-         * @param remainder The remainder will be stored here
-         * @return The map position of the tile
-         */
-        Point getMapPosition(const Point &pos, Point *remainder);
-
+        
         /**
          * Return tile position
-         * @param pos The map position of the tile
-         * @param pt The remainder left over used to find exact tile
-         * @return The tile position of the tile
+         * @param x Pixel x to convert
+         * @param y Pixel y to convert
+         * @return The tile x and y
          */
-        Point getTilePosition(const Point &pos, const Point &pt);
+        Point convertPixelToTile(int x, int y);
 
         /**
          * Return if a tile is blocking
@@ -260,8 +247,7 @@ namespace ST
 	private:
 		std::vector<Layer*> mLayers;
 		std::vector<Tileset*> mTilesets;
-		Point mTileWalk[8];
-		Point mMapWalk[8];
+        Point mTileWalk[8];
 		int mWidth;
 		int mHeight;
 		int mTileWidth;

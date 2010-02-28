@@ -89,6 +89,22 @@ namespace ST
     Being::Being(int id, const std::string &name, Texture *avatar):
         AnimatedNode(name, avatar), mId(id)
     {
+        look.hair = 0;
+        look.face = 0;
+        look.body = 0;
+        look.chest = 0;
+        look.legs = 0;
+        look.feet = 0;
+        look.gender = 0;
+        look.hairColour.r = 0;
+        look.hairColour.g = 0;
+        look.hairColour.b = 0;
+        look.eyeColour.r = 0;
+        look.eyeColour.g = 0;
+        look.eyeColour.b = 0;
+        look.skinColour.r = 0;
+        look.skinColour.g = 0;
+        look.skinColour.b = 0;
     }
 
     Being::~Being()
@@ -172,15 +188,7 @@ namespace ST
     bool Being::calculateNextDestination(const Point &finish)
     {
         int hops = 0;
-        Point pt;
-        Point mapPos = mapEngine->getMapPosition(finish, &pt);
-        Point endPos = mapEngine->getTilePosition(mapPos, pt);
-        Point beingPos = mapEngine->getMapPosition(mPosition, &pt);
-        Point tilePos = mapEngine->getTilePosition(beingPos, pt);
-        Point screenPos = {0, 0};
-        Point wayPos = tilePos;
         int dir = DIRECTION_NORTH;
-        std::stringstream str;
 
         // set start point
         mLastPosition.x = mPosition.x;
@@ -188,11 +196,10 @@ namespace ST
 
         // empty any previous path
         mWaypoints.clear();
-
-        std::vector<int> scores;
-
-        str << "Being tile position " << tilePos.x << "," << tilePos.y << std::endl;
-        str << "Destination tile position " << endPos.x << "," << endPos.y << std::endl;
+        
+        Point wayPos = getTilePosition();
+        Point endPos = mapEngine->convertPixelToTile(finish.x, finish.y);
+        Point screenPos = {0,0};
 
         // keep moving a tile towards destination until reached
         while(hops < 20)
@@ -207,8 +214,6 @@ namespace ST
             // find the tile inbetween
             wayPos = getNextTile(wayPos, dir);
 
-            str << "Waypoint position " << wayPos.x << "," << wayPos.y << " added." << std::endl;
-
             // translate to screen position and store that
             screenPos.x = 0.5 * (wayPos.x - wayPos.y) * mapEngine->getTileWidth();
             screenPos.y = 0.5 * (wayPos.x + wayPos.y) * mapEngine->getTileHeight();
@@ -217,9 +222,7 @@ namespace ST
             ++hops;
         }
 
-		mWaypoints.push_back(finish);
-
-        logger->logDebug(str.str());
+		mWaypoints.push_back(finish);\
 
         return (hops < 20);
     }
@@ -322,5 +325,42 @@ namespace ST
     void Being::saveDestination(const Point &pos)
     {
         mDestination = pos;
+    }
+    
+    void Being::changeAnimation()
+    {
+        std::stringstream str;
+        
+        // create the string for new animation
+        // check gender
+        // check direction
+        // check state
+        // final string will look like maleSEwalk
+        
+        if (look.gender == 0)
+            str << "male";
+        else
+            str << "female";
+        
+        switch (mDirection)
+        {
+            case DIRECTION_NORTHWEST:
+            case DIRECTION_NORTHEAST:
+                str << "NE";
+                break;
+            case DIRECTION_SOUTHWEST:    
+            case DIRECTION_SOUTHEAST:
+                str << "SE";
+                break;
+                
+            default:
+                str << "SE";
+                break;
+        }
+        
+        if (mState == STATE_MOVING)
+            str << "walk";
+
+        setAnimation(str.str());
     }
 }

@@ -50,9 +50,10 @@ namespace ST
 	void InputManager::getEvents()
 	{
 		SDL_Event event;
+        int rv = 0;
 		while (SDL_PollEvent(&event))
 		{
-		    AG_ProcessEvent(&event);
+		    rv = AG_ProcessEvent(&event);
 
 			switch (event.type)
 			{
@@ -64,6 +65,8 @@ namespace ST
                 } break;
             case SDL_MOUSEBUTTONDOWN:
                 {
+                    if (rv == 1)
+                        return;
                     interfaceManager->handleMouseEvent(event.button.button,
                                                        event.button.x, event.button.y,
                                                        1);

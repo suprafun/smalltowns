@@ -272,7 +272,7 @@ namespace ST
             // cycle through each line and output to console each line
             for (int line = 0; line < lines; ++line)
             {
-                AG_ConsoleMsg(chat, "%s", msg.substr(pos, npos).c_str());
+                AG_ConsoleAppendLine(chat, msg.substr(pos, npos).c_str());
                 pos += npos;
                 if (pos + npos > msg.size())
                     npos = msg.size() - pos;

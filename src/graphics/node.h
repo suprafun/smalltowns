@@ -185,6 +185,12 @@ namespace ST
          * Set animation
          */
         virtual void setAnimation(const std::string &name);
+        
+        /**
+         * Turn Node
+         * Changes the direction the node faces
+         */
+        virtual void turnNode(int direction);
 
         /**
          * Logic function
@@ -196,6 +202,7 @@ namespace ST
         Animation *mSetAnimation;
         int mUpdateTime;
         int mTimeSinceLastUpdate;
+        int mDirection;
 	};
 }
 

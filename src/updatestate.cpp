@@ -114,7 +114,8 @@ namespace ST
 		AG_Window *newsWin = AG_WindowNew(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE);
 		AG_WindowSetCaption(newsWin, "News");
 		AG_WindowSetGeometry(newsWin, halfScreenWidth - 200, halfScreenHeight - 125, 400, 250);
-		AG_WindowShow(newsWin);
+		AG_WindowSetSideBorders(newsWin, 3);
+        AG_WindowShow(newsWin);
 		interfaceManager->addWindow(newsWin);
 
 		text = AG_LabelNew(newsWin, AG_LABEL_EXPAND, "Downloading Updates");

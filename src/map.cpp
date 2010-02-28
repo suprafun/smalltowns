@@ -119,39 +119,22 @@ namespace ST
         mTileHeight = 0;
         mLoaded = false;
 		
-		mTileWalk[0].x = -1;
+		mTileWalk[0].x = 0;
 		mTileWalk[0].y = -1;
-		mTileWalk[1].x = 0;
+		mTileWalk[1].x = 1;
 		mTileWalk[1].y = -1;
 		mTileWalk[2].x = 1;
-		mTileWalk[2].y = -1;
+		mTileWalk[2].y = 0;
 		mTileWalk[3].x = 1;
-		mTileWalk[3].y = 0;
-		mTileWalk[4].x = 1;
+		mTileWalk[3].y = 1;
+		mTileWalk[4].x = 0;
 		mTileWalk[4].y = 1;
-		mTileWalk[5].x = 0;
+		mTileWalk[5].x = -1;
 		mTileWalk[5].y = 1;
 		mTileWalk[6].x = -1;
-		mTileWalk[6].y = 1;
+		mTileWalk[6].y = 0;
 		mTileWalk[7].x = -1;
-		mTileWalk[7].y = 0;
-		
-		mMapWalk[0].x = 0;
-		mMapWalk[0].y = -1;
-		mMapWalk[1].x = 1;
-		mMapWalk[1].y = -1;
-		mMapWalk[2].x = 1;
-		mMapWalk[2].y = 0;
-		mMapWalk[3].x = 1;
-		mMapWalk[3].y = 1;
-		mMapWalk[4].x = 0;
-		mMapWalk[4].y = 1;
-		mMapWalk[5].x = -1;
-		mMapWalk[5].y = 1;
-		mMapWalk[6].x = -1;
-		mMapWalk[6].y = 0;
-		mMapWalk[7].x = -1;
-		mMapWalk[8].y = -1;
+		mTileWalk[7].y = -1;
 	}
 
 	Map::~Map()
@@ -231,7 +214,7 @@ namespace ST
         return mLayers[layer];
     }
 
-    Point Map::walkTile(const Point &pos, int dir)
+    Point Map::walkMap(const Point &pos, int dir)
     {
         Point newPos = pos;
 
@@ -241,19 +224,9 @@ namespace ST
         return newPos;
     }
 
-    Point Map::walkMap(const Point &pos, int dir)
-    {
-        Point newPos = pos;
-        
-		newPos.x += mMapWalk[dir].x;
-		newPos.y += mMapWalk[dir].y;
-		
-        return newPos;
-    }
-
     Node* Map::getTile(const Point &pos, int dir)
     {
-        Point newPos = walkTile(pos, dir);
+        Point newPos = walkMap(pos, dir);
 
         int tilex = 0.5 * (newPos.x - newPos.y) * mTileWidth;
         int tiley = 0.5 * (newPos.x + newPos.y) * mTileHeight;
@@ -263,9 +236,7 @@ namespace ST
 
     Node* Map::getTile(const Point &pos)
     {
-        Point pt;
-        Point mapPos = getMapPosition(pos, &pt);
-        Point tilePos = getTilePosition(mapPos, pt);
+        Point tilePos = convertPixelToTile(pos.x, pos.y);
 
         return mLayers[0]->getNodeAt(tilePos.x, tilePos.y);
     }
@@ -275,89 +246,6 @@ namespace ST
         if (layer >= mLayers.size())
             return NULL;
         return mLayers[layer]->getNodeAt(x, y);
-    }
-
-    Point Map::getMapPosition(const Point &pos, Point *remainder)
-    {
-        Point cpt, fpt;
-
-        // get rough estimate of tile
-        cpt.x = pos.x / mTileWidth;
-        cpt.y = pos.y / mTileHeight;
-
-        fpt.x = pos.x % mTileWidth;
-        fpt.y = pos.y % mTileHeight;
-
-        // adjust if negative
-        if (fpt.x < 0)
-        {
-            fpt.x += mTileWidth;
-            --cpt.x;
-        }
-        if (fpt.y < 0)
-        {
-            fpt.y += mTileHeight;
-            --cpt.y;
-        }
-
-        if (remainder != NULL)
-            *remainder = fpt;
-
-        return cpt;
-    }
-
-    Point Map::getTilePosition(const Point &pos, const Point &pt)
-    {
-        Point origPos = pos;
-        Point tilePos; tilePos.x = 0; tilePos.y = 0;
-
-        int dir = DIRECTION_EAST;
-
-        if (pos.x < 0)
-        {
-            dir = DIRECTION_WEST;
-            origPos.x = -origPos.x;
-        }
-
-        while (origPos.x > 0)
-        {
-            tilePos = walkTile(tilePos, dir);
-            --origPos.x;
-        }
-
-        while (origPos.y > 0)
-        {
-            tilePos = walkTile(tilePos, DIRECTION_SOUTH);
-            --origPos.y;
-        }
-
-        int x = pt.x - (mTileWidth >> 1);
-
-        if (pt.y < (mTileHeight >> 1))
-        {
-            if (x > (pt.y * 2))
-            {
-                tilePos = walkTile(tilePos, DIRECTION_NORTHEAST);
-            }
-            else if (-x > (pt.y * 2))
-            {
-                tilePos = walkTile(tilePos, DIRECTION_NORTHWEST);
-            }
-        }
-        else
-        {
-            int y = mTileHeight - pt.y;
-            if (x > (y * 2))
-            {
-                tilePos = walkTile(tilePos, DIRECTION_SOUTHEAST);
-            }
-            else if (-x > (y * 2))
-            {
-                tilePos = walkTile(tilePos, DIRECTION_SOUTHWEST);
-            }
-        }
-
-        return tilePos;
     }
 
     bool Map::blocked(const Point &pos)
@@ -579,6 +467,21 @@ namespace ST
         free(data);
 
         mLayers.push_back(l);
+    }
+    
+    Point Map::convertPixelToTile(int x, int y)
+    {
+        Point pt;
+        const float ratio = (float)mTileWidth / mTileHeight;
+        
+        x -= mTileWidth / 2;
+        const float mx = y + (x / ratio);
+        const float my = y - (x / ratio);
+        
+        pt.x = mx / mTileHeight;
+        pt.y = my / mTileHeight;
+        
+        return pt;
     }
 }
 

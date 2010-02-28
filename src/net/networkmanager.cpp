@@ -367,19 +367,12 @@ namespace ST
                     being->setAnimation("");
                     being->setState(STATE_IDLE);
                     logger->logDebug("Server says Invalid move");
-                    Point pt = being->getPosition();
-                    Point rem;
-                    Point tile = mapEngine->getTilePosition(mapEngine->getMapPosition(pt, &rem), rem);
-                    std::stringstream str;
-                    str << "Being pos: " << pt.x << "," << pt.y << std::endl;
-                    str << "Being tile:" << tile.x << "," << tile.y;
-                    logger->logDebug(str.str());
                 }
                 else
                 {
                     logger->logDebug("Got player move");
-                    being->setAnimation("maleSEwalk");
                     being->setState(STATE_MOVING);
+                    being->changeAnimation();
                     being->calculateNextDestination();
                 }
             } break;
@@ -397,8 +390,8 @@ namespace ST
                 {
                     // found being, update their position
 					logger->logDebug("Being moving");
-					being->setAnimation("maleSEwalk");
-					being->setState(STATE_MOVING);
+                    being->setState(STATE_MOVING);
+					being->changeAnimation();
                     being->calculateNextDestination(finish);
                 }
                 else if (player->getSelectedCharacter()->getId() == id)
@@ -449,6 +442,7 @@ namespace ST
 
                     // TODO: set direction from saved info
                     int dir = beingManager->getSavedDirection(id);
+                    c->turnNode(dir);
 
                     std::stringstream str;
                     str << "New player info from id " << id << " received";

@@ -114,11 +114,7 @@ namespace ST
 
 	Point Node::getTilePosition()
 	{
-	    Point pt;
-	    Point mapPt = mapEngine->getMapPosition(mPosition, &pt);
-	    Point tilePt = mapEngine->getTilePosition(mapPt, pt);
-
-	    return tilePt;
+	    return mapEngine->convertPixelToTile(mPosition.x, mPosition.y);
 	}
 
 	Rectangle& Node::getBounds()
@@ -166,6 +162,7 @@ namespace ST
         mSetAnimation = NULL;
         mUpdateTime = 0;
         mTimeSinceLastUpdate = 0;
+        mDirection = 0;
 	}
 
 	AnimatedNode::~AnimatedNode()
@@ -194,6 +191,11 @@ namespace ST
 	    else
 	        mUpdateTime = 0;
 	}
+    
+    void AnimatedNode::turnNode(int direction)
+    {
+        mDirection = direction;
+    }
 
     void AnimatedNode::logic(int ms)
     {

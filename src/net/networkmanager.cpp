@@ -41,7 +41,6 @@
 #include "host.h"
 #include "packet.h"
 #include "protocol.h"
-#include "resourcemanager.h"
 
 #include "../graphics/camera.h"
 #include "../graphics/graphics.h"
@@ -62,6 +61,7 @@
 #include "../loginstate.h"
 #include "../map.h"
 #include "../player.h"
+#include "../resourcemanager.h"
 #include "../teststate.h"
 #include "../updatestate.h"
 
@@ -145,13 +145,14 @@ namespace ST
 
         case APMSG_REGISTER_RESPONSE:
             {
-                if (packet->getByte() == ERR_NONE)
+                int result = packet->getByte();
+                if (result == ERR_NONE)
                 {
                     logger->logDebug("Registered new account");
                     GameState *state = new UpdateState;
                     game->changeState(state);
                 }
-                else if (packet->getByte() == ERR_TAKEN_NAME)
+                else if (result == ERR_TAKEN_NAME)
                 {
 					interfaceManager->setErrorMessage("Username taken.");
                     logger->logWarning("Username already registered");

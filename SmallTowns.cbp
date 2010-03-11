@@ -8,7 +8,7 @@
 		<Build>
 			<Target title="FreeBSD">
 				<Option platforms="Unix;" />
-				<Option output="bin/SmallTowns" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/townslife" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin/" />
 				<Option object_output=".obj/" />
 				<Option type="1" />

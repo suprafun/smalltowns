@@ -140,19 +140,14 @@ namespace ST
 		 * Renders a single frame to the screen
 		 */
 		void renderFrame();
-
-		/**
-		 * Sort Nodes
-		 * Puts nodes into texture order, then y order
-		 */
-        void sortNodes();
-
+        
 		/**
 		 * Display Nodes
 		 * This puts the nodes on screen
 		 * It loops through all the nodes and draws them if visible
+         * @param layer The layer to output
 		 */
-		void outputNodes();
+		void outputNodes(int layer);
 
 		/**
 		 * Draw Untextured Rectangle
@@ -270,19 +265,22 @@ namespace ST
 		virtual void endScene() = 0;
 
 	private:
-		Camera *mCamera;
+        Camera *mCamera;
 		unsigned int mFrames;
 		unsigned int mAverageTime; // how often to update fps average
 		unsigned int mAverageFPS;
 		std::vector<unsigned int> mFPS;
-
+/*
 		// list of nodes
 		std::list<Node*> mNodes;
 		typedef std::list<Node*>::iterator NodeItr;
 		typedef std::list<Node*>::reverse_iterator NodeRevItr;
-
-		std::list<DisplayNode*> mDisplayNodes;
-		typedef std::list<DisplayNode*>::iterator DisplayNodeItr;
+        
+        // vector of sorted nodes
+        std::vector<Node*> mSortedNodes;
+        typedef std::vector<Node*>::iterator SortedNodeItr;
+*/
+        typedef std::vector<Node*>::iterator NodeItr;
 
 		// list of textures
 		std::map<std::string, Texture*> mTextures;

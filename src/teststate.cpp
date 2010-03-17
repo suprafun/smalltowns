@@ -259,7 +259,7 @@ namespace ST
 		interfaceManager->addWindow(chatWindow);
 
 		std::string nick = player->getSelectedCharacter()->getName();
-		std::string host = "london.uk.whatnet.org";
+		std::string host = "neo.us.whatnet.org";
 		chatServer->setNick(nick);
 
 #ifndef WITHOUT_CHAT
@@ -287,7 +287,10 @@ namespace ST
             Packet *packet = new Packet(PGMSG_MAP_LOADED);
             networkManager->sendPacket(packet);
             mLoaded = true;
-			interfaceManager->getMouse()->cursor = graphicsEngine->createNode("Cursor", resourceManager->getDataPath() + "glowtile.png", NULL);
+            Texture *texture = 
+                graphicsEngine->getTexture(resourceManager->getDataPath() + "glowtile.png");
+            interfaceManager->getMouse()->cursor = new Node("Cursor", texture);
+            mapEngine->getLayer(mapEngine->getLayers() - 1)->addNode(interfaceManager->getMouse()->cursor);
 	    }
 
 		// Check for input, if escape pressed, exit

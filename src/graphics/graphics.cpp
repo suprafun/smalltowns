@@ -93,29 +93,30 @@ namespace ST
 		if (mCamera)
 			delete mCamera;
 
-		mNodes.clear();
+//		mNodes.clear();
 
 //		SDL_FreeSurface(mScreen);
 	}
 
 	Node* GraphicsEngine::createNode(std::string name, std::string texture, Point *point)
 	{
+        assert(0);
 		Node *node = new Node(name, graphicsEngine->getTexture(texture));
 		if (point)
             node->moveNode(point);
-		addNode(node);
+		mapEngine->getLayer(mapEngine->getLayers() - 1)->addNode(node);
 		return node;
 	}
 
 	void GraphicsEngine::addNode(Node *node)
 	{
 	    assert(node);
-		mNodes.push_back(node);
+//		mNodes.push_back(node);
 	}
 
 	void GraphicsEngine::removeNode(Node *node)
 	{
-	    mNodes.remove(node);
+//	    mNodes.remove(node);
 	}
 
 	void GraphicsEngine::setCamera(Camera *cam)
@@ -131,7 +132,6 @@ namespace ST
 	void GraphicsEngine::renderFrame()
 	{
 	    ++mFrames;
-	    //sortNodes();
 
 		AG_LockVFS(agView);
 	    AG_BeginRendering();
@@ -140,7 +140,13 @@ namespace ST
 
 		// Display the nodes on screen (if theres a camera to view them)
 		if (mCamera)
-			outputNodes();
+        {
+            for (int i = 0; i < mapEngine->getLayers(); ++i)
+            {
+                mapEngine->getLayer(i)->sortNodes(0, mapEngine->getLayer(i)->getSize());
+                outputNodes(i);
+            }
+        }
 
         interfaceManager->drawWindows();
 
@@ -150,15 +156,12 @@ namespace ST
 		AG_UnlockVFS(agView);
 	}
 
-	void GraphicsEngine::sortNodes()
-	{
-
-	}
-
-	void GraphicsEngine::outputNodes()
+	void GraphicsEngine::outputNodes(int layer)
 	{
 	    // create iterators for looping
-        NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
+//        SortedNodeItr itr = mSortedNodes.begin(), itr_end = mSortedNodes.end();
+        NodeItr itr = mapEngine->getLayer(layer)->getFrontNode();
+        NodeItr itr_end = mapEngine->getLayer(layer)->getEndNode();
 
         Point pt = mCamera->getPosition();
 
@@ -562,7 +565,7 @@ namespace ST
 	Node* GraphicsEngine::getNode(int x, int y)
     {
         Point pt; pt.x = x; pt.y = y;
-        NodeRevItr itr = mNodes.rbegin(), itr_end = mNodes.rend();
+        /*NodeRevItr itr = mNodes.rbegin(), itr_end = mNodes.rend();
 
         while (itr != itr_end)
         {
@@ -572,6 +575,21 @@ namespace ST
                 return node;
             }
             ++itr;
+        }*/
+        for (int i = mapEngine->getLayers() - 1; i >= 0; --i)
+        {
+            NodeItr itr = mapEngine->getLayer(i)->getFrontNode();
+            NodeItr itr_end = mapEngine->getLayer(i)->getEndNode();
+            
+            while (itr != itr_end)
+            {
+                Node *node = *itr;
+                if (checkInside(pt, node->getBounds()))
+                {
+                    return node;
+                }
+                ++itr;
+            }
         }
 
         return NULL;

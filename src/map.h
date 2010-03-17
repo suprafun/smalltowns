@@ -82,6 +82,8 @@ namespace ST
 	 */
 	class Layer
 	{
+    public:
+        typedef std::vector<Node*>::iterator NodeItr;
 	public:
 		Layer(unsigned int, unsigned int);
 		~Layer();
@@ -106,10 +108,27 @@ namespace ST
 		 * @return Returns the Tile found at the given location
 		 */
 		Node* getNodeAt(unsigned int x, unsigned int y);
-
-	private:
+        
+        /**
+         * Get Node iterator
+         */
+        NodeItr getFrontNode();
+        NodeItr getEndNode();
+        
+        /**
+         * Sort Nodes
+         */
+        void sortNodes(int first, int size);
+        int findMiddleNode(int first, int size);
+        
+        /**
+         * Get Size
+         * Returns the number of nodes in layer
+         */
+        int getSize() const;
+        
+    private:
 		std::vector<Node*> mNodes;
-        typedef std::vector<Node*>::iterator NodeItr;
 		unsigned int mWidth;
 		unsigned int mHeight;
 	};

@@ -83,7 +83,8 @@ namespace ST
 		p.y = 0.5 * (x + y) * height;
 
 	    // add node and set its position
-        Node *node = graphicsEngine->createNode(str.str(), tex->getName(), &p);
+        Node *node = new Node(str.str(), tex);//graphicsEngine->createNode(str.str(), tex->getName(), &p);
+        node->moveNode(&p);
         if (blocking)
             node->setBlocking(true);
         addNode(node);
@@ -110,6 +111,97 @@ namespace ST
 
 	    return NULL;
 	}
+    
+    Layer::NodeItr Layer::getFrontNode()
+    {
+        return mNodes.begin();
+    }
+    
+    Layer::NodeItr Layer::getEndNode()
+    {
+        return mNodes.end();
+    }
+    
+    void Layer::sortNodes(int first, int size)
+    {
+        Node *pivot;
+        int last = first + size - 1;
+        int middle;
+        int lower = first;
+        int higher = last;
+        
+        if (size <= 1)
+            return;
+        
+        middle = findMiddleNode(first, size);
+        pivot = mNodes[middle];
+        mNodes[middle] = mNodes[first];
+        
+        while (lower < higher)
+        {
+            while ((pivot->getPosition().y - pivot->getHeight()) > 
+                   (mNodes[higher]->getPosition().y - mNodes[higher]->getHeight()) &&
+                   lower < higher)
+                higher--;
+            
+            if (higher != lower)
+            {
+                mNodes[lower] = mNodes[higher];
+                lower++;
+            }
+            
+            while ((pivot->getPosition().y - pivot->getHeight()) <
+                   (mNodes[lower]->getPosition().y - mNodes[lower]->getHeight()) &&
+                   lower < higher)
+                lower++;
+            
+            if (higher != lower)
+            {
+                mNodes[higher] = mNodes[lower];
+                higher--;
+            }
+        }
+        
+        mNodes[lower] = pivot;
+        sortNodes(first, lower - first);
+        sortNodes(lower + 1, last - lower);
+    }
+
+    int Layer::findMiddleNode(int first, int size)
+    {
+        int last = first + size - 1;
+        int middle = first + (size >> 1);
+        
+        int fy = mNodes[first]->getPosition().y - mNodes[first]->getHeight();
+        int my = mNodes[middle]->getPosition().y - mNodes[middle]->getHeight();
+        int ly = mNodes[last]->getPosition().y - mNodes[last]->getHeight();
+        
+        if (fy > my && fy > ly)
+        {
+            if (my > ly)
+                return middle;
+            else
+                return last;
+        }
+        
+        if (my > fy && my > ly)
+        {
+            if (fy > ly)
+                return first;
+            else
+                return last;
+        }
+        
+        if (my > fy)
+            return middle;
+        else
+            return first;
+    }
+    
+    int Layer::getSize() const
+    {
+        return mNodes.size();
+    }
 
 	Map::Map()
 	{

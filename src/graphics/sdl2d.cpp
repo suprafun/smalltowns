@@ -57,13 +57,16 @@ namespace ST
 	{
 	}
 
-	bool SDLGraphics::init()
+	bool SDLGraphics::init(bool fullscreen)
 	{
 		// get bpp of desktop
 		const SDL_VideoInfo* video = SDL_GetVideoInfo();
 		int bpp = video->vfmt->BitsPerPixel;
+        int flags = SDL_HWSURFACE|SDL_DOUBLEBUF;
+        if (fullscreen)
+            flags |= SDL_FULLSCREEN;
 
-		mScreen = SDL_SetVideoMode(mWidth, mHeight, bpp, SDL_HWSURFACE|SDL_DOUBLEBUF);
+		mScreen = SDL_SetVideoMode(mWidth, mHeight, bpp, flags);
 
         std::stringstream str;
         str << "Using SDL renderer at " << mWidth << "x" << mHeight << "x" << bpp;

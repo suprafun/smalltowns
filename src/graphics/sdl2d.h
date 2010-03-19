@@ -69,7 +69,7 @@ namespace ST
 		/**
 		 * Initialise the engine
 		 */
-		bool init();
+		bool init(bool fullscreen);
 
 		/**
 		 * Draw Untextured Rectangle

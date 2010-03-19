@@ -96,6 +96,7 @@ namespace ST
 		std::string hostname;
 		int port = 0;
 		int opengl = 0;
+        std::string fullscreen;
 
 #ifndef __APPLE__
 		if (file.load("townslife.cfg"))
@@ -108,13 +109,19 @@ namespace ST
             port = file.readInt("server", "port");
             file.setElement("graphics");
 			opengl = file.readInt("graphics", "opengl");
+            fullscreen = file.readString("graphics", "fullscreen");
         }
 
 		file.close();
 
 		// check whether opengl should be used
 		opengl ? graphicsEngine = new OpenGLGraphics : graphicsEngine = new SDLGraphics;
-		graphicsEngine->init();
+        
+        if (fullscreen == "true")
+            graphicsEngine->init(true);
+        else
+            graphicsEngine->init(false);
+        
 		inputManager = new InputManager;
 		mapEngine = new Map;
 		interfaceManager = new InterfaceManager;

@@ -60,7 +60,7 @@ namespace ST
 	{
 	}
 
-	bool OpenGLGraphics::init()
+	bool OpenGLGraphics::init(bool fullscreen)
 	{
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
@@ -72,7 +72,10 @@ namespace ST
 		const SDL_VideoInfo* video = SDL_GetVideoInfo();
 		int bpp = video->vfmt->BitsPerPixel;
 
-		mScreen = SDL_SetVideoMode(mWidth, mHeight, bpp, SDL_OPENGL);
+        if (fullscreen)
+            mScreen = SDL_SetVideoMode(mWidth, mHeight, bpp, SDL_OPENGL|SDL_FULLSCREEN);
+        else
+            mScreen = SDL_SetVideoMode(mWidth, mHeight, bpp, SDL_OPENGL);
 
 		std::stringstream str;
         str << "Using OpenGL renderer at " << mWidth << "x" << mHeight << "x" << bpp;

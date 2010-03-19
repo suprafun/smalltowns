@@ -203,9 +203,10 @@ namespace ST
 	{
 		// read from config file whether username was saved from last time
 		file->setElement("login");
-		int state = file->readInt("login", "save");
+		int loginState = file->readInt("login", "save");
 		std::string savedUser;
-		if (state == 1)
+        
+		if (loginState == 1)
 		{
 			savedUser = file->readString("login", "username");
 		}
@@ -222,7 +223,7 @@ namespace ST
 		}
 		AG_Textbox *password = AG_TextboxNew(mLoginWindow, AG_TEXTBOX_PASSWORD, "Password: ");
 		AG_Checkbox *save = AG_CheckboxNew(mLoginWindow, 0, "Save username for next time");
-		if (state == 1)
+		if (loginState == 1)
 		{
 			AG_CheckboxToggle(save);
 		}

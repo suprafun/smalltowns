@@ -139,26 +139,26 @@ namespace ST
         
         while (lower < higher)
         {
-            while ((pivot->getPosition().y - pivot->getHeight()) > 
+            while ((pivot->getPosition().y - pivot->getHeight()) < 
                    (mNodes[higher]->getPosition().y - mNodes[higher]->getHeight()) &&
                    lower < higher)
-                higher--;
+                --higher;
             
             if (higher != lower)
             {
                 mNodes[lower] = mNodes[higher];
-                lower++;
+                ++lower;
             }
             
-            while ((pivot->getPosition().y - pivot->getHeight()) <
+            while ((pivot->getPosition().y - pivot->getHeight()) >
                    (mNodes[lower]->getPosition().y - mNodes[lower]->getHeight()) &&
                    lower < higher)
-                lower++;
+                ++lower;
             
             if (higher != lower)
             {
                 mNodes[higher] = mNodes[lower];
-                higher--;
+                --higher;
             }
         }
         

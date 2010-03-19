@@ -159,7 +159,6 @@ namespace ST
 	void GraphicsEngine::outputNodes(int layer)
 	{
 	    // create iterators for looping
-//        SortedNodeItr itr = mSortedNodes.begin(), itr_end = mSortedNodes.end();
         NodeItr itr = mapEngine->getLayer(layer)->getFrontNode();
         NodeItr itr_end = mapEngine->getLayer(layer)->getEndNode();
 
@@ -169,12 +168,7 @@ namespace ST
         while (itr != itr_end)
         {
             Node *node = (*itr);
-            // dont draw if not on screen
-/*			if (!checkInside(node->getPosition(), mCamera->getViewBounds()))
-            {
-                continue;
-            }
-*/
+
             // dont draw if not visible
             if (!node->getVisible())
                 continue;
@@ -565,17 +559,7 @@ namespace ST
 	Node* GraphicsEngine::getNode(int x, int y)
     {
         Point pt; pt.x = x; pt.y = y;
-        /*NodeRevItr itr = mNodes.rbegin(), itr_end = mNodes.rend();
-
-        while (itr != itr_end)
-        {
-            Node *node = (*itr);
-            if (checkInside(pt, node->getBounds()))
-            {
-                return node;
-            }
-            ++itr;
-        }*/
+        
         for (int i = mapEngine->getLayers() - 1; i >= 0; --i)
         {
             NodeItr itr = mapEngine->getLayer(i)->getFrontNode();

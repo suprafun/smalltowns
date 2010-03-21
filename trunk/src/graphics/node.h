@@ -91,6 +91,18 @@ namespace ST
 		const int getHeight() const;
 
 		/**
+		 * Get Anchor
+		 * @return Returns the start of the node's image
+		 */
+        const int getAnchor() const;
+
+        /**
+         * Set Anchor
+         * @param anchor The start of the node's image
+         */
+        void setAnchor(int anchor);
+
+		/**
 		 * Get Bounds
 		 * @return Returns a rectangle with the position, and size
 		 */
@@ -164,6 +176,7 @@ namespace ST
 		Rectangle mBounds;
 		int mWidth;
 		int mHeight;
+		int mAnchor;
 		bool mVisible;
 		bool mShowName;
 		bool mBlocking;
@@ -185,7 +198,7 @@ namespace ST
          * Set animation
          */
         virtual void setAnimation(const std::string &name);
-        
+
         /**
          * Turn Node
          * Changes the direction the node faces

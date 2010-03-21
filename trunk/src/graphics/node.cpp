@@ -74,6 +74,7 @@ namespace ST
 
 		mPosition.x = 0;
 		mPosition.y = 0;
+		mAnchor = 0;
 
 		mBounds.x = 0;
 		mBounds.y = 0;
@@ -105,6 +106,16 @@ namespace ST
 	const int Node::getWidth() const
 	{
 		return mWidth;
+	}
+
+	const int Node::getAnchor() const
+	{
+	    return mAnchor;
+	}
+
+	void Node::setAnchor(int anchor)
+	{
+	    mAnchor = anchor;
 	}
 
 	Point& Node::getPosition()
@@ -191,7 +202,7 @@ namespace ST
 	    else
 	        mUpdateTime = 0;
 	}
-    
+
     void AnimatedNode::turnNode(int direction)
     {
         mDirection = direction;

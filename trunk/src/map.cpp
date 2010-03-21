@@ -111,17 +111,17 @@ namespace ST
 
 	    return NULL;
 	}
-    
+
     Layer::NodeItr Layer::getFrontNode()
     {
         return mNodes.begin();
     }
-    
+
     Layer::NodeItr Layer::getEndNode()
     {
         return mNodes.end();
     }
-    
+
     void Layer::sortNodes(int first, int size)
     {
         Node *pivot;
@@ -129,39 +129,39 @@ namespace ST
         int middle;
         int lower = first;
         int higher = last;
-        
+
         if (size <= 1)
             return;
-        
+
         middle = findMiddleNode(first, size);
         pivot = mNodes[middle];
         mNodes[middle] = mNodes[first];
-        
+
         while (lower < higher)
         {
-            while ((pivot->getPosition().y - pivot->getHeight()) < 
+            while ((pivot->getPosition().y - pivot->getHeight()) <
                    (mNodes[higher]->getPosition().y - mNodes[higher]->getHeight()) &&
                    lower < higher)
                 --higher;
-            
+
             if (higher != lower)
             {
                 mNodes[lower] = mNodes[higher];
                 ++lower;
             }
-            
+
             while ((pivot->getPosition().y - pivot->getHeight()) >
                    (mNodes[lower]->getPosition().y - mNodes[lower]->getHeight()) &&
                    lower < higher)
                 ++lower;
-            
+
             if (higher != lower)
             {
                 mNodes[higher] = mNodes[lower];
                 --higher;
             }
         }
-        
+
         mNodes[lower] = pivot;
         sortNodes(first, lower - first);
         sortNodes(lower + 1, last - lower);
@@ -171,11 +171,11 @@ namespace ST
     {
         int last = first + size - 1;
         int middle = first + (size >> 1);
-        
+
         int fy = mNodes[first]->getPosition().y - mNodes[first]->getHeight();
         int my = mNodes[middle]->getPosition().y - mNodes[middle]->getHeight();
         int ly = mNodes[last]->getPosition().y - mNodes[last]->getHeight();
-        
+
         if (fy > my && fy > ly)
         {
             if (my > ly)
@@ -183,7 +183,7 @@ namespace ST
             else
                 return last;
         }
-        
+
         if (my > fy && my > ly)
         {
             if (fy > ly)
@@ -191,13 +191,13 @@ namespace ST
             else
                 return last;
         }
-        
+
         if (my > fy)
             return middle;
         else
             return first;
     }
-    
+
     int Layer::getSize() const
     {
         return mNodes.size();
@@ -210,7 +210,7 @@ namespace ST
         mTileWidth = 0;
         mTileHeight = 0;
         mLoaded = false;
-		
+
 		mTileWalk[0].x = 0;
 		mTileWalk[0].y = -1;
 		mTileWalk[1].x = 1;
@@ -312,7 +312,7 @@ namespace ST
 
         newPos.x += mTileWalk[dir].x;
 		newPos.y += mTileWalk[dir].y;
-		
+
         return newPos;
     }
 
@@ -535,8 +535,11 @@ namespace ST
 					if (tile_id >= mTilesets[j]->id)
 					{
 						std::stringstream str;
+						bool blocking = false;
+						if (tile_id == 38)
+                            blocking == true;
 						str << mTilesets[j]->tilename << (tile_id - mTilesets[j]->id) + 1;
-						l->setTile(x, y, graphicsEngine->getTexture(str.str()), mTileWidth, mTileHeight, mLayers.size());
+						l->setTile(x, y, graphicsEngine->getTexture(str.str()), mTileWidth, mTileHeight, blocking);
 						break;
 					}
 				}
@@ -560,19 +563,19 @@ namespace ST
 
         mLayers.push_back(l);
     }
-    
+
     Point Map::convertPixelToTile(int x, int y)
     {
         Point pt;
         const float ratio = (float)mTileWidth / mTileHeight;
-        
+
         x -= mTileWidth / 2;
         const float mx = y + (x / ratio);
         const float my = y - (x / ratio);
-        
+
         pt.x = mx / mTileHeight;
         pt.y = my / mTileHeight;
-        
+
         return pt;
     }
 }

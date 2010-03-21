@@ -42,7 +42,7 @@
 
 namespace ST
 {
-	XMLFile::XMLFile() : mDoc(NULL), mHandle(NULL)
+	XMLFile::XMLFile() : mDoc(NULL), mHandle(NULL), mCurrentElement(NULL)
 	{
 
 	}
@@ -75,7 +75,7 @@ namespace ST
 		mDoc = NULL;
 	}
 
-	bool XMLFile::next(const std::string &element)
+	bool XMLFile::nextSubElement(const std::string &element)
 	{
         ElementItr itr = mElements.find(element);
         if (itr != mElements.end())
@@ -86,16 +86,30 @@ namespace ST
         return false;
     }
 
+    bool XMLFile::nextElement(const std::string &element)
+    {
+        ElementItr itr = mElements.find(element);
+        if (itr != mElements.end())
+        {
+            itr->second = itr->second->NextSiblingElement();
+            mCurrentElement = itr->second;
+	        return itr->second != 0;
+        }
+        return false;
+    }
+
 	void XMLFile::setElement(const std::string &element)
 	{
 		assert(mHandle);
 	    TiXmlElement *e = mHandle->FirstChild(element.c_str()).Element();
         mElements.insert(std::pair<std::string, TiXmlElement*>(element, e));
+        mCurrentElement = e;
 	}
 
 	void XMLFile::setSubElement(const std::string &element, const std::string &subelement)
 	{
-	    TiXmlElement *e = mHandle->FirstChild(element.c_str()).FirstChild().Element();
+	    assert(mCurrentElement);
+        TiXmlElement *e = mCurrentElement->FirstChildElement();
         mElements.insert(std::pair<std::string, TiXmlElement*>(subelement, e));
 	}
 
@@ -143,5 +157,14 @@ namespace ST
             itr->second->SetAttribute(attribute.c_str(), value);
         }
         mDoc->SaveFile();
+    }
+
+    void XMLFile::clear(const std::string &element)
+    {
+        ElementItr itr = mElements.find(element);
+        if (itr != mElements.end())
+        {
+            mElements.erase(itr);
+        }
     }
 }

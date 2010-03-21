@@ -150,7 +150,7 @@ namespace ST
                 BodyPart *body = new BodyPart(id, part, img, icon);
 
                 mBodyParts.push_back(body);
-            } while (file.next("body"));
+            } while (file.nextSubElement("body"));
 		}
     }
 
@@ -161,9 +161,10 @@ namespace ST
 		{
 		    // add all the animations
 		    file.setElement("animation");
-		    file.setSubElement("animation", "body");
             do
             {
+                file.setSubElement("animation", "body");
+
                 int id = file.readInt("animation", "id");
                 std::string name = file.readString("animation", "name");
                 int frames = file.readInt("animation", "frames");
@@ -192,11 +193,12 @@ namespace ST
                         }
                         animList.push_back(anim);
                     }
-                } while (file.next("body"));
+                } while (file.nextSubElement("body"));
 
                 mAnimations.insert(std::pair<std::string, std::list<BeingAnimation*> >(name, animList));
+                file.clear("body");
 
-            } while (file.next("animation"));
+            } while (file.nextElement("animation"));
         }
     }
 
@@ -286,7 +288,7 @@ namespace ST
     {
         return mDataPath;
     }
-	
+
 	std::string ResourceManager::getWritablePath()
 	{
 		return mWriteDataPath;

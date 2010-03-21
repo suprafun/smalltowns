@@ -54,7 +54,7 @@
 
 namespace ST
 {
-
+    // tile relative direction
     int getDirection(const Point &start, const Point &end)
     {
         int x = start.x - end.x;
@@ -105,6 +105,8 @@ namespace ST
         look.skinColour.r = 0;
         look.skinColour.g = 0;
         look.skinColour.b = 0;
+
+        mAnchor = 16;
     }
 
     Being::~Being()
@@ -196,7 +198,7 @@ namespace ST
 
         // empty any previous path
         mWaypoints.clear();
-        
+
         Point wayPos = getTilePosition();
         Point endPos = mapEngine->convertPixelToTile(finish.x, finish.y);
         Point screenPos = {0,0};
@@ -222,7 +224,7 @@ namespace ST
             ++hops;
         }
 
-		mWaypoints.push_back(finish);\
+		mWaypoints.push_back(finish);
 
         return (hops < 20);
     }
@@ -309,7 +311,9 @@ namespace ST
         {
             dir += diff;
             pos = mapEngine->walkMap(pt, dir);
+            // count down so it doesnt loop forever
             --attempts;
+            // make it try different direction next time
             diff = -diff;
 
             // check for greater or less than minimum and maximum direction
@@ -326,38 +330,38 @@ namespace ST
     {
         mDestination = pos;
     }
-    
+
     void Being::changeAnimation()
     {
         std::stringstream str;
-        
+
         // create the string for new animation
         // check gender
         // check direction
         // check state
         // final string will look like maleSEwalk
-        
+
         if (look.gender == 0)
             str << "male";
         else
             str << "female";
-        
+
         switch (mDirection)
         {
             case DIRECTION_NORTHWEST:
             case DIRECTION_NORTHEAST:
                 str << "NE";
                 break;
-            case DIRECTION_SOUTHWEST:    
+            case DIRECTION_SOUTHWEST:
             case DIRECTION_SOUTHEAST:
                 str << "SE";
                 break;
-                
+
             default:
                 str << "SE";
                 break;
         }
-        
+
         if (mState == STATE_MOVING)
             str << "walk";
 

@@ -175,7 +175,7 @@ namespace ST
 
             Rectangle rect = node->getBounds();
             rect.x -= pt.x;
-            rect.x -= node->getWidth() >> 1;
+            rect.x -= node->getAnchor();
             rect.y -= pt.y;
 
             drawTexturedRect(rect, node->getTexture());
@@ -559,12 +559,12 @@ namespace ST
 	Node* GraphicsEngine::getNode(int x, int y)
     {
         Point pt; pt.x = x; pt.y = y;
-        
+
         for (int i = mapEngine->getLayers() - 1; i >= 0; --i)
         {
             NodeItr itr = mapEngine->getLayer(i)->getFrontNode();
             NodeItr itr_end = mapEngine->getLayer(i)->getEndNode();
-            
+
             while (itr != itr_end)
             {
                 Node *node = *itr;

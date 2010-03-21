@@ -373,6 +373,7 @@ namespace ST
                 {
                     logger->logDebug("Got player move");
                     being->setState(STATE_MOVING);
+                    being->turnNode(-1);
                     being->changeAnimation();
                     being->calculateNextDestination();
                 }
@@ -392,6 +393,7 @@ namespace ST
                     // found being, update their position
 					logger->logDebug("Being moving");
                     being->setState(STATE_MOVING);
+                    being->turnNode(dir);
 					being->changeAnimation();
                     being->calculateNextDestination(finish);
                 }
@@ -441,7 +443,7 @@ namespace ST
                     Point pt = beingManager->getSavedDestination(id);
                     c->moveNode(&pt);
 
-                    // TODO: set direction from saved info
+                    // set direction from saved info
                     int dir = beingManager->getSavedDirection(id);
                     c->turnNode(dir);
 

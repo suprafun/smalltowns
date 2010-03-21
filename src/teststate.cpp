@@ -162,7 +162,7 @@ namespace ST
                     being->toggleName();
                     return;
                 }
-                
+
                 Point pt = mapEngine->convertPixelToTile(pos.x, pos.y);
 
                 if (mapEngine->blocked(pt))
@@ -184,7 +184,7 @@ namespace ST
 		    if (!interfaceManager->getMouse()->cursor)
                 return;
 
-            pos.x += mapEngine->getTileWidth() >> 1;
+//            pos.x += mapEngine->getTileWidth() >> 1;
 
 		    int mapWidth = mapEngine->getWidth() * mapEngine->getTileWidth();
 		    int mapHeight = mapEngine->getHeight() * mapEngine->getTileHeight();
@@ -193,7 +193,7 @@ namespace ST
 		        return;
 		    if (pos.y > mapHeight || pos.y < 0)
 		        return;
-            
+
             Point tilePos = mapEngine->convertPixelToTile(pos.x, pos.y);
 
 		    if (tilePos.x < 0 || tilePos.y < 0)
@@ -287,7 +287,7 @@ namespace ST
             Packet *packet = new Packet(PGMSG_MAP_LOADED);
             networkManager->sendPacket(packet);
             mLoaded = true;
-            Texture *texture = 
+            Texture *texture =
                 graphicsEngine->getTexture(resourceManager->getDataPath() + "glowtile.png");
             interfaceManager->getMouse()->cursor = new Node("Cursor", texture);
             mapEngine->getLayer(mapEngine->getLayers() - 1)->addNode(interfaceManager->getMouse()->cursor);

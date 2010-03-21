@@ -58,7 +58,8 @@ namespace ST
 
         bool load(const std::string &file);
 		void close();
-        bool next(const std::string &element);
+        bool nextElement(const std::string &element);
+        bool nextSubElement(const std::string &element);
         void setElement(const std::string &element);
         void setSubElement(const std::string &element, const std::string &subelement);
         std::string readString(const std::string &element, const std::string &attribute);
@@ -66,11 +67,13 @@ namespace ST
 		void changeString(const std::string &element, const std::string &attribute,
 						  const std::string &value);
 		void changeInt(const std::string &element, const std::string &attribute, int value);
+		void clear(const std::string &element);
 
     private:
         TiXmlDocument *mDoc;
         TiXmlHandle *mHandle;
         std::map<std::string, TiXmlElement*> mElements;
+        TiXmlElement *mCurrentElement;
         typedef std::map<std::string, TiXmlElement*>::iterator ElementItr;
     };
 }

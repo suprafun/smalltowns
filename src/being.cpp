@@ -348,12 +348,16 @@ namespace ST
 
         switch (mDirection)
         {
-            case DIRECTION_NORTHWEST:
-            case DIRECTION_NORTHEAST:
-                str << "NE";
+            case DIRECTION_NORTH:
+//                str << "NW";
+//                break;
+            case DIRECTION_WEST:
+//                str << "NE";
+//                break;
+            case DIRECTION_SOUTH:
+                str << "SW";
                 break;
-            case DIRECTION_SOUTHWEST:
-            case DIRECTION_SOUTHEAST:
+            case DIRECTION_EAST:
                 str << "SE";
                 break;
 

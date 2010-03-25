@@ -45,6 +45,7 @@
 #define ST_BODYPART_HEADER
 
 #include <string>
+#include <map>
 
 namespace ST
 {
@@ -54,8 +55,9 @@ namespace ST
     class BodyPart// : class GameObject
     {
     public:
-        BodyPart(int id, int type, const std::string &filename, const std::string &iconfile);
-        Texture* getTexture() { return mTexture; }
+        BodyPart(int id, int type, const std::string &iconfile);
+        void addTexture(int dir, const std::string &filename);
+        Texture* getTexture(int dir) { return mTextures[dir]; }
         Texture* getIcon() { return mIconTexture; }
         int getId() { return mId; }
         int getType() { return mType; }
@@ -63,7 +65,7 @@ namespace ST
     private:
         int mId;
         int mType;
-        Texture *mTexture;
+        std::map<int, Texture*> mTextures;
         Texture *mIconTexture;
     };
 }

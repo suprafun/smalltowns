@@ -177,7 +177,7 @@ namespace ST
         // create new frames and store them in the animation
         for (unsigned int i = 0; i < body->getFrames() && i < hair->getFrames(); ++i)
         {
-            Texture *tex = graphicsEngine->createAvatarFrame(mId, i+1, body->getTexture(), hair->getTexture());
+            Texture *tex = graphicsEngine->createAvatarFrame(mId, i+1, body->getTexture(), hair->getTexture(), mDirection);
             mSetAnimation->addTexture(tex);
             body->nextFrame();
             hair->nextFrame();
@@ -219,6 +219,8 @@ namespace ST
             // translate to screen position and store that
             screenPos.x = 0.5 * (wayPos.x - wayPos.y) * mapEngine->getTileWidth();
             screenPos.y = 0.5 * (wayPos.x + wayPos.y) * mapEngine->getTileHeight();
+            screenPos.x += mapEngine->getTileWidth() >> 1;
+            screenPos.y += mapEngine->getTileHeight() >> 1;
 
             mWaypoints.push_back(screenPos);
             ++hops;
@@ -258,6 +260,7 @@ namespace ST
             mWaypoints.pop_front();
             if (mWaypoints.size() == 0)
             {
+                mDirection = -1;
                 setAnimation("");
                 setState(STATE_IDLE);
                 return;
@@ -295,6 +298,15 @@ namespace ST
         movePos.y = nextPos.y;
 
         moveNode(&movePos);
+        
+        // check if direction changed, so we can turn the being and change its animation
+        int dir = getDirection(mapEngine->convertPixelToTile(movePos.x, movePos.y),
+                               mapEngine->convertPixelToTile(nextDest.x, nextDest.y));
+        if (mDirection != dir)
+        {
+            turnNode(dir);
+            changeAnimation();
+        }
 
         mLastPosition = nextPos;
     }
@@ -346,18 +358,23 @@ namespace ST
         else
             str << "female";
 
+        // direction is tile based
         switch (mDirection)
         {
-            case DIRECTION_NORTH:
-//                str << "NW";
-//                break;
             case DIRECTION_WEST:
-//                str << "NE";
-//                break;
+                str << "NW";
+                break;
+            case DIRECTION_NORTH:
+            case DIRECTION_NORTHWEST:
+                str << "NE";
+                break;
+            case DIRECTION_SOUTHWEST:
             case DIRECTION_SOUTH:
                 str << "SW";
                 break;
+            case DIRECTION_SOUTHEAST:
             case DIRECTION_EAST:
+            case DIRECTION_NORTHEAST:
                 str << "SE";
                 break;
 

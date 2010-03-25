@@ -210,7 +210,7 @@ namespace ST
                     std::string name = packet->getString();
                     int body = packet->getInteger();
                     int hair = packet->getInteger();
-                    Texture *avatar = graphicsEngine->createAvatar(slot, body, hair);
+                    Texture *avatar = graphicsEngine->createAvatar(slot, body, hair, DIRECTION_SOUTHEAST);
                     Character *c = new Character(id, name, avatar);
                     c->look.body = body;
                     c->look.hair = hair;
@@ -242,7 +242,7 @@ namespace ST
 					int body = packet->getInteger();
 					int hair = packet->getInteger();
 
-					Texture *avatar = graphicsEngine->createAvatar(charId, body, hair);
+					Texture *avatar = graphicsEngine->createAvatar(charId, body, hair, DIRECTION_SOUTHEAST);
 					Character *c = new Character(charId, name, avatar);
 					c->look.body = body;
 					c->look.hair = hair;
@@ -373,8 +373,7 @@ namespace ST
                 {
                     logger->logDebug("Got player move");
                     being->setState(STATE_MOVING);
-                    being->turnNode(-1);
-                    being->changeAnimation();
+                    //being->changeAnimation();
                     being->calculateNextDestination();
                 }
             } break;
@@ -393,8 +392,8 @@ namespace ST
                     // found being, update their position
 					logger->logDebug("Being moving");
                     being->setState(STATE_MOVING);
-                    being->turnNode(dir);
-					being->changeAnimation();
+                    //being->turnNode(dir);
+					//being->changeAnimation();
                     being->calculateNextDestination(finish);
                 }
                 else if (player->getSelectedCharacter()->getId() == id)
@@ -429,23 +428,20 @@ namespace ST
                 if (being == NULL)
                 {
                     // create new being based on info
-                    Texture *avatar = graphicsEngine->createAvatar(id, body, hair);
+                    Point pt = beingManager->getSavedDestination(id);
+                    int dir = beingManager->getSavedDirection(id);
+                    
+                    Texture *avatar = graphicsEngine->createAvatar(id, body, hair, dir);
                     Character *c = new Character(id, name, avatar);
                     c->look.body = body;
                     c->look.hair = hair;
                     c->setLevel(lvl);
                     c->setRights(rights);
+                    c->moveNode(&pt);
+                    c->turnNode(dir);
 
                     beingManager->addBeing(c);
                     mapEngine->getLayer(mapEngine->getLayers() - 1)->addNode(c);
-
-                    // set position from saved info
-                    Point pt = beingManager->getSavedDestination(id);
-                    c->moveNode(&pt);
-
-                    // set direction from saved info
-                    int dir = beingManager->getSavedDirection(id);
-                    c->turnNode(dir);
 
                     std::stringstream str;
                     str << "New player info from id " << id << " received";

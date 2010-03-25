@@ -411,7 +411,7 @@ namespace ST
         return mHeight;
     }
 
-    Texture* GraphicsEngine::createAvatar(unsigned int id, int bodyId, int hairId)
+    Texture* GraphicsEngine::createAvatar(unsigned int id, int bodyId, int hairId, int dir)
     {
         Texture *hairTex = NULL;
         Texture *bodyTex = NULL;
@@ -428,20 +428,20 @@ namespace ST
 
         // load all the textures
         if (hair)
-            hairTex = hair->getTexture();
+            hairTex = hair->getTexture(dir);
         if (body)
-            bodyTex = body->getTexture();
+            bodyTex = body->getTexture(dir);
         if (chest)
-            chestTex = chest->getTexture();
+            chestTex = chest->getTexture(dir);
         if (legs)
-            legsTex = legs->getTexture();
+            legsTex = legs->getTexture(dir);
         if (feet)
-            feetTex = feet->getTexture();
+            feetTex = feet->getTexture(dir);
 
-        return createAvatarFrame(id, 0, bodyTex, hairTex);
+        return createAvatarFrame(id, 0, bodyTex, hairTex, dir);
     }
 
-    Texture* GraphicsEngine::createAvatarFrame(unsigned int id, unsigned int frame, Texture *bodyTex, Texture *hairTex)
+    Texture* GraphicsEngine::createAvatarFrame(unsigned int id, unsigned int frame, Texture *bodyTex, Texture *hairTex, int dir)
     {
         // Set the byte order of RGBA
         Uint32 rmask, gmask, bmask, amask;
@@ -458,7 +458,7 @@ namespace ST
 #endif
 
         std::stringstream str;
-        str << "Being" << id << "_" << frame;
+        str << "Being" << id << "_" << dir << "_" << frame;
 
         TextureItr itr = mTextures.find(str.str());
         if (itr != mTextures.end())

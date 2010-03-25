@@ -42,6 +42,7 @@
 #include "connectstate.h"
 #include "input.h"
 #include "game.h"
+#include "map.h"
 #include "player.h"
 #include "resourcemanager.h"
 
@@ -401,7 +402,7 @@ namespace ST
             BodyPart *body = resourceManager->getDefaultBody(i);
             if (!body)
                 break;
-            Texture *tex = body->getTexture();
+            Texture *tex = body->getTexture(DIRECTION_SOUTHEAST);
 
             // put the texture into the pixmap
             if (graphicsEngine->isOpenGL())
@@ -420,7 +421,7 @@ namespace ST
     void CharacterState::updateAvatar(BodyPart *body)
     {
         // load the new graphic
-        Texture *tex = body->getTexture();
+        Texture *tex = body->getTexture(DIRECTION_SOUTHEAST);
 
         AG_Pixmap *pixmap = mAvatar->bodyparts.at(body->getType());
 

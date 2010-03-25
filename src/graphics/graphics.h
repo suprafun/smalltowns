@@ -222,8 +222,8 @@ namespace ST
         /**
          * Create a texture based on body parts
          */
-        Texture* createAvatar(unsigned int id, int bodyId, int hairId);
-        Texture* createAvatarFrame(unsigned int id, unsigned int frame, Texture *bodyTex, Texture *hairTex);
+        Texture* createAvatar(unsigned int id, int bodyId, int hairId, int dir);
+        Texture* createAvatarFrame(unsigned int id, unsigned int frame, Texture *bodyTex, Texture *hairTex, int dir);
 
         /**
          * Get the node at that position

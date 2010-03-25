@@ -38,6 +38,7 @@
  ********************************************/
 
 #include "resourcemanager.h"
+#include "map.h"
 
 #include "graphics/animation.h"
 #include "graphics/graphics.h"
@@ -142,15 +143,35 @@ namespace ST
             file.setElement("body");
             do
             {
+                file.setSubElement("body", "image");
                 int id = file.readInt("body", "id");
-                std::string img = mDataPath + file.readString("body", "file");
                 std::string icon = mDataPath + file.readString("body", "icon");
                 int part = file.readInt("body", "part");
 
-                BodyPart *body = new BodyPart(id, part, img, icon);
+                BodyPart *body = new BodyPart(id, part, icon);
+                
+                do
+                {
+                    int dir = -1;
+                    std::string img = mDataPath + file.readString("image", "file");
+                    std::string dirstr = file.readString("image", "dir");
+                    
+                    if (dirstr == "SE")
+                        dir = DIRECTION_SOUTHEAST;
+                    else if (dirstr == "SW")
+                        dir = DIRECTION_SOUTHWEST;
+                    else if (dirstr == "NE")
+                        dir = DIRECTION_NORTHEAST;
+                    else if (dirstr == "NW")
+                        dir = DIRECTION_NORTHWEST;
+                    
+                    body->addTexture(dir, img);
+                } while (file.nextSubElement("image"));
 
                 mBodyParts.push_back(body);
-            } while (file.nextSubElement("body"));
+                file.clear("image");
+                
+            } while (file.nextElement("body"));
 		}
     }
 

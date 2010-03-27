@@ -298,14 +298,18 @@ namespace ST
         movePos.y = nextPos.y;
 
         moveNode(&movePos);
-        
+
         // check if direction changed, so we can turn the being and change its animation
-        int dir = getDirection(mapEngine->convertPixelToTile(movePos.x, movePos.y),
-                               mapEngine->convertPixelToTile(nextDest.x, nextDest.y));
-        if (mDirection != dir)
+        Point srcTile = mapEngine->convertPixelToTile(movePos.x, movePos.y);
+        Point destTile = mapEngine->convertPixelToTile(nextDest.x, nextDest.y);
+        if (srcTile.x != destTile.x || srcTile.y != destTile.y)
         {
-            turnNode(dir);
-            changeAnimation();
+            int dir = getDirection(srcTile, destTile);
+            if (mDirection != dir)
+            {
+                turnNode(dir);
+                changeAnimation();
+            }
         }
 
         mLastPosition = nextPos;

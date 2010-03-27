@@ -85,13 +85,23 @@ namespace ST
     public:
         typedef std::vector<Node*>::iterator NodeItr;
 	public:
-		Layer(unsigned int, unsigned int);
+		Layer(const std::string &name, unsigned int width, unsigned int height);
 		~Layer();
+
+        /**
+         * Set as collision layer
+         */
+        void setCollisionLayer();
+
+        /**
+         * Returns if this is the collision layer
+         */
+        bool isCollisionLayer() { return mCollisionLayer; }
 
         /**
          * Set a tile
          */
-        void setTile(int x, int y, Texture *tex, int width, int height, int blocking);
+        void setTile(int x, int y, Texture *tex, int width, int height);
 
 		/**
 		 * Add Tile
@@ -108,29 +118,31 @@ namespace ST
 		 * @return Returns the Tile found at the given location
 		 */
 		Node* getNodeAt(unsigned int x, unsigned int y);
-        
+
         /**
          * Get Node iterator
          */
         NodeItr getFrontNode();
         NodeItr getEndNode();
-        
+
         /**
          * Sort Nodes
          */
         void sortNodes(int first, int size);
         int findMiddleNode(int first, int size);
-        
+
         /**
          * Get Size
          * Returns the number of nodes in layer
          */
         int getSize() const;
-        
+
     private:
 		std::vector<Node*> mNodes;
+		std::string mName;
 		unsigned int mWidth;
 		unsigned int mHeight;
+		bool mCollisionLayer;
 	};
 
 	/**
@@ -219,7 +231,7 @@ namespace ST
          * @return Returns the node at that position
          */
         Node* getTile(int x, int y, unsigned int layer);
-        
+
         /**
          * Return tile position
          * @param x Pixel x to convert
@@ -239,7 +251,7 @@ namespace ST
 		 * Add Layer.
 		 * Adds a layer to the map
 		 */
-        void addLayer(unsigned int width, unsigned int height, unsigned char *data,
+        void addLayer(const std::string &name, unsigned int width, unsigned int height, unsigned char *data,
 			unsigned int len);
 
         /**
@@ -265,6 +277,7 @@ namespace ST
 
 	private:
 		std::vector<Layer*> mLayers;
+		typedef std::vector<Layer*>::iterator LayerItr;
 		std::vector<Tileset*> mTilesets;
         Point mTileWalk[8];
 		int mWidth;

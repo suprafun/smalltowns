@@ -55,9 +55,11 @@
 
 namespace ST
 {
-	Layer::Layer(unsigned int width, unsigned int height) :
+	Layer::Layer(const std::string &name, unsigned int width, unsigned int height) :
+		mName(name),
 		mWidth(width),
-		mHeight(height)
+		mHeight(height),
+		mCollisionLayer(false)
 	{
 
 	}
@@ -73,7 +75,12 @@ namespace ST
 		}
 	}
 
-	void Layer::setTile(int x, int y, Texture *tex, int width, int height, int blocking)
+	void Layer::setCollisionLayer()
+	{
+	    mCollisionLayer = true;
+	}
+
+	void Layer::setTile(int x, int y, Texture *tex, int width, int height)
 	{
 	    std::stringstream str;
 	    Point p;
@@ -83,10 +90,8 @@ namespace ST
 		p.y = 0.5 * (x + y) * height;
 
 	    // add node and set its position
-        Node *node = new Node(str.str(), tex);//graphicsEngine->createNode(str.str(), tex->getName(), &p);
+        Node *node = new Node(str.str(), tex);
         node->moveNode(&p);
-        if (blocking)
-            node->setBlocking(true);
         addNode(node);
 	}
 
@@ -98,10 +103,14 @@ namespace ST
 	Node* Layer::getNodeAt(unsigned int x, unsigned int y)
 	{
 	    NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
+	    logger->logDebug("Layer Name" + mName);
 	    while (itr != itr_end)
 	    {
 	        Node *node = *itr;
 	        Point pt = node->getTilePosition();
+	        std::stringstream str;
+	        str << "Node at " << pt.x << "x" << pt.y << " called " << node->getName();
+	        logger->logDebug(str.str());
 	        if (pt.x == x && pt.y == y)
 	        {
 	            return node;
@@ -345,10 +354,19 @@ namespace ST
         assert(mLayers.size() > 1);
         if (pos.x < 0 || pos.x > mWidth || pos.y < 0 || pos.y > mHeight)
             return true;
-        Node *node = mLayers[1]->getNodeAt(pos.x, pos.y);
-        if (!node)
-            return false;
-        return node->getBlocking();
+        LayerItr itr = mLayers.begin(), itr_end = mLayers.end();
+        while (itr != itr_end)
+        {
+            if ((*itr)->isCollisionLayer())
+            {
+                Node *node = (*itr)->getNodeAt(pos.x, pos.y);
+                if (!node)
+                    return false;
+                return true;
+            }
+            ++itr;
+        }
+        return false;
     }
 
 	bool Map::loadMapInfo(TiXmlElement* e)
@@ -455,6 +473,7 @@ namespace ST
         }
 
         int layerWidth, layerHeight;
+        std::string layerName;
 
         if (e->QueryIntAttribute("width", &layerWidth) != TIXML_SUCCESS)
         {
@@ -467,6 +486,9 @@ namespace ST
             logger->logError("No layer height");
             return false;
         }
+
+        // layer name is optional, needed for collision layer
+        layerName = e->Attribute("name");
 
         // Load in compressed base64 map
         e = e->FirstChild("data")->ToElement();
@@ -501,15 +523,18 @@ namespace ST
             return false;
         }
 
-        addLayer(layerWidth, layerHeight, layerData, inflatedSize);
+        addLayer(layerName, layerWidth, layerHeight, layerData, inflatedSize);
 
         return true;
 	}
 
-	void Map::addLayer(unsigned int width, unsigned int height, unsigned char *data,
+	void Map::addLayer(const std::string &name, unsigned int width, unsigned int height, unsigned char *data,
 		unsigned int len)
     {
-        Layer *l = new Layer(width, height);
+        Layer *l = new Layer(name, width, height);
+
+        if (name == "collision")
+            l->setCollisionLayer();
 
         // load in the layer data
 	    int length = len - 3;
@@ -535,11 +560,8 @@ namespace ST
 					if (tile_id >= mTilesets[j]->id)
 					{
 						std::stringstream str;
-						bool blocking = false;
-						if (tile_id == 38)
-                            blocking == true;
 						str << mTilesets[j]->tilename << (tile_id - mTilesets[j]->id) + 1;
-						l->setTile(x, y, graphicsEngine->getTexture(str.str()), mTileWidth, mTileHeight, blocking);
+						l->setTile(x, y, graphicsEngine->getTexture(str.str()), mTileWidth, mTileHeight);
 						break;
 					}
 				}

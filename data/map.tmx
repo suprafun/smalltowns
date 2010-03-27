@@ -26,6 +26,11 @@
  <tileset firstgid="501" name="Tileset Stuff 64px tall" tilewidth="64" tileheight="64">
   <image source="Tileset Stuff 64px tall.png"/>
  </tileset>
+ <layer name="collision" width="30" height="30">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC82Vyw0AIQhEqYb+S9wrIcLyh0k8mABvEI0IALi8qC5yuTq5mrKeouL5dN/J1XxorEqm5KGrRyvPw5XitPypmV7jR5gVfi72W9VXhO2t5fU0fac335LkYZpn5Wbnf/UddfyFk/+vl7vJttarZmf1qmPlRvmaf3zEVJy7Na9q5n85/Ay995zPIeI5ysx6pusD0/evvxAOAAA=
+  </data>
+ </layer>
  <layer name="Dirt" width="30" height="30">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAC+3W3QoAEAwG0L3/JS/sFi2zH2PLVyslTiQN4I2U7w5zWFm53Fqt57jVsDjnjOzuJou7a2dyX37PvZ3BpexT9/xdH5dKhn9DklsuGLhSP5qL7cOJtreb99G8NUkPe9PFxl6x7O+1aWW1udwQDgAA
@@ -54,11 +59,6 @@
  <layer name="Trees 2" width="30" height="30">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAC2NgGAWjgDTAzQTBI8VeYsAnxoF2weACuMJjqIbTUHX3KBi5YDTNEg/oUV5xDEDdNZoGcIPR+KAc0MI/wy2McAGYPweTfwF4Hx7pEA4AAA==
-  </data>
- </layer>
- <layer name="collision" width="30" height="30">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAC82Vyw0AIQhEqYb+S9wrIcLyh0k8mABvEI0IALi8qC5yuTq5mrKeouL5dN/J1XxorEqm5KGrRyvPw5XitPypmV7jR5gVfi72W9VXhO2t5fU0fac335LkYZpn5Wbnf/UddfyFk/+vl7vJttarZmf1qmPlRvmaf3zEVJy7Na9q5n85/Ay995zPIeI5ysx6pusD0/evvxAOAAA=
   </data>
  </layer>
 </map>

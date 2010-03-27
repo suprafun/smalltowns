@@ -63,12 +63,6 @@ namespace ST
 	struct Point;
 	struct Rectangle;
 
-	struct DisplayNode
-	{
-        Texture *texture;
-        int y;
-	};
-
 	class GraphicsEngine
 	{
 	public:
@@ -140,7 +134,7 @@ namespace ST
 		 * Renders a single frame to the screen
 		 */
 		void renderFrame();
-        
+
 		/**
 		 * Display Nodes
 		 * This puts the nodes on screen
@@ -270,16 +264,7 @@ namespace ST
 		unsigned int mAverageTime; // how often to update fps average
 		unsigned int mAverageFPS;
 		std::vector<unsigned int> mFPS;
-/*
-		// list of nodes
-		std::list<Node*> mNodes;
-		typedef std::list<Node*>::iterator NodeItr;
-		typedef std::list<Node*>::reverse_iterator NodeRevItr;
-        
-        // vector of sorted nodes
-        std::vector<Node*> mSortedNodes;
-        typedef std::vector<Node*>::iterator SortedNodeItr;
-*/
+
         typedef std::vector<Node*>::iterator NodeItr;
 
 		// list of textures

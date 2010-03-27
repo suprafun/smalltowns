@@ -125,7 +125,7 @@ namespace ST
 
 	Point Node::getTilePosition()
 	{
-	    return mapEngine->convertPixelToTile(mPosition.x, mPosition.y);
+	    return mapEngine->convertPixelToTile(mPosition.x + (mWidth >> 1), mPosition.y + 1);
 	}
 
 	Rectangle& Node::getBounds()

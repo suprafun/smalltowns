@@ -143,6 +143,8 @@ namespace ST
         {
             for (int i = 0; i < mapEngine->getLayers(); ++i)
             {
+                if (mapEngine->getLayer(i)->isCollisionLayer())
+                    continue;
                 mapEngine->getLayer(i)->sortNodes(0, mapEngine->getLayer(i)->getSize());
                 outputNodes(i);
             }

@@ -9,28 +9,12 @@
  <tileset firstgid="213" name="Tileset Coblestone road" tilewidth="64" tileheight="32">
   <image source="Tileset Coblestone road.png"/>
  </tileset>
- <tileset firstgid="357" name="Tileset Small Props 96px tall" tilewidth="96" tileheight="32">
-  <image source="Tileset Small Props 96px tall.png"/>
-  <tile id="11">
-   <properties>
-    <property name="io" value=""/>
-   </properties>
-  </tile>
- </tileset>
  <tileset firstgid="453" name="Tileset Small Props 96px tall" tilewidth="64" tileheight="96">
   <image source="Tileset Small Props 96px tall.png"/>
- </tileset>
- <tileset firstgid="498" name="tree" tilewidth="64" tileheight="128">
-  <image source="tree.png"/>
  </tileset>
  <tileset firstgid="501" name="Tileset Stuff 64px tall" tilewidth="64" tileheight="64">
   <image source="Tileset Stuff 64px tall.png"/>
  </tileset>
- <layer name="collision" width="30" height="30">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAC82Vyw0AIQhEqYb+S9wrIcLyh0k8mABvEI0IALi8qC5yuTq5mrKeouL5dN/J1XxorEqm5KGrRyvPw5XitPypmV7jR5gVfi72W9VXhO2t5fU0fac335LkYZpn5Wbnf/UddfyFk/+vl7vJttarZmf1qmPlRvmaf3zEVJy7Na9q5n85/Ay995zPIeI5ysx6pusD0/evvxAOAAA=
-  </data>
- </layer>
  <layer name="Dirt" width="30" height="30">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAC+3W3QoAEAwG0L3/JS/sFi2zH2PLVyslTiQN4I2U7w5zWFm53Fqt57jVsDjnjOzuJou7a2dyX37PvZ3BpexT9/xdH5dKhn9DklsuGLhSP5qL7cOJtreb99G8NUkPe9PFxl6x7O+1aWW1udwQDgAA
@@ -51,14 +35,14 @@
    H4sIAAAAAAAAC+VVQQ6AIAxD8KDG/z9VEzxoNJIo6ZAJAmovXAYtXRlClIGhegdvKp0rTy5PDCaCv5VC9DKhkJ2rY/Bu3sn8HpaOUH9Ga78C/bE57D13tPjU6kMNxXmET41LT+Nxd6T7bg/UD/KN8sTtEzXHuHB5bThyzm2Uv6dwdceYHpwykCDz6M3G5ER5fDo35uwaZYTzp34MM9GLkL8AQRPnoflWAnL3Osp7YObaXlMhdtZCsADFoMt/EA4AAA==
   </data>
  </layer>
- <layer name="Trees 1" width="30" height="30">
+ <layer name="collision" width="30" height="30">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAC2NgGAWjgDTAxcTAwMlEnNovjNSzl5NIez9T0U5qA1zhQc1wQge4woMa4URLd+MCgy1+B5t7BhM4RsWwoVY4j6ZZ4sFwK69gYDQNDC4w3OKDFv4hZCYt/DNS0izInxxMI8e/uAAAjn4nHhAOAAA=
+   H4sIAAAAAAAAC82Vyw0AIQhEqYb+S9wrIcLyh0k8mABvEI0IALi8qC5yuTq5mrKeouL5dN/J1XxorEqm5KGrRyvPw5XitPypmV7jR5gVfi72W9VXhO2t5fU0fac335LkYZpn5Wbnf/UddfyFk/+vl7vJttarZmf1qmPlRvmaf3zEVJy7Na9q5n85/Ay995zPIeI5ysx6pusD0/evvxAOAAA=
   </data>
  </layer>
- <layer name="Trees 2" width="30" height="30">
+ <layer name="Trees" width="30" height="30">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAC2NgGAWjgDTAzQTBI8VeYsAnxoF2weACuMJjqIbTUHX3KBi5YDTNEg/oUV5xDEDdNZoGcIPR+KAc0MI/wy2McAGYPweTfwF4Hx7pEA4AAA==
+   H4sIAAAAAAAAC+2WwQ0AIAgDdf+9jDqVLz4mRR4WjXIL0F6QmFIQ8OjZf2Y7MLMaZyIfTE/Ixw5PKDfyYfWkoeVmedRy37xvLKyey8acP3o+zWv3SpjzM++VEPuLiX/Cmt8cefaVnp59pedNb3QABOFL+hAOAAA=
   </data>
  </layer>
 </map>

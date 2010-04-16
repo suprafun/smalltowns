@@ -41,6 +41,7 @@
 #include "input.h"
 #include "game.h"
 #include "loginstate.h"
+#include "resourcemanager.h"
 
 #include "graphics/camera.h"
 #include "graphics/graphics.h"
@@ -51,6 +52,7 @@
 
 #include "utilities/log.h"
 #include "utilities/stringutils.h"
+#include "utilities/xml.h"
 
 #include <SDL.h>
 #include <sstream>
@@ -123,7 +125,7 @@ namespace ST
 		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN|AG_WINDOW_KEEPBELOW);
 		AG_WindowShow(win);
 		AG_WindowMaximize(win);
-
+/*
 		AG_Window *test = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "Connection");
 		AG_WindowSetCaption(test, "Connect to server");
 		AG_WindowSetSpacing(test, 12);
@@ -139,15 +141,58 @@ namespace ST
 		AG_Button *button = AG_ButtonNewFn(test, 0, "Submit", submit_connect, "%p%p", hostname, port);
 		AG_ButtonJustify(button, AG_TEXT_CENTER);
 		AG_WidgetFocus(button);
+*/
+        // Load windows from file
+        XMLFile file;
+        std::string name;
+        std::string title;
+        std::string hostText;
+        std::string portText;
+        std::string buttonText;
+        int w;
+        int h;
 
-		AG_WindowHide(test);
+        if (file.load(resourceManager->getDataPath() + "connect.xml"))
+        {
+            file.setElement("window");
+            name = file.readString("window", "name");
+            title = file.readString("window", "title");
+            w = file.readInt("window", "width");
+            h = file.readInt("window", "height");
+            file.setSubElement("window", "input");
+			hostText = file.readString("input", "text");
+			file.nextSubElement("input");
+			portText = file.readString("input", "text");
+			file.setSubElement("window", "button");
+			buttonText = file.readString("button", "text");
+			file.close();
 
-		interfaceManager->addWindow(win);
-		interfaceManager->addWindow(test);
+			AG_Window *test = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, name.c_str());
+            AG_WindowSetCaption(test, title.c_str());
+            AG_WindowSetSpacing(test, 12);
+            AG_WindowSetGeometry(test, halfScreenWidth - (w / 2) , halfScreenHeight - (h / 2), w, h);
 
-		timeout = SDL_GetTicks();
+            AG_Textbox *hostname = AG_TextboxNew(test, 0, hostText.c_str());
+            AG_Textbox *port = AG_TextboxNew(test, AG_TEXTBOX_INT_ONLY, portText.c_str());
+
+            // set defaults
+            AG_TextboxSetString(hostname, "server.casualgamer.co.uk");
+            AG_TextboxSetString(port, "9910");
+
+            AG_Button *button = AG_ButtonNewFn(test, 0, buttonText.c_str(), submit_connect, "%p%p", hostname, port);
+            AG_ButtonJustify(button, AG_TEXT_CENTER);
+            AG_WidgetFocus(button);
+
+            AG_WindowHide(test);
+
+            interfaceManager->addWindow(win);
+            interfaceManager->addWindow(test);
+        }
+
+        timeout = SDL_GetTicks();
         networkManager->connect();
         connecting = true;
+
     }
 
 	void ConnectState::exit()

@@ -159,7 +159,7 @@ namespace ST
     bool OptionsState::update()
     {
         // Check for input, if escape pressed, exit
-		if (inputManager->getKey(SDLK_ESCAPE))
+		if (inputManager->getKey(AG_KEY_ESCAPE))
 		{
 			return false;
 		}

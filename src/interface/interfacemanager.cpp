@@ -187,7 +187,9 @@ namespace ST
 		{
 			if (AG_WindowIsVisible(*itr))
             {
+                AG_ObjectLock(*itr);
                 AG_WindowDraw(*itr);
+                AG_ObjectUnlock(*itr);
             }
 		}
 

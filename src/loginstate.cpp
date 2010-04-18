@@ -195,7 +195,7 @@ namespace ST
 	{
 
 		// Check for input, if escape pressed, exit
-		if (inputManager->getKey(SDLK_ESCAPE))
+		if (inputManager->getKey(AG_KEY_ESCAPE))
 		{
 			networkManager->disconnect();
 			return false;
@@ -224,11 +224,13 @@ namespace ST
 		AG_WindowSetGeometry(mLoginWindow, mHalfScreenWidth - 125, mHalfScreenHeight - 100, 225, 200);
 
 		AG_Textbox *username = AG_TextboxNew(mLoginWindow, 0, "Username: ");
+        AG_TextboxSizeHint(username, "XXXXXXXXXXXXXXXX");
 		if (!savedUser.empty())
 		{
 			AG_TextboxSetString(username, savedUser.c_str());
 		}
 		AG_Textbox *password = AG_TextboxNew(mLoginWindow, AG_TEXTBOX_PASSWORD, "Password: ");
+		AG_TextboxSizeHint(password, "XXXXXXXXXXXXXXXX");
 		AG_Checkbox *save = AG_CheckboxNew(mLoginWindow, 0, "Save username for next time");
 		if (loginState == 1)
 		{

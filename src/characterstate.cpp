@@ -245,7 +245,7 @@ namespace ST
     bool CharacterState::update()
     {
         // Check for input, if escape pressed, exit
-		if (inputManager->getKey(SDLK_ESCAPE))
+		if (inputManager->getKey(AG_KEY_ESCAPE))
 		{
 			return false;
 		}
@@ -282,7 +282,7 @@ namespace ST
                     AG_Surface *surface = NULL;
                     if (graphicsEngine->isOpenGL())
                     {
-						surface = graphicsEngine->createSurface(tex->getGLTexture(), 64, 128);
+						surface = AG_SurfaceFromSDL(graphicsEngine->createSurface(tex->getGLTexture(), 64, 128));
 						pixmap = AG_PixmapFromSurface(NULL, AG_PIXMAP_RESCALE, surface);
                     }
                     else
@@ -367,8 +367,8 @@ namespace ST
             AG_Surface *surface = NULL;
             if (graphicsEngine->isOpenGL())
             {
-				surface = graphicsEngine->createSurface(tex->getGLTexture(), tex->getWidth(),
-														tex->getHeight());
+				surface = AG_SurfaceFromSDL(graphicsEngine->createSurface(tex->getGLTexture(), tex->getWidth(),
+														tex->getHeight()));
             }
             else
             {
@@ -407,7 +407,7 @@ namespace ST
             // put the texture into the pixmap
             if (graphicsEngine->isOpenGL())
             {
-				AG_Surface *s = graphicsEngine->createSurface(tex->getGLTexture(), 64, 128);
+				AG_Surface *s = AG_SurfaceFromSDL(graphicsEngine->createSurface(tex->getGLTexture(), 64, 128));
                 mAvatar->bodyparts.push_back(AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, s));
             }
             else
@@ -429,7 +429,7 @@ namespace ST
 
         if (graphicsEngine->isOpenGL())
         {
-            surface = graphicsEngine->createSurface(tex->getGLTexture(), 64, 128);
+            surface = AG_SurfaceFromSDL(graphicsEngine->createSurface(tex->getGLTexture(), 64, 128));
         }
         else
         {

@@ -44,7 +44,8 @@
 #ifndef ST_INPUT_HEADER
 #define ST_INPUT_HEADER
 
-#include <SDL_keysym.h>
+#include <agar/core.h>
+#include <agar/gui.h>
 #include <list>
 
 namespace ST
@@ -64,10 +65,10 @@ namespace ST
 		 * @param key The key to check was pressed
 		 * @return Returns true if key was pressed
 		 */
-		bool getKey(SDLKey key);
+		bool getKey(AG_KeySym key);
 
 	private:
-		std::list<SDLKey> keysDown;
+		std::list<AG_KeySym> keysDown;
 	};
 
 	extern InputManager *inputManager;

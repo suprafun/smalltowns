@@ -49,6 +49,7 @@
 #include <string>
 #include <vector>
 
+struct ag_surface;
 struct SDL_Surface;
 
 namespace ST

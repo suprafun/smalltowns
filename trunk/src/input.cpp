@@ -49,48 +49,50 @@ namespace ST
 {
 	void InputManager::getEvents()
 	{
-		SDL_Event event;
-        int rv = 0;
-		while (SDL_PollEvent(&event))
-		{
-		    rv = AG_ProcessEvent(&event);
+        AG_DriverEvent dev;
 
-			switch (event.type)
-			{
-            case SDL_MOUSEBUTTONUP:
+        if (AG_PendingEvents(NULL) > 0)
+        {
+            do
+            {
+                if (AG_GetNextEvent(NULL, &dev) == 1)
                 {
-                    interfaceManager->handleMouseEvent(event.button.button,
-                                                       event.button.x, event.button.y,
-                                                       0);
-                } break;
-            case SDL_MOUSEBUTTONDOWN:
-                {
-                    if (rv == 1)
-                        return;
-                    interfaceManager->handleMouseEvent(event.button.button,
-                                                       event.button.x, event.button.y,
-                                                       1);
-                } break;
-			case SDL_MOUSEMOTION:
-				{
-					interfaceManager->handleMouseEvent(0, event.motion.x, event.motion.y, 0);
-				} break;
-			case SDL_KEYDOWN:
-				{
-					keysDown.push_back(event.key.keysym.sym);
-				} break;
-			case SDL_QUIT:
-				{
-					// fake escape being pressed
-					keysDown.push_back(SDLK_ESCAPE);
-				} break;
-			}
-		}
+                    switch (dev.type)
+                    {
+                    case AG_DRIVER_MOUSE_BUTTON_DOWN:
+                        interfaceManager->handleMouseEvent(dev.data.button.which,
+                               dev.data.button.x, dev.data.button.y,
+                               0);
+                        break;
+                    case AG_DRIVER_MOUSE_BUTTON_UP:
+                        interfaceManager->handleMouseEvent(dev.data.button.which,
+                               dev.data.button.x, dev.data.button.y,
+                               1);
+                        break;
+                    case AG_DRIVER_MOUSE_MOTION:
+                        interfaceManager->handleMouseEvent(0, dev.data.motion.x, dev.data.motion.y, 0);
+                        break;
+                    case AG_DRIVER_KEY_DOWN:
+                        keysDown.push_back(dev.data.key.ks);
+                        break;
+                    case AG_DRIVER_CLOSE:
+                        keysDown.push_back(AG_KEY_ESCAPE);
+                        break;
+                    default:
+                        break;
+                    }
+
+                    /* Forward the event to Agar. */
+                    if (AG_ProcessEvent(NULL, &dev) == -1)
+                        break;
+                }
+            } while (AG_PendingEvents(NULL) > 0);
+        }
 	}
 
-	bool InputManager::getKey(SDLKey key)
+	bool InputManager::getKey(AG_KeySym key)
 	{
-		std::list<SDLKey>::iterator itr;
+		std::list<AG_KeySym>::iterator itr;
 		itr = std::find(keysDown.begin(), keysDown.end(), key);
 		if (itr != keysDown.end())
 		{

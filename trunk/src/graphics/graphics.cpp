@@ -129,9 +129,12 @@ namespace ST
 	void GraphicsEngine::renderFrame()
 	{
 	    ++mFrames;
+	    AG_Driver *drv;
 
-		AG_LockVFS(agView);
-	    AG_BeginRendering();
+
+		AG_LockVFS(&agDrivers);
+		if (agDriverSw)
+            AG_BeginRendering(agDriverSw);
 
         setupScene();
 
@@ -151,8 +154,9 @@ namespace ST
 
 		endScene();
 
-        AG_EndRendering();
-		AG_UnlockVFS(agView);
+        if (agDriverSw)
+            AG_EndRendering(agDriverSw);
+		AG_UnlockVFS(&agDrivers);
 	}
 
 	void GraphicsEngine::outputNodes(int layer)

@@ -215,7 +215,7 @@ namespace ST
 	{
 		SDL_Surface *surface = NULL;
 		glBindTexture(GL_TEXTURE_2D, texture);
-		surface = AG_SurfaceRGBA(width, height, 32, 0,
+		surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32,
 #if AG_BYTEORDER == AG_BIG_ENDIAN
                                 0xff000000,
                                 0x00ff0000,

@@ -60,13 +60,17 @@ namespace ST
 	{
 	}
 
-	bool OpenGLGraphics::init(bool fullscreen)
+	bool OpenGLGraphics::init(int fullscreen, int x, int y)
 	{
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+        // set width and height
+        mWidth = x;
+        mHeight = y;
 
 		// get bpp of desktop
 		const SDL_VideoInfo* video = SDL_GetVideoInfo();

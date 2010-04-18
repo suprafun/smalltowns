@@ -234,7 +234,6 @@ namespace ST
 
 	void TestState::enter()
 	{
-		int screenWidth = graphicsEngine->getScreenWidth();
 		int screenHeight = graphicsEngine->getScreenHeight();
 
 		AG_Window *chatWindow = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "ChatWindow");

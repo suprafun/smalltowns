@@ -81,7 +81,7 @@ namespace ST
 		/**
 		 * Initialise the engine
 		 */
-		virtual bool init(bool fullscreen) = 0;
+		virtual bool init(int fullscreen, int x, int y) = 0;
 
 		/**
 		 * Create Node

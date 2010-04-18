@@ -41,6 +41,7 @@
 #include "connectstate.h"
 #include "registerstate.h"
 #include "teststate.h"
+#include "optionsstate.h"
 #include "input.h"
 #include "game.h"
 #include "player.h"
@@ -60,6 +61,12 @@
 
 namespace ST
 {
+    void goto_options(AG_Event *event)
+    {
+        GameState *state = new OptionsState;
+        game->changeState(state);
+    }
+
     void submit_login(AG_Event *event)
     {
         std::string username;
@@ -205,7 +212,7 @@ namespace ST
 		file->setElement("login");
 		int loginState = file->readInt("login", "save");
 		std::string savedUser;
-        
+
 		if (loginState == 1)
 		{
 			savedUser = file->readString("login", "username");
@@ -214,7 +221,7 @@ namespace ST
 		// create the login window's widgets
 		AG_WindowSetCaption(mLoginWindow, "Login");
 		AG_WindowSetSpacing(mLoginWindow, 12);
-		AG_WindowSetGeometry(mLoginWindow, mHalfScreenWidth - 125, mHalfScreenHeight - 75, 225, 152);
+		AG_WindowSetGeometry(mLoginWindow, mHalfScreenWidth - 125, mHalfScreenHeight - 100, 225, 200);
 
 		AG_Textbox *username = AG_TextboxNew(mLoginWindow, 0, "Username: ");
 		if (!savedUser.empty())
@@ -237,6 +244,8 @@ namespace ST
                                                     switch_login_window, "%p%p",
 													mLoginWindow, mRegisterWindow);
 		AG_ButtonJustify(register_button, AG_TEXT_CENTER);
+
+		AG_Button *options = AG_ButtonNewFn(mLoginWindow, 0, "Options", goto_options, 0);
 
 		AG_WindowShow(mLoginWindow);
 		interfaceManager->addWindow(mLoginWindow);

@@ -149,13 +149,13 @@ namespace ST
                 int part = file.readInt("body", "part");
 
                 BodyPart *body = new BodyPart(id, part, icon);
-                
+
                 do
                 {
                     int dir = -1;
                     std::string img = mDataPath + file.readString("image", "file");
                     std::string dirstr = file.readString("image", "dir");
-                    
+
                     if (dirstr == "SE")
                         dir = DIRECTION_SOUTHEAST;
                     else if (dirstr == "SW")
@@ -164,13 +164,13 @@ namespace ST
                         dir = DIRECTION_NORTHEAST;
                     else if (dirstr == "NW")
                         dir = DIRECTION_NORTHWEST;
-                    
+
                     body->addTexture(dir, img);
                 } while (file.nextSubElement("image"));
 
                 mBodyParts.push_back(body);
                 file.clear("image");
-                
+
             } while (file.nextElement("body"));
 		}
     }
@@ -206,7 +206,7 @@ namespace ST
                     if (graphicsEngine->loadTextureSet(texName.str(), img, width, height))
                     {
                         BeingAnimation *anim = new BeingAnimation(id, part);
-                        for (unsigned int i = 1; i <= frames; ++i)
+                        for (int i = 1; i <= frames; ++i)
                         {
                             std::stringstream str;
                             str << texName.str() << i;

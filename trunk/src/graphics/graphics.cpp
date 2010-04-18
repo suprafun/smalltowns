@@ -79,9 +79,6 @@ namespace ST
 		// Set the window title
 		SDL_WM_SetCaption("Towns Life", NULL);
 
-		mWidth = 1024;
-		mHeight = 768;
-
 		mCamera = NULL;
 		mFrames = 0;
 		mAverageTime = 5;

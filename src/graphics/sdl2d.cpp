@@ -57,11 +57,17 @@ namespace ST
 	{
 	}
 
-	bool SDLGraphics::init(bool fullscreen)
+	bool SDLGraphics::init(int fullscreen, int x, int y)
 	{
+	    // set width and height
+	    mWidth = x;
+	    mHeight = y;
+
 		// get bpp of desktop
 		const SDL_VideoInfo* video = SDL_GetVideoInfo();
 		int bpp = video->vfmt->BitsPerPixel;
+
+        // set fullscreen
         int flags = SDL_HWSURFACE|SDL_DOUBLEBUF;
         if (fullscreen)
             flags |= SDL_FULLSCREEN;

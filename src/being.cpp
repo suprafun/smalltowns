@@ -246,7 +246,6 @@ namespace ST
         float disty = 0.0f;
         float distance = 0.0f;
         float time = 0.0f;
-        float length = 0.0f;
 
         // check theres waypoints
         if (mWaypoints.size() == 0)

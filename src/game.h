@@ -74,12 +74,25 @@ namespace ST
 		~Game();
 
 		/**
+		 * Re-start
+		 *
+		 * Kills renderering so it can run again, used for changing graphics options
+		 */
+        void restart(int opengl, int fullscreen, int x, int y);
+
+		/**
 		 * Run
 		 *
 		 * Creates everything needed to run the game
-		 * Loops until user exists the game
 		 */
 		void run();
+
+		/**
+		 * Loop
+		 *
+		 * Loops indefinitely until quit
+		 */
+        void loop();
 
 		/**
 		 * Change State

@@ -89,6 +89,23 @@ namespace ST
 		delete logger;
 	}
 
+	void Game::restart(int opengl, int fullscreen, int x, int y)
+	{
+	    // recreate graphicsEngine
+	    delete graphicsEngine;
+
+	    if (opengl != 0)
+	    {
+	        graphicsEngine = new OpenGLGraphics;
+	    }
+	    else
+	    {
+	        graphicsEngine = new SDLGraphics;
+	    }
+
+	    graphicsEngine->init(fullscreen, x, y);
+	}
+
 	void Game::run()
 	{
 		// load in configuration file
@@ -96,6 +113,8 @@ namespace ST
 		std::string hostname;
 		int port = 0;
 		int opengl = 0;
+		int resx = 1024;
+		int resy = 768;
         std::string fullscreen;
 
 #ifndef __APPLE__
@@ -110,18 +129,20 @@ namespace ST
             file.setElement("graphics");
 			opengl = file.readInt("graphics", "opengl");
             fullscreen = file.readString("graphics", "fullscreen");
+            resx = file.readInt("graphics", "width");
+            resy = file.readInt("graphics", "height");
         }
 
 		file.close();
 
 		// check whether opengl should be used
 		opengl ? graphicsEngine = new OpenGLGraphics : graphicsEngine = new SDLGraphics;
-        
+
         if (fullscreen == "true")
-            graphicsEngine->init(true);
+            graphicsEngine->init(1, resx, resy);
         else
-            graphicsEngine->init(false);
-        
+            graphicsEngine->init(0, resx, resy);
+
 		inputManager = new InputManager;
 		mapEngine = new Map;
 		interfaceManager = new InterfaceManager;
@@ -144,7 +165,12 @@ namespace ST
 		mState = new ConnectState();
 		mState->enter();
 
-		// Update the state each frame
+		loop();
+	}
+
+	void Game::loop()
+	{
+        // Update the state each frame
 		// Render the frame
 		// Get Input
 		while (mState->update())

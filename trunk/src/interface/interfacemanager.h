@@ -83,6 +83,11 @@ namespace ST
 		~InterfaceManager();
 
 		/**
+		 * Reset interface
+		 */
+        void reset();
+
+		/**
 		 * Load GUI Sheet
 		 * Loads a gui from an xml file
 		 */

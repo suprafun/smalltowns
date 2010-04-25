@@ -104,6 +104,7 @@ namespace ST
 	    }
 
 	    graphicsEngine->init(fullscreen, x, y);
+	    interfaceManager->reset();
 	}
 
 	void Game::run()

@@ -87,6 +87,7 @@ namespace ST
 	{
 	    if (mHost->isConnected())
             disconnect();
+        delete mHost;
 	}
 
 	void NetworkManager::connect()
@@ -430,7 +431,7 @@ namespace ST
                     // create new being based on info
                     Point pt = beingManager->getSavedDestination(id);
                     int dir = beingManager->getSavedDirection(id);
-                    
+
                     Texture *avatar = graphicsEngine->createAvatar(id, body, hair, dir);
                     Character *c = new Character(id, name, avatar);
                     c->look.body = body;

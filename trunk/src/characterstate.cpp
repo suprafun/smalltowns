@@ -57,6 +57,7 @@
 
 #include "resources/bodypart.h"
 
+#include "utilities/log.h"
 #include "utilities/stringutils.h"
 #include "utilities/xml.h"
 
@@ -383,6 +384,7 @@ namespace ST
 
 		AG_Textbox *charNick = AG_TextboxNew(mCreateWindow, 0, "Nickname: ");
 		AG_TextboxSizeHint(charNick, "XXXXXXXXXXXXXXXX");
+		AG_ExpandHoriz(charNick);
 
 		AG_HBox *hbox = AG_HBoxNew(mCreateWindow, 0);
 		AG_Button *backButton = AG_ButtonNewFn(hbox, 0, "Cancel", switch_char_window, "%p%p",
@@ -405,15 +407,23 @@ namespace ST
             Texture *tex = body->getTexture(DIRECTION_SOUTHEAST);
 
             // put the texture into the pixmap
+            AG_Surface *surface = NULL;
+            SDL_Surface *s = NULL;
             if (graphicsEngine->isOpenGL())
             {
-				AG_Surface *s = AG_SurfaceFromSDL(graphicsEngine->createSurface(tex->getGLTexture(), 64, 128));
-                mAvatar->bodyparts.push_back(AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, s));
+                s = graphicsEngine->createSurface(tex->getGLTexture(), 64, 128);
+                if (s)
+                    surface = AG_SurfaceFromSDL(s);
+				if (surface)
+                    mAvatar->bodyparts.push_back(AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, surface));
             }
             else
             {
-                AG_Surface *s = AG_SurfaceFromSDL(tex->getSDLSurface());
-                mAvatar->bodyparts.push_back(AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, s));
+                s = tex->getSDLSurface();
+                if (s)
+                    surface = AG_SurfaceFromSDL(tex->getSDLSurface());
+                if (surface)
+                    mAvatar->bodyparts.push_back(AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, surface));
             }
         }
     }

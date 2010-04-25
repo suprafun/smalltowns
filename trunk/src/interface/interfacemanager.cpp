@@ -82,9 +82,15 @@ namespace ST
 	InterfaceManager::~InterfaceManager()
 	{
 	    delete mouse;
-		AG_ViewDetach(mErrorWindow);
+		AG_ObjectDetach(mErrorWindow);
 		removeAllWindows();
+		AG_DestroyVideo();
 		AG_Destroy();
+	}
+
+	void InterfaceManager::reset()
+	{
+        AG_ResizeDisplay(graphicsEngine->getScreenWidth(), graphicsEngine->getScreenHeight());
 	}
 
 	bool InterfaceManager::loadGuiSheet(const std::string &filename)
@@ -112,46 +118,31 @@ namespace ST
 
 	AG_Window* InterfaceManager::getWindow(const std::string &name)
 	{
-        WindowItr itr = mWindows.begin();
-        WindowItr itr_end = mWindows.end();
-
-        while (itr != itr_end)
+/*	    AG_Window *win;
+	    char driverName[255];
+	    AG_ObjectCopyName(&agDrivers, driverName, 255);
+	    std::string str = driverName;
+	    str.append(name);
+	    AG_FOREACH_WINDOW(win, agDriverSw)
         {
-            char object_name[255];
-
-            AG_ObjectCopyName((*itr), object_name, 255);
-
-            if (strncmp(object_name, name.c_str(), name.size()) == 0)
+            char windowName[255];
+            AG_ObjectCopyName(win, windowName, 255);
+            if (strncmp(windowName, str.c_str(), str.size()) == 0)
             {
-                return (*itr);
+                return win;
             }
-
-            ++itr;
         }
 
         return NULL;
+*/
+        return static_cast<AG_Window*>(AG_WidgetFind(agDriverSw, name.c_str()));
 	}
 
 	void InterfaceManager::removeWindow(const std::string &name)
 	{
-	    WindowItr itr = mWindows.begin();
-        WindowItr itr_end = mWindows.end();
-
-        while (itr != itr_end)
-        {
-            char object_name[255];
-
-            AG_ObjectCopyName(*itr, object_name, 255);
-
-            if (strncmp(object_name, name.c_str(), name.size()) == 0)
-            {
-                AG_ViewDetach(*itr);
-				mWindows.erase(itr);
-				return;
-            }
-
-            ++itr;
-        }
+	    AG_Window *win = getWindow(name);
+	    AG_ObjectDetach(win);
+	    mWindows.remove(win);
 	}
 
 	void InterfaceManager::removeAllWindows()
@@ -159,13 +150,13 @@ namespace ST
 		WindowItr itr_end = mWindows.end();
 		for (WindowItr itr = mWindows.begin(); itr != itr_end; ++itr)
 		{
-			AG_ViewDetach(*itr);
+			AG_ObjectDetach(*itr);
 		}
 		mWindows.clear();
         NameItr name_itr = mNames.begin(), name_itr_end = mNames.end();
         while (name_itr != name_itr_end)
         {
-            AG_ViewDetach(name_itr->second);
+            AG_ObjectDetach(name_itr->second);
             ++name_itr;
         }
         mNames.clear();
@@ -182,18 +173,13 @@ namespace ST
 
 	void InterfaceManager::drawWindows()
 	{
-		WindowItr itr_end = mWindows.end();
-		for (WindowItr itr = mWindows.begin(); itr != itr_end; ++itr)
+		AG_Window *win;
+		AG_FOREACH_WINDOW(win, agDriverSw)
 		{
-			if (AG_WindowIsVisible(*itr))
-            {
-                AG_ObjectLock(*itr);
-                AG_WindowDraw(*itr);
-                AG_ObjectUnlock(*itr);
-            }
+		    AG_ObjectLock(win);
+		    AG_WindowDraw(win);
+		    AG_ObjectUnlock(win);
 		}
-
-		AG_WindowDraw(mErrorWindow);
 	}
 
 	void InterfaceManager::drawName(const std::string &name, const Point &pt)
@@ -220,11 +206,13 @@ namespace ST
 	AG_Widget* InterfaceManager::getChild(AG_Widget *parent, const std::string &name)
 	{
 	    AG_Widget *widget;
+	    std::string str = agDrivers.archivePath;
+	    str.append(name);
 	    AGOBJECT_FOREACH_CHILD(widget, parent, ag_widget)
         {
             char widgetName[64];
             AG_ObjectCopyName(widget, widgetName, 30);
-            if (strncmp(widgetName, name.c_str(), name.size()) == 0)
+            if (strncmp(widgetName, str.c_str(), str.size()) == 0)
             {
                 return widget;
             }

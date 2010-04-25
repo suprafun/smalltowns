@@ -175,6 +175,9 @@ namespace ST
             AG_Textbox *hostname = AG_TextboxNew(test, 0, hostText.c_str());
             AG_Textbox *port = AG_TextboxNew(test, AG_TEXTBOX_INT_ONLY, portText.c_str());
 
+            AG_ExpandHoriz(hostname);
+            AG_ExpandHoriz(port);
+
             // set defaults
             AG_TextboxSetString(hostname, "server.casualgamer.co.uk");
             AG_TextboxSetString(port, "9910");

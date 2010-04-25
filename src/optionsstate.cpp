@@ -46,13 +46,15 @@
 
 #include "interface/interfacemanager.h"
 
+#include "utilities/log.h"
+
 #include <sstream>
 
 namespace ST
 {
     int width, height;
 
-    void selectedResolution(AG_Event *event)
+    void selected_resolution(AG_Event *event)
     {
         AG_TlistItem *item = static_cast<AG_TlistItem*>(AG_PTR(1));
         width = static_cast<Point*>(item->p1)->x;
@@ -61,17 +63,23 @@ namespace ST
 
     void apply_options(AG_Event *event)
     {
-        int opengl = AG_INT(1);
-        int fs = AG_INT(2);
+        int opengl = *static_cast<int*>(AG_PTR(1));
+        int fs = *static_cast<int*>(AG_PTR(2));
+
+        std::stringstream str;
+        str << "Fullscreen: " << fs;
+        logger->logDebug(str.str());
+
+        interfaceManager->removeAllWindows();
+        game->restart(opengl, fs, width, height);
 
         GameState *state = new LoginState;
         game->changeState(state);
-
-        game->restart(opengl, fs, width, height);
     }
 
     void cancel_options(AG_Event *event)
     {
+        interfaceManager->removeAllWindows();
         GameState *state = new LoginState;
         game->changeState(state);
     }
@@ -105,7 +113,7 @@ namespace ST
 		// alignment
 		AG_VBox *box = AG_VBoxNew(optionWindow, 0);
 
-		// add selection box for resolution
+		// create list of resolutions
 		Point pt;
 		pt.x = 1024;
 		pt.y = 768;
@@ -119,10 +127,13 @@ namespace ST
 		pt.x = 1440;
 		pt.y = 900;
 		mRes.push_back(pt);
+
+		// add selection box for resolution
         selectionBox = AG_UComboNew(box, 0);
         AG_ExpandHoriz(selectionBox);
         AG_UComboSizeHint(selectionBox, "Resolution", mRes.size());
 
+        // loop through all the resolutions
         for (unsigned int i = 0; i < mRes.size(); ++i)
         {
             std::stringstream str;
@@ -130,9 +141,12 @@ namespace ST
             AG_TlistAddPtr(selectionBox->list, NULL, str.str().c_str(), &mRes[i]);
         }
 
-        AG_ExpandVert(selectionBox);
+        AG_TlistSelect(selectionBox->list, AG_TlistFirstItem(selectionBox->list));
+        AG_SetEvent(selectionBox, "ucombo-selected", selected_resolution, NULL);
 
-        AG_SetEvent(selectionBox, "ucombo-selected", selectedResolution, NULL);
+        std::stringstream fs;
+        fs << "Fullscreen: " << mFullscreen;
+        logger->logDebug(fs.str());
 
 		// add checkbox for fullscreen
         AG_Checkbox *fullscreenBox = AG_CheckboxNewInt(box, 0, "Fullscreen", &mFullscreen);
@@ -142,7 +156,7 @@ namespace ST
 
         AG_HBox *hbox = AG_HBoxNew(box, 0);
 		// add button to apply
-		AG_Button *applyButton = AG_ButtonNewFn(hbox, 0, "Apply", apply_options, "%d%d", mOpenGL, mFullscreen);
+		AG_Button *applyButton = AG_ButtonNewFn(hbox, 0, "Apply", apply_options, "%p%p", &mOpenGL, &mFullscreen);
 
 		// add button to cancel
         AG_Button *cancelButton = AG_ButtonNewFn(hbox, 0, "Cancel", cancel_options, 0);
@@ -153,7 +167,7 @@ namespace ST
 
     void OptionsState::exit()
     {
-        interfaceManager->removeAllWindows();
+
     }
 
     bool OptionsState::update()

@@ -191,6 +191,10 @@ namespace ST
     {
         int hops = 0;
         int dir = DIRECTION_NORTH;
+        int hw = mWidth >> 1;
+        int mapWidth = mapEngine->getTileWidth();
+        int mapHeight = mapEngine->getTileHeight();
+        int hmh = mapHeight >> 1;
 
         // set start point
         mLastPosition.x = mPosition.x;
@@ -217,16 +221,17 @@ namespace ST
             wayPos = getNextTile(wayPos, dir);
 
             // translate to screen position and store that
-            screenPos.x = 0.5 * (wayPos.x - wayPos.y) * mapEngine->getTileWidth();
-            screenPos.y = 0.5 * (wayPos.x + wayPos.y) * mapEngine->getTileHeight();
-            screenPos.x += mapEngine->getTileWidth() >> 1;
-            screenPos.y += mapEngine->getTileHeight() >> 1;
+            screenPos.x = 0.5 * (wayPos.x - wayPos.y) * mapWidth;
+            screenPos.y = 0.5 * (wayPos.x + wayPos.y) * mapHeight;
+            screenPos.x += hw >> 1;
+            screenPos.y += hmh;
 
             mWaypoints.push_back(screenPos);
             ++hops;
         }
 
-		mWaypoints.push_back(finish);
+        // commented out as sabata wants to end on the tile not the pixel
+		//mWaypoints.push_back(finish);
 
         return (hops < 20);
     }

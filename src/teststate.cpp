@@ -247,7 +247,7 @@ namespace ST
         AG_NotebookTab *nbTab = AG_NotebookAddTab(book, "Global Chat", AG_BOX_VERT);
         AG_ObjectSetName(nbTab, "GlobalChat");
 
-        AG_Console *console = AG_ConsoleNew(nbTab, AG_CONSOLE_EXPAND);
+        AG_Console *console = AG_ConsoleNew(nbTab, AG_CONSOLE_EXPAND|AG_CONSOLE_AUTOSCROLL);
         AG_ObjectSetName(console, "Chat");
 
 		AG_Textbox *chatInput = AG_TextboxNew(chatWindow, AG_TEXTBOX_CATCH_TAB, NULL);

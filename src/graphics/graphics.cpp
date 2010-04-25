@@ -129,8 +129,6 @@ namespace ST
 	void GraphicsEngine::renderFrame()
 	{
 	    ++mFrames;
-	    AG_Driver *drv;
-
 
 		AG_LockVFS(&agDrivers);
 		if (agDriverSw)
@@ -212,7 +210,7 @@ namespace ST
 		Texture *tex = NULL;
 		if (s)
 		{
-			tex = createTexture(s, name,0, 0, s->w, s->h);
+			tex = createTexture(s, name, 0, 0, s->w, s->h);
 			SDL_FreeSurface(s);
 			s = NULL;
 		}
@@ -333,6 +331,12 @@ namespace ST
 
 		// Create texture from frame
 		Texture *texture = new Texture(name, width, height);
+
+		if (!texture)
+		{
+		    logger->logError("Unable to create texture " + name);
+		    return NULL;
+		}
 		if (mOpenGL)
 		{
 			texture->setPixels(tex);
@@ -340,7 +344,7 @@ namespace ST
 		}
 		else
 		{
-			texture->setImage(tex);
+            texture->setImage(tex);
 		}
 
 		mTextures.insert(std::pair<std::string, Texture*>(texture->getName(),

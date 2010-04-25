@@ -19,6 +19,7 @@
 					<Add option="`sdl-config --cflags`" />
 					<Add option="`freetype-config --cflags`" />
 					<Add option="`curl-config --cflags`" />
+					<Add option="`agar-config --cflags`" />
 					<Add option="-DWITHOUT_CHAT=1" />
 					<Add directory="libs/cppirclib" />
 					<Add directory="/usr/local/include/agar" />
@@ -26,7 +27,6 @@
 				<Linker>
 					<Add option="`sdl-config --libs`" />
 					<Add option="`curl-config --libs`" />
-					<Add option="`agar-config --libs`" />
 					<Add library="SDL_image" />
 					<Add library="GL" />
 					<Add library="GLU" />
@@ -34,6 +34,11 @@
 					<Add library="enet" />
 					<Add library="physfs" />
 					<Add library="libs/cppirclib/libcppirclib.a" />
+					<Add library="freetype" />
+					<Add library="png" />
+					<Add library="jpeg" />
+					<Add library="ag_core" />
+					<Add library="ag_gui" />
 					<Add library="pthread" />
 				</Linker>
 			</Target>
@@ -124,6 +129,8 @@
 		<Unit filename="src/net/packet.cpp" />
 		<Unit filename="src/net/packet.h" />
 		<Unit filename="src/net/protocol.h" />
+		<Unit filename="src/optionsstate.cpp" />
+		<Unit filename="src/optionsstate.h" />
 		<Unit filename="src/player.cpp" />
 		<Unit filename="src/player.h" />
 		<Unit filename="src/registerstate.h" />

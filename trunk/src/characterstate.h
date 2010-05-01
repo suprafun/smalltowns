@@ -105,6 +105,7 @@ namespace ST
 		AG_Window *mSelectWindow;
 		AG_Window *mCreateWindow;
 		Avatar *mAvatar;
+		unsigned int rmask, gmask, bmask, amask;
 	};
 }
 

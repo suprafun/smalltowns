@@ -77,6 +77,8 @@ namespace ST
 		mouse->cursor = NULL;
 		mouse->cursorPos.x = 0;
 		mouse->cursorPos.y = 0;
+
+		reset();
 	}
 
 	InterfaceManager::~InterfaceManager()
@@ -249,7 +251,7 @@ namespace ST
 		if ((msg.size() % lineSize) > 0)
 			++lines;
 
-        AG_Console *chat = static_cast<AG_Console*>(AG_WidgetFind(agView, "/ChatWindow/ChannelsFolder/GlobalChat/Chat"));
+        AG_Console *chat = static_cast<AG_Console*>(AG_WidgetFind(agDriverSw, "/ChatWindow/ChannelsFolder/GlobalChat/Chat"));
         if (chat)
         {
             unsigned int pos = 0;

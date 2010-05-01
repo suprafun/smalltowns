@@ -130,8 +130,8 @@ namespace ST
 	{
 	    ++mFrames;
 
-		AG_LockVFS(&agDrivers);
-		if (agDriverSw)
+        AG_LockVFS(&agDrivers);
+        if (agDriverSw)
             AG_BeginRendering(agDriverSw);
 
         setupScene();
@@ -154,7 +154,7 @@ namespace ST
 
         if (agDriverSw)
             AG_EndRendering(agDriverSw);
-		AG_UnlockVFS(&agDrivers);
+        AG_UnlockVFS(&agDrivers);
 	}
 
 	void GraphicsEngine::outputNodes(int layer)

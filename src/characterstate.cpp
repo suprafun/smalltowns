@@ -197,6 +197,17 @@ namespace ST
     {
 		mSelected = 0;
 		mAvatar = 0;
+		#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+        rmask = 0xff000000;
+        gmask = 0x00ff0000;
+        bmask = 0x0000ff00;
+        amask = 0x000000ff;
+        #else
+        rmask = 0x000000ff;
+        gmask = 0x0000ff00;
+        bmask = 0x00ff0000;
+        amask = 0xff000000;
+        #endif
 
 #ifndef __APPLE__
 		resourceManager->loadBodyParts("body.cfg");
@@ -283,12 +294,23 @@ namespace ST
                     AG_Surface *surface = NULL;
                     if (graphicsEngine->isOpenGL())
                     {
-						surface = AG_SurfaceFromSDL(graphicsEngine->createSurface(tex->getGLTexture(), 64, 128));
+                        /*
+                        SDL_Surface *s = graphicsEngine->createSurface(tex->getGLTexture(), 64, 128);
+                        SDL_LockSurface(s);
+                        AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
+                        SDL_UnlockSurface(s);
+						//surface = AG_SurfaceFromSDL(graphicsEngine->createSurface(tex->getGLTexture(), 64, 128));
 						pixmap = AG_PixmapFromSurface(NULL, AG_PIXMAP_RESCALE, surface);
+						*/
+						pixmap = AG_PixmapFromTexture(0, AG_PIXMAP_RESCALE, tex->getGLTexture(), 0);
                     }
                     else
                     {
-                        surface = AG_SurfaceFromSDL(tex->getSDLSurface());
+                        SDL_Surface *s = tex->getSDLSurface();
+                        //surface = AG_SurfaceFromSDL(tex->getSDLSurface());
+                        SDL_LockSurface(s);
+                        surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
+                        SDL_UnlockSurface(s);
                         pixmap = AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, surface);
                     }
 
@@ -365,15 +387,24 @@ namespace ST
             AG_ButtonValign(hair, AG_TEXT_MIDDLE);
 
             // make each haair style into a button with hair style icon
+            SDL_Surface *s;
             AG_Surface *surface = NULL;
             if (graphicsEngine->isOpenGL())
             {
-				surface = AG_SurfaceFromSDL(graphicsEngine->createSurface(tex->getGLTexture(), tex->getWidth(),
-														tex->getHeight()));
+                s = graphicsEngine->createSurface(tex->getGLTexture(), tex->getWidth(), tex->getHeight());
+                SDL_LockSurface(s);
+                surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
+                SDL_UnlockSurface(s);
+				//surface = AG_SurfaceFromSDL(graphicsEngine->createSurface(tex->getGLTexture(), tex->getWidth(),
+				//										tex->getHeight()));
             }
             else
             {
-                surface = AG_SurfaceFromSDL(tex->getSDLSurface());
+                s = tex->getSDLSurface();
+                SDL_LockSurface(s);
+                surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
+                SDL_UnlockSurface(s);
+                //surface = AG_SurfaceFromSDL(tex->getSDLSurface());
             }
             AG_ButtonSurface(hair, surface);
         }
@@ -413,17 +444,30 @@ namespace ST
             {
                 s = graphicsEngine->createSurface(tex->getGLTexture(), 64, 128);
                 if (s)
-                    surface = AG_SurfaceFromSDL(s);
+                {
+                    SDL_LockSurface(s);
+                    surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
+                    SDL_UnlockSurface(s);
+                }
 				if (surface)
-                    mAvatar->bodyparts.push_back(AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, surface));
+				{
+				    mAvatar->bodyparts.push_back(AG_PixmapFromSurface(0, 0, surface));
+				}
+
             }
             else
             {
                 s = tex->getSDLSurface();
                 if (s)
-                    surface = AG_SurfaceFromSDL(tex->getSDLSurface());
+                {
+                    SDL_LockSurface(s);
+                    surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
+                    SDL_UnlockSurface(s);
+                }
                 if (surface)
-                    mAvatar->bodyparts.push_back(AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, surface));
+                {
+                    mAvatar->bodyparts.push_back(AG_PixmapFromSurface(0, 0, surface));
+                }
             }
         }
     }
@@ -436,14 +480,22 @@ namespace ST
         AG_Pixmap *pixmap = mAvatar->bodyparts.at(body->getType());
 
         AG_Surface *surface = NULL;
-
+        SDL_Surface *s = NULL;
         if (graphicsEngine->isOpenGL())
         {
-            surface = AG_SurfaceFromSDL(graphicsEngine->createSurface(tex->getGLTexture(), 64, 128));
+            s = graphicsEngine->createSurface(tex->getGLTexture(), 64, 128);
+            SDL_LockSurface(s);
+            surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
+            SDL_UnlockSurface(s);
+            //surface = AG_SurfaceFromSDL(graphicsEngine->createSurface(tex->getGLTexture(), 64, 128));
         }
         else
         {
-            surface = AG_SurfaceFromSDL(tex->getSDLSurface());
+            s = tex->getSDLSurface();
+            SDL_LockSurface(s);
+            surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
+            SDL_UnlockSurface(s);
+            //surface = AG_SurfaceFromSDL(tex->getSDLSurface());
         }
 
         AG_PixmapReplaceCurrentSurface(pixmap, surface);

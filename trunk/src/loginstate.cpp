@@ -39,7 +39,6 @@
 
 #include "loginstate.h"
 #include "connectstate.h"
-#include "registerstate.h"
 #include "teststate.h"
 #include "optionsstate.h"
 #include "input.h"
@@ -263,6 +262,8 @@ namespace ST
 		AG_Textbox *reg_user = AG_TextboxNew(mRegisterWindow, 0, "Username: ");
 		AG_Textbox *reg_pass = AG_TextboxNew(mRegisterWindow, AG_TEXTBOX_PASSWORD, "Password: ");
 		AG_SetEvent(reg_pass, "textbox-return", submit_register, "%p%p", reg_user, reg_pass);
+        AG_ExpandHoriz(reg_user);
+        AG_ExpandHoriz(reg_pass);
 
 		AG_HBox *reg_box = AG_HBoxNew(mRegisterWindow, 0);
 		AG_Button *reg_button = AG_ButtonNewFn(reg_box, 0, "Submit", submit_register, "%p%p",

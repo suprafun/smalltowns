@@ -529,10 +529,10 @@ namespace ST
 	    CURLcode success;
 
 	    // open file for writing to
-	    FILE *outFile;
+	    FILE *outFile = NULL;
 		std::string fullpath = resourceManager->getWritablePath() + file;
-	    outFile = fopen(fullpath.c_str(), "w");
-		if (!outFile)
+	    outFile = fopen(fullpath.c_str(), "w+");
+		if (outFile == NULL || outFile->_ptr == NULL)
 		{
 			logger->logDebug("Failed to open file for downloading.");
 			return false;
@@ -545,7 +545,7 @@ namespace ST
 	    // initialise curl
         CURL *handle = curl_easy_init();
 
-		if (handle)
+		if (handle != NULL)
 		{
 
 			// set curl options

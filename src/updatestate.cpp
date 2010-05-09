@@ -95,6 +95,10 @@ namespace ST
             hostname = file.readString("newshost", "host");
             filename = file.readString("newshost", "file");
         }
+        else
+        {
+            logger->logWarning("Error loading configuration for newshost.");
+        }
 		file.close();
 
         mAccepted = false;

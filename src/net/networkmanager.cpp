@@ -74,6 +74,25 @@
 
 namespace ST
 {
+    size_t downloadNews( void *buffer, size_t size, size_t nmemb, void *ptr)
+    {
+        int segsize = size * nmemb;
+        char buf[65535];
+
+        if (segsize >= 65535)
+            return 0;
+
+        /* Copy data to char */
+        memcpy((void*)&buf[0], buffer, segsize);
+        buf[segsize] = 0;
+
+        /* Call function to output data to my file */
+        static_cast<NetworkManager*>(ptr)->saveData(buf);
+
+        /* Return the number of bytes received, indicating to curl that all is okay */
+        return segsize;
+    }
+
 	NetworkManager::NetworkManager()
 	{
 		enet_initialize();
@@ -343,9 +362,9 @@ namespace ST
         case GPMSG_LOAD_MAP:
             {
                 std::string mapFile = packet->getString();
-                mapEngine->loadMap(mapFile);
 
-                mapEngine->getLayer(mapEngine->getLayers() - 1)->addNode(player->getSelectedCharacter());
+                if (mapEngine->loadMap(mapFile))
+                    mapEngine->getLayer(mapEngine->getLayers() - 1)->addNode(player->getSelectedCharacter());
             } break;
 
         case GPMSG_WARPTO:
@@ -530,11 +549,13 @@ namespace ST
 
 	    // open file for writing to
 	    FILE *outFile = NULL;
+
 		std::string fullpath = resourceManager->getWritablePath() + file;
+
 	    outFile = fopen(fullpath.c_str(), "w+");
-		if (outFile == NULL || outFile->_ptr == NULL)
+		if (outFile == NULL)
 		{
-			logger->logDebug("Failed to open file for downloading.");
+			logger->logDebug("Failed to open file for downloading at " + fullpath);
 			return false;
 		}
 
@@ -549,7 +570,8 @@ namespace ST
 		{
 
 			// set curl options
-			curl_easy_setopt(handle, CURLOPT_WRITEDATA, outFile);
+			curl_easy_setopt(handle, CURLOPT_WRITEDATA, this);
+			curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, downloadNews);
 			curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
 
 			// perform the download
@@ -565,6 +587,8 @@ namespace ST
 			// cleanup
 			curl_easy_cleanup(handle);
 		}
+
+		fwrite(mFileData.c_str(), mFileData.size(), sizeof(char), outFile);
 
         fclose(outFile);
 
@@ -593,5 +617,13 @@ namespace ST
 	int NetworkManager::getPing() const
 	{
 	    return mPing;
+	}
+
+	void NetworkManager::saveData(char *buffer)
+	{
+	    if (mFileData.empty())
+            mFileData = buffer;
+        else
+            mFileData.append(buffer);
 	}
 }

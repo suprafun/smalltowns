@@ -115,6 +115,11 @@ namespace ST
          */
         int getPing() const;
 
+        /**
+         * Save data to file (for curl)
+         */
+        void saveData(char *buffer);
+
     private:
 		/**
 		 * Process the packets
@@ -127,6 +132,7 @@ namespace ST
 		int mDefaultPort;
 		int mTag; /** << Used for reconnecting to game server */
 		int mPing;
+		std::string mFileData;
 	};
 
 	extern NetworkManager *networkManager;

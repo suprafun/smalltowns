@@ -103,14 +103,10 @@ namespace ST
 	Node* Layer::getNodeAt(unsigned int x, unsigned int y)
 	{
 	    NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
-	    logger->logDebug("Layer Name" + mName);
 	    while (itr != itr_end)
 	    {
 	        Node *node = *itr;
 	        Point pt = node->getTilePosition();
-	        std::stringstream str;
-	        str << "Node at " << pt.x << "x" << pt.y << " called " << node->getName();
-	        logger->logDebug(str.str());
 	        if (pt.x == x && pt.y == y)
 	        {
 	            return node;

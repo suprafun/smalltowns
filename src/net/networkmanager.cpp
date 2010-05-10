@@ -393,7 +393,6 @@ namespace ST
                 {
                     logger->logDebug("Got player move");
                     being->setState(STATE_MOVING);
-                    //being->changeAnimation();
                     being->calculateNextDestination();
                 }
             } break;
@@ -412,8 +411,6 @@ namespace ST
                     // found being, update their position
 					logger->logDebug("Being moving");
                     being->setState(STATE_MOVING);
-                    //being->turnNode(dir);
-					//being->changeAnimation();
                     being->calculateNextDestination(finish);
                 }
                 else if (player->getSelectedCharacter()->getId() == id)
@@ -451,7 +448,7 @@ namespace ST
                     Point pt = beingManager->getSavedDestination(id);
                     int dir = beingManager->getSavedDirection(id);
 
-                    Texture *avatar = graphicsEngine->createAvatar(id, body, hair, dir);
+                    Texture *avatar = graphicsEngine->createAvatar(id, body, hair, DIRECTION_SOUTHEAST);
                     Character *c = new Character(id, name, avatar);
                     c->look.body = body;
                     c->look.hair = hair;

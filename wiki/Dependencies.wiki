@@ -8,10 +8,11 @@ Below is the list of dependencies required to build the client. These should eas
 = Details =
 
   * [http://www.libsdl.org SDL]
-  * [http://www.libsdl.org/projects/sdl_image SDL_image]
+  * [http://www.libsdl.org/projects/SDL_image SDL_image]
   * [http://enet.bespin.org enet]
   * [http://www.grinninglizard.com/tinyxml tinyxml]
   * [http://libagar.org agar]
   * [http://www.freetype.org FreeType 2]
   * [http://www.zlib.net zlib]
-  * [http://www.icculus.org/physfs physfs] - trunk only
+  * [http://www.icculus.org/physfs physfs]
+  * [http://curl.haxx.se libcurl]

@@ -113,7 +113,7 @@ namespace ST
 
 	void GraphicsEngine::removeNode(Node *node)
 	{
-//	    mNodes.remove(node);
+        assert(node);
 	}
 
 	void GraphicsEngine::setCamera(Camera *cam)

@@ -100,6 +100,20 @@ namespace ST
         mNodes.push_back(node);
 	}
 
+	void Layer::removeNode(Node *node)
+	{
+	    NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
+	    while (itr != itr_end)
+	    {
+	        if ((*itr)->getName() == node->getName())
+	        {
+	            mNodes.erase(itr);
+	            return;
+	        }
+	        ++itr;
+	    }
+	}
+
 	Node* Layer::getNodeAt(unsigned int x, unsigned int y)
 	{
 	    NodeItr itr = mNodes.begin(), itr_end = mNodes.end();

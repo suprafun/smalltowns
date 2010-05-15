@@ -111,6 +111,13 @@ namespace ST
 		void addNode(Node *node);
 
 		/**
+		 * Remove Node
+		 * Removes a node from the layer
+		 * @param node The node to remove
+		 */
+        void removeNode(Node *node);
+
+		/**
 		 * Get Tile At
 		 * Returns the tile at x, y
 		 * @param x The x position of the tile to return

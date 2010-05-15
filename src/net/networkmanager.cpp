@@ -478,7 +478,7 @@ namespace ST
                 Being *being = beingManager->findBeing(id);
                 if (being)
                 {
-                    graphicsEngine->removeNode(being);
+                    mapEngine->getLayer(mapEngine->getLayers() - 1)->removeNode(being);
                     beingManager->removeBeing(id);
                 }
 				logger->logDebug("Player Left");

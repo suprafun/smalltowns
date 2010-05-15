@@ -102,7 +102,7 @@ bool Socket::doConnection(uint32_t host, uint16_t port)
     if (connect(mDescriptor, (struct sockaddr*)&mAddress, sizeof(mAddress)) < 0)
     {
 #ifdef DEBUG
-        std:cout << "Unable to connect" << std::endl;
+        std::cout << "Unable to connect" << std::endl;
 #endif
         return false;
     }

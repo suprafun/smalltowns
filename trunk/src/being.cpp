@@ -361,7 +361,7 @@ namespace ST
         // check state
         // final string will look like maleSEwalk
 
-        if (look.gender == 0)
+        if (look.body == 1) // TODO: fix this, server should send gender
             str << "male";
         else
             str << "female";

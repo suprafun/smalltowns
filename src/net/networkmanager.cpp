@@ -415,7 +415,7 @@ namespace ST
                 }
                 else if (player->getSelectedCharacter()->getId() == id)
                 {
-                    graphicsEngine->setCameraToShow(finish, 2000);
+                    graphicsEngine->setCameraToShow(finish, 0);
                 }
                 else
                 {

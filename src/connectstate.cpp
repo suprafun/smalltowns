@@ -125,6 +125,7 @@ namespace ST
 		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN|AG_WINDOW_KEEPBELOW);
 		AG_WindowShow(win);
 		AG_WindowMaximize(win);
+        interfaceManager->addWindow(win);
 /*
 		AG_Window *test = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "Connection");
 		AG_WindowSetCaption(test, "Connect to server");
@@ -188,7 +189,6 @@ namespace ST
 
             AG_WindowHide(test);
 
-            interfaceManager->addWindow(win);
             interfaceManager->addWindow(test);
         }
 

@@ -196,12 +196,12 @@ namespace ST
 	        AG_WindowShow(win);
 	        AG_Label *label = AG_LabelNew(win, 0, name.c_str());
 	        mNames.insert(std::pair<std::string, AG_Window*>(name, win));
-	        AG_WindowDraw(win);
+	        //AG_WindowDraw(win);
 	    }
 	    else
 	    {
 	        AG_WindowSetGeometry(itr->second, pt.x - camPt.x, pt.y - 10 - camPt.y, -1, -1);
-	        AG_WindowDraw(itr->second);
+	        //AG_WindowDraw(itr->second);
 	    }
 	}
 

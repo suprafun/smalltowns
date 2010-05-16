@@ -208,7 +208,7 @@ namespace ST
 
 	void OpenGLGraphics::endScene()
 	{
-
+        SDL_GL_SwapBuffers();
 	}
 
 	SDL_Surface* OpenGLGraphics::createSurface(unsigned int texture, int width, int height)

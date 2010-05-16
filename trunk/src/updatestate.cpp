@@ -144,7 +144,7 @@ namespace ST
             AG_ButtonEnable(button);
             std::string news = readFile(resourceManager->getWritablePath() + filename);
             if (!news.empty())
-                AG_LabelText(text, news.c_str());
+                AG_LabelText(text, "%s", news.c_str());
         }
 
         if (mAccepted)

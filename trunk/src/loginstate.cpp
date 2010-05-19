@@ -87,7 +87,8 @@ namespace ST
             player->setName(username);
             Packet *packet = new Packet(PAMSG_LOGIN);
             packet->setString(username);
-            packet->setString(password);
+            // use encrypted password
+            packet->setString(encryptPassword(username+password));
             networkManager->sendPacket(packet);
 
 			if (three)

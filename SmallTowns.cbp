@@ -133,7 +133,6 @@
 		<Unit filename="src/optionsstate.h" />
 		<Unit filename="src/player.cpp" />
 		<Unit filename="src/player.h" />
-		<Unit filename="src/registerstate.h" />
 		<Unit filename="src/resourcemanager.cpp" />
 		<Unit filename="src/resourcemanager.h" />
 		<Unit filename="src/resources/bodypart.cpp" />
@@ -146,6 +145,8 @@
 		<Unit filename="src/updatestate.h" />
 		<Unit filename="src/utilities/base64.cpp" />
 		<Unit filename="src/utilities/base64.h" />
+		<Unit filename="src/utilities/crypt.cpp" />
+		<Unit filename="src/utilities/crypt.h" />
 		<Unit filename="src/utilities/gzip.cpp" />
 		<Unit filename="src/utilities/gzip.h" />
 		<Unit filename="src/utilities/log.cpp" />

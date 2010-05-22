@@ -610,6 +610,16 @@ namespace ST
 
         return pt;
     }
+
+    Point Map::convertTileToPixel(const Point &pt)
+    {
+        Point pixel;
+
+        pixel.x = 0.5 * (pt.x - pt.y) * mTileWidth;
+        pixel.y = 0.5 * (pt.x + pt.y) * mTileHeight;
+
+        return pixel;
+    }
 }
 
 

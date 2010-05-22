@@ -248,6 +248,13 @@ namespace ST
         Point convertPixelToTile(int x, int y);
 
         /**
+         * Return pixel position
+         * @param pt Tile position
+         * @return The pixel position
+         */
+        Point convertTileToPixel(const Point &pt);
+
+        /**
          * Return if a tile is blocking
          * @param pos The tile position of the tile
          */

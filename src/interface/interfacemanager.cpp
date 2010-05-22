@@ -69,9 +69,15 @@ namespace ST
 		mErrorWindow = AG_WindowNewNamed(0, "Error");
 		AG_WindowSetCaption(mErrorWindow, "Error");
 		AG_WindowSetGeometry(mErrorWindow, halfScreenWidth - 150, 50, 300, 75);
+
 		mErrorCaption = AG_LabelNewString(mErrorWindow, 0, "");
 		AG_LabelSizeHint(mErrorCaption, 1, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		AG_LabelJustify(mErrorCaption, AG_TEXT_CENTER);
+
+		mPlayerWindow = AG_WindowNewNamed(AG_WINDOW_NOMOVE|AG_WINDOW_PLAIN|AG_WINDOW_NOBUTTONS, "Player");
+		AG_Label *label = AG_LabelNewString(mPlayerWindow, 0, "");
+		AG_LabelSizeHint(label, 1, "XXXXXXXXXXXX");
+		AG_LabelJustify(label, AG_TEXT_CENTER);
 
         mouse = new Mouse;
 		mouse->cursor = NULL;
@@ -184,25 +190,21 @@ namespace ST
 		}
 	}
 
-	void InterfaceManager::drawName(const std::string &name, const Point &pt)
+	void InterfaceManager::drawName(const std::string &name, const Point &pt, bool draw)
 	{
-        int halfScreenWidth = int(graphicsEngine->getScreenWidth() * 0.5);
+	    if (!draw)
+	    {
+	        if (AG_WindowIsVisible(mPlayerWindow))
+                AG_WindowHide(mPlayerWindow);
+	    }
+
+	    if (!AG_WindowIsVisible(mPlayerWindow))
+            AG_WindowShow(mPlayerWindow);
+
         Point camPt = graphicsEngine->getCamera()->getPosition();
-	    NameItr itr = mNames.find(name);
-	    if (itr == mNames.end())
-	    {
-	        AG_Window *win = AG_WindowNew(AG_WINDOW_NOMOVE|AG_WINDOW_PLAIN|AG_WINDOW_NOBUTTONS);
-            AG_WindowSetGeometry(win, pt.x - camPt.x, pt.y - 10 - camPt.y, 75, 20);
-	        AG_WindowShow(win);
-	        AG_Label *label = AG_LabelNew(win, 0, name.c_str());
-	        mNames.insert(std::pair<std::string, AG_Window*>(name, win));
-	        //AG_WindowDraw(win);
-	    }
-	    else
-	    {
-	        AG_WindowSetGeometry(itr->second, pt.x - camPt.x, pt.y - 10 - camPt.y, -1, -1);
-	        //AG_WindowDraw(itr->second);
-	    }
+
+	    AG_WindowSetGeometry(mPlayerWindow, pt.x - camPt.x, pt.y - 5 - camPt.y, 75, 20);
+	    // TODO: Set Label to name
 	}
 
 	AG_Widget* InterfaceManager::getChild(AG_Widget *parent, const std::string &name)

@@ -250,6 +250,11 @@ namespace ST
          */
         unsigned int getFPS();
 
+        /**
+         * Sort the nodes
+         */
+        void sort();
+
 	protected:
 		SDL_Surface *mScreen;
 		int mWidth;

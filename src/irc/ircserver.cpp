@@ -82,7 +82,7 @@ namespace ST
         if (!mRegistered && !mRegistering && mNick.size() > 1)
         {
 			std::string pass = "test";
-			std::string realname = "st 0 * :" "Towns Life 0.0.7";
+			std::string realname = "st 0 * :" "Towns Life 0.0.8";
             mClient->doRegistration(pass, mNick, realname);
             mRegistering = true;
             logger->logDebug("Registering with IRC server");

@@ -39,7 +39,7 @@
 
 #include "crypt.h"
 
-#include <sstream>
+#include <stdio.h>
 
 #include <sys/types.h>
 #include <openssl/sha.h>
@@ -50,12 +50,20 @@ namespace ST
 	{
 	    SHA256_CTX c;
         unsigned char msg[SHA256_DIGEST_LENGTH];
-        std::stringstream str;
+        std::string hash = "";
         SHA256_Init(&c);
         SHA256_Update(&c, password.c_str(), password.size());
         SHA256_Final(msg, &c);
-        str << msg;
-        return str.str();
+
+        const char *hex = "0123456789abcdef";
+
+        for (int i = 0; i < SHA256_DIGEST_LENGTH; ++i)
+        {
+            hash += hex[msg[i] / 16];
+            hash += hex[msg[i] % 16];
+        }
+
+        return hash;
 	}
 }
 

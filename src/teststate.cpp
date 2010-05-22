@@ -170,12 +170,12 @@ namespace ST
 
                 // send move message
                 Packet *p = new Packet(PGMSG_PLAYER_MOVE);
-                p->setInteger(pos.x);
-                p->setInteger(pos.y);
+                p->setInteger(pt.x);
+                p->setInteger(pt.y);
                 networkManager->sendPacket(p);
 
                 // save destination for later
-                player->getSelectedCharacter()->saveDestination(pos);
+                player->getSelectedCharacter()->saveDestination(pt);
             }
         }
 

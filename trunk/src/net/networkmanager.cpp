@@ -178,6 +178,12 @@ namespace ST
                     logger->logWarning("Username already registered");
                     interfaceManager->showErrorWindow(true);
                 }
+                else if (result == ERR_INVALID_PASS)
+                {
+                    interfaceManager->setErrorMessage("Password invalid.");
+                    logger->logWarning("Problem with encryption? Invalid Password");
+                    interfaceManager->showErrorWindow(true);
+                }
                 else
                 {
 					interfaceManager->setErrorMessage("Invalid username or password");
@@ -369,14 +375,16 @@ namespace ST
 
         case GPMSG_WARPTO:
             {
-                Point pt;
+                Point pt, pos;
                 pt.x = packet->getInteger();
                 pt.y = packet->getInteger();
 
+                pos = mapEngine->convertTileToPixel(pt);
                 Character *c = player->getSelectedCharacter();
-                c->moveNode(&pt);
+                c->moveNode(&pos);
 
-                graphicsEngine->warpCamera(pt);
+                graphicsEngine->warpCamera(pos);
+                graphicsEngine->sort();
             } break;
 
         case GPMSG_PLAYER_MOVE:
@@ -401,7 +409,7 @@ namespace ST
             {
                 // check if we know the player exists
                 unsigned int id = packet->getInteger();
-                Point finish;
+                Point pt, finish;
                 finish.x = packet->getInteger();
                 finish.y = packet->getInteger();
                 int dir = packet->getInteger();
@@ -415,7 +423,8 @@ namespace ST
                 }
                 else if (player->getSelectedCharacter()->getId() == id)
                 {
-                    graphicsEngine->setCameraToShow(finish, 0);
+                    pt = mapEngine->convertTileToPixel(finish);
+                    graphicsEngine->setCameraToShow(pt, 0);
                 }
                 else
                 {
@@ -446,6 +455,7 @@ namespace ST
                 {
                     // create new being based on info
                     Point pt = beingManager->getSavedDestination(id);
+                    Point pos = mapEngine->convertTileToPixel(pt);
                     int dir = beingManager->getSavedDirection(id);
 
                     Texture *avatar = graphicsEngine->createAvatar(id, body, hair, DIRECTION_SOUTHEAST);
@@ -454,11 +464,12 @@ namespace ST
                     c->look.hair = hair;
                     c->setLevel(lvl);
                     c->setRights(rights);
-                    c->moveNode(&pt);
+                    c->moveNode(&pos);
                     c->turnNode(dir);
 
                     beingManager->addBeing(c);
                     mapEngine->getLayer(mapEngine->getLayers() - 1)->addNode(c);
+                    graphicsEngine->sort();
 
                     std::stringstream str;
                     str << "New player info from id " << id << " received";
@@ -480,6 +491,7 @@ namespace ST
                 {
                     mapEngine->getLayer(mapEngine->getLayers() - 1)->removeNode(being);
                     beingManager->removeBeing(id);
+                    graphicsEngine->sort();
                 }
 				logger->logDebug("Player Left");
             } break;

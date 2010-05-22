@@ -115,11 +115,16 @@ namespace ST
          * Stores a destination for path finding
          */
         virtual void saveDestination(const Point &pos);
-        
+
         /**
          * Change the animation
          */
         virtual void changeAnimation();
+
+        /**
+         * Tile changed
+         */
+        bool tileChanged() const;
 
     public:
         Look look;
@@ -135,6 +140,7 @@ namespace ST
         Pointf mLastPosition; // set by client
         std::deque<Point> mWaypoints; // set by client
         Point mDestination; // set by server
+        bool mTileChanged;
     };
 }
 

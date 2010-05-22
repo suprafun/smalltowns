@@ -143,7 +143,6 @@ namespace ST
             {
                 if (mapEngine->getLayer(i)->isCollisionLayer())
                     continue;
-                mapEngine->getLayer(i)->sortNodes(0, mapEngine->getLayer(i)->getSize());
                 outputNodes(i);
             }
         }
@@ -180,11 +179,6 @@ namespace ST
             rect.y -= pt.y;
 
             drawTexturedRect(rect, node->getTexture());
-
-            if (node->showName())
-            {
-                interfaceManager->drawName(node->getName(), node->getPosition());
-            }
 
             ++itr;
 	    }
@@ -632,5 +626,15 @@ namespace ST
     unsigned int GraphicsEngine::getFPS()
     {
         return mAverageFPS;
+    }
+
+    void GraphicsEngine::sort()
+    {
+        for (int i = 0; i < mapEngine->getLayers(); ++i)
+        {
+            if (mapEngine->getLayer(i)->isCollisionLayer())
+                continue;
+            mapEngine->getLayer(i)->sortNodes(0, mapEngine->getLayer(i)->getSize());
+        }
     }
 }

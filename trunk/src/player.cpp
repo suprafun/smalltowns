@@ -126,13 +126,13 @@ namespace ST
     {
         if (!mSelected)
             return;
-        mLastUpdate += ms;
 
-        if (mLastUpdate > 200)
+        if (mSelected->getState() == STATE_MOVING)
         {
-            if (mSelected->getState() == STATE_MOVING)
-                networkManager->sendPositionUpdate(mSelected->getPosition());
-            mLastUpdate = 0;
+            if (mSelected->tileChanged())
+            {
+                networkManager->sendPositionUpdate(mSelected->getTilePosition());
+            }
         }
     }
 }

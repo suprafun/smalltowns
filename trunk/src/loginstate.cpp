@@ -54,6 +54,7 @@
 
 #include "graphics/graphics.h"
 
+#include "utilities/crypt.h"
 #include "utilities/xml.h"
 
 #include <SDL.h>
@@ -172,7 +173,7 @@ namespace ST
 		file->load(resourceManager->getDataPath()+"townslife.cfg");
 #endif
 
-		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN|AG_WINDOW_DENYFOCUS);
+		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN|AG_WINDOW_DENYFOCUS|AG_WINDOW_KEEPBELOW);
 		AG_WindowShow(win);
 		AG_WindowMaximize(win);
 

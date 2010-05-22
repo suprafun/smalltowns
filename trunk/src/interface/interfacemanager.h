@@ -133,7 +133,7 @@ namespace ST
 		/**
 		 * Draw name
 		 */
-        void drawName(const std::string &name, const Point &pt);
+        void drawName(const std::string &name, const Point &pt, bool draw);
 
 		/**
 		 * Get a child
@@ -187,6 +187,7 @@ namespace ST
 		XMLFile *mGuiSheet;
 		AG_Window *mErrorWindow;
 		AG_Label *mErrorCaption;
+		AG_Window *mPlayerWindow;
         Mouse *mouse;
 	};
 

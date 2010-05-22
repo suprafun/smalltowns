@@ -204,7 +204,7 @@ namespace ST
         mWaypoints.clear();
 
         Point wayPos = getTilePosition();
-        Point endPos = mapEngine->convertPixelToTile(finish.x, finish.y);
+        Point endPos = finish;//mapEngine->convertPixelToTile(finish.x, finish.y);
         Point screenPos = {0,0};
 
         // keep moving a tile towards destination until reached
@@ -221,8 +221,7 @@ namespace ST
             wayPos = getNextTile(wayPos, dir);
 
             // translate to screen position and store that
-            screenPos.x = 0.5 * (wayPos.x - wayPos.y) * mapWidth;
-            screenPos.y = 0.5 * (wayPos.x + wayPos.y) * mapHeight;
+            screenPos = mapEngine->convertTileToPixel(wayPos);
             screenPos.x += hw >> 1;
             screenPos.y += hmh;
 
@@ -308,12 +307,18 @@ namespace ST
         Point destTile = mapEngine->convertPixelToTile(nextDest.x, nextDest.y);
         if (srcTile.x != destTile.x || srcTile.y != destTile.y)
         {
+            mTileChanged = true;
+            graphicsEngine->sort();
             int dir = getDirection(srcTile, destTile);
             if (mDirection != dir)
             {
                 turnNode(dir);
                 changeAnimation();
             }
+        }
+        else
+        {
+            mTileChanged = false;
         }
 
         mLastPosition = nextPos;
@@ -395,5 +400,10 @@ namespace ST
             str << "walk";
 
         setAnimation(str.str());
+    }
+
+    bool Being::tileChanged() const
+    {
+        return mTileChanged;
     }
 }

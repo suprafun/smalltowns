@@ -173,7 +173,7 @@ namespace ST
                 p->setInteger(pt.x);
                 p->setInteger(pt.y);
                 networkManager->sendPacket(p);
-                logger->logDebug("Sending move request");
+                //logger->logDebug("Sending move request");
 
                 // save destination for later
                 player->getSelectedCharacter()->saveDestination(pt);
@@ -251,7 +251,7 @@ namespace ST
         AG_Console *console = AG_ConsoleNew(nbTab, AG_CONSOLE_EXPAND|AG_CONSOLE_AUTOSCROLL);
         AG_ObjectSetName(console, "Chat");
 
-		AG_Textbox *chatInput = AG_TextboxNew(chatWindow, AG_TEXTBOX_CATCH_TAB, NULL);
+		AG_Textbox *chatInput = AG_TextboxNewS(chatWindow, AG_TEXTBOX_CATCH_TAB, "");
 		AG_TextboxSizeHint(chatInput, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		AG_SetEvent(chatInput, "textbox-return", submit_chat, "%p%p%p", chatServer, chatInput, console);
 

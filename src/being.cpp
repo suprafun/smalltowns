@@ -303,11 +303,10 @@ namespace ST
         movePos.y = nextPos.y;
 
         // compare to last tile position to see if changed which tile being is on
-        srcTile = getTilePosition();
+        srcTile = mapEngine->convertPixelToTile(mLastPosition.x, mLastPosition.y);
         destTile = mapEngine->convertPixelToTile(movePos.x, movePos.y);
         if (srcTile.x != destTile.x || srcTile.y != destTile.y)
         {
-            logger->logDebug("Tile changed.");
             mTileChanged = true;
             graphicsEngine->sort();
         }

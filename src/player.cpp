@@ -134,7 +134,6 @@ namespace ST
             if (mSelected->tileChanged())
             {
                 networkManager->sendPositionUpdate(mSelected->getTilePosition());
-                logger->logDebug("Sending position update");
             }
         }
     }

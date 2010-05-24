@@ -16,3 +16,4 @@ Below is the list of dependencies required to build the client. These should eas
   * [http://www.zlib.net zlib]
   * [http://www.icculus.org/physfs physfs]
   * [http://curl.haxx.se libcurl]
+  * [http://www.openssl.org openssl]

@@ -42,6 +42,8 @@
 
 #include "net/networkmanager.h"
 
+#include "utilities/log.h"
+
 namespace ST
 {
     Player::Player()
@@ -132,6 +134,7 @@ namespace ST
             if (mSelected->tileChanged())
             {
                 networkManager->sendPositionUpdate(mSelected->getTilePosition());
+                logger->logDebug("Sending position update");
             }
         }
     }

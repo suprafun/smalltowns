@@ -245,6 +245,8 @@ namespace ST
         Pointf nextPos;
         Point nextDest;
         Point movePos;
+        Point srcTile;
+        Point destTile;
         float speed = 25.0f;
         float distx = 0.0f;
         float disty = 0.0f;
@@ -300,25 +302,33 @@ namespace ST
         movePos.x = nextPos.x;
         movePos.y = nextPos.y;
 
+        // compare to last tile position to see if changed which tile being is on
+        srcTile = getTilePosition();
+        destTile = mapEngine->convertPixelToTile(movePos.x, movePos.y);
+        if (srcTile.x != destTile.x || srcTile.y != destTile.y)
+        {
+            logger->logDebug("Tile changed.");
+            mTileChanged = true;
+            graphicsEngine->sort();
+        }
+        else
+        {
+            mTileChanged = false;
+        }
+
         moveNode(&movePos);
 
         // check if direction changed, so we can turn the being and change its animation
-        Point srcTile = mapEngine->convertPixelToTile(movePos.x, movePos.y);
-        Point destTile = mapEngine->convertPixelToTile(nextDest.x, nextDest.y);
+        srcTile = destTile;
+        destTile = mapEngine->convertPixelToTile(nextDest.x, nextDest.y);
         if (srcTile.x != destTile.x || srcTile.y != destTile.y)
         {
-            mTileChanged = true;
-            graphicsEngine->sort();
             int dir = getDirection(srcTile, destTile);
             if (mDirection != dir)
             {
                 turnNode(dir);
                 changeAnimation();
             }
-        }
-        else
-        {
-            mTileChanged = false;
         }
 
         mLastPosition = nextPos;

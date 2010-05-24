@@ -173,6 +173,7 @@ namespace ST
                 p->setInteger(pt.x);
                 p->setInteger(pt.y);
                 networkManager->sendPacket(p);
+                logger->logDebug("Sending move request");
 
                 // save destination for later
                 player->getSelectedCharacter()->saveDestination(pt);

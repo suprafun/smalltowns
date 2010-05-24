@@ -399,7 +399,7 @@ namespace ST
                 }
                 else
                 {
-                    logger->logDebug("Got player move");
+                    //logger->logDebug("Got player move");
                     being->setState(STATE_MOVING);
                     being->calculateNextDestination();
                 }
@@ -417,7 +417,7 @@ namespace ST
                 if (being)
                 {
                     // found being, update their position
-					logger->logDebug("Being moving");
+					//logger->logDebug("Being moving");
                     being->setState(STATE_MOVING);
                     being->calculateNextDestination(finish);
                 }

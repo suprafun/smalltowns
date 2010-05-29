@@ -126,23 +126,7 @@ namespace ST
 		AG_WindowShow(win);
 		AG_WindowMaximize(win);
         interfaceManager->addWindow(win);
-/*
-		AG_Window *test = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "Connection");
-		AG_WindowSetCaption(test, "Connect to server");
-		AG_WindowSetSpacing(test, 12);
-		AG_WindowSetGeometry(test, halfScreenWidth - 125, halfScreenHeight - 45, 225, 135);
 
-		AG_Textbox *hostname = AG_TextboxNew(test, 0, "Server: ");
-		AG_Textbox *port = AG_TextboxNew(test, AG_TEXTBOX_INT_ONLY, "Port: ");
-
-		// set defaults
-		AG_TextboxSetString(hostname, "server.casualgamer.co.uk");
-		AG_TextboxSetString(port, "9910");
-
-		AG_Button *button = AG_ButtonNewFn(test, 0, "Submit", submit_connect, "%p%p", hostname, port);
-		AG_ButtonJustify(button, AG_TEXT_CENTER);
-		AG_WidgetFocus(button);
-*/
         // Load windows from file
         XMLFile file;
         std::string name;
@@ -153,7 +137,7 @@ namespace ST
         int w;
         int h;
 
-        if (file.load(resourceManager->getDataPath() + "connect.xml"))
+        if (file.load(resourceManager->getDataPath("connect.xml")))
         {
             file.setElement("window");
             name = file.readString("window", "name");
@@ -190,6 +174,25 @@ namespace ST
             AG_WindowHide(test);
 
             interfaceManager->addWindow(test);
+        }
+        else
+        {
+            // XML file wasnt found, load default
+            AG_Window *test = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "Connection");
+            AG_WindowSetCaption(test, "Connect to server");
+            AG_WindowSetSpacing(test, 12);
+            AG_WindowSetGeometry(test, halfScreenWidth - 125, halfScreenHeight - 45, 225, 135);
+
+            AG_Textbox *hostname = AG_TextboxNew(test, 0, "Server: ");
+            AG_Textbox *port = AG_TextboxNew(test, AG_TEXTBOX_INT_ONLY, "Port: ");
+
+            // set defaults
+            AG_TextboxSetString(hostname, "server.casualgamer.co.uk");
+            AG_TextboxSetString(port, "9910");
+
+            AG_Button *button = AG_ButtonNewFn(test, 0, "Submit", submit_connect, "%p%p", hostname, port);
+            AG_ButtonJustify(button, AG_TEXT_CENTER);
+            AG_WidgetFocus(button);
         }
 
         timeout = SDL_GetTicks();

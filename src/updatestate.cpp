@@ -84,12 +84,7 @@ namespace ST
     UpdateState::UpdateState()
     {
         XMLFile file;
-
-#ifndef __APPLE__
-        if (file.load("townslife.cfg"))
-#else
-		if (file.load(resourceManager->getDataPath() + "townslife.cfg"))
-#endif
+		if (file.load(resourceManager->getDataPath("townslife.cfg")))
         {
             file.setElement("newshost");
             hostname = file.readString("newshost", "host");

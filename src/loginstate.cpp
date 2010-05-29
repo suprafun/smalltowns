@@ -167,11 +167,7 @@ namespace ST
 		mHalfScreenHeight = screenHeight / 2;
 
 		file = new XMLFile();
-#ifndef __APPLE__
-		file->load("townslife.cfg");
-#else
-		file->load(resourceManager->getDataPath()+"townslife.cfg");
-#endif
+        file->load(resourceManager->getDataPath("townslife.cfg"));
 
 		AG_Window *win = AG_WindowNew(AG_WINDOW_PLAIN|AG_WINDOW_DENYFOCUS|AG_WINDOW_KEEPBELOW);
 		AG_WindowShow(win);

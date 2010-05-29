@@ -221,7 +221,7 @@ namespace ST
         chatServer = new IRCServer;
 
         // load glowing tile
-        graphicsEngine->loadTexture(resourceManager->getDataPath() + "glowtile.png");
+        graphicsEngine->loadTexture(resourceManager->getDataPath("glowtile.png"));
 
 		// create camera
 		Rectangle rect;
@@ -288,7 +288,7 @@ namespace ST
             networkManager->sendPacket(packet);
             mLoaded = true;
             Texture *texture =
-                graphicsEngine->getTexture(resourceManager->getDataPath() + "glowtile.png");
+                graphicsEngine->getTexture(resourceManager->getDataPath("glowtile.png"));
             interfaceManager->getMouse()->cursor = new Node("Cursor", texture);
             mapEngine->getLayer(mapEngine->getLayers() - 1)->addNode(interfaceManager->getMouse()->cursor);
 	    }

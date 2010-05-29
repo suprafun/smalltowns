@@ -102,10 +102,10 @@ namespace ST
         Animation* getAnimation(int bodypart, const std::string &name);
 
         /**
-         * Returns the path to data directory
+         * Returns the full path to file
          */
-        std::string getDataPath();
-		
+        std::string getDataPath(std::string file);
+
 		/**
 		 * Returns the path to writing data
 		 */
@@ -127,7 +127,7 @@ namespace ST
         std::map<std::string, std::list<BeingAnimation*> > mAnimations;
         typedef std::map<std::string, std::list<BeingAnimation*> >::iterator AnimationItr;
 
-        std::string mDataPath;
+        std::vector<std::string> mDataPaths;
 		std::string mWriteDataPath;
     };
 

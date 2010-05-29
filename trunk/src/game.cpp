@@ -72,7 +72,7 @@ namespace ST
     {
         resourceManager = new ResourceManager(path);
         logger = new Log(resourceManager->getWritablePath() + "log.txt");
-		logger->logDebug("Data Path: " + resourceManager->getDataPath());
+		logger->logDebug("Data Path: " + resourceManager->getDataPath("tree.png"));
 		logger->logDebug("Writable Path: " + resourceManager->getWritablePath());
     }
 
@@ -118,11 +118,7 @@ namespace ST
 		int resy = 768;
         std::string fullscreen;
 
-#ifndef __APPLE__
-		if (file.load("townslife.cfg"))
-#else
-		if (file.load(resourceManager->getDataPath() + "townslife.cfg"))
-#endif
+        if (file.load(resourceManager->getDataPath("townslife.cfg")))
         {
             file.setElement("server");
             hostname = file.readString("server", "host");

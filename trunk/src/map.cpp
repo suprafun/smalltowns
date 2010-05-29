@@ -255,7 +255,7 @@ namespace ST
 
 	bool Map::loadMap(const std::string &filename)
 	{
-	    std::string file = resourceManager->getDataPath() + filename;
+	    std::string file = resourceManager->getDataPath(filename);
         logger->logDebug("Loading map " + file);
 
         TiXmlDocument doc(file.c_str());
@@ -454,9 +454,12 @@ namespace ST
             return false;
         }
 
-        if (resourceManager->doesExist(imagefile))
+        imagefile = resourceManager->getDataPath(imagefile);
+
+        if (imagefile.empty())
         {
-            imagefile.insert(0, resourceManager->getDataPath());
+            logger->logError(imagefile + " not found.");
+            return false;
         }
 
         if (!graphicsEngine->loadTextureSet(imagefile, width, height))

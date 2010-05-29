@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{86D57DD2-B020-44BA-9926-9CFE67E1CBB6}</ProjectGuid>
+    <RootNamespace>SmallTowns</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\david\Documents\programming\SDL-1.2.14\include;C:\Users\david\Documents\programming\SDL_image-1.2.10;C:\Users\david\Documents\programming\enet-1.2.1\include;C:\Users\david\Documents\programming\tinyxml;C:\Program Files\Agar\include;C:\Users\david\Documents\programming\zlib-1.2.5;C:\Users\david\Documents\programming\physfs-2.0.1;C:\Users\david\Documents\programming\libcurl\include;C:\Users\david\Documents\programming\openssl\include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\david\Documents\programming\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\david\Documents\programming\SDL-1.2.14\include;C:\Users\david\Documents\programming\SDL_image-1.2.10;C:\Users\david\Documents\programming\enet-1.2.1\include;C:\Users\david\Documents\programming\tinyxml;C:\Program Files\Agar\include;C:\Users\david\Documents\programming\zlib-1.2.5;C:\Users\david\Documents\programming\physfs-2.0.1;C:\Users\david\Documents\programming\libcurl\include;C:\Users\david\Documents\programming\openssl\include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\david\Documents\programming\libs;$(LibraryPath)</LibraryPath>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\libs\cppirclib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;WITHOUT_CHAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>uuid.lib;msvcrtd.lib;msvcprtd.lib;SDLMain.lib;SDL.lib;SDL_image.lib;opengl32.lib;glu32.lib;tinyxml.lib;WS2_32.lib;winmm.lib;enet.lib;zlib.lib;ag_core_static.lib;ag_gui_static.lib;freetype2312.lib;physfs.lib;curllib.lib;libeay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>..\..\libs\cppirclib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>uuid.lib;msvcrt.lib;msvcprt.lib;SDLMain.lib;SDL.lib;SDL_image.lib;opengl32.lib;glu32.lib;tinyxml.lib;enet.lib;ws2_32.lib;winmm.lib;ag_core_static.lib;ag_gui_static.lib;freetype2312.lib;physfs.lib;curllib.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libc;libcmt;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\libs\cppirclib\cppirclib.cpp" />
+    <ClCompile Include="..\..\libs\cppirclib\ircparser.cpp" />
+    <ClCompile Include="..\..\src\being.cpp" />
+    <ClCompile Include="..\..\src\beingmanager.cpp" />
+    <ClCompile Include="..\..\src\character.cpp" />
+    <ClCompile Include="..\..\src\characterstate.cpp" />
+    <ClCompile Include="..\..\src\connectstate.cpp" />
+    <ClCompile Include="..\..\src\game.cpp" />
+    <ClCompile Include="..\..\src\input.cpp" />
+    <ClCompile Include="..\..\src\irc\ircmessage.cpp" />
+    <ClCompile Include="..\..\src\irc\ircserver.cpp" />
+    <ClCompile Include="..\..\src\loadstate.cpp" />
+    <ClCompile Include="..\..\src\loginstate.cpp" />
+    <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\map.cpp" />
+    <ClCompile Include="..\..\src\optionsstate.cpp" />
+    <ClCompile Include="..\..\src\player.cpp" />
+    <ClCompile Include="..\..\src\resourcemanager.cpp" />
+    <ClCompile Include="..\..\src\teststate.cpp" />
+    <ClCompile Include="..\..\src\tile.cpp" />
+    <ClCompile Include="..\..\src\updatestate.cpp" />
+    <ClCompile Include="..\..\src\graphics\animation.cpp" />
+    <ClCompile Include="..\..\src\graphics\camera.cpp" />
+    <ClCompile Include="..\..\src\graphics\graphics.cpp" />
+    <ClCompile Include="..\..\src\graphics\node.cpp" />
+    <ClCompile Include="..\..\src\graphics\opengl.cpp" />
+    <ClCompile Include="..\..\src\graphics\sdl2d.cpp" />
+    <ClCompile Include="..\..\src\graphics\texture.cpp" />
+    <ClCompile Include="..\..\src\interface\interfacemanager.cpp" />
+    <ClCompile Include="..\..\src\net\client.cpp" />
+    <ClCompile Include="..\..\src\net\host.cpp" />
+    <ClCompile Include="..\..\src\net\networkmanager.cpp" />
+    <ClCompile Include="..\..\src\net\packet.cpp" />
+    <ClCompile Include="..\..\src\utilities\base64.cpp" />
+    <ClCompile Include="..\..\src\utilities\crypt.cpp" />
+    <ClCompile Include="..\..\src\utilities\gzip.cpp" />
+    <ClCompile Include="..\..\src\utilities\log.cpp" />
+    <ClCompile Include="..\..\src\utilities\math.cpp" />
+    <ClCompile Include="..\..\src\utilities\xml.cpp" />
+    <ClCompile Include="..\..\src\resources\bodypart.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\being.h" />
+    <ClInclude Include="..\..\src\beingmanager.h" />
+    <ClInclude Include="..\..\src\character.h" />
+    <ClInclude Include="..\..\src\characterstate.h" />
+    <ClInclude Include="..\..\src\connectstate.h" />
+    <ClInclude Include="..\..\src\game.h" />
+    <ClInclude Include="..\..\src\gamestate.h" />
+    <ClInclude Include="..\..\src\input.h" />
+    <ClInclude Include="..\..\src\irc\ircmessage.h" />
+    <ClInclude Include="..\..\src\irc\ircserver.h" />
+    <ClInclude Include="..\..\src\loginstate.h" />
+    <ClInclude Include="..\..\src\map.h" />
+    <ClInclude Include="..\..\src\optionsstate.h" />
+    <ClInclude Include="..\..\src\player.h" />
+    <ClInclude Include="..\..\src\registerstate.h" />
+    <ClInclude Include="..\..\src\resourcemanager.h" />
+    <ClInclude Include="..\..\src\teststate.h" />
+    <ClInclude Include="..\..\src\tile.h" />
+    <ClInclude Include="..\..\src\updatestate.h" />
+    <ClInclude Include="..\..\src\graphics\animation.h" />
+    <ClInclude Include="..\..\src\graphics\camera.h" />
+    <ClInclude Include="..\..\src\graphics\entity.h" />
+    <ClInclude Include="..\..\src\graphics\graphics.h" />
+    <ClInclude Include="..\..\src\graphics\node.h" />
+    <ClInclude Include="..\..\src\graphics\opengl.h" />
+    <ClInclude Include="..\..\src\graphics\sdl2d.h" />
+    <ClInclude Include="..\..\src\graphics\texture.h" />
+    <ClInclude Include="..\..\src\interface\interfacemanager.h" />
+    <ClInclude Include="..\..\src\net\client.h" />
+    <ClInclude Include="..\..\src\net\host.h" />
+    <ClInclude Include="..\..\src\net\networkmanager.h" />
+    <ClInclude Include="..\..\src\net\packet.h" />
+    <ClInclude Include="..\..\src\net\protocol.h" />
+    <ClInclude Include="..\..\src\utilities\base64.h" />
+    <ClInclude Include="..\..\src\utilities\crypt.h" />
+    <ClInclude Include="..\..\src\utilities\gzip.h" />
+    <ClInclude Include="..\..\src\utilities\log.h" />
+    <CustomBuildStep Include="..\..\src\utilities\math.h" />
+    <ClInclude Include="..\..\src\utilities\types.h" />
+    <ClInclude Include="..\..\src\utilities\xml.h" />
+    <ClInclude Include="..\..\src\resources\bodypart.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

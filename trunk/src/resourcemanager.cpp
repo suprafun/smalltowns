@@ -62,32 +62,43 @@ namespace ST
         mDefaultHair = 0;
         mBodyWidth = 0;
         mBodyHeight = 0;
+        std::string datapath = "";
         // physfs code
         PHYSFS_init(path.c_str());
 
-#ifndef __APPLE__
-        mDataPath = "data/";
+#if defined __unix__
+        mDataPaths.push_back("data/");
+        mDataPaths.push_back("");
 		mWriteDataPath = "";
         PHYSFS_addToSearchPath("data", 0);
-#else
+#elif defined __APPLE__
         CFBundleRef mainBundle = CFBundleGetMainBundle();
 		CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
 		char resPath[PATH_MAX];
 		CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)resPath, PATH_MAX);
 		CFRelease(resourcesURL);
-		mDataPath = resPath;
-		mDataPath.append("/");
+		datapath = resPath;
+		datapath.append("/");
+		PHYSFS_addToSearchPath(resPath, 0);
+
 		mWriteDataPath = PHYSFS_getUserDir();
 		mWriteDataPath.append("Library/Application Support/townslife/");
-		PHYSFS_addToSearchPath(resPath, 0);
-		if (!doesExist(mWriteDataPath))
-		{
-			PHYSFS_setWriteDir(PHYSFS_getUserDir());
-			PHYSFS_mkdir("Library/Application Support/townslife/");
-			PHYSFS_setWriteDir(mWriteDataPath.c_str());
-		}
-		PHYSFS_addToSearchPath(mWriteDataPath.c_str(), 0);
+		mDataPaths.push_back(mWriteDataPath + "data/");
+		mDataPaths.push_back(datapath);
+#elif defined _WIN32
+        mWriteDataPath = PHYSFS_getUserDir();
+        mWriteDataPath.append("Documents/townslife/");
+        mDataPaths.push_back(mWriteDataPath + "data/");
+        mDataPaths.push_back("data/");
+        mDataPaths.push_back("");
 #endif
+        if (!doesExist(mWriteDataPath))
+        {
+            PHYSFS_setWriteDir(PHYSFS_getUserDir());
+			PHYSFS_mkdir(mWriteDataPath.c_str());
+			PHYSFS_setWriteDir(mWriteDataPath.c_str());
+        }
+        PHYSFS_addToSearchPath(mWriteDataPath.c_str(), 0);
     }
 
     ResourceManager::~ResourceManager()
@@ -145,7 +156,7 @@ namespace ST
             {
                 file.setSubElement("body", "image");
                 int id = file.readInt("body", "id");
-                std::string icon = mDataPath + file.readString("body", "icon");
+                std::string icon = getDataPath(file.readString("body", "icon"));
                 int part = file.readInt("body", "part");
 
                 BodyPart *body = new BodyPart(id, part, icon);
@@ -153,7 +164,7 @@ namespace ST
                 do
                 {
                     int dir = -1;
-                    std::string img = mDataPath + file.readString("image", "file");
+                    std::string img = getDataPath(file.readString("image", "file"));
                     std::string dirstr = file.readString("image", "dir");
 
                     if (dirstr == "SE")
@@ -196,7 +207,7 @@ namespace ST
                 std::list<BeingAnimation*> animList;
                 do
                 {
-                    std::string img = mDataPath + file.readString("body", "file");
+                    std::string img = getDataPath(file.readString("body", "file"));
                     int part = file.readInt("body", "part");
 
                     std::stringstream texName;
@@ -305,9 +316,16 @@ namespace ST
         return NULL;
     }
 
-    std::string ResourceManager::getDataPath()
+    std::string ResourceManager::getDataPath(std::string file)
     {
-        return mDataPath;
+        for (unsigned int i = 0; i < mDataPaths.size(); ++i)
+        {
+            if (doesExist(mDataPaths[i] + file))
+            {
+                return mDataPaths[i] + file;
+            }
+        }
+        return "";
     }
 
 	std::string ResourceManager::getWritablePath()

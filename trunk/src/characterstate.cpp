@@ -213,8 +213,8 @@ namespace ST
 		resourceManager->loadBodyParts("body.cfg");
         resourceManager->loadAnimations("animation.cfg");
 #else
-		resourceManager->loadBodyParts(resourceManager->getDataPath() + "body.cfg");
-        resourceManager->loadAnimations(resourceManager->getDataPath() + "animation.cfg");
+		resourceManager->loadBodyParts(resourceManager->getDataPath("body.cfg"));
+        resourceManager->loadAnimations(resourceManager->getDataPath("animation.cfg"));
 #endif
 
 		BodyPart *body = resourceManager->getDefaultBody(PART_BODY);

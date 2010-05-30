@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2008, The Small Towns Dev Team
+ *	Copyright (c) 2008, CT Games
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -15,7 +15,7 @@
  *	- Redistributions in binary form must reproduce the above copyright notice,
  *		this list of conditions and the following disclaimer in the documentation
  *		and/or other materials provided with the distribution.
- *	- Neither the name of the Small Towns Dev Team nor the names of its contributors
+ *	- Neither the CT Games name nor the names of its contributors
  *		may be used to endorse or promote products derived from this software without
  *		specific prior written permission.
  *
@@ -173,11 +173,16 @@ namespace ST
 
         // create new animation to store the new frames
         mSetAnimation = new Animation;
+        unsigned int frames = body->getFrames();
+        frames = std::min(frames, hair->getFrames());
 
         // create new frames and store them in the animation
-        for (unsigned int i = 0; i < body->getFrames() && i < hair->getFrames(); ++i)
+        for (unsigned int i = 0; i < frames; ++i)
         {
-            Texture *tex = graphicsEngine->createAvatarFrame(mId, i+1, body->getTexture(), hair->getTexture(), mDirection);
+            std::map<int, Texture*> textures;
+            textures[PART_BODY] = body->getTexture();
+            textures[PART_HAIR] = hair->getTexture();
+            Texture *tex = graphicsEngine->createAvatarFrame(mId, i+1, textures, mDirection);
             mSetAnimation->addTexture(tex);
             body->nextFrame();
             hair->nextFrame();

@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2008, The Small Towns Dev Team
+ *	Copyright (c) 2008, CT Games
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -15,7 +15,7 @@
  *	- Redistributions in binary form must reproduce the above copyright notice,
  *		this list of conditions and the following disclaimer in the documentation
  *		and/or other materials provided with the distribution.
- *	- Neither the name of the Small Towns Dev Team nor the names of its contributors
+ *	- Neither the name of CT Games nor the names of its contributors
  *		may be used to endorse or promote products derived from this software without
  *		specific prior written permission.
  *
@@ -139,7 +139,7 @@ namespace ST
 		// Display the nodes on screen (if theres a camera to view them)
 		if (mCamera)
         {
-            for (int i = 0; i < mapEngine->getLayers(); ++i)
+            for (unsigned int i = 0; i < mapEngine->getLayers(); ++i)
             {
                 if (mapEngine->getLayer(i)->isCollisionLayer())
                     continue;
@@ -412,37 +412,58 @@ namespace ST
         return mHeight;
     }
 
-    Texture* GraphicsEngine::createAvatar(unsigned int id, int bodyId, int hairId, int dir)
+    Texture* GraphicsEngine::createAvatar(unsigned int id, const std::map<int, int> &partIds, int dir)
     {
-        Texture *hairTex = NULL;
-        Texture *bodyTex = NULL;
-        Texture *chestTex = NULL;
-        Texture *legsTex = NULL;
-        Texture *feetTex = NULL;
+        std::map<int, Texture*> textures;
+        std::map<int, int>::const_iterator itr;
 
         // all the body parts that make up the avatar
-        BodyPart *hair = resourceManager->getBodyPart(hairId);
-        BodyPart *body = resourceManager->getBodyPart(bodyId);
-        BodyPart *chest = NULL;
-        BodyPart *legs = NULL;
-        BodyPart *feet = NULL;
+        BodyPart *part = NULL;
 
-        // load all the textures
-        if (hair)
-            hairTex = hair->getTexture(dir);
-        if (body)
-            bodyTex = body->getTexture(dir);
-        if (chest)
-            chestTex = chest->getTexture(dir);
-        if (legs)
-            legsTex = legs->getTexture(dir);
-        if (feet)
-            feetTex = feet->getTexture(dir);
+        itr = partIds.find(PART_BODY);
+        if (itr != partIds.end())
+        {
+            part = resourceManager->getBodyPart(itr->second);
+            if (part)
+                textures[PART_BODY] = part->getTexture(dir);
+        }
 
-        return createAvatarFrame(id, 0, bodyTex, hairTex, dir);
+        itr = partIds.find(PART_HAIR);
+        if (itr != partIds.end())
+        {
+            part = resourceManager->getBodyPart(itr->second);
+            if (part)
+                textures[PART_HAIR] = part->getTexture(dir);
+        }
+
+        itr = partIds.find(PART_CHEST);
+        if (itr != partIds.end())
+        {
+            part = resourceManager->getBodyPart(itr->second);
+            if (part)
+                textures[PART_CHEST] = part->getTexture(dir);
+        }
+
+        itr = partIds.find(PART_LEGS);
+        if (itr != partIds.end())
+        {
+            part = resourceManager->getBodyPart(itr->second);
+            if (part)
+                textures[PART_LEGS] = part->getTexture(dir);
+        }
+
+        itr = partIds.find(PART_FEET);
+        if (itr != partIds.end())
+        {
+            part = resourceManager->getBodyPart(itr->second);
+            if (part)
+                textures[PART_FEET] = part->getTexture(dir);
+        }
+
+        return createAvatarFrame(id, 0, textures, dir);
     }
 
-    Texture* GraphicsEngine::createAvatarFrame(unsigned int id, unsigned int frame, Texture *bodyTex, Texture *hairTex, int dir)
+    Texture* GraphicsEngine::createAvatarFrame(unsigned int id, unsigned int frame, const std::map<int, Texture*> &textures, int dir)
     {
         // Set the byte order of RGBA
         Uint32 rmask, gmask, bmask, amask;
@@ -468,8 +489,10 @@ namespace ST
             mTextures.erase(itr);
         }
 
-		Texture *tex = new Texture(str.str(), resourceManager->getBodyWidth(),
-			resourceManager->getBodyHeight());
+        int bodyWidth = resourceManager->getBodyWidth();
+        int bodyHeight = resourceManager->getBodyHeight();
+
+		Texture *tex = new Texture(str.str(), bodyWidth, bodyHeight);
 
         // write all the textures to the surface
         // start with the body as the base
@@ -477,33 +500,34 @@ namespace ST
 		{
 		    // create surface to render to
             SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                64, 128,
+                bodyWidth, bodyHeight,
                 mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
 
-            if (bodyTex)
+            if (textures.find(PART_BODY) != textures.end())
             {
-                SDL_Surface *s = createSurface(bodyTex->getGLTexture(), 64, 128);
+                SDL_Surface *s = createSurface(textures.find(PART_BODY)->second->getGLTexture(), bodyWidth, bodyHeight);
                 SDL_SetAlpha(s, 0, 255);
                 SDL_BlitSurface(s, NULL, surface, NULL);
             }
-            if (hairTex)
+            if (textures.find(PART_HAIR) != textures.end())
             {
-                SDL_Surface *s = createSurface(hairTex->getGLTexture(), 64, 128);
+                SDL_Surface *s = createSurface(textures.find(PART_HAIR)->second->getGLTexture(), bodyWidth, bodyHeight);
                 SDL_SetAlpha(s, SDL_SRCALPHA | SDL_RLEACCEL, 0);
                 SDL_BlitSurface(s, NULL, surface, NULL);
             }
-/*            if (chestTex)
+            if (textures.find(PART_CHEST) != textures.end())
             {
-                SDL_Surface *s = createSurface(chestTex->getGLTexture(), 64, 128);
+                SDL_Surface *s = createSurface(textures.find(PART_CHEST)->second->getGLTexture(), bodyWidth, bodyHeight);
                 SDL_SetAlpha(s, SDL_SRCALPHA | SDL_RLEACCEL, 0);
                 SDL_BlitSurface(s, NULL, surface, NULL);
             }
-            if (legsTex)
+            if (textures.find(PART_LEGS) != textures.end())
             {
-                SDL_Surface *s = createSurface(legsTex->getGLTexture(), 64, 128);
+                SDL_Surface *s = createSurface(textures.find(PART_LEGS)->second->getGLTexture(), bodyWidth, bodyHeight);
                 SDL_SetAlpha(s, SDL_SRCALPHA | SDL_RLEACCEL, 0);
                 SDL_BlitSurface(s, NULL, surface, NULL);
             }
+/*
             if (feetTex)
             {
                 SDL_Surface *s = createSurface(feetTex->getGLTexture(), 64, 128);
@@ -512,7 +536,7 @@ namespace ST
             }
 */
 
-            tex->setSize(64, 128);
+            //tex->setSize(bodyWidth, bodyHeight);
             tex->setPixels(surface);
 			SDL_FreeSurface(surface);
 		}
@@ -520,29 +544,30 @@ namespace ST
         {
             // create surface to render to
             SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                resourceManager->getBodyWidth(), resourceManager->getBodyHeight(),
+                bodyWidth, bodyHeight,
                 mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
 
-            if (bodyTex)
+            if (textures.find(PART_BODY) != textures.end())
             {
-                SDL_SetAlpha(bodyTex->getSDLSurface(), 0, 255);
-                SDL_BlitSurface(bodyTex->getSDLSurface(), NULL, surface, NULL);
+                SDL_SetAlpha(textures.find(PART_BODY)->second->getSDLSurface(), 0, 255);
+                SDL_BlitSurface(textures.find(PART_BODY)->second->getSDLSurface(), NULL, surface, NULL);
             }
-            if (hairTex)
+            if (textures.find(PART_HAIR) != textures.end())
             {
-                SDL_SetAlpha(hairTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
-                SDL_BlitSurface(hairTex->getSDLSurface(), NULL, surface, NULL);
+                SDL_SetAlpha(textures.find(PART_HAIR)->second->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(textures.find(PART_HAIR)->second->getSDLSurface(), NULL, surface, NULL);
             }
-/*            if (chestTex)
+            if (textures.find(PART_CHEST) != textures.end())
             {
-                SDL_SetAlpha(chestTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
-                SDL_BlitSurface(chestTex->getSDLSurface(), NULL, surface, NULL);
+                SDL_SetAlpha(textures.find(PART_CHEST)->second->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(textures.find(PART_CHEST)->second->getSDLSurface(), NULL, surface, NULL);
             }
-            if (legsTex)
+            if (textures.find(PART_LEGS) != textures.end())
             {
-                SDL_SetAlpha(legsTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
-                SDL_BlitSurface(legsTex->getSDLSurface(), NULL, surface, NULL);
+                SDL_SetAlpha(textures.find(PART_LEGS)->second->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(textures.find(PART_LEGS)->second->getSDLSurface(), NULL, surface, NULL);
             }
+/*
             if (feetTex)
             {
                 SDL_SetAlpha(feetTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);

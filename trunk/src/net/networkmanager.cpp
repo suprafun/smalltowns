@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2009, The Small Towns Dev Team
+ *	Copyright (c) 2009, CT Games
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -15,7 +15,7 @@
  *	- Redistributions in binary form must reproduce the above copyright notice,
  *		this list of conditions and the following disclaimer in the documentation
  *		and/or other materials provided with the distribution.
- *	- Neither the name of the Small Towns Dev Team nor the names of its contributors
+ *	- Neither the name of CT Games nor the names of its contributors
  *		may be used to endorse or promote products derived from this software without
  *		specific prior written permission.
  *
@@ -47,6 +47,8 @@
 #include "../graphics/texture.h"
 
 #include "../interface/interfacemanager.h"
+
+#include "../resources/bodypart.h"
 
 #include "../utilities/log.h"
 #include "../utilities/stringutils.h"
@@ -231,15 +233,16 @@ namespace ST
                 int count = packet->getInteger();
                 for (int i = 0; i < count; ++i)
                 {
+                    std::map<int, int> Ids;
                     int id = packet->getInteger();
                     int slot = packet->getInteger();
                     std::string name = packet->getString();
-                    int body = packet->getInteger();
-                    int hair = packet->getInteger();
-                    Texture *avatar = graphicsEngine->createAvatar(slot, body, hair, DIRECTION_SOUTHEAST);
+                    Ids[PART_BODY] = packet->getInteger();
+                    Ids[PART_HAIR] = packet->getInteger();
+                    Texture *avatar = graphicsEngine->createAvatar(slot, Ids, DIRECTION_SOUTHEAST);
                     Character *c = new Character(id, name, avatar);
-                    c->look.body = body;
-                    c->look.hair = hair;
+                    c->look.body = Ids[PART_BODY];
+                    c->look.hair = Ids[PART_HAIR];
                     c->setLevel(packet->getInteger());
                     c->setRights(packet->getInteger());
                     player->addCharacter(c, slot);
@@ -259,19 +262,20 @@ namespace ST
                 int error = packet->getByte();
                 if (error == ERR_NONE)
                 {
+                    std::map<int, int> Ids;
 					int id = packet->getInteger();
 					player->setId(id);
 
                     int slot = packet->getInteger();
                     std::string name = packet->getString();
 					int charId = packet->getInteger();
-					int body = packet->getInteger();
-					int hair = packet->getInteger();
+					Ids[PART_BODY] = packet->getInteger();
+                    Ids[PART_HAIR] = packet->getInteger();
 
-					Texture *avatar = graphicsEngine->createAvatar(charId, body, hair, DIRECTION_SOUTHEAST);
+					Texture *avatar = graphicsEngine->createAvatar(charId, Ids, DIRECTION_SOUTHEAST);
 					Character *c = new Character(charId, name, avatar);
-					c->look.body = body;
-					c->look.hair = hair;
+					c->look.body = Ids[PART_BODY];
+                    c->look.hair = Ids[PART_HAIR];
                     c->setLevel(packet->getInteger());
                     c->setRights(packet->getInteger());
                     player->addCharacter(c, slot);
@@ -443,10 +447,11 @@ namespace ST
         case GPMSG_PLAYER_INFO_RESPONSE:
             {
                 // check if being already exists
+                std::map<int, int> Ids;
                 unsigned int id = packet->getInteger();
                 std::string name = packet->getString();
-                int body = packet->getInteger();
-				int hair = packet->getInteger();
+                Ids[PART_BODY] = packet->getInteger();
+                Ids[PART_HAIR] = packet->getInteger();
 				int lvl = packet->getInteger();
 				int rights = packet->getInteger();
 
@@ -458,10 +463,10 @@ namespace ST
                     Point pos = mapEngine->convertTileToPixel(pt);
                     int dir = beingManager->getSavedDirection(id);
 
-                    Texture *avatar = graphicsEngine->createAvatar(id, body, hair, DIRECTION_SOUTHEAST);
+                    Texture *avatar = graphicsEngine->createAvatar(id, Ids, DIRECTION_SOUTHEAST);
                     Character *c = new Character(id, name, avatar);
-                    c->look.body = body;
-                    c->look.hair = hair;
+                    c->look.body = Ids[PART_BODY];
+                    c->look.hair = Ids[PART_HAIR];
                     c->setLevel(lvl);
                     c->setRights(rights);
                     c->moveNode(&pos);

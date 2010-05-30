@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2008, The Small Towns Dev Team
+ *	Copyright (c) 2008, CT Games
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -15,7 +15,7 @@
  *	- Redistributions in binary form must reproduce the above copyright notice,
  *		this list of conditions and the following disclaimer in the documentation
  *		and/or other materials provided with the distribution.
- *	- Neither the name of the Small Towns Dev Team nor the names of its contributors
+ *	- Neither the name of CT Games nor the names of its contributors
  *		may be used to endorse or promote products derived from this software without
  *		specific prior written permission.
  *
@@ -217,8 +217,8 @@ namespace ST
         /**
          * Create a texture based on body parts
          */
-        Texture* createAvatar(unsigned int id, int bodyId, int hairId, int dir);
-        Texture* createAvatarFrame(unsigned int id, unsigned int frame, Texture *bodyTex, Texture *hairTex, int dir);
+        Texture* createAvatar(unsigned int id, const std::map<int, int> &partIds, int dir);
+        Texture* createAvatarFrame(unsigned int id, unsigned int frame, const std::map<int, Texture*> &textures, int dir);
 
         /**
          * Get the node at that position

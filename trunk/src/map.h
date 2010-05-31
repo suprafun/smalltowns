@@ -208,7 +208,7 @@ namespace ST
         /**
          * Returns a layer
          */
-        Layer* getLayer(int layer);
+        Layer* getLayer(unsigned int layer);
 
         /**
          * Walks a tile on the map

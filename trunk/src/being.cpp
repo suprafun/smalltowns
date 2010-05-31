@@ -118,7 +118,7 @@ namespace ST
         return mName;
     }
 
-    int Being::getId() const
+    unsigned int Being::getId() const
     {
         return mId;
     }
@@ -197,7 +197,6 @@ namespace ST
         int hops = 0;
         int dir = DIRECTION_NORTH;
         int hw = mWidth >> 1;
-        int mapWidth = mapEngine->getTileWidth();
         int mapHeight = mapEngine->getTileHeight();
         int hmh = mapHeight >> 1;
 
@@ -209,7 +208,7 @@ namespace ST
         mWaypoints.clear();
 
         Point wayPos = getTilePosition();
-        Point endPos = finish;//mapEngine->convertPixelToTile(finish.x, finish.y);
+        Point endPos = finish;
         Point screenPos = {0,0};
 
         // keep moving a tile towards destination until reached
@@ -233,9 +232,6 @@ namespace ST
             mWaypoints.push_back(screenPos);
             ++hops;
         }
-
-        // commented out as sabata wants to end on the tile not the pixel
-		//mWaypoints.push_back(finish);
 
         return (hops < 20);
     }

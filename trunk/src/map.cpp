@@ -318,7 +318,7 @@ namespace ST
         return true;
     }
 
-    Layer* Map::getLayer(int layer)
+    Layer* Map::getLayer(unsigned int layer)
     {
         if (layer >= mLayers.size())
             return NULL;

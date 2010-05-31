@@ -69,6 +69,11 @@ namespace ST
         void loadAnimations(const std::string &filename);
 
         /**
+         * Returns number of body parts
+         */
+        unsigned int numBodyParts() const;
+
+        /**
          * Returns width of body parts
          */
         int getBodyWidth() const;
@@ -122,6 +127,7 @@ namespace ST
         int mDefaultBody;
         int mDefaultFemale;
         int mDefaultHair;
+        unsigned int mNumParts;
         std::vector<BodyPart*> mBodyParts;
         typedef std::vector<BodyPart*>::iterator BodyPartItr;
         std::map<std::string, std::list<BeingAnimation*> > mAnimations;

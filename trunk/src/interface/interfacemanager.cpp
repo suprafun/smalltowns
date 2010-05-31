@@ -59,7 +59,7 @@ namespace ST
             logger->logError("Error: Unable to init agar");
         }
 
-        if (AG_InitVideoSDL(graphicsEngine->getSurface(), 0) == -1)
+        if (AG_InitVideoSDL(graphicsEngine->getSurface(), AG_VIDEO_OPENGL_OR_SDL) == -1)
         {
             logger->logError("Error: Unable to init video");
         }

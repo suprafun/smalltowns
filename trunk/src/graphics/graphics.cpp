@@ -527,16 +527,13 @@ namespace ST
                 SDL_SetAlpha(s, SDL_SRCALPHA | SDL_RLEACCEL, 0);
                 SDL_BlitSurface(s, NULL, surface, NULL);
             }
-/*
-            if (feetTex)
+            if (textures.find(PART_FEET) != textures.end())
             {
-                SDL_Surface *s = createSurface(feetTex->getGLTexture(), 64, 128);
+                SDL_Surface *s = createSurface(textures.find(PART_FEET)->second->getGLTexture(), bodyWidth, bodyHeight);
                 SDL_SetAlpha(s, SDL_SRCALPHA | SDL_RLEACCEL, 0);
                 SDL_BlitSurface(s, NULL, surface, NULL);
             }
-*/
 
-            //tex->setSize(bodyWidth, bodyHeight);
             tex->setPixels(surface);
 			SDL_FreeSurface(surface);
 		}
@@ -567,13 +564,11 @@ namespace ST
                 SDL_SetAlpha(textures.find(PART_LEGS)->second->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
                 SDL_BlitSurface(textures.find(PART_LEGS)->second->getSDLSurface(), NULL, surface, NULL);
             }
-/*
-            if (feetTex)
+            if (textures.find(PART_FEET) != textures.end())
             {
-                SDL_SetAlpha(feetTex->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
-                SDL_BlitSurface(feetTex->getSDLSurface(), NULL, surface, NULL);
+                SDL_SetAlpha(textures.find(PART_FEET)->second->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(textures.find(PART_FEET)->second->getSDLSurface(), NULL, surface, NULL);
             }
-*/
             tex->setImage(surface);
         }
 
@@ -638,7 +633,7 @@ namespace ST
         if (mFPS.size() > mAverageTime)
         {
             int av = 0;
-            for (int i = 0; i < mAverageTime; ++i)
+            for (unsigned int i = 0; i < mAverageTime; ++i)
             {
                 av += mFPS[i];
             }
@@ -655,7 +650,7 @@ namespace ST
 
     void GraphicsEngine::sort()
     {
-        for (int i = 0; i < mapEngine->getLayers(); ++i)
+        for (unsigned int i = 0; i < mapEngine->getLayers(); ++i)
         {
             if (mapEngine->getLayer(i)->isCollisionLayer())
                 continue;

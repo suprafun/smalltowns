@@ -239,6 +239,9 @@ namespace ST
                     std::string name = packet->getString();
                     Ids[PART_BODY] = packet->getInteger();
                     Ids[PART_HAIR] = packet->getInteger();
+                    Ids[PART_CHEST] = packet->getInteger();
+                    Ids[PART_LEGS] = packet->getInteger();
+                    Ids[PART_FEET] = packet->getInteger();
                     Texture *avatar = graphicsEngine->createAvatar(slot, Ids, DIRECTION_SOUTHEAST);
                     Character *c = new Character(id, name, avatar);
                     c->look.body = Ids[PART_BODY];
@@ -271,11 +274,17 @@ namespace ST
 					int charId = packet->getInteger();
 					Ids[PART_BODY] = packet->getInteger();
                     Ids[PART_HAIR] = packet->getInteger();
+                    Ids[PART_CHEST] = packet->getInteger();
+                    Ids[PART_LEGS] = packet->getInteger();
+                    Ids[PART_FEET] = packet->getInteger();
 
 					Texture *avatar = graphicsEngine->createAvatar(charId, Ids, DIRECTION_SOUTHEAST);
 					Character *c = new Character(charId, name, avatar);
 					c->look.body = Ids[PART_BODY];
                     c->look.hair = Ids[PART_HAIR];
+                    c->look.chest = Ids[PART_CHEST];
+                    c->look.legs = Ids[PART_LEGS];
+                    c->look.feet = Ids[PART_FEET];
                     c->setLevel(packet->getInteger());
                     c->setRights(packet->getInteger());
                     player->addCharacter(c, slot);
@@ -452,6 +461,9 @@ namespace ST
                 std::string name = packet->getString();
                 Ids[PART_BODY] = packet->getInteger();
                 Ids[PART_HAIR] = packet->getInteger();
+                Ids[PART_CHEST] = packet->getInteger();
+                Ids[PART_LEGS] = packet->getInteger();
+                Ids[PART_FEET] = packet->getInteger();
 				int lvl = packet->getInteger();
 				int rights = packet->getInteger();
 
@@ -467,6 +479,9 @@ namespace ST
                     Character *c = new Character(id, name, avatar);
                     c->look.body = Ids[PART_BODY];
                     c->look.hair = Ids[PART_HAIR];
+                    c->look.chest = Ids[PART_CHEST];
+                    c->look.legs = Ids[PART_LEGS];
+                    c->look.feet = Ids[PART_FEET];
                     c->setLevel(lvl);
                     c->setRights(rights);
                     c->moveNode(&pos);

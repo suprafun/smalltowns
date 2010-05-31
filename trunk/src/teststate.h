@@ -47,6 +47,9 @@
 
 #include "gamestate.h"
 
+#include <agar/core.h>
+#include <agar/gui.h>
+
 #include <string>
 
 namespace ST
@@ -79,10 +82,12 @@ namespace ST
 
 	private:
 		IRCServer *chatServer;
+		AG_Window *popUp;
 		Camera *mCam;
 		int mTime;
         int ms;
         int lastframe;
+        int mLeft;
         bool mLoaded;
 	};
 }

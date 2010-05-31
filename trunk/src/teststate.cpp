@@ -38,7 +38,7 @@
  ********************************************/
 
 #include "teststate.h"
-#include "loginstate.h"
+#include "connectstate.h"
 #include "input.h"
 #include "player.h"
 #include "beingmanager.h"
@@ -212,12 +212,34 @@ namespace ST
 		}
     }
 
+    void handle_logout(AG_Event *event)
+    {
+        IRCServer *chatServer = static_cast<IRCServer*>(AG_PTR(1));
+        int *left = static_cast<int*>(AG_PTR(2));
+        int logout = AG_INT(3);
+        *left = 1;
+
+        // disconnect from game server
+        Packet *p = new Packet(PGMSG_DISCONNECT);
+        networkManager->sendPacket(p);
+        game->disconnect();
+        chatServer->quit();
+
+        if (logout == 1)
+        {
+            // connect to account server
+            GameState *gs = new ConnectState;
+            game->changeState(gs);
+        }
+    }
+
 	TestState::TestState()
 	{
         ms = 0;
         mTime = 0;
         lastframe = SDL_GetTicks();
         mLoaded = false;
+        mLeft = 0;
         chatServer = new IRCServer;
 
         // load glowing tile
@@ -235,6 +257,7 @@ namespace ST
 
 	void TestState::enter()
 	{
+	    int screenWidth = graphicsEngine->getScreenWidth();
 		int screenHeight = graphicsEngine->getScreenHeight();
 
 		AG_Window *chatWindow = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "ChatWindow");
@@ -258,6 +281,19 @@ namespace ST
 		// add elements to interface manager
 		interfaceManager->addWindow(chatWindow);
 
+		popUp = AG_WindowNew(AG_WINDOW_NOBUTTONS);
+		AG_WindowSetCaption(popUp, "Exit Game");
+		AG_WindowSetGeometry(popUp, screenWidth / 2 - 75, screenHeight / 2 - 40, 150, 80);
+		AG_WindowHide(popUp);
+
+		AG_Button *logOut = AG_ButtonNewFn(popUp, 0, "Log Out", handle_logout, "%p%p%d", chatServer, &mLeft, 1);
+		AG_ButtonJustify(logOut, AG_TEXT_CENTER);
+
+		AG_Button *exitGame = AG_ButtonNewFn(popUp, 0, "Exit to Desktop", handle_logout, "%p%p%d", chatServer, &mLeft, 0);
+		AG_ButtonJustify(exitGame, AG_TEXT_CENTER);
+
+		interfaceManager->addWindow(popUp);
+
 		std::string nick = player->getSelectedCharacter()->getName();
 		std::string host = "neo.us.whatnet.org";
 		chatServer->setNick(nick);
@@ -273,14 +309,20 @@ namespace ST
 	void TestState::exit()
 	{
 		delete mCam;
+		mCam = NULL;
 		delete chatServer;
+		chatServer = NULL;
         interfaceManager->removeAllWindows();
         interfaceManager->removeMouseListeners();
+        graphicsEngine->setCamera(NULL);
         graphicsEngine->removeNode(interfaceManager->getMouse()->cursor);
 	}
 
 	bool TestState::update()
 	{
+	    if (mLeft)
+            return false;
+
 	    // check if the map has been loaded then tell the game server we're ready
 	    if (!mLoaded && mapEngine->mapLoaded())
 	    {
@@ -296,11 +338,11 @@ namespace ST
 		// Check for input, if escape pressed, exit
 		if (inputManager->getKey(AG_KEY_ESCAPE))
 		{
-            Packet *p = new Packet(PGMSG_DISCONNECT);
-            networkManager->sendPacket(p);
-            game->disconnect();
-		    chatServer->quit();
-			return false;
+            // bring up menu to choose whether to log off or quit
+            if (AG_WindowIsVisible(popUp))
+                AG_WindowHide(popUp);
+            else
+                AG_WindowShow(popUp);
 		}
 
         // number of milliseconds since last frame

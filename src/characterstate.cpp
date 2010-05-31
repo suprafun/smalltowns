@@ -294,24 +294,15 @@ namespace ST
                     AG_Surface *surface = NULL;
                     if (graphicsEngine->isOpenGL())
                     {
-                        /*
-                        SDL_Surface *s = graphicsEngine->createSurface(tex->getGLTexture(), 64, 128);
-                        SDL_LockSurface(s);
-                        AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
-                        SDL_UnlockSurface(s);
-						//surface = AG_SurfaceFromSDL(graphicsEngine->createSurface(tex->getGLTexture(), 64, 128));
-						pixmap = AG_PixmapFromSurface(NULL, AG_PIXMAP_RESCALE, surface);
-						*/
-						pixmap = AG_PixmapFromTexture(0, AG_PIXMAP_RESCALE, tex->getGLTexture(), 0);
+						pixmap = AG_PixmapFromTexture(0, 0, tex->getGLTexture(), 0);
                     }
                     else
                     {
                         SDL_Surface *s = tex->getSDLSurface();
-                        //surface = AG_SurfaceFromSDL(tex->getSDLSurface());
                         SDL_LockSurface(s);
                         surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
                         SDL_UnlockSurface(s);
-                        pixmap = AG_PixmapFromSurface(0, AG_PIXMAP_RESCALE, surface);
+                        pixmap = AG_PixmapFromSurface(0, 0, surface);
                     }
 
                     // put the pixmap on the screen
@@ -395,8 +386,6 @@ namespace ST
                 SDL_LockSurface(s);
                 surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
                 SDL_UnlockSurface(s);
-				//surface = AG_SurfaceFromSDL(graphicsEngine->createSurface(tex->getGLTexture(), tex->getWidth(),
-				//										tex->getHeight()));
             }
             else
             {
@@ -404,7 +393,6 @@ namespace ST
                 SDL_LockSurface(s);
                 surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
                 SDL_UnlockSurface(s);
-                //surface = AG_SurfaceFromSDL(tex->getSDLSurface());
             }
             AG_ButtonSurface(hair, surface);
         }
@@ -429,7 +417,7 @@ namespace ST
 
     void CharacterState::createAvatar()
     {
-        for (int i = 0; i < 2; ++i)
+        for (unsigned int i = 0; i < resourceManager->numBodyParts(); ++i)
         {
             // load the texture
             BodyPart *body = resourceManager->getDefaultBody(i);
@@ -442,7 +430,7 @@ namespace ST
             SDL_Surface *s = NULL;
             if (graphicsEngine->isOpenGL())
             {
-                s = graphicsEngine->createSurface(tex->getGLTexture(), 64, 128);
+                s = graphicsEngine->createSurface(tex->getGLTexture(), resourceManager->getBodyWidth(), resourceManager->getBodyHeight());
                 if (s)
                 {
                     SDL_LockSurface(s);
@@ -483,11 +471,10 @@ namespace ST
         SDL_Surface *s = NULL;
         if (graphicsEngine->isOpenGL())
         {
-            s = graphicsEngine->createSurface(tex->getGLTexture(), 64, 128);
+            s = graphicsEngine->createSurface(tex->getGLTexture(), resourceManager->getBodyWidth(), resourceManager->getBodyHeight());
             SDL_LockSurface(s);
             surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
             SDL_UnlockSurface(s);
-            //surface = AG_SurfaceFromSDL(graphicsEngine->createSurface(tex->getGLTexture(), 64, 128));
         }
         else
         {
@@ -495,7 +482,6 @@ namespace ST
             SDL_LockSurface(s);
             surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
             SDL_UnlockSurface(s);
-            //surface = AG_SurfaceFromSDL(tex->getSDLSurface());
         }
 
         AG_PixmapReplaceCurrentSurface(pixmap, surface);

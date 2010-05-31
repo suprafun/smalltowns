@@ -62,6 +62,7 @@ namespace ST
         mDefaultHair = 0;
         mBodyWidth = 0;
         mBodyHeight = 0;
+        mNumParts = 2; // TODO: Calculate based on body.cfg
         std::string datapath = "";
         // physfs code
         PHYSFS_init(path.c_str());
@@ -232,6 +233,11 @@ namespace ST
 
             } while (file.nextElement("animation"));
         }
+    }
+
+    unsigned int ResourceManager::numBodyParts() const
+    {
+        return mNumParts;
     }
 
     int ResourceManager::getBodyWidth() const

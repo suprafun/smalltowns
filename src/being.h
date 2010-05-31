@@ -81,7 +81,7 @@ namespace ST
         virtual ~Being();
 
         virtual std::string getName();
-        virtual int getId() const;
+        virtual unsigned int getId() const;
 
         /** Set the animation state of the being */
         virtual void setState(int state);
@@ -135,7 +135,7 @@ namespace ST
         Point getNextTile(const Point &pt, int dir);
 
     protected:
-        int mId;
+        unsigned int mId;
         int mState;
         Pointf mLastPosition; // set by client
         std::deque<Point> mWaypoints; // set by client

@@ -38,9 +38,9 @@ enum
 
     // Character screen
     PAMSG_CHAR_LIST             = 0x0010, //
-    APMSG_CHAR_LIST_RESPONSE    = 0x0011, // I num, { I id, I slot, S char name, I body, I hair, I level, I rights }
+    APMSG_CHAR_LIST_RESPONSE    = 0x0011, // I num, { I id, I slot, S char name, I body, I hair, I chest, I legs, I feet, I level, I rights }
     PAMSG_CHAR_CREATE           = 0x0012, // S char name, I body, I hair
-    APMSG_CHAR_CREATE_RESPONSE  = 0x0013, // C error [ I id, I slot, S char name, I body, I hair, I level, I rights ]
+    APMSG_CHAR_CREATE_RESPONSE  = 0x0013, // C error [ I id, I slot, S char name, I body, I hair, I chest, I legs, I feet, I level, I rights ]
     PAMSG_CHAR_CHOOSE           = 0x0016, // I slot
     APMSG_CHAR_CHOOSE_RESPONSE  = 0x0017, // C error [ I id ]
     PAMSG_CHAR_DELETE           = 0x0020, // I slot
@@ -67,7 +67,7 @@ enum
 
     // player info
     PGMSG_PLAYER_INFO           = 0x0820, // S char name
-    GPMSG_PLAYER_INFO_RESPONSE  = 0x0821, // I id, S char name, I body, I hair, I level, I rights
+    GPMSG_PLAYER_INFO_RESPONSE  = 0x0821, // I id, S char name, I body, I hair, I chest, I legs, I feet, I level, I rights
 
     // movement
     GPMSG_WARPTO                = 0x0850, // I x, I y

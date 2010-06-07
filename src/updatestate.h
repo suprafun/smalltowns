@@ -75,8 +75,8 @@ namespace ST
 		 */
 		bool update();
 
-        bool mSuccess;
-        bool mAccepted;
+    private:
+        int mContent;
         AG_Button *button;
         AG_Label *text;
         std::string hostname;

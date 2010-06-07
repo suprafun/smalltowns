@@ -53,6 +53,9 @@
 #ifdef __APPLE__
 #include <CoreFoundation/CFBundle.h>
 #endif
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 namespace ST
 {
@@ -68,10 +71,12 @@ namespace ST
         PHYSFS_init(path.c_str());
 
 #if defined __unix__
-        mDataPaths.push_back("data/");
-        mDataPaths.push_back("");
-		mWriteDataPath = "";
-        PHYSFS_addToSearchPath("data", 0);
+        datapath = PHYSFS_getBaseDir();
+        mDataPaths.push_back(datapath + "data/");
+        mDataPaths.push_back(datapath);
+		mWriteDataPath = datapath;
+		datapath.append("data");
+        PHYSFS_addToSearchPath(datapath.c_str(), 0);
 #elif defined __APPLE__
         CFBundleRef mainBundle = CFBundleGetMainBundle();
 		CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
@@ -80,18 +85,29 @@ namespace ST
 		CFRelease(resourcesURL);
 		datapath = resPath;
 		datapath.append("/");
-		PHYSFS_addToSearchPath(resPath, 0);
+		mDataPaths.push_back(datapath);
 
 		mWriteDataPath = PHYSFS_getUserDir();
 		mWriteDataPath.append("Library/Application Support/townslife/");
-		mDataPaths.push_back(mWriteDataPath + "data/");
-		mDataPaths.push_back(datapath);
+
+		PHYSFS_addToSearchPath(resPath, 0);
 #elif defined _WIN32
+        TCHAR exePath[MAX_PATH];
+        if (GetModuleFileName(0, exePath, MAX_PATH) == 0)
+        {
+            logger->logError("Unable to get path to executable.");
+        }
         mWriteDataPath = PHYSFS_getUserDir();
-        mWriteDataPath.append("Documents/townslife/");
-        mDataPaths.push_back(mWriteDataPath + "data/");
-        mDataPaths.push_back("data/");
-        mDataPaths.push_back("");
+        mWriteDataPath.append("Documents\\townslife\\");
+
+        datapath = exePath;
+        datapath = datapath.substr(0, datapath.find_last_of("\\") + 1);
+        mDataPaths.push_back(datapath + "data\\");
+        mDataPaths.push_back(datapath);
+
+        PHYSFS_addToSearchPath(datapath.c_str(), 0);
+        datapath.append("data\\");
+        PHYSFS_addToSearchPath(datapath.c_str(), 0);
 #endif
         if (!doesExist(mWriteDataPath))
         {
@@ -324,12 +340,9 @@ namespace ST
 
     std::string ResourceManager::getDataPath(std::string file)
     {
-        for (unsigned int i = 0; i < mDataPaths.size(); ++i)
+        if (doesExist(file))
         {
-            if (doesExist(mDataPaths[i] + file))
-            {
-                return mDataPaths[i] + file;
-            }
+            return PHYSFS_getRealDir(file.c_str()) + file;
         }
         return "";
     }

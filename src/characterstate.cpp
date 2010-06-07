@@ -176,11 +176,17 @@ namespace ST
         {
             int body = state->mChosen[PART_BODY];
 			int hair = state->mChosen[PART_HAIR];
+			int chest = 0;
+			int legs = 0;
+			int feet = 0;
 
             Packet *packet = new Packet(PAMSG_CHAR_CREATE);
             packet->setString(name);
             packet->setInteger(body);
             packet->setInteger(hair);
+            packet->setInteger(chest);
+            packet->setInteger(legs);
+            packet->setInteger(feet);
             networkManager->sendPacket(packet);
 
             interfaceManager->setErrorMessage("");

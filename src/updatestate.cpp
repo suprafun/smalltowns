@@ -51,34 +51,20 @@
 #include "net/protocol.h"
 
 #include "utilities/log.h"
+#include "utilities/stringutils.h"
 #include "utilities/xml.h"
 
 #include <SDL.h>
+#include <sstream>
 
 namespace ST
 {
     void clicked(AG_Event *event)
     {
-        UpdateState *state = static_cast<UpdateState*>(AG_PTR(1));
-        state->mAccepted = true;
-    }
-
-    std::string readFile(const std::string &filename)
-    {
-        std::string fileString;
-        char buffer[256];
-        int size = 0;
-        FILE *file = fopen(filename.c_str(), "r");
-		if (!file)
-			return "";
-        do
-        {
-            memset(buffer, 0, 256);
-            size = fread(buffer, 255, 1, file);
-            fileString.append(buffer);
-        } while (size != 0 || size >= 255);
-
-        return fileString;
+        logger->logDebug("Retrieving character list");
+        Packet *packet = new Packet(PAMSG_CHAR_LIST);
+        networkManager->sendPacket(packet);
+        AG_ButtonDisable(static_cast<AG_Button*>(AG_SELF()));
     }
 
     UpdateState::UpdateState()
@@ -95,9 +81,7 @@ namespace ST
             logger->logWarning("Error loading configuration for newshost.");
         }
 		file.close();
-
-        mAccepted = false;
-        mSuccess = false;
+        mContent = 0;
     }
 
     void UpdateState::enter()
@@ -120,8 +104,22 @@ namespace ST
 		text = AG_LabelNew(newsWin, AG_LABEL_EXPAND, "Downloading Updates");
 		//AG_Expand(text);
 
-		button = AG_ButtonNewFn(newsWin, 0, "OK", clicked, "%p", this);
+		button = AG_ButtonNewFn(newsWin, 0, "OK", clicked, "");
 		AG_ButtonDisable(button);
+
+        // get news file
+		if (networkManager->downloadFile(hostname, filename))
+		{
+		    std::string news = utils::readFile(resourceManager->getWritablePath() + filename);
+		    AG_LabelText(text, "%s", news.c_str());
+		}
+		else
+		{
+		    AG_LabelText(text, "%s", "Error downloading news.");
+		}
+
+		// get content files
+        mContent = networkManager->downloadContent(hostname);
     }
 
     void UpdateState::exit()
@@ -131,23 +129,22 @@ namespace ST
 
     bool UpdateState::update()
     {
-        if (!mSuccess)
+        if (mContent < networkManager->getTotalDownloads())
         {
-            logger->logDebug("Downloading news update.");
-            mSuccess = networkManager->downloadFile(hostname, filename);
-            logger->logDebug("Finished downloading news update.");
-            AG_ButtonEnable(button);
-            std::string news = readFile(resourceManager->getWritablePath() + filename);
-            if (!news.empty())
-                AG_LabelText(text, "%s", news.c_str());
-        }
+            mContent = networkManager->downloadContent(hostname);
 
-        if (mAccepted)
+            if (mContent == -1)
+            {
+                logger->logError("Unable to download content updates");
+                return false;
+            }
+            std::stringstream str;
+            str << "Downloading " << mContent << " of " << networkManager->getTotalDownloads();
+            logger->logDebug(str.str());
+        }
+        else
         {
-            logger->logDebug("Retrieving character list");
-            Packet *packet = new Packet(PAMSG_CHAR_LIST);
-            networkManager->sendPacket(packet);
-			mAccepted = false;
+            AG_ButtonEnable(button);
         }
 
         if (inputManager->getKey(AG_KEY_ESCAPE))

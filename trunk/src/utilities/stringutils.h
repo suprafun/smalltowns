@@ -73,6 +73,24 @@ namespace ST
         str << num;
         return str.str();
     }
+
+    static std::string readFile(const std::string &filename)
+    {
+        std::string fileString;
+        char buffer[256];
+        int size = 0;
+        FILE *file = fopen(filename.c_str(), "r");
+		if (!file)
+			return "";
+        do
+        {
+            memset(buffer, 0, 256);
+            size = fread(buffer, 255, 1, file);
+            fileString.append(buffer);
+        } while (size != 0 || size >= 255);
+
+        return fileString;
+    }
     };
 }
 

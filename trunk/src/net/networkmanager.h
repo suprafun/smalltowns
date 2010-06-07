@@ -99,6 +99,11 @@ namespace ST
         bool downloadFile(const std::string &hostname, const std::string &file);
 
         /**
+         * Download content files
+         */
+        int downloadContent(const std::string &hostname);
+
+        /**
          * Set default settings
          */
         void setDefault(const std::string &hostname, int port);
@@ -118,7 +123,12 @@ namespace ST
         /**
          * Save data to file (for curl)
          */
-        void saveData(char *buffer);
+        void saveData(char *buffer, int size);
+
+        /**
+         * Returns the total number of content updates needed to download
+         */
+        unsigned int getTotalDownloads() const;
 
     private:
 		/**
@@ -132,7 +142,9 @@ namespace ST
 		int mDefaultPort;
 		int mTag; /** << Used for reconnecting to game server */
 		int mPing;
-		std::string mFileData;
+		unsigned int mNumDownloads;
+		char *mFileData;
+		unsigned int mPos;
 	};
 
 	extern NetworkManager *networkManager;

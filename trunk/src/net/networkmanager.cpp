@@ -76,7 +76,7 @@
 
 namespace ST
 {
-    size_t downloadNews( void *buffer, size_t size, size_t nmemb, void *ptr)
+    size_t downloadData( void *buffer, size_t size, size_t nmemb, void *ptr)
     {
         int segsize = size * nmemb;
         char buf[65535];
@@ -89,7 +89,7 @@ namespace ST
         buf[segsize] = 0;
 
         /* Call function to output data to my file */
-        static_cast<NetworkManager*>(ptr)->saveData(buf);
+        static_cast<NetworkManager*>(ptr)->saveData(buf, segsize);
 
         /* Return the number of bytes received, indicating to curl that all is okay */
         return segsize;
@@ -102,6 +102,8 @@ namespace ST
         mHost = new Host();
         mTag = -1;
         mPing = 0;
+        mNumDownloads = 0;
+        mPos = 0;
 	}
 
 	NetworkManager::~NetworkManager()
@@ -581,7 +583,7 @@ namespace ST
 
 		std::string fullpath = resourceManager->getWritablePath() + file;
 
-	    outFile = fopen(fullpath.c_str(), "w+");
+	    outFile = fopen(fullpath.c_str(), "wb+");
 		if (outFile == NULL)
 		{
 			logger->logDebug("Failed to open file for downloading at " + fullpath);
@@ -600,7 +602,7 @@ namespace ST
 
 			// set curl options
 			curl_easy_setopt(handle, CURLOPT_WRITEDATA, this);
-			curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, downloadNews);
+			curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, downloadData);
 			curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
 
 			// perform the download
@@ -617,11 +619,58 @@ namespace ST
 			curl_easy_cleanup(handle);
 		}
 
-		fwrite(mFileData.c_str(), mFileData.size(), sizeof(char), outFile);
+		fwrite(mFileData, 1, mPos, outFile);
 
         fclose(outFile);
 
+        free(mFileData);
+        mFileData = NULL;
+        mPos = 0;
+
         return true;
+	}
+
+	int NetworkManager::downloadContent(const std::string &hostname)
+	{
+	    // download list of updates
+        if (!downloadFile(hostname, "updates.txt"))
+        {
+            logger->logError("Unable to download updates file.");
+            return -1;
+        }
+
+	    // read list of updates
+        std::string updateList = utils::readFile(resourceManager->getWritablePath() + "updates.txt");
+
+        if (updateList.empty())
+            return 0;
+
+	    // check if we already have updates
+	    // for now just check filename, in future, use MD5 hash
+	    while (!updateList.empty())
+	    {
+	        size_t size = updateList.find_first_of("\n");
+	        if (size == std::string::npos)
+	        {
+                size = updateList.size();
+	        }
+	        std::string str = updateList.substr(0, size);
+	        // check if exists else download
+	        if (resourceManager->doesExist(str))
+	        {
+	            logger->logDebug("File already exists: " + str);
+	        }
+	        else if (!downloadFile(hostname, str))
+            {
+                logger->logError("Unable to download: " + str);
+                return -1;
+            }
+	        updateList = updateList.substr(size + 1);
+
+	        ++mNumDownloads;
+	    }
+
+	    return mNumDownloads;
 	}
 
 	void NetworkManager::setDefault(const std::string &hostname, int port)
@@ -648,11 +697,25 @@ namespace ST
 	    return mPing;
 	}
 
-	void NetworkManager::saveData(char *buffer)
+	unsigned int NetworkManager::getTotalDownloads() const
 	{
-	    if (mFileData.empty())
-            mFileData = buffer;
+	    return mNumDownloads;
+	}
+
+	void NetworkManager::saveData(char *buffer, int size)
+	{
+	    if (mPos == 0)
+            mFileData = (char*)malloc(size + 1);
         else
-            mFileData.append(buffer);
+        {
+            char *buf;
+            buf = (char*)malloc(mPos);
+            strncpy(buf, mFileData, mPos);
+            mFileData = (char*)realloc(mFileData, mPos + size + 1);
+            strncpy(mFileData, buf, mPos);
+            free(buf);
+        }
+        memcpy(&mFileData[mPos], buffer, size);
+        mPos += size;
 	}
 }

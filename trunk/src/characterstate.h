@@ -90,6 +90,11 @@ namespace ST
 		 */
         void updateAvatar(BodyPart *body);
 
+        /**
+         * Add body part selection
+         */
+        void addBodyPartSelection(int bodypart, AG_Window *box);
+
     private:
         void createSelectionWindow();
         void createCreationWindow();

@@ -44,14 +44,18 @@
 
 namespace ST
 {
-    BodyPart::BodyPart(int id, int type, const std::string &iconfile):
+    BodyPart::BodyPart(int id, int type, Texture *tex):
         mId(id), mType(type)
     {
-        mIconTexture = graphicsEngine->loadTexture(iconfile);
+        mIconTexture = tex;
     }
 
     void BodyPart::addTexture(int dir, const std::string &filename)
     {
         mTextures.insert(std::pair<int, Texture*>(dir, graphicsEngine->loadTexture(filename)));
+    }
+    void BodyPart::addTexture(int dir, const std::string &filename, char *data, int size)
+    {
+        mTextures.insert(std::pair<int, Texture*>(dir, graphicsEngine->loadTexture(filename, data, size)));
     }
 }

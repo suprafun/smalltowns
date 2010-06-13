@@ -62,52 +62,28 @@ namespace ST
     ResourceManager::ResourceManager(const std::string &path)
     {
         mDefaultBody = 0;
+        mDefaultFemale = 0;
         mDefaultHair = 0;
+        mDefaultChest = 0;
+        mDefaultLegs = 0;
         mBodyWidth = 0;
         mBodyHeight = 0;
-        mNumParts = 2; // TODO: Calculate based on body.cfg
+        mNumParts = 4; // TODO: Calculate based on body.cfg
         std::string datapath = "";
         // physfs code
         PHYSFS_init(path.c_str());
 
+        // add paths
+        // writable first, since thats where updates will go to
 #if defined __unix__
-        datapath = PHYSFS_getBaseDir();
-        mDataPaths.push_back(datapath + "data/");
-        mDataPaths.push_back(datapath);
-		mWriteDataPath = datapath;
-		datapath.append("data");
-        PHYSFS_addToSearchPath(datapath.c_str(), 0);
+        mWriteDataPath = PHYSFS_getUserDir();
+		mWriteDataPath.append(".townslife/");
 #elif defined __APPLE__
-        CFBundleRef mainBundle = CFBundleGetMainBundle();
-		CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
-		char resPath[PATH_MAX];
-		CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)resPath, PATH_MAX);
-		CFRelease(resourcesURL);
-		datapath = resPath;
-		datapath.append("/");
-		mDataPaths.push_back(datapath);
-
 		mWriteDataPath = PHYSFS_getUserDir();
 		mWriteDataPath.append("Library/Application Support/townslife/");
-
-		PHYSFS_addToSearchPath(resPath, 0);
 #elif defined _WIN32
-        TCHAR exePath[MAX_PATH];
-        if (GetModuleFileName(0, exePath, MAX_PATH) == 0)
-        {
-            logger->logError("Unable to get path to executable.");
-        }
         mWriteDataPath = PHYSFS_getUserDir();
         mWriteDataPath.append("Documents\\townslife\\");
-
-        datapath = exePath;
-        datapath = datapath.substr(0, datapath.find_last_of("\\") + 1);
-        mDataPaths.push_back(datapath + "data\\");
-        mDataPaths.push_back(datapath);
-
-        PHYSFS_addToSearchPath(datapath.c_str(), 0);
-        datapath.append("data\\");
-        PHYSFS_addToSearchPath(datapath.c_str(), 0);
 #endif
         if (!doesExist(mWriteDataPath))
         {
@@ -115,7 +91,30 @@ namespace ST
 			PHYSFS_mkdir(mWriteDataPath.c_str());
 			PHYSFS_setWriteDir(mWriteDataPath.c_str());
         }
-        PHYSFS_addToSearchPath(mWriteDataPath.c_str(), 0);
+        addPath(mWriteDataPath);
+
+        // now add cfg and /data directory
+#if defined __unix__
+        datapath = PHYSFS_getBaseDir() + "data/";
+        addPath(datapath);
+#elif defined __APPLE__
+        CFBundleRef mainBundle = CFBundleGetMainBundle();
+		CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+		char resPath[PATH_MAX];
+		CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)resPath, PATH_MAX);
+		CFRelease(resourcesURL);
+		addPath(resPath);
+#elif defined _WIN32
+        TCHAR exePath[MAX_PATH];
+        if (GetModuleFileName(0, exePath, MAX_PATH) == 0)
+        {
+            logger->logError("Unable to get path to executable.");
+        }
+        datapath = exePath;
+        datapath = datapath.substr(0, datapath.find_last_of("\\") + 1);
+        addPath(datapath);
+        addPath(datapath + "data\\");
+#endif
     }
 
     ResourceManager::~ResourceManager()
@@ -154,7 +153,10 @@ namespace ST
     void ResourceManager::loadBodyParts(const std::string &filename)
     {
         XMLFile file;
-		if (file.load(filename))
+        int size;
+        char *data = loadFile(filename, size);
+
+		if (file.parse(data))
 		{
 		    // set size
 		    file.setElement("size");
@@ -166,6 +168,8 @@ namespace ST
 		    mDefaultBody = file.readInt("default", "body");
             mDefaultFemale = file.readInt("default", "female");
 		    mDefaultHair = file.readInt("default", "hair");
+		    mDefaultChest = file.readInt("default", "chest");
+		    mDefaultLegs = file.readInt("default", "legs");
 
             // add all the body parts
             file.setElement("body");
@@ -173,15 +177,34 @@ namespace ST
             {
                 file.setSubElement("body", "image");
                 int id = file.readInt("body", "id");
-                std::string icon = getDataPath(file.readString("body", "icon"));
+                std::string icon = file.readString("body", "icon");
                 int part = file.readInt("body", "part");
 
-                BodyPart *body = new BodyPart(id, part, icon);
+                Texture *iconTex = NULL;
+                if (getDataPath(icon).find_first_of(".zip") == std::string::npos)
+                {
+                    iconTex = graphicsEngine->loadTexture(getDataPath(icon));
+                }
+                else
+                {
+                    int iconBufSize = 0;
+                    char *buffer = loadFile(icon, iconBufSize);
+                    iconTex = graphicsEngine->loadTexture(icon, buffer, iconBufSize);
+                    free(buffer);
+                }
+
+                if (iconTex == NULL)
+                {
+                    logger->logError("Unable to load icon: " + icon);
+                }
+
+                BodyPart *body = new BodyPart(id, part, iconTex);
 
                 do
                 {
                     int dir = -1;
-                    std::string img = getDataPath(file.readString("image", "file"));
+                    // check if img is in a content update
+                    std::string img = file.readString("image", "file");
                     std::string dirstr = file.readString("image", "dir");
 
                     if (dirstr == "SE")
@@ -193,7 +216,18 @@ namespace ST
                     else if (dirstr == "NW")
                         dir = DIRECTION_NORTHWEST;
 
-                    body->addTexture(dir, img);
+                    if (getDataPath(img).find_first_of(".zip") == std::string::npos)
+                    {
+                        body->addTexture(dir, getDataPath(img));
+                    }
+                    else
+                    {
+                        int imgBufSize = 0;
+                        char *buffer = loadFile(img, imgBufSize);
+                        body->addTexture(dir, img, buffer, imgBufSize);
+                        free(buffer);
+                    }
+
                 } while (file.nextSubElement("image"));
 
                 mBodyParts.push_back(body);
@@ -206,7 +240,11 @@ namespace ST
     void ResourceManager::loadAnimations(const std::string &filename)
     {
         XMLFile file;
-		if (file.load(filename))
+        int size;
+        bool loaded = false;
+        char *data = loadFile(filename, size);
+
+		if (file.parse(data))
 		{
 		    // add all the animations
 		    file.setElement("animation");
@@ -224,14 +262,28 @@ namespace ST
                 std::list<BeingAnimation*> animList;
                 do
                 {
-                    std::string img = getDataPath(file.readString("body", "file"));
+                    std::string img = file.readString("body", "file");
                     int part = file.readInt("body", "part");
 
                     std::stringstream texName;
                     texName << part << name;
 
+                    // check if animation is in content update
+                    if (getDataPath(img).find_first_of(".zip") == std::string::npos)
+                    {
+                        img = getDataPath(img);
+                        loaded = graphicsEngine->loadTextureSet(texName.str(), img, width, height);
+                    }
+                    else
+                    {
+                        int imgBufSize = 0;
+                        char *buffer = loadFile(img, imgBufSize);
+                        loaded = graphicsEngine->loadTextureSet(texName.str(), buffer, imgBufSize, width, height);
+                        free(buffer);
+                    }
+
                     // load in all the frames of animation
-                    if (graphicsEngine->loadTextureSet(texName.str(), img, width, height))
+                    if (loaded)
                     {
                         BeingAnimation *anim = new BeingAnimation(id, part);
                         for (int i = 1; i <= frames; ++i)
@@ -290,6 +342,10 @@ namespace ST
             return getBodyPart(mDefaultBody);
         case PART_HAIR:
             return getBodyPart(mDefaultHair);
+        case PART_CHEST:
+            return getBodyPart(mDefaultChest);
+        case PART_LEGS:
+            return getBodyPart(mDefaultLegs);
         }
 
         return NULL;
@@ -338,11 +394,21 @@ namespace ST
         return NULL;
     }
 
+    void ResourceManager::addPath(const std::string &path)
+    {
+        PHYSFS_addToSearchPath(path.c_str(), 0);
+    }
+
     std::string ResourceManager::getDataPath(std::string file)
     {
         if (doesExist(file))
         {
-            return PHYSFS_getRealDir(file.c_str()) + file;
+            std::string path = PHYSFS_getRealDir(file.c_str());
+#ifndef _WIN32
+            return path + "/" + file;
+#else
+            return path + "\\" + file;
+#endif
         }
         return "";
     }
@@ -355,5 +421,51 @@ namespace ST
     bool ResourceManager::doesExist(const std::string &filename)
     {
         return (PHYSFS_exists(filename.c_str()) != 0);
+    }
+
+    char* ResourceManager::loadFile(const std::string &filename, int &size)
+    {
+        PHYSFS_file *file = PHYSFS_openRead(filename.c_str());
+        if (file == NULL)
+        {
+            logger->logError("Invalid file: " + filename);
+            return NULL;
+        }
+
+        size = PHYSFS_fileLength(file);
+        char *buffer = (char*)malloc(size + 1);
+        PHYSFS_read(file, buffer, 1, size);
+        PHYSFS_close(file);
+        buffer[size] = '\0';
+
+        return buffer;
+    }
+
+    void ResourceManager::loadGlowingTiles()
+    {
+        int size = 0;
+        char *buffer;
+        if (getDataPath("glowtile_red").find_first_of(".zip") == std::string::npos)
+        {
+            graphicsEngine->loadTexture(getDataPath("glowtile_red.png"));
+        }
+        else
+        {
+            buffer = loadFile("glowtile_red.png", size);
+            graphicsEngine->loadTexture("glowtile_red.png", buffer, size);
+            free(buffer);
+        }
+
+        if (getDataPath("glowtile_green").find_first_of(".zip") == std::string::npos)
+        {
+            graphicsEngine->loadTexture(getDataPath("glowtile_green.png"));
+        }
+        else
+        {
+            size = 0;
+            buffer = loadFile("glowtile_green.png", size);
+            graphicsEngine->loadTexture("glowtile_green.png", buffer, size);
+            free(buffer);
+        }
     }
 }

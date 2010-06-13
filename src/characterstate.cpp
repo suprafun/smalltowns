@@ -176,9 +176,9 @@ namespace ST
         {
             int body = state->mChosen[PART_BODY];
 			int hair = state->mChosen[PART_HAIR];
-			int chest = 0;
-			int legs = 0;
-			int feet = 0;
+			int chest = state->mChosen[PART_CHEST];
+			int legs = state->mChosen[PART_LEGS];
+			int feet = state->mChosen[PART_FEET];
 
             Packet *packet = new Packet(PAMSG_CHAR_CREATE);
             packet->setString(name);
@@ -215,20 +215,21 @@ namespace ST
         amask = 0xff000000;
         #endif
 
-#ifndef __APPLE__
-		resourceManager->loadBodyParts("body.cfg");
+        resourceManager->loadBodyParts("body.cfg");
         resourceManager->loadAnimations("animation.cfg");
-#else
-		resourceManager->loadBodyParts(resourceManager->getDataPath("body.cfg"));
-        resourceManager->loadAnimations(resourceManager->getDataPath("animation.cfg"));
-#endif
 
 		BodyPart *body = resourceManager->getDefaultBody(PART_BODY);
 		BodyPart *hair = resourceManager->getDefaultBody(PART_HAIR);
+		BodyPart *chest = resourceManager->getDefaultBody(PART_CHEST);
+		BodyPart *legs = resourceManager->getDefaultBody(PART_LEGS);
 		if (body)
             mChosen.push_back(body->getId());
         if (hair)
            	mChosen.push_back(hair->getId());
+        if (chest)
+            mChosen.push_back(chest->getId());
+        if (legs)
+            mChosen.push_back(legs->getId());
     }
 
     void CharacterState::enter()
@@ -346,62 +347,24 @@ namespace ST
         // set window paramaters
         AG_WindowSetCaption(mCreateWindow, "Create new Character");
 		AG_WindowSetSpacing(mCreateWindow, 12);
-		AG_WindowSetGeometry(mCreateWindow, mHalfScreenWidth - 140, mHalfScreenHeight - 150, 280, 300);
+		AG_WindowSetGeometry(mCreateWindow, mHalfScreenWidth - 140, mHalfScreenHeight - 225, 280, 450);
 
         // create layout
-		AG_HBox *charBox = AG_HBoxNew(mCreateWindow, 0);
-		AG_Fixed *charPos = AG_FixedNew(charBox, 0);
+		AG_Fixed *charPos = AG_FixedNew(mCreateWindow, 0);
+
+		addBodyPartSelection(PART_HAIR, mCreateWindow);
+		addBodyPartSelection(PART_CHEST, mCreateWindow);
+		addBodyPartSelection(PART_LEGS, mCreateWindow);
 
         // build default avatar
         mAvatar = new Avatar;
         createAvatar();
         for (unsigned int i = 0; i < mAvatar->bodyparts.size(); ++i)
         {
-            AG_FixedPut(charPos, mAvatar->bodyparts[i], 10, 10);
+            AG_FixedPut(charPos, mAvatar->bodyparts[i], 10, 5);
         }
 
-        AG_Expand(charBox);
         AG_Expand(charPos);
-
-        // list all the hair styles to choose from
-        std::vector<BodyPart*> hairList = resourceManager->getBodyList(PART_HAIR);
-        int hairCount = hairList.size();
-        for (int i = 0; i < hairCount; ++i)
-        {
-            // get the body
-            BodyPart *body = hairList[i];
-
-            if (!body)
-            {
-                // error
-                break;
-            }
-            // load the texture
-            Texture *tex = body->getIcon();
-
-            AG_Button *hair = AG_ButtonNewFn(charBox, 0, 0, change_part, "%p%p", body, this);
-            AG_ButtonJustify(hair, AG_TEXT_CENTER);
-            AG_ButtonValign(hair, AG_TEXT_MIDDLE);
-
-            // make each haair style into a button with hair style icon
-            SDL_Surface *s;
-            AG_Surface *surface = NULL;
-            if (graphicsEngine->isOpenGL())
-            {
-                s = graphicsEngine->createSurface(tex->getGLTexture(), tex->getWidth(), tex->getHeight());
-                SDL_LockSurface(s);
-                surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
-                SDL_UnlockSurface(s);
-            }
-            else
-            {
-                s = tex->getSDLSurface();
-                SDL_LockSurface(s);
-                surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
-                SDL_UnlockSurface(s);
-            }
-            AG_ButtonSurface(hair, surface);
-        }
 
         AG_Radio *sex = AG_RadioNewFn(mCreateWindow, 0, NULL, change_sex, "%p", this);
         AG_RadioAddItem(sex, "male");
@@ -492,5 +455,52 @@ namespace ST
 
         AG_PixmapReplaceCurrentSurface(pixmap, surface);
         AG_WindowUpdate(mCreateWindow);
+    }
+
+    void CharacterState::addBodyPartSelection(int bodypart, AG_Window *box)
+    {
+        AG_HBox *charBox = AG_HBoxNew(box, 0);
+
+        // list all the body parts to choose from
+        std::vector<BodyPart*> list = resourceManager->getBodyList(bodypart);
+        int count = list.size();
+        for (int i = 0; i < count; ++i)
+        {
+            // get the body
+            BodyPart *body = list[i];
+
+            if (!body)
+            {
+                // error
+                break;
+            }
+            // load the texture
+            Texture *tex = body->getIcon();
+
+            AG_Button *button = AG_ButtonNewFn(charBox, 0, 0, change_part, "%p%p", body, this);
+            AG_ButtonJustify(button, AG_TEXT_CENTER);
+            AG_ButtonValign(button, AG_TEXT_MIDDLE);
+
+            // make each haair style into a button with hair style icon
+            SDL_Surface *s;
+            AG_Surface *surface = NULL;
+            if (graphicsEngine->isOpenGL())
+            {
+                s = graphicsEngine->createSurface(tex->getGLTexture(), tex->getWidth(), tex->getHeight());
+                SDL_LockSurface(s);
+                surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
+                SDL_UnlockSurface(s);
+            }
+            else
+            {
+                s = tex->getSDLSurface();
+                SDL_LockSurface(s);
+                surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
+                SDL_UnlockSurface(s);
+            }
+            AG_ButtonSurface(button, surface);
+        }
+
+        //AG_Expand(charBox);
     }
 }

@@ -68,6 +68,7 @@ namespace ST
 						  const std::string &value);
 		void changeInt(const std::string &element, const std::string &attribute, int value);
 		void clear(const std::string &element);
+		bool parse(char *data);
 
     private:
         TiXmlDocument *mDoc;

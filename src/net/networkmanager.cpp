@@ -665,6 +665,8 @@ namespace ST
                 logger->logError("Unable to download: " + str);
                 return -1;
             }
+
+            resourceManager->addPath(resourceManager->getDataPath(str));
 	        updateList = updateList.substr(size + 1);
 
 	        ++mNumDownloads;

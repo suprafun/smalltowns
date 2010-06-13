@@ -55,8 +55,9 @@ namespace ST
     class BodyPart// : class GameObject
     {
     public:
-        BodyPart(int id, int type, const std::string &iconfile);
+        BodyPart(int id, int type, Texture *tex);
         void addTexture(int dir, const std::string &filename);
+        void addTexture(int dir, const std::string &filename, char *data, int size);
         Texture* getTexture(int dir) { return mTextures[dir]; }
         Texture* getIcon() { return mIconTexture; }
         int getId() { return mId; }

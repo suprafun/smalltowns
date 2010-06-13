@@ -216,6 +216,38 @@ namespace ST
 		return tex;
 	}
 
+	Texture* GraphicsEngine::loadTexture(const std::string &filename, char *data, int size)
+	{
+	    // Set the byte order of RGBA
+		Uint32 rmask, gmask, bmask, amask;
+		#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		rmask = 0xff000000;
+		gmask = 0x00ff0000;
+		bmask = 0x0000ff00;
+		amask = 0x000000ff;
+		#else
+		rmask = 0x000000ff;
+		gmask = 0x0000ff00;
+		bmask = 0x00ff0000;
+		amask = 0xff000000;
+		#endif
+
+		if (size == 0 || !data)
+            return NULL;
+
+        // create surface for texture
+        SDL_RWops *rw = SDL_RWFromMem (data, size);
+        SDL_Surface *s = IMG_Load_RW(rw, 0);
+        SDL_FreeRW(rw);
+
+        // create texture
+        Texture *tex = createTexture(s, filename, 0, 0, s->w, s->h);
+        SDL_FreeSurface(s);
+        s = NULL;
+
+        return tex;
+	}
+
     bool GraphicsEngine::loadTextureSet(const std::string &name, int w, int h)
     {
         return loadTextureSet(name, name, w, h);
@@ -225,6 +257,68 @@ namespace ST
 	{
 		// Load in the texture set
 		SDL_Surface *s = IMG_Load(file.c_str());
+
+		if (s)
+		{
+			if (w && h)
+			{
+				// keep creating textures
+				int imgX = s->w / w;
+				int imgY = s->h / h;
+                int id = 1;
+				for (int i = 0; i < imgY; ++i)
+				{
+					for (int j = 0; j < imgX; ++j)
+					{
+                        std::stringstream str;
+                        str << name << id;
+						createTexture(s, str.str(), j*w, i*h, w, h);
+                        ++id;
+					}
+				}
+				SDL_FreeSurface(s);
+				s = NULL;
+				return true;
+			}
+			else
+			{
+				SDL_FreeSurface(s);
+				s = NULL;
+				logger->logError("Bad dimension for image: " + name);
+			}
+		}
+		else
+		{
+		    logger->logError("Image not found: " + name);
+		}
+
+		return false;
+	}
+
+	bool GraphicsEngine::loadTextureSet(const std::string &name, char *data, int size, int w, int h)
+	{
+		// Load in the texture set
+		// Set the byte order of RGBA
+		Uint32 rmask, gmask, bmask, amask;
+		#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		rmask = 0xff000000;
+		gmask = 0x00ff0000;
+		bmask = 0x0000ff00;
+		amask = 0x000000ff;
+		#else
+		rmask = 0x000000ff;
+		gmask = 0x0000ff00;
+		bmask = 0x00ff0000;
+		amask = 0xff000000;
+		#endif
+
+		if (size == 0 || !data)
+            return NULL;
+
+        // create surface for texture
+        SDL_RWops *rw = SDL_RWFromMem (data, size);
+        SDL_Surface *s = IMG_Load_RW(rw, 0);
+        SDL_FreeRW(rw);
 
 		if (s)
 		{
@@ -299,7 +393,7 @@ namespace ST
 
 		// Put the frame into new surface
 		SDL_Surface *tex = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height,
-			surface->format->BitsPerPixel, rmask, gmask, bmask, amask);
+			mScreen->format->BitsPerPixel, rmask, gmask, bmask, amask);
 
 		if (!tex)
 		{

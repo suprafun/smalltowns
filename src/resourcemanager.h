@@ -107,6 +107,11 @@ namespace ST
         Animation* getAnimation(int bodypart, const std::string &name);
 
         /**
+         * Add data path
+         */
+        void addPath(const std::string &path);
+
+        /**
          * Returns the full path to file
          */
         std::string getDataPath(std::string file);
@@ -121,19 +126,30 @@ namespace ST
          */
         bool doesExist(const std::string &filename);
 
+        /**
+         * Load File
+         */
+        char* loadFile(const std::string &filename, int &size);
+
+        /**
+         * Load glowing tiles
+         */
+        void loadGlowingTiles();
+
     private:
         int mBodyWidth;
         int mBodyHeight;
         int mDefaultBody;
         int mDefaultFemale;
         int mDefaultHair;
+        int mDefaultChest;
+        int mDefaultLegs;
         unsigned int mNumParts;
         std::vector<BodyPart*> mBodyParts;
         typedef std::vector<BodyPart*>::iterator BodyPartItr;
         std::map<std::string, std::list<BeingAnimation*> > mAnimations;
         typedef std::map<std::string, std::list<BeingAnimation*> >::iterator AnimationItr;
 
-        std::vector<std::string> mDataPaths;
 		std::string mWriteDataPath;
     };
 

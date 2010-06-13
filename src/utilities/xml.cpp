@@ -167,4 +167,12 @@ namespace ST
             mElements.erase(itr);
         }
     }
+
+    bool XMLFile::parse(char *data)
+    {
+        mDoc = new TiXmlDocument;
+        mDoc->Parse(data);
+        mHandle = new TiXmlHandle(mDoc);
+        return true;
+    }
 }

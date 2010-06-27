@@ -712,9 +712,9 @@ namespace ST
         {
             char *buf;
             buf = (char*)malloc(mPos);
-            strncpy(buf, mFileData, mPos);
+            memcpy(buf, mFileData, mPos);
             mFileData = (char*)realloc(mFileData, mPos + size + 1);
-            strncpy(mFileData, buf, mPos);
+            memcpy(mFileData, buf, mPos);
             free(buf);
         }
         memcpy(&mFileData[mPos], buffer, size);

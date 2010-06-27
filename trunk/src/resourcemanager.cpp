@@ -70,6 +70,8 @@ namespace ST
         mBodyHeight = 0;
         mNumParts = 4; // TODO: Calculate based on body.cfg
         std::string datapath = "";
+        std::string error;
+
         // physfs code
         PHYSFS_init(path.c_str());
 
@@ -77,20 +79,29 @@ namespace ST
         // writable first, since thats where updates will go to
 #if defined __unix__
         mWriteDataPath = PHYSFS_getUserDir();
-		mWriteDataPath.append(".townslife/");
 #elif defined __APPLE__
 		mWriteDataPath = PHYSFS_getUserDir();
-		mWriteDataPath.append("Library/Application Support/townslife/");
+		mWriteDataPath.append("Library/Application Support");
 #elif defined _WIN32
         mWriteDataPath = PHYSFS_getUserDir();
-        mWriteDataPath.append("Documents\\townslife\\");
+        mWriteDataPath.append("Documents");
 #endif
-        if (!doesExist(mWriteDataPath))
+        PHYSFS_setWriteDir(mWriteDataPath.c_str());
+        if (!doesExist("townslife"))
         {
-            PHYSFS_setWriteDir(PHYSFS_getUserDir());
-			PHYSFS_mkdir(mWriteDataPath.c_str());
-			PHYSFS_setWriteDir(mWriteDataPath.c_str());
+			if (PHYSFS_mkdir("townslife") == 0)
+			{
+			    error = PHYSFS_getLastError();
+			}
+			PHYSFS_setWriteDir("townslife");
         }
+
+#ifndef __unix__
+        mWriteDataPath.append("/");
+#else
+        mWriteDataPath.append(".");
+#endif
+        mWriteDataPath.append("townslife/");
         addPath(mWriteDataPath);
 
         // now add cfg and /data directory
@@ -106,10 +117,7 @@ namespace ST
 		addPath(resPath);
 #elif defined _WIN32
         TCHAR exePath[MAX_PATH];
-        if (GetModuleFileName(0, exePath, MAX_PATH) == 0)
-        {
-            logger->logError("Unable to get path to executable.");
-        }
+        GetModuleFileName(0, exePath, MAX_PATH);
         datapath = exePath;
         datapath = datapath.substr(0, datapath.find_last_of("\\") + 1);
         addPath(datapath);
@@ -156,7 +164,7 @@ namespace ST
         int size;
         char *data = loadFile(filename, size);
 
-		if (file.parse(data))
+		if (data && file.parse(data))
 		{
 		    // set size
 		    file.setElement("size");
@@ -244,7 +252,7 @@ namespace ST
         bool loaded = false;
         char *data = loadFile(filename, size);
 
-		if (file.parse(data))
+		if (data && file.parse(data))
 		{
 		    // add all the animations
 		    file.setElement("animation");
@@ -396,7 +404,11 @@ namespace ST
 
     void ResourceManager::addPath(const std::string &path)
     {
-        PHYSFS_addToSearchPath(path.c_str(), 0);
+        if (PHYSFS_addToSearchPath(path.c_str(), 0) == 0)
+        {
+            logger->logError("Unable to add path: " + path);
+            logger->logError(PHYSFS_getLastError());
+        }
     }
 
     std::string ResourceManager::getDataPath(std::string file)
@@ -407,7 +419,7 @@ namespace ST
 #ifndef _WIN32
             return path + "/" + file;
 #else
-            return path + "\\" + file;
+            return path + file;
 #endif
         }
         return "";
@@ -429,6 +441,7 @@ namespace ST
         if (file == NULL)
         {
             logger->logError("Invalid file: " + filename);
+            logger->logError(PHYSFS_getLastError());
             return NULL;
         }
 

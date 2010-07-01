@@ -248,6 +248,9 @@ namespace ST
                     Character *c = new Character(id, name, avatar);
                     c->look.body = Ids[PART_BODY];
                     c->look.hair = Ids[PART_HAIR];
+                    c->look.chest = Ids[PART_CHEST];
+                    c->look.legs = Ids[PART_LEGS];
+                    c->look.feet = Ids[PART_FEET];
                     c->setLevel(packet->getInteger());
                     c->setRights(packet->getInteger());
                     player->addCharacter(c, slot);

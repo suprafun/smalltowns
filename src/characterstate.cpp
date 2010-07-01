@@ -222,6 +222,7 @@ namespace ST
 		BodyPart *hair = resourceManager->getDefaultBody(PART_HAIR);
 		BodyPart *chest = resourceManager->getDefaultBody(PART_CHEST);
 		BodyPart *legs = resourceManager->getDefaultBody(PART_LEGS);
+		BodyPart *feet = resourceManager->getDefaultBody(PART_FEET);
 		if (body)
             mChosen.push_back(body->getId());
         if (hair)
@@ -230,6 +231,8 @@ namespace ST
             mChosen.push_back(chest->getId());
         if (legs)
             mChosen.push_back(legs->getId());
+        if (feet)
+            mChosen.push_back(feet->getId());
     }
 
     void CharacterState::enter()

@@ -164,7 +164,7 @@ namespace ST
         NameItr name_itr = mNames.begin(), name_itr_end = mNames.end();
         while (name_itr != name_itr_end)
         {
-            AG_ObjectDetach(name_itr->second);
+            AG_ObjectDestroy(name_itr->second);
             ++name_itr;
         }
         mNames.clear();

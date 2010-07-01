@@ -171,6 +171,10 @@ namespace ST
 	    if (!hair)
             return;
 
+        // get existing animation
+	    Animation *chest = resourceManager->getAnimation(look.chest, name);
+	    Animation *legs = resourceManager->getAnimation(look.legs, name);
+
         // create new animation to store the new frames
         mSetAnimation = new Animation;
         unsigned int frames = body->getFrames();
@@ -182,10 +186,18 @@ namespace ST
             std::map<int, Texture*> textures;
             textures[PART_BODY] = body->getTexture();
             textures[PART_HAIR] = hair->getTexture();
+            if (chest)
+                textures[PART_CHEST] = chest->getTexture();
+            if (legs)
+                textures[PART_LEGS] = legs->getTexture();
             Texture *tex = graphicsEngine->createAvatarFrame(mId, i+1, textures, mDirection);
             mSetAnimation->addTexture(tex);
             body->nextFrame();
             hair->nextFrame();
+            if (chest)
+                chest->nextFrame();
+            if (legs)
+                legs->nextFrame();
         }
 
         // set the update rate based on number of frames per second

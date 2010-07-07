@@ -54,7 +54,9 @@
 #include <CoreFoundation/CFBundle.h>
 #endif
 #ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <shlobj.h>
 #endif
 
 namespace ST
@@ -83,8 +85,9 @@ namespace ST
 		mWriteDataPath = PHYSFS_getUserDir();
 		mWriteDataPath.append("Library/Application Support");
 #elif defined _WIN32
-        mWriteDataPath = PHYSFS_getUserDir();
-        mWriteDataPath.append("Documents");
+        TCHAR writePath[MAX_PATH];
+        SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, writePath);
+        mWriteDataPath = writePath;
 #endif
         PHYSFS_setWriteDir(mWriteDataPath.c_str());
         if (!doesExist("townslife"))

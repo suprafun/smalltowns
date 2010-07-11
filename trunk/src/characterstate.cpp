@@ -358,6 +358,7 @@ namespace ST
 		addBodyPartSelection(PART_HAIR, mCreateWindow);
 		addBodyPartSelection(PART_CHEST, mCreateWindow);
 		addBodyPartSelection(PART_LEGS, mCreateWindow);
+		addBodyPartSelection(PART_FEET, mCreateWindow);
 
         // build default avatar
         mAvatar = new Avatar;

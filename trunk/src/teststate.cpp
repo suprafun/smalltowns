@@ -217,11 +217,11 @@ namespace ST
         IRCServer *chatServer = static_cast<IRCServer*>(AG_PTR(1));
         int *left = static_cast<int*>(AG_PTR(2));
         int logout = AG_INT(3);
-        *left = 1;
 
         // disconnect from game server
         Packet *p = new Packet(PGMSG_DISCONNECT);
         networkManager->sendPacket(p);
+        networkManager->process();
         game->disconnect();
         chatServer->quit();
 
@@ -230,6 +230,10 @@ namespace ST
             // connect to account server
             GameState *gs = new ConnectState;
             game->changeState(gs);
+        }
+        else
+        {
+            *left = 1;
         }
     }
 

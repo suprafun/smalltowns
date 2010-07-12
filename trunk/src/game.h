@@ -120,12 +120,26 @@ namespace ST
          */
         bool connect(const std::string &server, int port);
 
+        /**
+         * Set the language used in game
+         */
+        void setLanguage(const std::string &language);
+
+        /**
+         * Get the language to use
+         *
+         * This will be used to select which XML file to
+         * load
+         */
+        std::string getLanguage() const;
+
     private:
         void cleanUp();
 
 	private:
 		GameState *mState;
 		GameState *mOldState;
+		std::string mLang;
 	};
 }
 

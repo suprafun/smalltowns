@@ -4,7 +4,7 @@
  *
  *	License: New BSD License
  *
- *	Copyright (c) 2009, CT Games
+ *	Copyright (c) 2010, CT Games
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -31,55 +31,47 @@
  *	THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- *	Date of file creation: 09-04-24
+ *	Date of file creation: 10-07-11
  *
  *	$Id$
  *
  ********************************************/
 
 /**
- * The XMLFile class deals with xml files
+ * The Language State is used for choosing a language when running for the first time.
  */
 
-#ifndef ST_XML_HEADER
-#define ST_XML_HEADER
+#ifndef ST_LANGUAGESTATE_HEADER
+#define ST_LANGUAGESTATE_HEADER
 
-#include <map>
-#include <string>
-#include <tinyxml.h>
+#include "gamestate.h"
 
 namespace ST
 {
-    class XMLFile
-    {
-    public:
-        XMLFile();
-		~XMLFile();
+	class LanguageState : public GameState
+	{
+	public:
+		LanguageState();
 
-        bool load(const std::string &file);
-		void close();
-        bool nextElement(const std::string &element);
-        bool nextSubElement(const std::string &element);
-        void setElement(const std::string &element);
-        void setSubElement(const std::string &element, const std::string &subelement);
-        std::string readString(const std::string &element, const std::string &attribute);
-        int readInt(const std::string &element, const std::string &attribute);
-		void changeString(const std::string &element, const std::string &attribute,
-						  const std::string &value);
-		void changeInt(const std::string &element, const std::string &attribute, int value);
-		void addString(const std::string &element, const std::string &attribute,
-						  const std::string &value);
-        void addInt(const std::string &element, const std::string &attribute, int value);
-		void clear(const std::string &element);
-		bool parse(char *data);
+		/**
+		 * Enter
+		 * Called when entering the state
+		 */
+		void enter();
 
-    private:
-        TiXmlDocument *mDoc;
-        TiXmlHandle *mHandle;
-        std::map<std::string, TiXmlElement*> mElements;
-        TiXmlElement *mCurrentElement;
-        typedef std::map<std::string, TiXmlElement*>::iterator ElementItr;
-    };
+		/**
+		 * Exit
+		 * Called when leaving the state
+		 */
+		void exit();
+
+		/**
+		 * Update
+		 * Called every frame
+		 * Return false to exit the game
+		 */
+		bool update();
+	};
 }
 
 #endif

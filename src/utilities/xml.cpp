@@ -102,8 +102,11 @@ namespace ST
 	{
 		assert(mHandle);
 	    TiXmlElement *e = mHandle->FirstChild(element.c_str()).Element();
-        mElements.insert(std::pair<std::string, TiXmlElement*>(element, e));
-        mCurrentElement = e;
+	    if (e)
+	    {
+	        mElements.insert(std::pair<std::string, TiXmlElement*>(element, e));
+            mCurrentElement = e;
+	    }
 	}
 
 	void XMLFile::setSubElement(const std::string &element, const std::string &subelement)
@@ -156,6 +159,23 @@ namespace ST
         {
             itr->second->SetAttribute(attribute.c_str(), value);
         }
+        mDoc->SaveFile();
+    }
+
+    void XMLFile::addString(const std::string &element, const std::string &attribute,
+        const std::string &value)
+    {
+        TiXmlElement *el = new TiXmlElement(element.c_str());
+        el->SetAttribute(attribute.c_str(), value.c_str());
+        mDoc->LinkEndChild(el);
+        mDoc->SaveFile();
+    }
+
+    void XMLFile::addInt(const std::string &element, const std::string &attribute, int value)
+    {
+        TiXmlElement *el = new TiXmlElement(element.c_str());
+        el->SetAttribute(attribute.c_str(), value);
+        mDoc->LinkEndChild(el);
         mDoc->SaveFile();
     }
 

@@ -42,6 +42,7 @@
 #include "beingmanager.h"
 #include "connectstate.h"
 #include "input.h"
+#include "languagestate.h"
 #include "map.h"
 #include "player.h"
 #include "resourcemanager.h"
@@ -117,6 +118,7 @@ namespace ST
 		int resx = 1024;
 		int resy = 768;
         std::string fullscreen;
+        std::string lang;
 
         if (file.load(resourceManager->getDataPath("townslife.cfg")))
         {
@@ -128,6 +130,8 @@ namespace ST
             fullscreen = file.readString("graphics", "fullscreen");
             resx = file.readInt("graphics", "width");
             resy = file.readInt("graphics", "height");
+            file.setElement("language");
+            lang = file.readString("language", "value");
         }
 
 		file.close();
@@ -159,7 +163,17 @@ namespace ST
 
 		// Create state to connect to server
 		mOldState = 0;
-		mState = new ConnectState();
+
+		if (lang.empty())
+		{
+		    mState = new LanguageState;
+		}
+		else
+		{
+		    setLanguage(lang);
+		    mState = new ConnectState();
+		}
+
 		mState->enter();
 
 		loop();
@@ -225,5 +239,15 @@ namespace ST
         }
 
         return true;
+    }
+
+    void Game::setLanguage(const std::string &language)
+    {
+        mLang = language;
+    }
+
+    std::string Game::getLanguage() const
+    {
+        return mLang;
     }
 }

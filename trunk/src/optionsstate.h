@@ -81,6 +81,7 @@ namespace ST
     private:
         int mOpenGL;
         int mFullscreen;
+        int mLangs;
         AG_UCombo *selectionBox;
         std::vector<Point> mRes;
     };

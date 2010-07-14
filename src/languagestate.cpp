@@ -148,7 +148,7 @@ namespace ST
 
             button[0] = AG_ButtonNewFn(test, 0, "English", submit_language, "%s", "en");
             button[1] = AG_ButtonNewFn(test, 0, "Portugues", submit_language, "%s", "pt");
-            button[2] = AG_ButtonNewFn(test, 0, "Español", submit_language, "%s", "es");
+            button[2] = AG_ButtonNewFn(test, 0, "Espa\xc3\xb1ol", submit_language, "%s", "es");
 
             AG_WindowShow(test);
             interfaceManager->addWindow(test);

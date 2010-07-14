@@ -65,10 +65,29 @@ namespace ST
     {
         int opengl = *static_cast<int*>(AG_PTR(1));
         int fs = *static_cast<int*>(AG_PTR(2));
+        int lang = *static_cast<int*>(AG_PTR(3));
 
         std::stringstream str;
         str << "Fullscreen: " << fs;
         logger->logDebug(str.str());
+
+        if (lang == -1)
+            return;
+
+        switch (lang)
+        {
+            case 0:
+                game->setLanguage("en");
+                break;
+
+            case 1:
+                game->setLanguage("pt");
+                break;
+
+            case 2:
+                game->setLanguage("es");
+                break;
+        }
 
         interfaceManager->removeAllWindows();
         game->restart(opengl, fs, width, height);
@@ -88,6 +107,13 @@ namespace ST
     {
         mFullscreen = 0;
         mOpenGL = graphicsEngine->isOpenGL();
+        std::string lang = game->getLanguage();
+        if (lang == "en")
+            mLangs = 0;
+        else if (lang == "pt")
+            mLangs = 1;
+        else if (lang == "es")
+            mLangs = 2;
         width = 1024;
         height = 768;
     }
@@ -108,7 +134,7 @@ namespace ST
 		// create options window
 		AG_Window *optionWindow = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "OptionWindow");
 		AG_WindowSetCaption(optionWindow, "Options");
-		AG_WindowSetGeometry(optionWindow, halfScreenWidth - 80, halfScreenHeight - 75, 160, 150);
+		AG_WindowSetGeometry(optionWindow, halfScreenWidth - 85, halfScreenHeight - 85, 170, 170);
 
 		// alignment
 		AG_VBox *box = AG_VBoxNew(optionWindow, 0);
@@ -154,9 +180,13 @@ namespace ST
         // add checkbox for hardware acceleration
         AG_Checkbox *openglBox = AG_CheckboxNewInt(box, 0, "OpenGL", &mOpenGL);
 
+        // add radio for languages
+        const char *languages[] = { "English", "Portugues", "Espa\xc3\xb1ol", NULL};
+        AG_Radio *langRadio = AG_RadioNewInt(box, 0, languages, &mLangs);
+
         AG_HBox *hbox = AG_HBoxNew(box, 0);
 		// add button to apply
-		AG_Button *applyButton = AG_ButtonNewFn(hbox, 0, "Apply", apply_options, "%p%p", &mOpenGL, &mFullscreen);
+		AG_Button *applyButton = AG_ButtonNewFn(hbox, 0, "Apply", apply_options, "%p%p%p", &mOpenGL, &mFullscreen, &mLangs);
 
 		// add button to cancel
         AG_Button *cancelButton = AG_ButtonNewFn(hbox, 0, "Cancel", cancel_options, 0);

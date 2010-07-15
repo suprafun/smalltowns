@@ -75,6 +75,13 @@ namespace ST
             file.setElement("newshost");
             hostname = file.readString("newshost", "host");
             filename = file.readString("newshost", "file");
+
+            // find language for news and replace with current language
+            size_t pos = filename.find("$lang");
+            if (pos != std::string::npos)
+            {
+                filename.replace(pos, 5, game->getLanguage());
+            }
         }
         else
         {

@@ -55,6 +55,7 @@
 #include "graphics/graphics.h"
 
 #include "utilities/crypt.h"
+#include "utilities/log.h"
 #include "utilities/xml.h"
 
 #include <SDL.h>
@@ -205,7 +206,7 @@ namespace ST
 
 	void LoginState::createLoginWidgets()
 	{
-		// read from config file whether username was saved from last time
+	    // read from config file whether username was saved from last time
 		file->setElement("login");
 		int loginState = file->readInt("login", "save");
 		std::string savedUser;
@@ -215,62 +216,199 @@ namespace ST
 			savedUser = file->readString("login", "username");
 		}
 
-		// create the login window's widgets
-		AG_WindowSetCaption(mLoginWindow, "Login");
-		AG_WindowSetSpacing(mLoginWindow, 12);
-		AG_WindowSetGeometry(mLoginWindow, mHalfScreenWidth - 125, mHalfScreenHeight - 100, 225, 200);
+	    // Load windows from file
+        XMLFile guifile;
+        std::string filename;
+        std::string name;
+        std::string title;
+        std::string userText;
+        std::string passText;
+        std::string saveText;
+        std::string submitText;
+        std::string regText;
+        std::string optionsText;
+        int w;
+        int h;
 
-		AG_Textbox *username = AG_TextboxNew(mLoginWindow, 0, "Username: ");
-        AG_TextboxSizeHint(username, "XXXXXXXXXXXXXXXX");
-		if (!savedUser.empty())
-		{
-			AG_TextboxSetString(username, savedUser.c_str());
-		}
-		AG_Textbox *password = AG_TextboxNew(mLoginWindow, AG_TEXTBOX_PASSWORD, "Password: ");
-		AG_TextboxSizeHint(password, "XXXXXXXXXXXXXXXX");
-		AG_Checkbox *save = AG_CheckboxNew(mLoginWindow, 0, "Save username for next time");
-		if (loginState == 1)
-		{
-			AG_CheckboxToggle(save);
-		}
-		AG_SetEvent(password, "textbox-return", submit_login, "%p%p%p%p", username, password, save, file);
+        filename = "login.";
+        filename.append(game->getLanguage());
+        filename.append(".xml");
 
-		AG_HBox *box = AG_HBoxNew(mLoginWindow, 0);
-		AG_Button *button = AG_ButtonNewFn(box, 0, "Submit", submit_login, "%p%p%p%p",
-										   username, password, save, file);
-		AG_ButtonJustify(button, AG_TEXT_CENTER);
-		AG_Button *register_button = AG_ButtonNewFn(box, 0, "Register",
-                                                    switch_login_window, "%p%p",
-													mLoginWindow, mRegisterWindow);
-		AG_ButtonJustify(register_button, AG_TEXT_CENTER);
+        if (guifile.load(resourceManager->getDataPath(filename)))
+        {
+            guifile.setElement("window");
+            name = guifile.readString("window", "name");
+            title = guifile.readString("window", "title");
+            w = guifile.readInt("window", "width");
+            h = guifile.readInt("window", "height");
+            guifile.setSubElement("input");
+			userText = guifile.readString("input", "text");
+			guifile.nextSubElement("input");
+			passText = guifile.readString("input", "text");
+			guifile.nextSubElement("input");
+			saveText = guifile.readString("input", "text");
+			guifile.setSubElement("button");
+			submitText = guifile.readString("button", "text");
+			guifile.nextSubElement("button");
+			regText = guifile.readString("button", "text");
+			guifile.nextSubElement("button");
+			optionsText = guifile.readString("button", "text");
+			guifile.close();
 
-		AG_Button *options = AG_ButtonNewFn(mLoginWindow, 0, "Options", goto_options, 0);
+            AG_WindowSetCaption(mLoginWindow, title.c_str());
+            AG_WindowSetSpacing(mLoginWindow, 12);
+            AG_WindowSetGeometry(mLoginWindow, mHalfScreenWidth - (w / 2) , mHalfScreenHeight - (h / 2), w, h);
 
-		AG_WindowShow(mLoginWindow);
-		interfaceManager->addWindow(mLoginWindow);
+            AG_Textbox *username = AG_TextboxNew(mLoginWindow, 0, userText.c_str());
+            AG_TextboxSizeHint(username, "XXXXXXXXXXXXXXXX");
+            if (!savedUser.empty())
+            {
+                AG_TextboxSetString(username, savedUser.c_str());
+            }
+            AG_Textbox *password = AG_TextboxNew(mLoginWindow, AG_TEXTBOX_PASSWORD, passText.c_str());
+            AG_TextboxSizeHint(password, "XXXXXXXXXXXXXXXX");
+            AG_Checkbox *save = AG_CheckboxNew(mLoginWindow, 0, saveText.c_str());
+            if (loginState == 1)
+            {
+                AG_CheckboxToggle(save);
+            }
+            AG_SetEvent(password, "textbox-return", submit_login, "%p%p%p%p", username, password, save, file);
+
+            AG_HBox *box = AG_HBoxNew(mLoginWindow, 0);
+            AG_Button *button = AG_ButtonNewFn(box, 0, submitText.c_str(), submit_login, "%p%p%p%p",
+                                               username, password, save, file);
+            AG_ButtonJustify(button, AG_TEXT_CENTER);
+            AG_Button *register_button = AG_ButtonNewFn(box, 0, regText.c_str(),
+                                                        switch_login_window, "%p%p",
+                                                        mLoginWindow, mRegisterWindow);
+            AG_ButtonJustify(register_button, AG_TEXT_CENTER);
+
+            AG_Button *options = AG_ButtonNewFn(mLoginWindow, 0, optionsText.c_str(), goto_options, 0);
+
+            AG_WindowShow(mLoginWindow);
+            interfaceManager->addWindow(mLoginWindow);
+        }
+        else
+        {
+            logger->logDebug("XML file not found");
+
+            // create the login window's widgets
+            AG_WindowSetCaption(mLoginWindow, "Login");
+            AG_WindowSetSpacing(mLoginWindow, 12);
+            AG_WindowSetGeometry(mLoginWindow, mHalfScreenWidth - 125, mHalfScreenHeight - 100, 225, 200);
+
+            AG_Textbox *username = AG_TextboxNew(mLoginWindow, 0, "Username: ");
+            AG_TextboxSizeHint(username, "XXXXXXXXXXXXXXXX");
+            if (!savedUser.empty())
+            {
+                AG_TextboxSetString(username, savedUser.c_str());
+            }
+            AG_Textbox *password = AG_TextboxNew(mLoginWindow, AG_TEXTBOX_PASSWORD, "Password: ");
+            AG_TextboxSizeHint(password, "XXXXXXXXXXXXXXXX");
+            AG_Checkbox *save = AG_CheckboxNew(mLoginWindow, 0, "Save username for next time");
+            if (loginState == 1)
+            {
+                AG_CheckboxToggle(save);
+            }
+            AG_SetEvent(password, "textbox-return", submit_login, "%p%p%p%p", username, password, save, file);
+
+            AG_HBox *box = AG_HBoxNew(mLoginWindow, 0);
+            AG_Button *button = AG_ButtonNewFn(box, 0, "Submit", submit_login, "%p%p%p%p",
+                                               username, password, save, file);
+            AG_ButtonJustify(button, AG_TEXT_CENTER);
+            AG_Button *register_button = AG_ButtonNewFn(box, 0, "Register",
+                                                        switch_login_window, "%p%p",
+                                                        mLoginWindow, mRegisterWindow);
+            AG_ButtonJustify(register_button, AG_TEXT_CENTER);
+
+            AG_Button *options = AG_ButtonNewFn(mLoginWindow, 0, "Options", goto_options, 0);
+
+            AG_WindowShow(mLoginWindow);
+            interfaceManager->addWindow(mLoginWindow);
+        }
 	}
 
 	void LoginState::createRegisterWidgets()
 	{
-		// create registration widgets
-		AG_WindowSetCaption(mRegisterWindow, "Registration");
-		AG_WindowSetSpacing(mRegisterWindow, 12);
-		AG_WindowSetGeometry(mRegisterWindow, mHalfScreenWidth - 125, mHalfScreenHeight - 45, 225, 135);
+	    // Load windows from file
+        XMLFile guifile;
+        std::string filename;
+        std::string name;
+        std::string title;
+        std::string userText;
+        std::string passText;
+        std::string submitText;
+        std::string loginText;
+        int w;
+        int h;
 
-		AG_Textbox *reg_user = AG_TextboxNew(mRegisterWindow, 0, "Username: ");
-		AG_Textbox *reg_pass = AG_TextboxNew(mRegisterWindow, AG_TEXTBOX_PASSWORD, "Password: ");
-		AG_SetEvent(reg_pass, "textbox-return", submit_register, "%p%p", reg_user, reg_pass);
-        AG_ExpandHoriz(reg_user);
-        AG_ExpandHoriz(reg_pass);
+        filename = "register.";
+        filename.append(game->getLanguage());
+        filename.append(".xml");
 
-		AG_HBox *reg_box = AG_HBoxNew(mRegisterWindow, 0);
-		AG_Button *reg_button = AG_ButtonNewFn(reg_box, 0, "Submit", submit_register, "%p%p",
-											   reg_user, reg_pass);
-		AG_ButtonJustify(reg_button, AG_TEXT_CENTER);
-		AG_Button *back_button = AG_ButtonNewFn(reg_box, 0, "Back",
-                                                switch_login_window, "%p%p", mRegisterWindow, mLoginWindow);
-        AG_ButtonJustify(back_button, AG_TEXT_CENTER);
+        if (guifile.load(resourceManager->getDataPath(filename)))
+        {
+            guifile.setElement("window");
+            name = guifile.readString("window", "name");
+            title = guifile.readString("window", "title");
+            w = guifile.readInt("window", "width");
+            h = guifile.readInt("window", "height");
+            guifile.setSubElement("input");
+			userText = guifile.readString("input", "text");
+			guifile.nextSubElement("input");
+			passText = guifile.readString("input", "text");
+			guifile.setSubElement("button");
+			submitText = guifile.readString("button", "text");
+			guifile.nextSubElement("button");
+			loginText = guifile.readString("button", "text");
+			guifile.close();
 
-		interfaceManager->addWindow(mRegisterWindow);
+            // create registration widgets
+            AG_WindowSetCaption(mRegisterWindow, title.c_str());
+            AG_WindowSetSpacing(mRegisterWindow, 12);
+            AG_WindowSetGeometry(mRegisterWindow, mHalfScreenWidth - (w / 2) , mHalfScreenHeight - (h / 2), w, h);
+
+            AG_Textbox *reg_user = AG_TextboxNew(mRegisterWindow, 0, userText.c_str());
+            AG_Textbox *reg_pass = AG_TextboxNew(mRegisterWindow, AG_TEXTBOX_PASSWORD, passText.c_str());
+            AG_SetEvent(reg_pass, "textbox-return", submit_register, "%p%p", reg_user, reg_pass);
+            AG_ExpandHoriz(reg_user);
+            AG_ExpandHoriz(reg_pass);
+
+            AG_HBox *reg_box = AG_HBoxNew(mRegisterWindow, 0);
+            AG_Button *reg_button = AG_ButtonNewFn(reg_box, 0, submitText.c_str(), submit_register, "%p%p",
+                                                   reg_user, reg_pass);
+            AG_ButtonJustify(reg_button, AG_TEXT_CENTER);
+            AG_Button *back_button = AG_ButtonNewFn(reg_box, 0, loginText.c_str(),
+                                                    switch_login_window, "%p%p", mRegisterWindow, mLoginWindow);
+            AG_ButtonJustify(back_button, AG_TEXT_CENTER);
+
+            AG_WindowHide(mRegisterWindow);
+            interfaceManager->addWindow(mRegisterWindow);
+        }
+        else
+        {
+            logger->logDebug("XML file not found");
+
+            // create registration widgets
+            AG_WindowSetCaption(mRegisterWindow, "Registration");
+            AG_WindowSetSpacing(mRegisterWindow, 12);
+            AG_WindowSetGeometry(mRegisterWindow, mHalfScreenWidth - 125, mHalfScreenHeight - 45, 225, 135);
+
+            AG_Textbox *reg_user = AG_TextboxNew(mRegisterWindow, 0, "Username: ");
+            AG_Textbox *reg_pass = AG_TextboxNew(mRegisterWindow, AG_TEXTBOX_PASSWORD, "Password: ");
+            AG_SetEvent(reg_pass, "textbox-return", submit_register, "%p%p", reg_user, reg_pass);
+            AG_ExpandHoriz(reg_user);
+            AG_ExpandHoriz(reg_pass);
+
+            AG_HBox *reg_box = AG_HBoxNew(mRegisterWindow, 0);
+            AG_Button *reg_button = AG_ButtonNewFn(reg_box, 0, "Submit", submit_register, "%p%p",
+                                                   reg_user, reg_pass);
+            AG_ButtonJustify(reg_button, AG_TEXT_CENTER);
+            AG_Button *back_button = AG_ButtonNewFn(reg_box, 0, "Back",
+                                                    switch_login_window, "%p%p", mRegisterWindow, mLoginWindow);
+            AG_ButtonJustify(back_button, AG_TEXT_CENTER);
+
+            interfaceManager->addWindow(mRegisterWindow);
+        }
 	}
 }

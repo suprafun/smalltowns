@@ -129,6 +129,7 @@ namespace ST
 
         // Load windows from file
         XMLFile file;
+        std::string filename;
         std::string name;
         std::string title;
         std::string hostText;
@@ -137,18 +138,22 @@ namespace ST
         int w;
         int h;
 
-        if (file.load(resourceManager->getDataPath("connect.xml")))
+        filename = "connect.";
+        filename.append(game->getLanguage());
+        filename.append(".xml");
+
+        if (file.load(resourceManager->getDataPath(filename)))
         {
             file.setElement("window");
             name = file.readString("window", "name");
             title = file.readString("window", "title");
             w = file.readInt("window", "width");
             h = file.readInt("window", "height");
-            file.setSubElement("window", "input");
+            file.setSubElement("input");
 			hostText = file.readString("input", "text");
 			file.nextSubElement("input");
 			portText = file.readString("input", "text");
-			file.setSubElement("window", "button");
+			file.setSubElement("button");
 			buttonText = file.readString("button", "text");
 			file.close();
 
@@ -177,6 +182,8 @@ namespace ST
         }
         else
         {
+            logger->logDebug("XML file not found");
+
             // XML file wasnt found, load default
             AG_Window *test = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "Connection");
             AG_WindowSetCaption(test, "Connect to server");

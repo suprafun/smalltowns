@@ -111,7 +111,7 @@ namespace ST
             title = file.readString("window", "title");
             w = file.readInt("window", "width");
             h = file.readInt("window", "height");
-            file.setSubElement("window", "button");
+            file.setSubElement("button");
 			lang[0] = file.readString("button", "text");
 			value[0] = file.readString("button", "value");
 			file.nextSubElement("button");

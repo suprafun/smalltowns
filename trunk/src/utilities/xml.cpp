@@ -109,10 +109,10 @@ namespace ST
 	    }
 	}
 
-	void XMLFile::setSubElement(const std::string &element, const std::string &subelement)
+	void XMLFile::setSubElement(const std::string &subelement)
 	{
 	    assert(mCurrentElement);
-        TiXmlElement *e = mCurrentElement->FirstChildElement();
+        TiXmlElement *e = mCurrentElement->FirstChildElement(subelement.c_str());
         mElements.insert(std::pair<std::string, TiXmlElement*>(subelement, e));
 	}
 

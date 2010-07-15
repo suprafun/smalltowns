@@ -186,7 +186,7 @@ namespace ST
             file.setElement("body");
             do
             {
-                file.setSubElement("body", "image");
+                file.setSubElement("image");
                 int id = file.readInt("body", "id");
                 std::string icon = file.readString("body", "icon");
                 int part = file.readInt("body", "part");
@@ -261,7 +261,7 @@ namespace ST
 		    file.setElement("animation");
             do
             {
-                file.setSubElement("animation", "body");
+                file.setSubElement("body");
 
                 int id = file.readInt("animation", "id");
                 std::string name = file.readString("animation", "name");

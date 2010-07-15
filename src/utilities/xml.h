@@ -61,7 +61,7 @@ namespace ST
         bool nextElement(const std::string &element);
         bool nextSubElement(const std::string &element);
         void setElement(const std::string &element);
-        void setSubElement(const std::string &element, const std::string &subelement);
+        void setSubElement(const std::string &subelement);
         std::string readString(const std::string &element, const std::string &attribute);
         int readInt(const std::string &element, const std::string &attribute);
 		void changeString(const std::string &element, const std::string &attribute,

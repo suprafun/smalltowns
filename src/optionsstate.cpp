@@ -175,21 +175,21 @@ namespace ST
         logger->logDebug(fs.str());
 
 		// add checkbox for fullscreen
-        AG_Checkbox *fullscreenBox = AG_CheckboxNewInt(box, 0, "Fullscreen", &mFullscreen);
+        AG_CheckboxNewInt(box, 0, "Fullscreen", &mFullscreen);
 
         // add checkbox for hardware acceleration
-        AG_Checkbox *openglBox = AG_CheckboxNewInt(box, 0, "OpenGL", &mOpenGL);
+        AG_CheckboxNewInt(box, 0, "OpenGL", &mOpenGL);
 
         // add radio for languages
         const char *languages[] = { "English", "Portugues", "Espa\xc3\xb1ol", NULL};
-        AG_Radio *langRadio = AG_RadioNewInt(box, 0, languages, &mLangs);
+        AG_RadioNewInt(box, 0, languages, &mLangs);
 
         AG_HBox *hbox = AG_HBoxNew(box, 0);
 		// add button to apply
-		AG_Button *applyButton = AG_ButtonNewFn(hbox, 0, "Apply", apply_options, "%p%p%p", &mOpenGL, &mFullscreen, &mLangs);
+		AG_ButtonNewFn(hbox, 0, "Apply", apply_options, "%p%p%p", &mOpenGL, &mFullscreen, &mLangs);
 
 		// add button to cancel
-        AG_Button *cancelButton = AG_ButtonNewFn(hbox, 0, "Cancel", cancel_options, 0);
+        AG_ButtonNewFn(hbox, 0, "Cancel", cancel_options, 0);
 
         AG_WindowShow(optionWindow);
         interfaceManager->addWindow(optionWindow);

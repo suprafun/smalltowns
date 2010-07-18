@@ -445,7 +445,7 @@ namespace ST
     char* ResourceManager::loadFile(const std::string &filename, int &size)
     {
         PHYSFS_file *file = PHYSFS_openRead(filename.c_str());
-        if (file == NULL)
+        if (file == NULL || filename.empty())
         {
             logger->logError("Invalid file: " + filename);
             logger->logError(PHYSFS_getLastError());

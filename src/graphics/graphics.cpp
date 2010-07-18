@@ -609,15 +609,15 @@ namespace ST
                 SDL_SetAlpha(s, SDL_SRCALPHA | SDL_RLEACCEL, 0);
                 SDL_BlitSurface(s, NULL, surface, NULL);
             }
-            if (textures.find(PART_CHEST) != textures.end())
-            {
-                SDL_Surface *s = createSurface(textures.find(PART_CHEST)->second->getGLTexture(), bodyWidth, bodyHeight);
-                SDL_SetAlpha(s, SDL_SRCALPHA | SDL_RLEACCEL, 0);
-                SDL_BlitSurface(s, NULL, surface, NULL);
-            }
             if (textures.find(PART_LEGS) != textures.end())
             {
                 SDL_Surface *s = createSurface(textures.find(PART_LEGS)->second->getGLTexture(), bodyWidth, bodyHeight);
+                SDL_SetAlpha(s, SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(s, NULL, surface, NULL);
+            }
+            if (textures.find(PART_CHEST) != textures.end())
+            {
+                SDL_Surface *s = createSurface(textures.find(PART_CHEST)->second->getGLTexture(), bodyWidth, bodyHeight);
                 SDL_SetAlpha(s, SDL_SRCALPHA | SDL_RLEACCEL, 0);
                 SDL_BlitSurface(s, NULL, surface, NULL);
             }
@@ -648,15 +648,15 @@ namespace ST
                 SDL_SetAlpha(textures.find(PART_HAIR)->second->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
                 SDL_BlitSurface(textures.find(PART_HAIR)->second->getSDLSurface(), NULL, surface, NULL);
             }
-            if (textures.find(PART_CHEST) != textures.end())
-            {
-                SDL_SetAlpha(textures.find(PART_CHEST)->second->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
-                SDL_BlitSurface(textures.find(PART_CHEST)->second->getSDLSurface(), NULL, surface, NULL);
-            }
             if (textures.find(PART_LEGS) != textures.end())
             {
                 SDL_SetAlpha(textures.find(PART_LEGS)->second->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
                 SDL_BlitSurface(textures.find(PART_LEGS)->second->getSDLSurface(), NULL, surface, NULL);
+            }
+            if (textures.find(PART_CHEST) != textures.end())
+            {
+                SDL_SetAlpha(textures.find(PART_CHEST)->second->getSDLSurface(), SDL_SRCALPHA | SDL_RLEACCEL, 0);
+                SDL_BlitSurface(textures.find(PART_CHEST)->second->getSDLSurface(), NULL, surface, NULL);
             }
             if (textures.find(PART_FEET) != textures.end())
             {

@@ -349,7 +349,7 @@ namespace ST
     {
         // set window paramaters
         AG_WindowSetCaption(mCreateWindow, "Create new Character");
-		AG_WindowSetSpacing(mCreateWindow, 12);
+		AG_WindowSetSpacing(mCreateWindow, 5);
 		AG_WindowSetGeometry(mCreateWindow, mHalfScreenWidth - 140, mHalfScreenHeight - 225, 280, 450);
 
         // create layout
@@ -480,6 +480,9 @@ namespace ST
             }
             // load the texture
             Texture *tex = body->getIcon();
+
+            if (!tex)
+                break;
 
             AG_Button *button = AG_ButtonNewFn(charBox, 0, 0, change_part, "%p%p", body, this);
             AG_ButtonJustify(button, AG_TEXT_CENTER);

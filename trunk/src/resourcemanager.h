@@ -144,6 +144,7 @@ namespace ST
         int mDefaultHair;
         int mDefaultChest;
         int mDefaultLegs;
+        int mDefaultFeet;
         unsigned int mNumParts;
         std::vector<BodyPart*> mBodyParts;
         typedef std::vector<BodyPart*>::iterator BodyPartItr;

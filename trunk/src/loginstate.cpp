@@ -283,7 +283,7 @@ namespace ST
                                                         mLoginWindow, mRegisterWindow);
             AG_ButtonJustify(register_button, AG_TEXT_CENTER);
 
-            AG_Button *options = AG_ButtonNewFn(mLoginWindow, 0, optionsText.c_str(), goto_options, 0);
+            AG_ButtonNewFn(mLoginWindow, 0, optionsText.c_str(), goto_options, 0);
 
             AG_WindowShow(mLoginWindow);
             interfaceManager->addWindow(mLoginWindow);
@@ -321,7 +321,7 @@ namespace ST
                                                         mLoginWindow, mRegisterWindow);
             AG_ButtonJustify(register_button, AG_TEXT_CENTER);
 
-            AG_Button *options = AG_ButtonNewFn(mLoginWindow, 0, "Options", goto_options, 0);
+            AG_ButtonNewFn(mLoginWindow, 0, "Options", goto_options, 0);
 
             AG_WindowShow(mLoginWindow);
             interfaceManager->addWindow(mLoginWindow);

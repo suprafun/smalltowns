@@ -68,9 +68,10 @@ namespace ST
         mDefaultHair = 0;
         mDefaultChest = 0;
         mDefaultLegs = 0;
+        mDefaultFeet = 0;
         mBodyWidth = 0;
         mBodyHeight = 0;
-        mNumParts = 4; // TODO: Calculate based on body.cfg
+        mNumParts = 5; // TODO: Calculate based on body.cfg
         std::string datapath = "";
         std::string error;
 
@@ -181,6 +182,7 @@ namespace ST
 		    mDefaultHair = file.readInt("default", "hair");
 		    mDefaultChest = file.readInt("default", "chest");
 		    mDefaultLegs = file.readInt("default", "legs");
+		    mDefaultFeet = file.readInt("default", "feet");
 
             // add all the body parts
             file.setElement("body");
@@ -357,6 +359,8 @@ namespace ST
             return getBodyPart(mDefaultChest);
         case PART_LEGS:
             return getBodyPart(mDefaultLegs);
+        case PART_FEET:
+            return getBodyPart(mDefaultFeet);
         }
 
         return NULL;

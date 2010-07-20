@@ -69,10 +69,13 @@ namespace ST
         NodeItr itr = mNodes.begin(), itr_end = mNodes.end();
 		while (itr != itr_end)
 		{
-            if (*itr)// player character may already have been deleted
-    			delete (*itr);
+            if (*itr)// node may already have been deleted
+            {
+                delete (*itr);
+            }
 			++itr;
 		}
+		mNodes.clear();
 	}
 
 	void Layer::setCollisionLayer()
@@ -316,6 +319,20 @@ namespace ST
         mLoaded = true;
 
         return true;
+    }
+
+    void Map::unload()
+    {
+        for (unsigned i = 0; i < mLayers.size(); ++i)
+        {
+            delete mLayers[i];
+        }
+        mLayers.clear();
+        mWidth = 0;
+        mHeight = 0;
+        mTileWidth = 0;
+        mTileHeight = 0;
+        mLoaded = false;
     }
 
     Layer* Map::getLayer(unsigned int layer)
@@ -622,6 +639,15 @@ namespace ST
         pixel.y = 0.5 * (pt.x + pt.y) * mTileHeight;
 
         return pixel;
+    }
+
+    void Map::removeNode(Node *node)
+    {
+        for (unsigned i = 0; i < mLayers.size(); ++i)
+        {
+            Layer *layer = getLayer(i);
+            layer->removeNode(node);
+        }
     }
 }
 

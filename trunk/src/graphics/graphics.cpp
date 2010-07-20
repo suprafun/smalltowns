@@ -90,6 +90,8 @@ namespace ST
 		if (mCamera)
 			delete mCamera;
 
+        SDL_Quit();
+
 //		mNodes.clear();
 
 //		SDL_FreeSurface(mScreen);

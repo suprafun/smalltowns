@@ -180,6 +180,12 @@ namespace ST
 		 */
         bool mapLoaded() { return mLoaded; }
 
+        /**
+		 * Unload map
+		 * Call when done
+		 */
+        void unload();
+
 		/**
 		 * Returns width of tiles
 		 */
@@ -259,6 +265,12 @@ namespace ST
          * @param pos The tile position of the tile
          */
         bool blocked(const Point &pos);
+
+        /**
+         * Remove a node
+         * Removes the node from the map
+         */
+        void removeNode(Node *node);
 
     private:
 		/**

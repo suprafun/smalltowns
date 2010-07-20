@@ -100,6 +100,7 @@ namespace ST
 				{
 					file->changeString("login", "username", username);
 				}
+				file->save();
 			}
 
             interfaceManager->setErrorMessage("");

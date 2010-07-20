@@ -174,6 +174,7 @@ namespace ST
         // get existing animation
 	    Animation *chest = resourceManager->getAnimation(look.chest, name);
 	    Animation *legs = resourceManager->getAnimation(look.legs, name);
+	    Animation *feet = resourceManager->getAnimation(look.feet, name);
 
         // create new animation to store the new frames
         mSetAnimation = new Animation;
@@ -190,6 +191,8 @@ namespace ST
                 textures[PART_CHEST] = chest->getTexture();
             if (legs)
                 textures[PART_LEGS] = legs->getTexture();
+            if (feet)
+                textures[PART_FEET] = feet->getTexture();
             Texture *tex = graphicsEngine->createAvatarFrame(mId, i+1, textures, mDirection);
             mSetAnimation->addTexture(tex);
             body->nextFrame();
@@ -198,6 +201,8 @@ namespace ST
                 chest->nextFrame();
             if (legs)
                 legs->nextFrame();
+            if (feet)
+                feet->nextFrame();
         }
 
         // set the update rate based on number of frames per second

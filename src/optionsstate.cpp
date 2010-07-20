@@ -41,12 +41,14 @@
 #include "game.h"
 #include "loginstate.h"
 #include "input.h"
+#include "resourcemanager.h"
 
 #include "graphics/graphics.h"
 
 #include "interface/interfacemanager.h"
 
 #include "utilities/log.h"
+#include "utilities/xml.h"
 
 #include <sstream>
 
@@ -91,6 +93,25 @@ namespace ST
 
         interfaceManager->removeAllWindows();
         game->restart(opengl, fs, width, height);
+
+        XMLFile file;
+        if (file.load(resourceManager->getDataPath("townslife.cfg")))
+        {
+            file.setElement("graphics");
+
+            file.changeInt("graphics", "opengl", opengl);
+            if (fs)
+                file.changeString("graphics", "fullscreen", "true");
+            else
+                file.changeString("graphics", "fullscreen", "false");
+            file.changeInt("graphics", "width", width);
+            file.changeInt("graphics", "height", height);
+
+            file.setElement("language");
+            file.changeString("language", "value", game->getLanguage());
+
+            file.save();
+        }
 
         GameState *state = new LoginState;
         game->changeState(state);

@@ -177,7 +177,6 @@ namespace ST
             AG_WidgetFocus(button);
 
             AG_WindowHide(test);
-
             interfaceManager->addWindow(test);
         }
         else
@@ -200,6 +199,9 @@ namespace ST
             AG_Button *button = AG_ButtonNewFn(test, 0, "Submit", submit_connect, "%p%p", hostname, port);
             AG_ButtonJustify(button, AG_TEXT_CENTER);
             AG_WidgetFocus(button);
+
+            AG_WindowHide(test);
+            interfaceManager->addWindow(test);
         }
 
         timeout = SDL_GetTicks();

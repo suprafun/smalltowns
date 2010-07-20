@@ -319,7 +319,9 @@ namespace ST
         interfaceManager->removeAllWindows();
         interfaceManager->removeMouseListeners();
         graphicsEngine->setCamera(NULL);
-        graphicsEngine->removeNode(interfaceManager->getMouse()->cursor);
+        mapEngine->removeNode(player->getSelectedCharacter());
+        player->removeCharacters();
+        mapEngine->unload();
 	}
 
 	bool TestState::update()
@@ -360,13 +362,17 @@ namespace ST
             mTime = 0;
         }
 
-        // pass the number of milliseconds to logic
-        beingManager->logic(ms);
-        player->getSelectedCharacter()->logic(ms);
-        player->logic(ms);
-        graphicsEngine->getCamera()->logic(ms);
+        if (networkManager->isConnected())
+        {
+            // pass the number of milliseconds to logic
+            beingManager->logic(ms);
+            player->getSelectedCharacter()->logic(ms);
+            player->logic(ms);
+            graphicsEngine->getCamera()->logic(ms);
 
-		chatServer->process();
+            chatServer->process();
+        }
+
 
 		SDL_Delay(0);
 

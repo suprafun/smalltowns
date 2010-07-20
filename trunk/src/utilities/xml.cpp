@@ -149,7 +149,6 @@ namespace ST
         {
             itr->second->SetAttribute(attribute.c_str(), value.c_str());
         }
-        mDoc->SaveFile();
     }
 
     void XMLFile::changeInt(const std::string &element, const std::string &attribute, int value)
@@ -159,7 +158,6 @@ namespace ST
         {
             itr->second->SetAttribute(attribute.c_str(), value);
         }
-        mDoc->SaveFile();
     }
 
     void XMLFile::addString(const std::string &element, const std::string &attribute,
@@ -168,7 +166,6 @@ namespace ST
         TiXmlElement *el = new TiXmlElement(element.c_str());
         el->SetAttribute(attribute.c_str(), value.c_str());
         mDoc->LinkEndChild(el);
-        mDoc->SaveFile();
     }
 
     void XMLFile::addInt(const std::string &element, const std::string &attribute, int value)
@@ -176,7 +173,6 @@ namespace ST
         TiXmlElement *el = new TiXmlElement(element.c_str());
         el->SetAttribute(attribute.c_str(), value);
         mDoc->LinkEndChild(el);
-        mDoc->SaveFile();
     }
 
     void XMLFile::clear(const std::string &element)
@@ -194,5 +190,10 @@ namespace ST
         mDoc->Parse(data);
         mHandle = new TiXmlHandle(mDoc);
         return true;
+    }
+
+    void XMLFile::save()
+    {
+        mDoc->SaveFile();
     }
 }

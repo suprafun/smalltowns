@@ -72,6 +72,7 @@ namespace ST
         void addInt(const std::string &element, const std::string &attribute, int value);
 		void clear(const std::string &element);
 		bool parse(char *data);
+		void save();
 
     private:
         TiXmlDocument *mDoc;

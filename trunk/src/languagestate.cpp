@@ -69,6 +69,7 @@ namespace ST
         {
             language = lang;
             file.addString("language", "value", language);
+            file.save();
         }
 
         free(lang);

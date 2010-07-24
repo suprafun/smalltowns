@@ -72,12 +72,16 @@ namespace ST
 
 		atexit(SDL_Quit);
 
+		SDL_Surface *icon = loadSDLTexture(resourceManager->getDataPath("logo.png"));
+
 		// needed for input
 		SDL_EnableUNICODE(true);
 		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
 		// Set the window title
 		SDL_WM_SetCaption("Towns Life", NULL);
+		if (icon)
+            SDL_WM_SetIcon(icon, 0);
 
 		mCamera = NULL;
 		mFrames = 0;

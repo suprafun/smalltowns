@@ -106,6 +106,7 @@ namespace ST
         {
             std::string lang[3];
             std::string value[3];
+            std::string icon[3];
 
             file.setElement("window");
             name = file.readString("window", "name");
@@ -115,12 +116,15 @@ namespace ST
             file.setSubElement("button");
 			lang[0] = file.readString("button", "text");
 			value[0] = file.readString("button", "value");
+			icon[0] = file.readString("button", "icon");
 			file.nextSubElement("button");
 			lang[1] = file.readString("button", "text");
 			value[1] = file.readString("button", "value");
+			icon[1] = file.readString("button", "icon");
 			file.nextSubElement("button");
 			lang[2] = file.readString("button", "text");
 			value[2] = file.readString("button", "value");
+			icon[2] = file.readString("button", "icon");
 			file.close();
 
 			AG_Window *test = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, name.c_str());
@@ -130,9 +134,18 @@ namespace ST
 
             AG_Button *button[3];
 
-            button[0] = AG_ButtonNewFn(test, 0, lang[0].c_str(), submit_language, "%s", strdup(value[0].c_str()));
-            button[1] = AG_ButtonNewFn(test, 0, lang[1].c_str(), submit_language, "%s", strdup(value[1].c_str()));
-            button[2] = AG_ButtonNewFn(test, 0, lang[2].c_str(), submit_language, "%s", strdup(value[2].c_str()));
+            AG_HBox *box = AG_HBoxNew(test, 0);
+            for (int i = 0; i < 3; ++i)
+            {
+                button[i] = AG_ButtonNewFn(box, 0, lang[0].c_str(), submit_language, "%s", strdup(value[i].c_str()));
+                AG_Surface *surface;
+                SDL_Surface *s = graphicsEngine->loadSDLTexture(resourceManager->getDataPath(icon[i].c_str()));
+                SDL_LockSurface(s);
+                surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, s->format->Rmask, s->format->Bmask, s->format->Gmask, s->format->Amask);
+                SDL_UnlockSurface(s);
+                if (surface)
+                    AG_ButtonSurface(button[i], surface);
+            }
 
             AG_WindowShow(test);
             interfaceManager->addWindow(test);

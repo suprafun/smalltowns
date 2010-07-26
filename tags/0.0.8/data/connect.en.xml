@@ -1,0 +1,5 @@
+<window align="center" width="225" height="135" name="Connection" title="Connect to Server">
+	<input text="Server: ">server.casualgamer.co.uk</input>
+	<input text="Port: ">9910</input>
+	<button text="Submit" />
+</window>

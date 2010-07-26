@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="isometric" width="30" height="30" tilewidth="64" tileheight="32">
+ <tileset firstgid="1" name="Tileset Grass" tilewidth="64" tileheight="32">
+  <image source="Tileset Grass.png"/>
+ </tileset>
+ <tileset firstgid="145" name="Tileset Dirt" tilewidth="64" tileheight="32">
+  <image source="Tileset Dirt.png"/>
+ </tileset>
+ <tileset firstgid="213" name="Tileset Coblestone road" tilewidth="64" tileheight="32">
+  <image source="Tileset Coblestone road.png"/>
+ </tileset>
+ <tileset firstgid="453" name="Tileset Small Props 96px tall" tilewidth="64" tileheight="96">
+  <image source="Tileset Small Props 96px tall.png"/>
+ </tileset>
+ <tileset firstgid="501" name="Tileset Stuff 64px tall" tilewidth="64" tileheight="64">
+  <image source="Tileset Stuff 64px tall.png"/>
+ </tileset>
+ <layer name="Dirt" width="30" height="30">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+3W3QoAEAwG0L3/JS/sFi2zH2PLVyslTiQN4I2U7w5zWFm53Fqt57jVsDjnjOzuJou7a2dyX37PvZ3BpexT9/xdH5dKhn9DklsuGLhSP5qL7cOJtreb99G8NUkPe9PFxl6x7O+1aWW1udwQDgAA
+  </data>
+ </layer>
+ <layer name="Grass" width="30" height="30">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC71W0W6DMAy0trE+wPbUUnigzf9/5RKJE9fDDkHTZskSCknOvrOTmG02ZL9m/7L/tTH7W/bLwTzEV/xmv49zXnE/A6zb6s91HvwicxBTazzATfaaz9XBemR/z75QnHeZkxqxJ9rzY90Xvsi/b8JCnIgNVtOMtcK6TsZLzL3gwTCOuBTX06wYaom9k/FO4oTOXlyLs5dns71qhpwm2+s02F5n5bJfsaG/8uPheusZ28NULhEbYo2M81IttD4j74I1NWyepzpG+amX/Vlnrv9IX9YDWpzBjPq15ezjHvTOiCN/OPlBv6iPNGfm6Eye3Pu8J3OgBl55jdeLXp46D7wVLHAdaTzapu9A8WkvRfUU9fRM357Ntp2NT/r27p5WL7oeaQxcPoO93gWvngZ6l/AeEc+TcBH1UXQ+8D/cJ+CK+1PtTlwMNF9zSrbVDOPy3mMwHuFiT44xqqskfDBXk+3v6Mi0b2p8RjXk5dD6zkF+nTMW9S9qCLoyD1E9eVb04XdadKerdh4vyc697cBbL3sDX7XjWtQ+K9h4mxzdx8na3sfMreaPuua+SJW9cH9y3HovY+3d4vcMv4mj2q8Z6pPf7InyrJ1FR7VfM+QPDvi71qMttfiXBnzV4gdtaTCMEA4AAA==
+  </data>
+ </layer>
+ <layer name="Road" width="30" height="30">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+2UzQrCMBCEd4n2YTx6E9//HWp6EwrSmz94EAUzJKGhekkNu6gZCGkp3Y+dnYSo6hvVMFHn9tatJctxu+TZymFpUOJu2HsM5uIDnzEv1JCcFRS9gn93Qb4J+YyenWWwL7ooMDVm3SQ5nbLx3pP/Xlo21N3RyEfOHuQzZ2nM3prLZdCEft+dTeRu79Zh8s+q0DwM590HJbOfU8sEv7FumZyYp23oUeoctcmOvFyFuDFP/3hfQbXf3+YelbgnJW6d7zw9AeKn/EMQDgAA
+  </data>
+ </layer>
+ <layer name="Stuff" width="30" height="30">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+VVQQ6AIAxD8KDG/z9VEzxoNJIo6ZAJAmovXAYtXRlClIGhegdvKp0rTy5PDCaCv5VC9DKhkJ2rY/Bu3sn8HpaOUH9Ga78C/bE57D13tPjU6kMNxXmET41LT+Nxd6T7bg/UD/KN8sTtEzXHuHB5bThyzm2Uv6dwdceYHpwykCDz6M3G5ER5fDo35uwaZYTzp34MM9GLkL8AQRPnoflWAnL3Osp7YObaXlMhdtZCsADFoMt/EA4AAA==
+  </data>
+ </layer>
+ <layer name="collision" width="30" height="30">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC82Vyw0AIQhEqYb+S9wrIcLyh0k8mABvEI0IALi8qC5yuTq5mrKeouL5dN/J1XxorEqm5KGrRyvPw5XitPypmV7jR5gVfi72W9VXhO2t5fU0fac335LkYZpn5Wbnf/UddfyFk/+vl7vJttarZmf1qmPlRvmaf3zEVJy7Na9q5n85/Ay995zPIeI5ysx6pusD0/evvxAOAAA=
+  </data>
+ </layer>
+ <layer name="Trees" width="30" height="30">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+2WwQ0AIAgDdf+9jDqVLz4mRR4WjXIL0F6QmFIQ8OjZf2Y7MLMaZyIfTE/Ixw5PKDfyYfWkoeVmedRy37xvLKyey8acP3o+zWv3SpjzM++VEPuLiX/Cmt8cefaVnp59pedNb3QABOFL+hAOAAA=
+  </data>
+ </layer>
+</map>

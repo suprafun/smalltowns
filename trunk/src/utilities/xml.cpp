@@ -123,7 +123,10 @@ namespace ST
         ElementItr itr = mElements.find(element);
         if (itr != mElements.end())
         {
-            str = itr->second->Attribute(attribute.c_str());
+            const char *c_str = itr->second->Attribute(attribute.c_str());
+            if (c_str == NULL)
+                return "";
+            str = c_str;
         }
 
         return str;

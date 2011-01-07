@@ -192,6 +192,7 @@ namespace ST
                 int id = file.readInt("body", "id");
                 std::string icon = file.readString("body", "icon");
                 int part = file.readInt("body", "part");
+                std::string colour = file.readString("body", "colour");
 
                 Texture *iconTex = NULL;
                 if (getDataPath(icon).find_first_of(".zip") == std::string::npos)

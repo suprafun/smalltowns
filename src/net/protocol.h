@@ -77,6 +77,14 @@ enum
     PGMSG_PLAYER_MOVE_UPDATE    = 0x0863, // I x, I y
     GPMSG_PLAYER_LEFT           = 0x0870, // I id
 
+    // npc
+    GPMSG_NPC_FOUND             = 0x0900, // I id, S char name, I x, I y, I body, I hair, I chest, I legs, I feet
+    PGMSG_NPC_START_TALK        = 0x0901, // I id
+    PGMSG_NPC_TALK              = 0x0902, // I id, I response
+    GPMSG_NPC_REPLY             = 0x0905, // I id, S chat, I num, { S responses }
+    GPMSG_NPC_RESPONSE          = 0x0906, // I id, C error
+    GPMSG_NPC_TRADE             = 0x0910, // I id, L item id
+
 };
 
 enum

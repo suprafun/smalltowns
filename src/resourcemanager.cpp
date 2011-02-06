@@ -74,6 +74,7 @@ namespace ST
         mNumParts = 5; // TODO: Calculate based on body.cfg
         std::string datapath = "";
         std::string error;
+        std::string dirName;
 
         // physfs code
         PHYSFS_init(path.c_str());
@@ -84,34 +85,37 @@ namespace ST
         mWriteDataPath = PHYSFS_getUserDir();
 #elif defined __APPLE__
 		mWriteDataPath = PHYSFS_getUserDir();
-		mWriteDataPath.append("Library/Application Support");
+		mWriteDataPath.append("Library/Application Support/");
 #elif defined _WIN32
         TCHAR writePath[MAX_PATH];
         SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, writePath);
         mWriteDataPath = writePath;
 #endif
+
+#ifndef __unix__
+        dirName = "townslife";
+#else
+        dirName = ".townslife";
+#endif
         PHYSFS_setWriteDir(mWriteDataPath.c_str());
-        if (!doesExist("townslife"))
+
+        if (!doesExist(dirName))
         {
-			if (PHYSFS_mkdir("townslife") == 0)
+			if (PHYSFS_mkdir(dirName.c_str()) == 0)
 			{
 			    error = PHYSFS_getLastError();
 			}
-			PHYSFS_setWriteDir("townslife");
         }
-
-#ifndef __unix__
+        mWriteDataPath.append(dirName);
+        PHYSFS_setWriteDir(mWriteDataPath.c_str());
         mWriteDataPath.append("/");
-#else
-        mWriteDataPath.append(".");
-#endif
-        mWriteDataPath.append("townslife/");
         addPath(mWriteDataPath);
 
         // now add cfg and /data directory
 #if defined __unix__
-        datapath = PHYSFS_getBaseDir() + "data/";
+        datapath = PHYSFS_getBaseDir();
         addPath(datapath);
+        addPath(datapath + "data/");
 #elif defined __APPLE__
         CFBundleRef mainBundle = CFBundleGetMainBundle();
 		CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
@@ -414,8 +418,11 @@ namespace ST
     {
         if (PHYSFS_addToSearchPath(path.c_str(), 0) == 0)
         {
-            logger->logError("Unable to add path: " + path);
-            logger->logError(PHYSFS_getLastError());
+            if (logger)
+            {
+                logger->logError("Unable to add path: " + path);
+                logger->logError(PHYSFS_getLastError());
+            }
         }
     }
 

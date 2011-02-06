@@ -521,6 +521,30 @@ namespace ST
 				logger->logDebug("Player Left");
             } break;
 
+            case GPMSG_NPC_FOUND:
+            {
+                std::map<int, int> Ids;
+                unsigned int id = packet->getInteger();
+                std::string name = packet->getString();
+                Point pos;
+                pos.x = packet->getInteger();
+                pos.y = packet->getInteger();
+                Ids[PART_BODY] = packet->getInteger();
+                Ids[PART_HAIR] = packet->getInteger();
+                Ids[PART_CHEST] = packet->getInteger();
+                Ids[PART_LEGS] = packet->getInteger();
+                Ids[PART_FEET] = packet->getInteger();
+
+                Texture *avatar = graphicsEngine->createAvatar(id, Ids, DIRECTION_SOUTHEAST);
+                Character *c = new Character(id, name, avatar);
+                c->look.body = Ids[PART_BODY];
+                c->look.hair = Ids[PART_HAIR];
+                c->look.chest = Ids[PART_CHEST];
+                c->look.legs = Ids[PART_LEGS];
+                c->look.feet = Ids[PART_FEET];
+                c->moveNode(&pos);
+            } break;
+
             case GPMSG_PING:
             {
                 Packet *p = new Packet(PGMSG_PONG);

@@ -265,7 +265,7 @@ namespace ST
         Point movePos;
         Point srcTile;
         Point destTile;
-        float speed = 25.0f;
+        float speed = 50.0f;
         float distx = 0.0f;
         float disty = 0.0f;
         float distance = 0.0f;

@@ -526,9 +526,10 @@ namespace ST
                 std::map<int, int> Ids;
                 unsigned int id = packet->getInteger();
                 std::string name = packet->getString();
-                Point pos;
-                pos.x = packet->getInteger();
-                pos.y = packet->getInteger();
+                Point pt;
+                pt.x = packet->getInteger();
+                pt.y = packet->getInteger();
+                Point pos = mapEngine->convertTileToPixel(pt);
                 Ids[PART_BODY] = packet->getInteger();
                 Ids[PART_HAIR] = packet->getInteger();
                 Ids[PART_CHEST] = packet->getInteger();
@@ -543,6 +544,14 @@ namespace ST
                 c->look.legs = Ids[PART_LEGS];
                 c->look.feet = Ids[PART_FEET];
                 c->moveNode(&pos);
+
+                beingManager->addBeing(c);
+                mapEngine->getLayer(mapEngine->getLayers() - 1)->addNode(c);
+                graphicsEngine->sort();
+
+                std::stringstream str;
+                str << "NPC found at " << pos.x << "x" << pos.y;
+                logger->logDebug(str.str());
             } break;
 
             case GPMSG_PING:

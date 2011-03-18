@@ -188,6 +188,7 @@ namespace ST
 		AG_Window *mErrorWindow;
 		AG_Label *mErrorCaption;
 		AG_Window *mPlayerWindow;
+		AG_Label *mPlayerLabel;
         Mouse *mouse;
 	};
 

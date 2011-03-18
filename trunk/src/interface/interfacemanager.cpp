@@ -75,9 +75,9 @@ namespace ST
 		AG_LabelJustify(mErrorCaption, AG_TEXT_CENTER);
 
 		mPlayerWindow = AG_WindowNewNamed(AG_WINDOW_NOMOVE|AG_WINDOW_PLAIN|AG_WINDOW_NOBUTTONS, "Player");
-		AG_Label *label = AG_LabelNewString(mPlayerWindow, 0, "");
-		AG_LabelSizeHint(label, 1, "XXXXXXXXXXXX");
-		AG_LabelJustify(label, AG_TEXT_CENTER);
+		mPlayerLabel = AG_LabelNewString(mPlayerWindow, 0, "");
+		AG_LabelSizeHint(mPlayerLabel, 1, "XXXXXXXXXXXX");
+		AG_LabelJustify(mPlayerLabel, AG_TEXT_CENTER);
 
         mouse = new Mouse;
 		mouse->cursor = NULL;
@@ -197,14 +197,16 @@ namespace ST
 	        if (AG_WindowIsVisible(mPlayerWindow))
                 AG_WindowHide(mPlayerWindow);
 	    }
-
-	    if (!AG_WindowIsVisible(mPlayerWindow))
-            AG_WindowShow(mPlayerWindow);
+        else
+        {
+            if (!AG_WindowIsVisible(mPlayerWindow))
+                AG_WindowShow(mPlayerWindow);
+        }
 
         Point camPt = graphicsEngine->getCamera()->getPosition();
 
 	    AG_WindowSetGeometry(mPlayerWindow, pt.x - camPt.x, pt.y - 5 - camPt.y, 75, 20);
-	    // TODO: Set Label to name
+	    AG_LabelTextS(mPlayerLabel, name.c_str());
 	}
 
 	AG_Widget* InterfaceManager::getChild(AG_Widget *parent, const std::string &name)

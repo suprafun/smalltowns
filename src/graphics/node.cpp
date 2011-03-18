@@ -42,6 +42,8 @@
 #include "graphics.h"
 #include "animation.h"
 
+#include "../interface/interfacemanager.h"
+
 #include "../map.h"
 #include "../resourcemanager.h"
 
@@ -149,6 +151,7 @@ namespace ST
 	void Node::toggleName()
 	{
 	    mShowName = !mShowName;
+	    interfaceManager->drawName(getName(), mPosition, mShowName);
 	}
 
 	bool Node::showName()

@@ -544,6 +544,7 @@ namespace ST
                 c->look.legs = Ids[PART_LEGS];
                 c->look.feet = Ids[PART_FEET];
                 c->moveNode(&pos);
+                c->setNPC();
 
                 beingManager->addBeing(c);
                 mapEngine->getLayer(mapEngine->getLayers() - 1)->addNode(c);
@@ -551,6 +552,22 @@ namespace ST
 
                 std::stringstream str;
                 str << "NPC found at " << pos.x << "x" << pos.y;
+                logger->logDebug(str.str());
+            } break;
+
+            case GPMSG_NPC_REPLY:
+            {
+                unsigned int id = packet->getInteger();
+                std::string text = packet->getString();
+                unsigned int options = packet->getInteger();
+                Being *being = beingManager->findBeing(id);
+                if (being)
+                {
+                    interfaceManager->addNPCChat(being, text);
+                    being->setTalking(true);
+                }
+                std::stringstream str;
+                str << "NPC said " << text;
                 logger->logDebug(str.str());
             } break;
 

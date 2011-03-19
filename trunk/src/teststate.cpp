@@ -149,17 +149,25 @@ namespace ST
         pos.x = evt->x + camPos.x;
         pos.y = evt->y + camPos.y + mapEngine->getTileHeight();
 
+        // left mouse button has finished being pressed
         if (evt->button == SDL_BUTTON_LEFT && evt->type == 1)
         {
             // check user clicked on map
             Node *node = graphicsEngine->getNode(pos.x, pos.y);
             if (node)
             {
+                // show name if player/NPC is clicked
                 Being *being = beingManager->findBeing(node->getName());
                 if (being)
                 {
                     // toggle being name
                     being->toggleName();
+                    if (being->isNPC() && !being->isTalking())
+                    {
+                        Packet *p = new Packet(PGMSG_NPC_START_TALK);
+                        p->setInteger(being->getId());
+                        networkManager->sendPacket(p);
+                    }
                     return;
                 }
 

@@ -107,6 +107,8 @@ namespace ST
         look.skinColour.b = 0;
 
         mAnchor = 16;
+        mNPC = false;
+        mTileChanged = false;
     }
 
     Being::~Being()

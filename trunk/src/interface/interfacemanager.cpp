@@ -39,6 +39,8 @@
 
 #include "interfacemanager.h"
 
+#include "../being.h"
+#include "../beingmanager.h"
 #include "../input.h"
 
 #include "../graphics/camera.h"
@@ -49,6 +51,17 @@
 
 #include <agar/core.h>
 #include <agar/gui.h>
+
+void end_chat(AG_Event *event)
+{
+    int id = AG_INT(1);
+    ST::Being *being = ST::beingManager->findBeing(id);
+    if (being)
+    {
+        being->setTalking(false);
+    }
+    AG_WindowHide(ST::interfaceManager->getWindow("/NPC"));
+}
 
 namespace ST
 {
@@ -78,6 +91,19 @@ namespace ST
 		mPlayerLabel = AG_LabelNewString(mPlayerWindow, 0, "");
 		AG_LabelSizeHint(mPlayerLabel, 1, "XXXXXXXXXXXX");
 		AG_LabelJustify(mPlayerLabel, AG_TEXT_CENTER);
+
+		mNPCWindow = AG_WindowNewNamed(AG_WINDOW_NOMOVE|AG_WINDOW_PLAIN|AG_WINDOW_NOBUTTONS, "NPC");
+		AG_WindowSetCaption(mNPCWindow, "NPC");
+		mNPCLabel = AG_LabelNewString(mNPCWindow, 0, "");
+		AG_LabelSizeHint(mNPCLabel, 1, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+		AG_LabelJustify(mNPCLabel, AG_TEXT_CENTER);
+
+		mPlayerWindowPos.x = 0;
+		mPlayerWindowPos.y = 0;
+		mNPCWindowPos.x = 0;
+		mNPCWindowPos.y = 0;
+		cachedCamPt.x = 0;
+		cachedCamPt.y = 0;
 
         mouse = new Mouse;
 		mouse->cursor = NULL;
@@ -181,6 +207,7 @@ namespace ST
 
 	void InterfaceManager::drawWindows()
 	{
+	    moveWindows();
 		AG_Window *win;
 		AG_FOREACH_WINDOW(win, agDriverSw)
 		{
@@ -190,8 +217,29 @@ namespace ST
 		}
 	}
 
+	void InterfaceManager::moveWindows(bool force)
+	{
+	    Point camPt;
+	    camPt.x = 0;
+	    camPt.y = 0;
+	    Point pt;
+	    if (graphicsEngine->getCamera())
+	    {
+	        camPt = graphicsEngine->getCamera()->getPosition();
+	    }
+	    if (cachedCamPt.x != camPt.x || cachedCamPt.y != camPt.y || force)
+	    {
+	        cachedCamPt = camPt;
+	        pt = mPlayerWindowPos;
+            AG_WindowSetGeometry(mPlayerWindow, pt.x - camPt.x, pt.y - camPt.y, 75, 20);
+            pt = mNPCWindowPos;
+            AG_WindowSetGeometry(mNPCWindow, pt.x - camPt.x, pt.y - camPt.y, 120, 45);
+	    }
+	}
+
 	void InterfaceManager::drawName(const std::string &name, const Point &pt, bool draw)
 	{
+	    AG_LabelTextS(mPlayerLabel, name.c_str());
 	    if (!draw)
 	    {
 	        if (AG_WindowIsVisible(mPlayerWindow))
@@ -203,10 +251,11 @@ namespace ST
                 AG_WindowShow(mPlayerWindow);
         }
 
-        Point camPt = graphicsEngine->getCamera()->getPosition();
+        mPlayerWindowPos = pt;
+        mPlayerWindowPos.y -= 5;
+	    AG_WindowSetGeometry(mPlayerWindow, mPlayerWindowPos.x, mPlayerWindowPos.y, 75, 20);
+	    moveWindows(true);
 
-	    AG_WindowSetGeometry(mPlayerWindow, pt.x - camPt.x, pt.y - 5 - camPt.y, 75, 20);
-	    AG_LabelTextS(mPlayerLabel, name.c_str());
 	}
 
 	AG_Widget* InterfaceManager::getChild(AG_Widget *parent, const std::string &name)
@@ -274,6 +323,18 @@ namespace ST
                     npos = msg.size() - pos;
             }
         }
+	}
+
+	void InterfaceManager::addNPCChat(Being *being, const std::string &msg)
+	{
+	    mNPCWindowPos = being->getPosition();
+	    AG_LabelTextS(mNPCLabel, msg.c_str());
+	    AG_WindowShow(mNPCWindow);
+	    mNPCWindowPos.x -= 20;
+	    mNPCWindowPos.y += 25;
+        AG_WindowSetGeometry(mNPCWindow, mNPCWindowPos.x, mNPCWindowPos.y, 75, 80);
+        AG_ButtonNewFn(mNPCWindow, 0, "Bye!", end_chat, "%d", being->getId());
+        moveWindows(true);
 	}
 
 	void InterfaceManager::addMouseListener(myfunc func)

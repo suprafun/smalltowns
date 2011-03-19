@@ -76,6 +76,7 @@ typedef void (*myfunc)(ST::Event* evt);
 namespace ST
 {
 	class XMLFile;
+	class Being;
 	class InterfaceManager
 	{
 	public:
@@ -131,6 +132,11 @@ namespace ST
 		void drawWindows();
 
 		/**
+		 * Move windows
+		 */
+        void moveWindows(bool force = false);
+
+		/**
 		 * Draw name
 		 */
         void drawName(const std::string &name, const Point &pt, bool draw);
@@ -154,6 +160,11 @@ namespace ST
 		 * Send to chat window
 		 */
 		void sendToChat(const std::string &msg);
+
+		/**
+		 * Add NPC window
+		 */
+        void addNPCChat(Being *being, const std::string &msg);
 
 		/**
 		 * Add mouse listener
@@ -189,6 +200,12 @@ namespace ST
 		AG_Label *mErrorCaption;
 		AG_Window *mPlayerWindow;
 		AG_Label *mPlayerLabel;
+		Point mPlayerWindowPos;
+		AG_Window *mNPCWindow;
+		AG_Label *mNPCLabel;
+		Point mNPCWindowPos;
+
+		Point cachedCamPt;
         Mouse *mouse;
 	};
 

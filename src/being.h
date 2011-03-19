@@ -126,6 +126,18 @@ namespace ST
          */
         bool tileChanged() const;
 
+        /**
+         * NPC check
+         */
+        bool isNPC() const { return mNPC; }
+        void setNPC() { mNPC = true; }
+
+        /**
+         * NPC talk check
+         */
+        bool isTalking() const { return mTalking; }
+        void setTalking(bool talking) { mTalking = talking; }
+
     public:
         Look look;
 
@@ -141,6 +153,8 @@ namespace ST
         std::deque<Point> mWaypoints; // set by client
         Point mDestination; // set by server
         bool mTileChanged;
+        bool mNPC;
+        bool mTalking;
     };
 }
 

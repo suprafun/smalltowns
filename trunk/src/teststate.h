@@ -61,6 +61,7 @@ namespace ST
 	{
 	public:
 		TestState();
+
 		/**
 		 * Enter
 		 * Called when entering the state

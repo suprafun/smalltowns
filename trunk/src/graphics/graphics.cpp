@@ -107,7 +107,9 @@ namespace ST
 		Node *node = new Node(name, graphicsEngine->getTexture(texture));
 		if (point)
             node->moveNode(point);
-		mapEngine->getLayer(mapEngine->getLayers() - 1)->addNode(node);
+		Layer *layer = mapEngine->getLayer("Character");
+		if (layer)
+            layer->addNode(node);
 		return node;
 	}
 

@@ -144,6 +144,12 @@ namespace ST
          */
         int getSize() const;
 
+        /**
+         * Get Name
+         * Returns the name of the layer
+         */
+        const std::string& getName() const { return mName; }
+
     private:
 		std::vector<Node*> mNodes;
 		std::string mName;
@@ -212,9 +218,14 @@ namespace ST
         unsigned int getLayers() { return mLayers.size(); }
 
         /**
-         * Returns a layer
+         * Returns a layer by number
          */
         Layer* getLayer(unsigned int layer);
+
+        /**
+         * Returns a layer by name
+         */
+        Layer* getLayer(const std::string &layer);
 
         /**
          * Walks a tile on the map

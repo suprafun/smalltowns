@@ -342,6 +342,18 @@ namespace ST
         return mLayers[layer];
     }
 
+    Layer* Map::getLayer(const std::string &layer)
+    {
+        LayerItr itr = mLayers.begin(), itr_end = mLayers.end();
+        while (itr != itr_end)
+        {
+            if ((*itr)->getName() == layer)
+                return *itr;
+            ++itr;
+        }
+        return NULL;
+    }
+
     Point Map::walkMap(const Point &pos, int dir)
     {
         Point newPos = pos;
@@ -519,6 +531,12 @@ namespace ST
 
         // layer name is optional, needed for collision layer
         layerName = e->Attribute("name");
+        if (layerName == "Character")
+        {
+            Layer *l = new Layer(layerName, layerWidth, layerHeight);
+            mLayers.push_back(l);
+            return true;
+        }
 
         // Load in compressed base64 map
         e = e->FirstChild("data")->ToElement();

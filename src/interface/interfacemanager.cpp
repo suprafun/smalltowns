@@ -77,7 +77,7 @@ namespace ST
             logger->logError("Error: Unable to init video");
         }
 
-		mGuiSheet = 0;
+        mGuiSheet = 0;
 		int halfScreenWidth = (int)(graphicsEngine->getScreenWidth() * 0.5);
 		mErrorWindow = AG_WindowNewNamed(0, "Error");
 		AG_WindowSetCaption(mErrorWindow, "Error");

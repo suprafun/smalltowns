@@ -98,7 +98,7 @@ namespace ST
         if (mDelay > 0)
             return;
 
-        float speed = 20.0f;
+        float speed = 60.0f;
         float time = 0.0f;
 
         // calculate next position by taking the last position and

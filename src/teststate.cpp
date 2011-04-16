@@ -67,6 +67,8 @@
 #include <sstream>
 #include <SDL.h>
 
+int timeToExit = 0;
+
 namespace ST
 {
     void submit_chat(AG_Event *event)
@@ -220,29 +222,28 @@ namespace ST
 		}
     }
 
-    void handle_logout(AG_Event *event)
+    void disconnect_from_game()
     {
-        IRCServer *chatServer = static_cast<IRCServer*>(AG_PTR(1));
-        int *left = static_cast<int*>(AG_PTR(2));
-        int logout = AG_INT(3);
-
         // disconnect from game server
         Packet *p = new Packet(PGMSG_DISCONNECT);
         networkManager->sendPacket(p);
         networkManager->process();
         game->disconnect();
-        chatServer->quit();
+    }
 
-        if (logout == 1)
-        {
-            // connect to account server
-            GameState *gs = new ConnectState;
-            game->changeState(gs);
-        }
-        else
-        {
-            *left = 1;
-        }
+    void handle_logout(AG_Event *event)
+    {
+        disconnect_from_game();
+
+        // connect to account server
+        GameState *gs = new ConnectState;
+        game->changeState(gs);
+    }
+
+    void handle_exit(AG_Event *event)
+    {
+        disconnect_from_game();
+        timeToExit = 1;
     }
 
 	TestState::TestState()
@@ -298,10 +299,10 @@ namespace ST
 		AG_WindowSetGeometry(popUp, screenWidth / 2 - 75, screenHeight / 2 - 40, 150, 80);
 		AG_WindowHide(popUp);
 
-		AG_Button *logOut = AG_ButtonNewFn(popUp, 0, "Log Out", handle_logout, "%p%p%d", chatServer, &mLeft, 1);
+		AG_Button *logOut = AG_ButtonNewFn(popUp, 0, "Log Out", handle_logout, 0);
 		AG_ButtonJustify(logOut, AG_TEXT_CENTER);
 
-		AG_Button *exitGame = AG_ButtonNewFn(popUp, 0, "Exit to Desktop", handle_logout, "%p%p%d", chatServer, &mLeft, 0);
+		AG_Button *exitGame = AG_ButtonNewFn(popUp, 0, "Exit to Desktop", handle_exit, 0);
 		AG_ButtonJustify(exitGame, AG_TEXT_CENTER);
 
 		interfaceManager->addWindow(popUp);
@@ -320,6 +321,7 @@ namespace ST
 
 	void TestState::exit()
 	{
+	    chatServer->quit();
 		delete mCam;
 		mCam = NULL;
 		delete chatServer;
@@ -334,8 +336,11 @@ namespace ST
 
 	bool TestState::update()
 	{
-	    if (mLeft)
+	    if (timeToExit)
+        {
+            chatServer->quit();
             return false;
+        }
 
 	    // check if the map has been loaded then tell the game server we're ready
 	    if (!mLoaded && mapEngine->mapLoaded())

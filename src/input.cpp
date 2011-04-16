@@ -57,6 +57,9 @@ namespace ST
             {
                 if (AG_GetNextEvent(NULL, &dev) == 1)
                 {
+                    /* Forward the event to Agar. */
+                    if (AG_ProcessEvent(NULL, &dev) != 0)
+                        return;
                     switch (dev.type)
                     {
                     case AG_DRIVER_MOUSE_BUTTON_DOWN:
@@ -81,10 +84,6 @@ namespace ST
                     default:
                         break;
                     }
-
-                    /* Forward the event to Agar. */
-                    if (AG_ProcessEvent(NULL, &dev) == -1)
-                        break;
                 }
             } while (AG_PendingEvents(NULL) > 0);
         }

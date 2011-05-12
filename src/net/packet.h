@@ -48,6 +48,9 @@
 #ifdef WIN32
 typedef int int32_t;
 #endif
+#ifdef __linux__
+#include <stdint.h>
+#endif
 
 namespace ST
 {

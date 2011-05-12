@@ -38,6 +38,7 @@
  ********************************************/
 
 #include "animation.h"
+#include <stdlib.h>
 
 namespace ST
 {

@@ -46,10 +46,14 @@ namespace ST
         mServer(NULL), mConnected(false)
     {
         // create a new client host for connecting to the server
+#ifdef ENET_VERSION
+        mClient = enet_host_create(NULL, 1, 0, 57600 / 8, 14400 / 8);
+#else
         mClient = enet_host_create (NULL /* create a client host */,
                 1 /* only allow 1 outgoing connection */,
                 57600 / 8 /* 56K modem with 56 Kbps downstream bandwidth */,
                 14400 / 8 /* 56K modem with 14 Kbps upstream bandwidth */);
+#endif
     }
 
     Host::~Host()
@@ -64,7 +68,11 @@ namespace ST
         mAddress.port = port;
 
         // connect to the server
+#ifdef ENET_VERSION
+        mServer = enet_host_connect(mClient, &mAddress, 0, 1);
+#else
         mServer = enet_host_connect (mClient, &mAddress, 1);
+#endif
     }
 
     void Host::process()

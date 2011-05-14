@@ -272,6 +272,14 @@ namespace ST
         Point convertTileToPixel(const Point &pt);
 
         /**
+         * Calculate distance between 2 positions in tiles
+         * @param pos1 Position 1
+         * @param pos2 Position 2
+         * @return The distance in tiles
+         */
+        int calculateDistanceInTiles(const Point &pos1, const Point &pos2);
+
+        /**
          * Return if a tile is blocking
          * @param pos The tile position of the tile
          */

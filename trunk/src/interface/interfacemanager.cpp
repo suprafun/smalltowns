@@ -332,7 +332,7 @@ namespace ST
 	    AG_WindowShow(mNPCWindow);
 	    mNPCWindowPos.x -= 20;
 	    mNPCWindowPos.y += 25;
-        AG_WindowSetGeometry(mNPCWindow, mNPCWindowPos.x, mNPCWindowPos.y, 75, 80);
+        AG_WindowSetGeometry(mNPCWindow, mNPCWindowPos.x, mNPCWindowPos.y, 12 * strlen(msg.c_str()), 110);
         AG_ButtonNewFn(mNPCWindow, 0, "Bye!", end_chat, "%d", being->getId());
         moveWindows(true);
 	}

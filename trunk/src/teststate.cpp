@@ -71,6 +71,17 @@ int timeToExit = 0;
 
 namespace ST
 {
+    bool withinReach(const Point &pos1, const Point &pos2)
+    {
+        // allow 3 tiles between player and NPC
+        int distanceAllowed = 3;
+
+        if (mapEngine->calculateDistanceInTiles(pos1, pos2) > distanceAllowed)
+            return false;
+
+        return true;
+    }
+
     void submit_chat(AG_Event *event)
     {
         IRCServer *chatServer = static_cast<IRCServer*>(AG_PTR(1));
@@ -164,7 +175,7 @@ namespace ST
                 {
                     // toggle being name
                     being->toggleName();
-                    if (being->isNPC() && !being->isTalking())
+                    if (being->isNPC() && withinReach(being->getPosition(), player->getSelectedCharacter()->getPosition()) && !being->isTalking())
                     {
                         Packet *p = new Packet(PGMSG_NPC_START_TALK);
                         p->setInteger(being->getId());

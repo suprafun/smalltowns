@@ -659,6 +659,19 @@ namespace ST
         return pixel;
     }
 
+    int Map::calculateDistanceInTiles(const Point &pos1, const Point &pos2)
+    {
+        Point tile1 = convertPixelToTile(pos1.x, pos1.y);
+        Point tile2 = convertPixelToTile(pos2.x, pos2.y);
+        int x = tile1.x - tile2.x;
+        int y = tile1.y - tile2.y;
+        if (x < 0)
+            x = -x;
+        if (y < 0)
+            y = -y;
+        return std::max(x,y);
+    }
+
     void Map::removeNode(Node *node)
     {
         for (unsigned i = 0; i < mLayers.size(); ++i)

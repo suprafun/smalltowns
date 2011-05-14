@@ -77,6 +77,24 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="libs/tinyxml/tinystr.cpp">
+			<Option target="Linux" />
+		</Unit>
+		<Unit filename="libs/tinyxml/tinystr.h">
+			<Option target="Linux" />
+		</Unit>
+		<Unit filename="libs/tinyxml/tinyxml.cpp">
+			<Option target="Linux" />
+		</Unit>
+		<Unit filename="libs/tinyxml/tinyxml.h">
+			<Option target="Linux" />
+		</Unit>
+		<Unit filename="libs/tinyxml/tinyxmlerror.cpp">
+			<Option target="Linux" />
+		</Unit>
+		<Unit filename="libs/tinyxml/tinyxmlparser.cpp">
+			<Option target="Linux" />
+		</Unit>
 		<Unit filename="src/being.cpp" />
 		<Unit filename="src/being.h" />
 		<Unit filename="src/beingmanager.cpp" />

@@ -57,9 +57,6 @@ namespace ST
             {
                 if (AG_GetNextEvent(NULL, &dev) == 1)
                 {
-                    /* Forward the event to Agar. */
-                    if (AG_ProcessEvent(NULL, &dev) != 0)
-                        return;
                     switch (dev.type)
                     {
                     case AG_DRIVER_MOUSE_BUTTON_DOWN:
@@ -68,9 +65,12 @@ namespace ST
                                0);
                         break;
                     case AG_DRIVER_MOUSE_BUTTON_UP:
-                        interfaceManager->handleMouseEvent(dev.data.button.which,
+                        if (!AG_WindowIntersect(agDriverSw, dev.data.button.x, dev.data.button.y))
+                        {
+                            interfaceManager->handleMouseEvent(dev.data.button.which,
                                dev.data.button.x, dev.data.button.y,
                                1);
+                        }
                         break;
                     case AG_DRIVER_MOUSE_MOTION:
                         interfaceManager->handleMouseEvent(0, dev.data.motion.x, dev.data.motion.y, 0);
@@ -84,6 +84,9 @@ namespace ST
                     default:
                         break;
                     }
+
+                    /* Forward the event to Agar. */
+                    AG_ProcessEvent(NULL, &dev);
                 }
             } while (AG_PendingEvents(NULL) > 0);
         }

@@ -376,6 +376,12 @@ namespace ST
         return getBodyPart(mDefaultFemale);
     }
 
+    Texture* ResourceManager::getBeingAvatar(int id)
+    {
+        // TODO: Change to actual being avatar
+        return mAvatars.find(0)->second;
+    }
+
     std::vector<BodyPart*> ResourceManager::getBodyList(int type)
     {
         std::vector<BodyPart*> vec;
@@ -495,5 +501,10 @@ namespace ST
             graphicsEngine->loadTexture("glowtile_green.png", buffer, size);
             free(buffer);
         }
+    }
+
+    void ResourceManager::loadAvatars()
+    {
+        mAvatars.insert(std::pair<int, Texture*>(0, graphicsEngine->loadTexture(getDataPath("mia.png"))));
     }
 }

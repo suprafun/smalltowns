@@ -268,6 +268,7 @@ namespace ST
 
         // load glowing tile
         resourceManager->loadGlowingTiles();
+        resourceManager->loadAvatars();
 
 		// create camera
 		Rectangle rect;

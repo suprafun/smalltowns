@@ -287,6 +287,7 @@ namespace ST
             AG_ButtonNewFn(mLoginWindow, 0, optionsText.c_str(), goto_options, 0);
 
             AG_WindowShow(mLoginWindow);
+            AG_WidgetFocus(username);
             interfaceManager->addWindow(mLoginWindow);
         }
         else
@@ -325,6 +326,7 @@ namespace ST
             AG_ButtonNewFn(mLoginWindow, 0, "Options", goto_options, 0);
 
             AG_WindowShow(mLoginWindow);
+            AG_WidgetFocus(username);
             interfaceManager->addWindow(mLoginWindow);
         }
 	}

@@ -203,6 +203,8 @@ namespace ST
 		Point mPlayerWindowPos;
 		AG_Window *mNPCWindow;
 		AG_Label *mNPCLabel;
+		AG_Button *mNPCButton;
+		AG_Window *mNPCAvatar;
 		Point mNPCWindowPos;
 
 		Point cachedCamPt;

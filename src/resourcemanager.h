@@ -50,6 +50,7 @@ namespace ST
     class Animation;
     class BeingAnimation;
     class BodyPart;
+    class Texture;
 
     /**
      * The Resource Manager is the class used for storing resources
@@ -107,6 +108,11 @@ namespace ST
         Animation* getAnimation(int bodypart, const std::string &name);
 
         /**
+         * Returns Avatar of being
+         */
+        Texture* getBeingAvatar(int id);
+
+        /**
          * Add data path
          */
         void addPath(const std::string &path);
@@ -136,6 +142,11 @@ namespace ST
          */
         void loadGlowingTiles();
 
+        /**
+         * Load avatars
+         */
+        void loadAvatars();
+
     private:
         int mBodyWidth;
         int mBodyHeight;
@@ -150,6 +161,8 @@ namespace ST
         typedef std::vector<BodyPart*>::iterator BodyPartItr;
         std::map<std::string, std::list<BeingAnimation*> > mAnimations;
         typedef std::map<std::string, std::list<BeingAnimation*> >::iterator AnimationItr;
+        std::map<int, Texture*> mAvatars;
+        typedef std::map<int, Texture*>::iterator AvatarItr;
 
 		std::string mWriteDataPath;
     };

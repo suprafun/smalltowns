@@ -42,9 +42,11 @@
 #include "../being.h"
 #include "../beingmanager.h"
 #include "../input.h"
+#include "../resourcemanager.h"
 
 #include "../graphics/camera.h"
 #include "../graphics/graphics.h"
+#include "../graphics/texture.h"
 
 #include "../utilities/log.h"
 #include "../utilities/xml.h"
@@ -59,8 +61,10 @@ void end_chat(AG_Event *event)
     if (being)
     {
         being->setTalking(false);
+        being->toggleName();
     }
     AG_WindowHide(ST::interfaceManager->getWindow("/NPC"));
+    AG_WindowHide(ST::interfaceManager->getWindow("/Avatar"));
 }
 
 namespace ST
@@ -97,11 +101,16 @@ namespace ST
 		mNPCLabel = AG_LabelNewString(mNPCWindow, 0, "");
 		AG_LabelSizeHint(mNPCLabel, 1, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		AG_LabelJustify(mNPCLabel, AG_TEXT_CENTER);
+		mNPCButton = AG_ButtonNewS(mNPCWindow, 0, "Bye!");
+		mNPCAvatar = AG_WindowNewNamed(
+                                 AG_WINDOW_NOMOVE|AG_WINDOW_PLAIN|AG_WINDOW_NOBUTTONS|AG_WINDOW_NOBACKGROUND,
+                                 "Avatar");
+        AG_WindowSetGeometry(mNPCAvatar, halfScreenWidth*2-272, 0, 272, 379);
 
 		mPlayerWindowPos.x = 0;
 		mPlayerWindowPos.y = 0;
-		mNPCWindowPos.x = 0;
-		mNPCWindowPos.y = 0;
+		mNPCWindowPos.x = halfScreenWidth;
+		mNPCWindowPos.y = 40;
 		cachedCamPt.x = 0;
 		cachedCamPt.y = 0;
 
@@ -327,13 +336,38 @@ namespace ST
 
 	void InterfaceManager::addNPCChat(Being *being, const std::string &msg)
 	{
-	    mNPCWindowPos = being->getPosition();
 	    AG_LabelTextS(mNPCLabel, msg.c_str());
-	    AG_WindowShow(mNPCWindow);
-	    mNPCWindowPos.x -= 20;
-	    mNPCWindowPos.y += 25;
+	    AG_SetEvent(mNPCButton, "button-pushed", end_chat, "%d", being->getId());
+	    AG_Surface *surface = NULL;
+	    if (graphicsEngine->isOpenGL())
+        {
+            AG_PixmapFromTexture(mNPCAvatar, 0, resourceManager->getBeingAvatar(being->getId())->getGLTexture(), 0);
+        }
+        else
+        {
+            SDL_Surface *s = resourceManager->getBeingAvatar(being->getId())->getSDLSurface();
+            SDL_LockSurface(s);
+            unsigned int rmask, gmask, bmask, amask;
+            #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+            rmask = 0xff000000;
+            gmask = 0x00ff0000;
+            bmask = 0x0000ff00;
+            amask = 0x000000ff;
+            #else
+            rmask = 0x000000ff;
+            gmask = 0x0000ff00;
+            bmask = 0x00ff0000;
+            amask = 0xff000000;
+            #endif
+            surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
+            SDL_UnlockSurface(s);
+            AG_PixmapFromSurface(mNPCAvatar, 0, surface);
+        }
+
         AG_WindowSetGeometry(mNPCWindow, mNPCWindowPos.x, mNPCWindowPos.y, 12 * strlen(msg.c_str()), 110);
-        AG_ButtonNewFn(mNPCWindow, 0, "Bye!", end_chat, "%d", being->getId());
+
+        AG_WindowShow(mNPCWindow);
+        AG_WindowShow(mNPCAvatar);
         moveWindows(true);
 	}
 

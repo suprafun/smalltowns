@@ -96,21 +96,24 @@ namespace ST
 		AG_LabelSizeHint(mPlayerLabel, 1, "XXXXXXXXXXXX");
 		AG_LabelJustify(mPlayerLabel, AG_TEXT_CENTER);
 
+		mNPCWindowPos.x = 80;
+		mNPCWindowPos.y = graphicsEngine->getScreenHeight()-110;
+
 		mNPCWindow = AG_WindowNewNamed(AG_WINDOW_NOMOVE|AG_WINDOW_PLAIN|AG_WINDOW_NOBUTTONS, "NPC");
 		AG_WindowSetCaption(mNPCWindow, "NPC");
 		mNPCLabel = AG_LabelNewString(mNPCWindow, 0, "");
 		AG_LabelSizeHint(mNPCLabel, 1, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		AG_LabelJustify(mNPCLabel, AG_TEXT_CENTER);
 		mNPCButton = AG_ButtonNewS(mNPCWindow, 0, "Bye!");
+		AG_WindowSetGeometry(mNPCWindow, mNPCWindowPos.x, mNPCWindowPos.y, 200, 110);
+
 		mNPCAvatar = AG_WindowNewNamed(
                                  AG_WINDOW_NOMOVE|AG_WINDOW_PLAIN|AG_WINDOW_NOBUTTONS|AG_WINDOW_NOBACKGROUND,
                                  "Avatar");
-        AG_WindowSetGeometry(mNPCAvatar, halfScreenWidth*2-272, 0, 272, 379);
+        AG_WindowSetGeometry(mNPCAvatar, graphicsEngine->getScreenWidth()-272, graphicsEngine->getScreenHeight()-349, 272, 379);
 
 		mPlayerWindowPos.x = 0;
 		mPlayerWindowPos.y = 0;
-		mNPCWindowPos.x = halfScreenWidth;
-		mNPCWindowPos.y = 40;
 		cachedCamPt.x = 0;
 		cachedCamPt.y = 0;
 

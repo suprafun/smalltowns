@@ -56,6 +56,10 @@
 #include <agar/core.h>
 #include <agar/gui.h>
 
+#ifdef _WIN32
+#include <shlwapi.h>
+#endif
+
 namespace ST
 {
     void submit_language(AG_Event *event)
@@ -137,7 +141,13 @@ namespace ST
             AG_HBox *box = AG_HBoxNew(test, 0);
             for (int i = 0; i < 3; ++i)
             {
+#ifndef _MSC_VER
                 button[i] = AG_ButtonNewFn(box, 0, lang[0].c_str(), submit_language, "%s", strdup(value[i].c_str()));
+#else
+				wchar_t *wc;
+				mbstowcs(wc, value[i].c_str(), value[i].length());
+				button[i] = AG_ButtonNewFn(box, 0, lang[0].c_str(), submit_language, "%s", StrDup(wc));
+#endif
                 AG_Surface *surface;
                 SDL_Surface *s = graphicsEngine->loadSDLTexture(resourceManager->getDataPath(icon[i].c_str()));
                 SDL_LockSurface(s);

@@ -397,6 +397,8 @@ namespace ST
             if (!body)
                 break;
             Texture *tex = body->getTexture(DIRECTION_SOUTHEAST);
+			if (!tex)
+				break;
 
             // put the texture into the pixmap
             AG_Surface *surface = NULL;

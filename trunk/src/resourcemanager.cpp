@@ -57,6 +57,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <shlobj.h>
+#include <tchar.h>
 #endif
 
 namespace ST
@@ -87,9 +88,10 @@ namespace ST
 		mWriteDataPath = PHYSFS_getUserDir();
 		mWriteDataPath.append("Library/Application Support/");
 #elif defined _WIN32
-        TCHAR writePath[MAX_PATH];
+        TCHAR writePath[MAX_PATH+1];
         SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, writePath);
-        mWriteDataPath = writePath;
+		int length = _tcslen(writePath);
+        mWriteDataPath.assign(&writePath[0], &writePath[length]);
 #endif
 
 #ifndef __unix__
@@ -106,7 +108,7 @@ namespace ST
 			    error = PHYSFS_getLastError();
 			}
         }
-        mWriteDataPath.append(dirName);
+        mWriteDataPath.append("/" + dirName);
         PHYSFS_setWriteDir(mWriteDataPath.c_str());
         mWriteDataPath.append("/");
         addPath(mWriteDataPath);
@@ -124,9 +126,10 @@ namespace ST
 		CFRelease(resourcesURL);
 		addPath(resPath);
 #elif defined _WIN32
-        TCHAR exePath[MAX_PATH];
+        TCHAR exePath[MAX_PATH+1];
         GetModuleFileName(0, exePath, MAX_PATH);
-        datapath = exePath;
+		length = _tcslen(exePath);
+        datapath.append(&exePath[0], &exePath[length]);
         datapath = datapath.substr(0, datapath.find_last_of("\\") + 1);
         addPath(datapath);
         addPath(datapath + "data\\");

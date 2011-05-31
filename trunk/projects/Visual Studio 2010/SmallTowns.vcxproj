@@ -45,7 +45,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\david\Documents\programming\SDL-1.2.14\include;C:\Users\david\Documents\programming\SDL_image-1.2.10;C:\Users\david\Documents\programming\enet-1.2.1\include;C:\Users\david\Documents\programming\tinyxml;C:\Program Files\Agar\include;C:\Users\david\Documents\programming\zlib-1.2.5;C:\Users\david\Documents\programming\physfs-2.0.1;C:\Users\david\Documents\programming\libcurl\include;C:\Users\david\Documents\programming\openssl\include;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\david\Documents\programming\libs;$(LibraryPath)</LibraryPath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\david\Documents\programming\SDL-1.2.14\include;C:\Users\david\Documents\programming\SDL_image-1.2.10;C:\Users\david\Documents\programming\enet-1.2.1\include;C:\Users\david\Documents\programming\tinyxml;C:\Program Files\Agar\include;C:\Users\david\Documents\programming\zlib-1.2.5;C:\Users\david\Documents\programming\physfs-2.0.1;C:\Users\david\Documents\programming\libcurl\include;C:\Users\david\Documents\programming\openssl\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\david\Documents\programming\SDL-1.2.14\include;C:\Users\david\Documents\programming\SDL_image-1.2.10;C:\Users\david\Documents\programming\enet-1.2.1\include;C:\Users\david\Documents\programming\tinyxml;C:\Users\david\Documents\programming\Agar-1.4.1-nothreads\include;C:\Users\david\Documents\programming\zlib-1.2.5;C:\Users\david\Documents\programming\physfs-2.0.1;C:\Users\david\Documents\programming\libcurl\include;C:\Users\david\Documents\programming\openssl\include;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\david\Documents\programming\libs;$(LibraryPath)</LibraryPath>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)_d</TargetName>
   </PropertyGroup>
@@ -64,7 +64,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>uuid.lib;msvcrtd.lib;msvcprtd.lib;SDLMain.lib;SDL.lib;SDL_image.lib;opengl32.lib;glu32.lib;tinyxml.lib;WS2_32.lib;winmm.lib;enet.lib;zlib.lib;ag_core_static.lib;ag_gui_static.lib;freetype2312.lib;physfs.lib;curllib.lib;libeay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>uuid.lib;msvcrtd.lib;msvcprtd.lib;SDLMain.lib;SDL.lib;SDL_image.lib;opengl32.lib;glu32.lib;tinyxml.lib;WS2_32.lib;winmm.lib;enet.lib;zlib.lib;ag_core_static.lib;ag_gui_static.lib;freetype2312.lib;physfs.lib;curllib.lib;ssleay32.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -88,7 +88,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>uuid.lib;msvcrt.lib;msvcprt.lib;SDLMain.lib;SDL.lib;SDL_image.lib;opengl32.lib;glu32.lib;tinyxml.lib;enet.lib;ws2_32.lib;winmm.lib;ag_core_static.lib;ag_gui_static.lib;freetype2312.lib;physfs.lib;curllib.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>uuid.lib;msvcrt.lib;msvcprt.lib;SDLMain.lib;SDL.lib;SDL_image.lib;opengl32.lib;glu32.lib;tinyxml.lib;enet.lib;ws2_32.lib;winmm.lib;ag_core_static.lib;ag_gui_static.lib;freetype2312.lib;physfs.lib;curllib.lib;zlib.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libc;libcmt;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -111,6 +111,7 @@
     <ClCompile Include="..\..\src\input.cpp" />
     <ClCompile Include="..\..\src\irc\ircmessage.cpp" />
     <ClCompile Include="..\..\src\irc\ircserver.cpp" />
+    <ClCompile Include="..\..\src\languagestate.cpp" />
     <ClCompile Include="..\..\src\loadstate.cpp" />
     <ClCompile Include="..\..\src\loginstate.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="..\..\src\input.h" />
     <ClInclude Include="..\..\src\irc\ircmessage.h" />
     <ClInclude Include="..\..\src\irc\ircserver.h" />
+    <ClInclude Include="..\..\src\languagestate.h" />
     <ClInclude Include="..\..\src\loginstate.h" />
     <ClInclude Include="..\..\src\map.h" />
     <ClInclude Include="..\..\src\optionsstate.h" />

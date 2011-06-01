@@ -87,7 +87,7 @@ namespace ST
 
 	void SDLGraphics::drawTexturedRect(Rectangle &rect, Texture *texture)
 	{
-	    if (!texture)
+	    if (!texture || !texture->getSDLSurface())
             return;
 		SDL_Rect dstRect;
 		dstRect.x = rect.x;

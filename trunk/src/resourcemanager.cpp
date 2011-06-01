@@ -202,21 +202,24 @@ namespace ST
                 std::string colour = file.readString("body", "colour");
 
                 Texture *iconTex = NULL;
-                if (getDataPath(icon).find_first_of(".zip") == std::string::npos)
+                if (icon != "")
                 {
-                    iconTex = graphicsEngine->loadTexture(getDataPath(icon));
-                }
-                else
-                {
-                    int iconBufSize = 0;
-                    char *buffer = loadFile(icon, iconBufSize);
-                    iconTex = graphicsEngine->loadTexture(icon, buffer, iconBufSize);
-                    free(buffer);
-                }
+                    if (getDataPath(icon).find(".zip") == std::string::npos)
+                    {
+                        iconTex = graphicsEngine->loadTexture(getDataPath(icon));
+                    }
+                    else
+                    {
+                        int iconBufSize = 0;
+                        char *buffer = loadFile(icon, iconBufSize);
+                        iconTex = graphicsEngine->loadTexture(icon, buffer, iconBufSize);
+                        free(buffer);
+                    }
 
-                if (iconTex == NULL)
-                {
-                    logger->logError("Unable to load icon: " + icon);
+                    if (iconTex == NULL)
+                    {
+                        logger->logError("Unable to load icon: " + icon);
+                    }
                 }
 
                 BodyPart *body = new BodyPart(id, part, iconTex);
@@ -237,9 +240,11 @@ namespace ST
                     else if (dirstr == "NW")
                         dir = DIRECTION_NORTHWEST;
 
-                    if (getDataPath(img).find_first_of(".zip") == std::string::npos)
+                    std::string path = getDataPath(img);
+                    size_t found = path.find(".zip");
+                    if (found == std::string::npos)
                     {
-                        body->addTexture(dir, getDataPath(img));
+                        body->addTexture(dir, path);
                     }
                     else
                     {
@@ -290,7 +295,7 @@ namespace ST
                     texName << part << name;
 
                     // check if animation is in content update
-                    if (getDataPath(img).find_first_of(".zip") == std::string::npos)
+                    if (getDataPath(img).find(".zip") == std::string::npos)
                     {
                         img = getDataPath(img);
                         loaded = graphicsEngine->loadTextureSet(texName.str(), img, width, height);
@@ -482,7 +487,7 @@ namespace ST
     {
         int size = 0;
         char *buffer;
-        if (getDataPath("glowtile_red").find_first_of(".zip") == std::string::npos)
+        if (getDataPath("glowtile_red").find(".zip") == std::string::npos)
         {
             graphicsEngine->loadTexture(getDataPath("glowtile_red.png"));
         }
@@ -493,7 +498,7 @@ namespace ST
             free(buffer);
         }
 
-        if (getDataPath("glowtile_green").find_first_of(".zip") == std::string::npos)
+        if (getDataPath("glowtile_green").find(".zip") == std::string::npos)
         {
             graphicsEngine->loadTexture(getDataPath("glowtile_green.png"));
         }
@@ -508,6 +513,11 @@ namespace ST
 
     void ResourceManager::loadAvatars()
     {
-        mAvatars.insert(std::pair<int, Texture*>(0, graphicsEngine->loadTexture(getDataPath("mia.png"))));
+        Texture *tex = graphicsEngine->loadTexture(getDataPath("mia.png"));
+        if (!tex)
+        {
+            logger->logError("Unable to load NPC avatar");
+        }
+        mAvatars.insert(std::pair<int, Texture*>(0, tex));
     }
 }

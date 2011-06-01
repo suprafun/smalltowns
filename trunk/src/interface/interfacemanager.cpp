@@ -349,22 +349,25 @@ namespace ST
         else
         {
             SDL_Surface *s = resourceManager->getBeingAvatar(being->getId())->getSDLSurface();
-            SDL_LockSurface(s);
-            unsigned int rmask, gmask, bmask, amask;
-            #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-            rmask = 0xff000000;
-            gmask = 0x00ff0000;
-            bmask = 0x0000ff00;
-            amask = 0x000000ff;
-            #else
-            rmask = 0x000000ff;
-            gmask = 0x0000ff00;
-            bmask = 0x00ff0000;
-            amask = 0xff000000;
-            #endif
-            surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
-            SDL_UnlockSurface(s);
-            AG_PixmapFromSurface(mNPCAvatar, 0, surface);
+            if (s)
+            {
+                SDL_LockSurface(s);
+                unsigned int rmask, gmask, bmask, amask;
+                #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+                rmask = 0xff000000;
+                gmask = 0x00ff0000;
+                bmask = 0x0000ff00;
+                amask = 0x000000ff;
+                #else
+                rmask = 0x000000ff;
+                gmask = 0x0000ff00;
+                bmask = 0x00ff0000;
+                amask = 0xff000000;
+                #endif
+                surface = AG_SurfaceFromPixelsRGBA(s->pixels, s->w, s->h, s->format->BitsPerPixel, rmask, gmask, bmask, amask);
+                SDL_UnlockSurface(s);
+                AG_PixmapFromSurface(mNPCAvatar, 0, surface);
+            }
         }
 
         AG_WindowSetGeometry(mNPCWindow, mNPCWindowPos.x, mNPCWindowPos.y, 12 * strlen(msg.c_str()), 110);

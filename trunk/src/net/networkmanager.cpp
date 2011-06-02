@@ -244,7 +244,7 @@ namespace ST
                     Ids[PART_CHEST] = packet->getInteger();
                     Ids[PART_LEGS] = packet->getInteger();
                     Ids[PART_FEET] = packet->getInteger();
-                    Texture *avatar = graphicsEngine->createAvatar(slot, Ids, DIRECTION_SOUTHEAST);
+                    Texture *avatar = graphicsEngine->createAvatar(id, Ids, DIRECTION_SOUTHEAST);
                     Character *c = new Character(id, name, avatar);
                     c->look.body = Ids[PART_BODY];
                     c->look.hair = Ids[PART_HAIR];

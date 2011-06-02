@@ -177,8 +177,8 @@ namespace ST
 
 		interfaceManager->addWindow(win);
 
-		mLoginWindow = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "LoginWindow");
-		mRegisterWindow = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS, "Register");
+		mLoginWindow = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "LoginWindow");
+		mRegisterWindow = AG_WindowNewNamed(AG_WINDOW_NOBUTTONS|AG_WINDOW_KEEPABOVE, "Register");
 
 		createLoginWidgets();
 		createRegisterWidgets();

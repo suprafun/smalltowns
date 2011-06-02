@@ -41,6 +41,7 @@
 
 #include "graphics/graphics.h"
 #include "interface/interfacemanager.h"
+#include "utilities/log.h"
 
 #include <SDL.h>
 #include <algorithm>

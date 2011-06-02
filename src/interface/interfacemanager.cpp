@@ -96,8 +96,8 @@ namespace ST
 		AG_LabelSizeHint(mPlayerLabel, 1, "XXXXXXXXXXXX");
 		AG_LabelJustify(mPlayerLabel, AG_TEXT_CENTER);
 
-		mNPCWindowPos.x = 80;
-		mNPCWindowPos.y = graphicsEngine->getScreenHeight()-110;
+		mNPCWindowPos.x = halfScreenWidth;
+		mNPCWindowPos.y = graphicsEngine->getScreenHeight()-70;
 
 		mNPCWindow = AG_WindowNewNamed(AG_WINDOW_NOMOVE|AG_WINDOW_PLAIN|AG_WINDOW_NOBUTTONS, "NPC");
 		AG_WindowSetCaption(mNPCWindow, "NPC");
@@ -105,7 +105,7 @@ namespace ST
 		AG_LabelSizeHint(mNPCLabel, 1, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		AG_LabelJustify(mNPCLabel, AG_TEXT_CENTER);
 		mNPCButton = AG_ButtonNewS(mNPCWindow, 0, "Bye!");
-		AG_WindowSetGeometry(mNPCWindow, mNPCWindowPos.x, mNPCWindowPos.y, 200, 110);
+		AG_WindowSetGeometry(mNPCWindow, mNPCWindowPos.x, mNPCWindowPos.y, 200, 70);
 
 		mNPCAvatar = AG_WindowNewNamed(
                                  AG_WINDOW_NOMOVE|AG_WINDOW_PLAIN|AG_WINDOW_NOBUTTONS|AG_WINDOW_NOBACKGROUND,
@@ -244,8 +244,6 @@ namespace ST
 	        cachedCamPt = camPt;
 	        pt = mPlayerWindowPos;
             AG_WindowSetGeometry(mPlayerWindow, pt.x - camPt.x, pt.y - camPt.y, 75, 20);
-            pt = mNPCWindowPos;
-            AG_WindowSetGeometry(mNPCWindow, pt.x - camPt.x, pt.y - camPt.y, 120, 45);
 	    }
 	}
 
@@ -370,7 +368,7 @@ namespace ST
             }
         }
 
-        AG_WindowSetGeometry(mNPCWindow, mNPCWindowPos.x, mNPCWindowPos.y, 12 * strlen(msg.c_str()), 110);
+        AG_WindowSetGeometry(mNPCWindow, mNPCWindowPos.x, mNPCWindowPos.y, 12 * strlen(msg.c_str()), 70);
 
         AG_WindowShow(mNPCWindow);
         AG_WindowShow(mNPCAvatar);

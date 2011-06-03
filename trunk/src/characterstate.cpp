@@ -262,6 +262,8 @@ namespace ST
         interfaceManager->removeAllWindows();
         delete mAvatar;
         mAvatar = 0;
+        mSelectWindow = NULL;
+        mCreateWindow = NULL;
     }
 
     bool CharacterState::update()

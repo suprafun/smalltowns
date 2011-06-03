@@ -199,6 +199,7 @@ namespace ST
 			AG_ObjectDetach(*itr);
 		}
 		mWindows.clear();
+		AG_FreeDetachedWindows();
         NameItr name_itr = mNames.begin(), name_itr_end = mNames.end();
         while (name_itr != name_itr_end)
         {
@@ -262,7 +263,7 @@ namespace ST
         }
 
         mPlayerWindowPos = pt;
-        mPlayerWindowPos.y -= 5;
+        //mPlayerWindowPos.y -= 5;
 	    AG_WindowSetGeometry(mPlayerWindow, mPlayerWindowPos.x, mPlayerWindowPos.y, 75, 20);
 	    moveWindows(true);
 
